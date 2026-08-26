@@ -6,14 +6,15 @@ import logging
 
 def compute_pagerank(G: nx.Graph) -> dict:
     try:
-        return nx.pagerank(G, weight='weight')
+        # Don't use edge weight - financial amounts skew structural importance
+        return nx.pagerank(G)
     except Exception as e:
         logging.error(f"PageRank error: {e}")
         return {}
 
 def compute_betweenness(G: nx.Graph) -> dict:
     try:
-        return nx.betweenness_centrality(G, weight='weight')
+        return nx.betweenness_centrality(G)
     except Exception as e:
         logging.error(f"Betweenness error: {e}")
         return {}
@@ -48,8 +49,11 @@ def update_entity_metrics(db: Session, G: nx.Graph):
     db.commit()
 
 def get_top_influencers(db: Session, limit: int = 10) -> list[dict]:
-    entities = db.query(Entity).order_by((Entity.pagerank + Entity.betweenness).desc()).limit(limit).all()
-    return [{"id": e.id, "name": e.name, "type": e.entity_type, "pagerank": e.pagerank, "betweenness": e.betweenness} for e in entities]
+    entities = db.query(Entity).filter(Entity.entity_type == "PERSON").order_by(Entity.pagerank.desc()).limit(limit).all()
+    if not entities or all(e.pagerank == 0 for e in entities):
+        # Fallback: return all entity types sorted by pagerank
+        entities = db.query(Entity).order_by(Entity.pagerank.desc()).limit(limit).all()
+    return [{"id": e.id, "name": e.name, "type": e.entity_type, "pagerank": round(e.pagerank or 0, 6), "betweenness": round(e.betweenness or 0, 6), "community_id": e.community_id} for e in entities]
 
 def get_communities_summary(db: Session) -> list[dict]:
     entities = db.query(Entity).filter(Entity.community_id.isnot(None)).all()

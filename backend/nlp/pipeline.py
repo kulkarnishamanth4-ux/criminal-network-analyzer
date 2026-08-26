@@ -83,12 +83,28 @@ def extract_entities_from_text(text: str) -> dict:
     extract_regex(regexes['ACCOUNT'], 'accounts', result['accounts'], 'number')
     extract_regex(regexes['FIR_NUMBER'], 'fir_numbers', result['fir_numbers'], 'number')
     
-    # Deduplicate persons/locations if any (simple)
+    # Clean entity names - strip trailing conjunctions/prepositions SpaCy sometimes grabs
+    stop_suffixes = {' and', ' or', ' the', ' of', ' in', ' at', ' to', ' from', ' with', ' by', ' for', ' on', ' is', ' was', ' were', ' are', ' has', ' had', ' have', ' who', ' that', ' which'}
+    def clean_name(name: str) -> str:
+        name = name.strip()
+        lower = name.lower()
+        for suffix in stop_suffixes:
+            if lower.endswith(suffix):
+                name = name[:len(name)-len(suffix)].strip()
+        # Remove trailing punctuation
+        name = name.rstrip('.,;:!?')
+        return name.strip()
+    
+    for key in ['persons', 'locations', 'organizations']:
+        for item in result[key]:
+            item['name'] = clean_name(item['name'])
+    
+    # Deduplicate and filter empty names
     for key in ['persons', 'locations', 'organizations']:
         unique_items = []
         seen = set()
         for item in result[key]:
-            if item['name'] not in seen:
+            if item['name'] and item['name'] not in seen and len(item['name']) > 1:
                 seen.add(item['name'])
                 unique_items.append(item)
         result[key] = unique_items

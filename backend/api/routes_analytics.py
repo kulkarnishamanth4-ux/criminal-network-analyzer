@@ -19,7 +19,13 @@ def communities_summary(db: Session = Depends(get_db)):
 
 @router.get("/analytics/anomalies")
 def all_anomalies(db: Session = Depends(get_db)):
-    return get_all_anomalies(db)
+    anomalies = get_all_anomalies(db)
+    return {"anomalies": [
+        {"id": a.id, "anomaly_type": a.anomaly_type, "severity": a.severity,
+         "title": a.title, "description": a.description,
+         "evidence": a.evidence or [], "entity_ids": a.entity_ids or []}
+        for a in anomalies
+    ]}
 
 @router.get("/analytics/crime-predictions")
 def crime_predictions(community_id: int = None, db: Session = Depends(get_db)):
