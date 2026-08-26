@@ -61,7 +61,7 @@ export default function AlertsFeed({ onEntitySelect }) {
                       className="text-[9px] px-1.5 py-0.5 rounded border border-current opacity-80 hover:opacity-100"
                       onClick={() => onEntitySelect({ id })}
                     >
-                      {id.slice(0, 8)}...
+                      ID: {id}
                     </button>
                   ))}
                 </div>
