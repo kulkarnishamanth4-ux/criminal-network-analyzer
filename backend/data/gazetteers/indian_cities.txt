@@ -1,0 +1,222 @@
+Delhi, Delhi
+Mumbai, Maharashtra
+Kolkata, West Bengal
+Chennai, Tamil Nadu
+Bengaluru, Karnataka
+Hyderabad, Telangana
+Pune, Maharashtra
+Ahmedabad, Gujarat
+Jaipur, Rajasthan
+Lucknow, Uttar Pradesh
+Kanpur, Uttar Pradesh
+Nagpur, Maharashtra
+Indore, Madhya Pradesh
+Bhopal, Madhya Pradesh
+Patna, Bihar
+Vadodara, Gujarat
+Surat, Gujarat
+Coimbatore, Tamil Nadu
+Kochi, Kerala
+Visakhapatnam, Andhra Pradesh
+Agra, Uttar Pradesh
+Varanasi, Uttar Pradesh
+Meerut, Uttar Pradesh
+Allahabad, Uttar Pradesh
+Noida, Uttar Pradesh
+Gurgaon, Haryana
+Faridabad, Haryana
+Ghaziabad, Uttar Pradesh
+Thane, Maharashtra
+Nashik, Maharashtra
+Aurangabad, Maharashtra
+Solapur, Maharashtra
+Jabalpur, Madhya Pradesh
+Gwalior, Madhya Pradesh
+Ujjain, Madhya Pradesh
+Jodhpur, Rajasthan
+Udaipur, Rajasthan
+Kota, Rajasthan
+Ajmer, Rajasthan
+Bikaner, Rajasthan
+Dehradun, Uttarakhand
+Haridwar, Uttarakhand
+Amritsar, Punjab
+Ludhiana, Punjab
+Jalandhar, Punjab
+Chandigarh, Chandigarh
+Ranchi, Jharkhand
+Dhanbad, Jharkhand
+Jamshedpur, Jharkhand
+Raipur, Chhattisgarh
+Bilaspur, Chhattisgarh
+Bhubaneswar, Odisha
+Cuttack, Odisha
+Guwahati, Assam
+Imphal, Manipur
+Shillong, Meghalaya
+Agartala, Tripura
+Gangtok, Sikkim
+Itanagar, Arunachal Pradesh
+Kohima, Nagaland
+Aizawl, Mizoram
+Thiruvananthapuram, Kerala
+Kozhikode, Kerala
+Thrissur, Kerala
+Madurai, Tamil Nadu
+Tiruchirappalli, Tamil Nadu
+Salem, Tamil Nadu
+Tirunelveli, Tamil Nadu
+Mangaluru, Karnataka
+Mysuru, Karnataka
+Hubli, Karnataka
+Belgaum, Karnataka
+Warangal, Telangana
+Nizamabad, Telangana
+Guntur, Andhra Pradesh
+Vijayawada, Andhra Pradesh
+Tirupati, Andhra Pradesh
+Nellore, Andhra Pradesh
+Shimla, Himachal Pradesh
+Dharamshala, Himachal Pradesh
+Jammu, Jammu & Kashmir
+Srinagar, Jammu & Kashmir
+Panaji, Goa
+Pondicherry, Puducherry
+Aligarh, Uttar Pradesh
+Bareilly, Uttar Pradesh
+Moradabad, Uttar Pradesh
+Saharanpur, Uttar Pradesh
+Gorakhpur, Uttar Pradesh
+Jhansi, Uttar Pradesh
+Mathura, Uttar Pradesh
+Rohtak, Haryana
+Panipat, Haryana
+Karnal, Haryana
+Hisar, Haryana
+Sonipat, Haryana
+Panchkula, Haryana
+Bhavnagar, Gujarat
+Jamnagar, Gujarat
+Rajkot, Gujarat
+Gandhinagar, Gujarat
+Junagadh, Gujarat
+Navsari, Gujarat
+Amravati, Maharashtra
+Nanded, Maharashtra
+Kolhapur, Maharashtra
+Akola, Maharashtra
+Jalgaon, Maharashtra
+Latur, Maharashtra
+Dhule, Maharashtra
+Ahmednagar, Maharashtra
+Sangli, Maharashtra
+Bhilai, Chhattisgarh
+Korba, Chhattisgarh
+Raigarh, Chhattisgarh
+Rourkela, Odisha
+Berhampur, Odisha
+Sambalpur, Odisha
+Siliguri, West Bengal
+Asansol, West Bengal
+Durgapur, West Bengal
+Howrah, West Bengal
+Kharagpur, West Bengal
+Bardhaman, West Bengal
+Gaya, Bihar
+Bhagalpur, Bihar
+Muzaffarpur, Bihar
+Purnia, Bihar
+Darbhanga, Bihar
+Bokaro, Jharkhand
+Hazaribagh, Jharkhand
+Deoghar, Jharkhand
+Belagavi, Karnataka
+Davangere, Karnataka
+Ballari, Karnataka
+Tumakuru, Karnataka
+Shivamogga, Karnataka
+Raichur, Karnataka
+Bidar, Karnataka
+Hosapete, Karnataka
+Kurnool, Andhra Pradesh
+Rajamahendravaram, Andhra Pradesh
+Kakinada, Andhra Pradesh
+Kadapa, Andhra Pradesh
+Anantapur, Andhra Pradesh
+Karimnagar, Telangana
+Khammam, Telangana
+Ramagundam, Telangana
+Erode, Tamil Nadu
+Vellore, Tamil Nadu
+Thoothukudi, Tamil Nadu
+Dindigul, Tamil Nadu
+Thanjavur, Tamil Nadu
+Ranipet, Tamil Nadu
+Kollam, Kerala
+Alappuzha, Kerala
+Kottayam, Kerala
+Palakkad, Kerala
+Kannur, Kerala
+Manali, Himachal Pradesh
+Dalhousie, Himachal Pradesh
+Mandi, Himachal Pradesh
+Solan, Himachal Pradesh
+Rishikesh, Uttarakhand
+Roorkee, Uttarakhand
+Haldwani, Uttarakhand
+Kashipur, Uttarakhand
+Rudrapur, Uttarakhand
+Pathankot, Punjab
+Hoshiarpur, Punjab
+Batala, Punjab
+Moga, Punjab
+Abohar, Punjab
+Malerkotla, Punjab
+Khanna, Punjab
+Phagwara, Punjab
+Muktsar, Punjab
+Bhind, Madhya Pradesh
+Murwara, Madhya Pradesh
+Rewa, Madhya Pradesh
+Satna, Madhya Pradesh
+Dewas, Madhya Pradesh
+Sagar, Madhya Pradesh
+Ratlam, Madhya Pradesh
+Singrauli, Madhya Pradesh
+Burhanpur, Madhya Pradesh
+Khandwa, Madhya Pradesh
+Bhilwara, Rajasthan
+Alwar, Rajasthan
+Sikar, Rajasthan
+Pali, Rajasthan
+Sri Ganganagar, Rajasthan
+Bharatpur, Rajasthan
+Bhiwadi, Rajasthan
+Silchar, Assam
+Dibrugarh, Assam
+Jorhat, Assam
+Nagaon, Assam
+Tinsukia, Assam
+Tezpur, Assam
+Dimapur, Nagaland
+Mokokchung, Nagaland
+Tura, Meghalaya
+Jowai, Meghalaya
+Namchi, Sikkim
+Gyalshing, Sikkim
+Pasighat, Arunachal Pradesh
+Ziro, Arunachal Pradesh
+Churachandpur, Manipur
+Thoubal, Manipur
+Lunglei, Mizoram
+Champhai, Mizoram
+Dharmanagar, Tripura
+Udaipur, Tripura
+Kailasahar, Tripura
+Port Blair, Andaman and Nicobar Islands
+Kavaratti, Lakshadweep
+Leh, Ladakh
+Kargil, Ladakh
+Daman, Dadra and Nagar Haveli and Daman and Diu
+Diu, Dadra and Nagar Haveli and Daman and Diu
+Silvassa, Dadra and Nagar Haveli and Daman and Diu
