@@ -5,7 +5,7 @@ import GraphCanvas from './components/GraphCanvas';
 import RightPanel from './components/RightPanel';
 import UploadModal from './components/UploadModal';
 import NodeLegend from './components/NodeLegend';
-import { getFullGraph, getDashboardStats } from './api/client';
+import { getFullGraph, getDashboardStats, getPredictedLinks } from './api/client';
 
 function App() {
   const [selectedEntity, setSelectedEntity] = useState(null);
@@ -17,11 +17,26 @@ function App() {
   const loadData = async () => {
     setIsLoading(true);
     try {
-      const [graphRes, statsRes] = await Promise.all([
+      const [graphRes, statsRes, linksRes] = await Promise.all([
         getFullGraph().catch(() => ({ nodes: [], edges: [] })),
-        getDashboardStats().catch(() => null)
+        getDashboardStats().catch(() => null),
+        getPredictedLinks().catch(() => ({ predictions: [] }))
       ]);
-      if (graphRes) setGraphData(graphRes);
+      
+      let finalEdges = graphRes?.edges || [];
+      if (linksRes && linksRes.predictions && linksRes.predictions.length > 0) {
+          const predictedEdges = linksRes.predictions.map((p, i) => ({
+              id: `pred_${p.source_id}_${p.target_id}_${i}`,
+              source: p.source_id,
+              target: p.target_id,
+              type: 'PREDICTED',
+              label: 'PREDICTED LINK',
+              weight: p.confidence
+          }));
+          finalEdges = [...finalEdges, ...predictedEdges];
+      }
+      
+      if (graphRes) setGraphData({ nodes: graphRes.nodes || [], edges: finalEdges });
       if (statsRes) setStats(statsRes);
     } catch (err) {
       console.error("Failed to load initial data", err);
