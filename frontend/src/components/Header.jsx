@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { FiSearch, FiUploadCloud, FiShield } from 'react-icons/fi';
+import { FiSearch, FiUploadCloud, FiShield, FiFileText } from 'react-icons/fi';
 import { searchEntities } from '../api/client';
 
 export default function Header({ onUploadClick, onSearchResultSelect }) {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
+
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
@@ -75,13 +77,22 @@ export default function Header({ onUploadClick, onSearchResultSelect }) {
         )}
       </div>
 
-      <button 
-        onClick={onUploadClick}
-        className="flex items-center gap-2 bg-[var(--bg-primary)] border border-[var(--text-accent)] text-[var(--text-accent)] px-4 py-1.5 rounded-md hover:bg-[var(--text-accent)] hover:text-[var(--bg-primary)] transition-all text-sm font-semibold"
-      >
-        <FiUploadCloud />
-        <span>Data Ingestion</span>
-      </button>
+      <div className="flex items-center gap-2">
+        <button 
+          onClick={() => window.open(`${API_URL}/api/report/generate`, '_blank')}
+          className="flex items-center gap-2 bg-[var(--bg-primary)] border border-[var(--border)] text-[var(--text-secondary)] px-3 py-1.5 rounded-md hover:border-[var(--neon-gold)] hover:text-[var(--neon-gold)] transition-all text-sm font-semibold"
+        >
+          <FiFileText />
+          <span className="hidden lg:inline">Report</span>
+        </button>
+        <button 
+          onClick={onUploadClick}
+          className="flex items-center gap-2 bg-[var(--bg-primary)] border border-[var(--text-accent)] text-[var(--text-accent)] px-4 py-1.5 rounded-md hover:bg-[var(--text-accent)] hover:text-[var(--bg-primary)] transition-all text-sm font-semibold"
+        >
+          <FiUploadCloud />
+          <span>Data Ingestion</span>
+        </button>
+      </div>
     </header>
   );
 }
