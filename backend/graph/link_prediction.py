@@ -19,4 +19,4 @@ def predict_links(G: nx.Graph, min_confidence: float = 0.3) -> list[dict]:
     except Exception:
         pass
         
-    return sorted(preds, key=lambda x: x['confidence'], reverse=True)
+    return {"predictions": sorted(preds, key=lambda x: x['confidence'], reverse=True)}

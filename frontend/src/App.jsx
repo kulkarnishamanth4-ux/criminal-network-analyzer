@@ -5,6 +5,7 @@ import GraphCanvas from './components/GraphCanvas';
 import RightPanel from './components/RightPanel';
 import UploadModal from './components/UploadModal';
 import NodeLegend from './components/NodeLegend';
+import PathFinder from './components/PathFinder';
 import { getFullGraph, getDashboardStats, getPredictedLinks } from './api/client';
 
 function App() {
@@ -13,6 +14,13 @@ function App() {
   const [stats, setStats] = useState(null);
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [highlightPath, setHighlightPath] = useState(null);
+  const [toast, setToast] = useState(null);
+
+  const showToast = (message, type = 'success') => {
+    setToast({ message, type });
+    setTimeout(() => setToast(null), 4000);
+  };
 
   const loadData = async () => {
     setIsLoading(true);
@@ -55,11 +63,18 @@ function App() {
 
   const handleClearSelection = () => {
     setSelectedEntity(null);
+    setHighlightPath(null);
   };
 
   const handleUploadSuccess = () => {
     setShowUploadModal(false);
-    loadData(); // Refresh data after upload
+    showToast('Data ingested successfully. Network updated.');
+    loadData();
+  };
+
+  const handlePathFound = (path) => {
+    setHighlightPath(path);
+    showToast(`Connection traced: ${path.length - 1} hops`, 'info');
   };
 
   return (
@@ -79,9 +94,11 @@ function App() {
               elements={graphData} 
               onNodeSelect={handleNodeSelect} 
               onClearSelection={handleClearSelection}
+              highlightPath={highlightPath}
             />
           )}
           <NodeLegend />
+          <PathFinder onPathFound={handlePathFound} />
         </main>
         
         <RightPanel selectedEntity={selectedEntity} onEntitySelect={handleNodeSelect} />
@@ -92,6 +109,20 @@ function App() {
           onClose={() => setShowUploadModal(false)} 
           onSuccess={handleUploadSuccess} 
         />
+      )}
+
+      {/* Toast Notification */}
+      {toast && (
+        <div className={`fixed bottom-6 left-1/2 -translate-x-1/2 z-[100] px-6 py-3 rounded-lg shadow-2xl text-sm font-semibold flex items-center gap-2 animate-in fade-in slide-in-from-bottom-4 duration-300 ${
+          toast.type === 'success' ? 'bg-[var(--neon-green)] text-[#0a0a1a]' :
+          toast.type === 'info' ? 'bg-[var(--text-accent)] text-[#0a0a1a]' :
+          'bg-red-500 text-white'
+        }`}>
+          {toast.type === 'success' && '✓'}
+          {toast.type === 'info' && '🔗'}
+          {toast.type === 'error' && '⚠'}
+          {toast.message}
+        </div>
       )}
     </div>
   );

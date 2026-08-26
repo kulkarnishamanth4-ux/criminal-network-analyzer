@@ -54,3 +54,7 @@ export const uploadFile = (type, file) => {
     headers: { 'Content-Type': 'multipart/form-data' }
   }).then(res => res.data);
 };
+
+export const getShortestPath = (sourceId, targetId) => {
+  return client.get('/api/graph/shortest-path', { params: { source_id: sourceId, target_id: targetId } }).then(res => res.data);
+};
