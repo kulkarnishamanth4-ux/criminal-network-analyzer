@@ -77,6 +77,20 @@ function App() {
     showToast(`Connection traced: ${path.length - 1} hops`, 'info');
   };
 
+  const handleExpandNetwork = async (entityId) => {
+    if (!entityId) return;
+    try {
+      const { getNetwork } = await import('./api/client');
+      const netRes = await getNetwork(entityId, 2);
+      if (netRes && netRes.nodes && netRes.nodes.length > 0) {
+        setHighlightPath(netRes.nodes.map(n => n.id));
+        showToast(`Subnetwork isolated: ${netRes.nodes.length} connected entities`, 'info');
+      }
+    } catch {
+      showToast('Could not isolate subnetwork', 'error');
+    }
+  };
+
   return (
     <div className="flex flex-col h-screen w-screen overflow-hidden bg-[var(--bg-primary)] text-[var(--text-primary)]">
       <Header onUploadClick={() => setShowUploadModal(true)} onSearchResultSelect={handleNodeSelect} />
@@ -101,7 +115,11 @@ function App() {
           <PathFinder onPathFound={handlePathFound} />
         </main>
         
-        <RightPanel selectedEntity={selectedEntity} onEntitySelect={handleNodeSelect} />
+        <RightPanel 
+          selectedEntity={selectedEntity} 
+          onEntitySelect={handleNodeSelect}
+          onExpandNetwork={handleExpandNetwork}
+        />
       </div>
 
       {showUploadModal && (

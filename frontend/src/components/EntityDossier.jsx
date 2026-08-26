@@ -42,7 +42,7 @@ function Section({ title, icon, count, children, defaultOpen = true }) {
   );
 }
 
-export default function EntityDossier({ entityData }) {
+export default function EntityDossier({ entityData, onEntitySelect, onExpandNetwork }) {
   const [dossier, setDossier] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -193,9 +193,17 @@ export default function EntityDossier({ entityData }) {
           <Section title="Known Connections" icon={<FiActivity size={12} />} count={relationships.length}>
              <ul className="space-y-1.5">
               {relationships.slice(0, 15).map((rel, i) => (
-                <li key={i} className="text-xs flex items-center gap-2 p-1.5 bg-[var(--bg-card)] rounded border border-[var(--border)]">
-                  <span className="text-[9px] px-1.5 py-0.5 rounded bg-[var(--bg-card-hover)] text-[var(--text-accent)] shrink-0 font-mono tracking-tight">{rel.type}</span>
-                  <span className="truncate text-[var(--text-primary)]">{rel.target_name || rel.target_id}</span>
+                <li 
+                  key={i} 
+                  className="text-xs flex items-center justify-between p-2 bg-[var(--bg-card)] rounded border border-[var(--border)] cursor-pointer hover:border-[var(--text-accent)] hover:bg-[var(--bg-card-hover)] transition-all group"
+                  onClick={() => onEntitySelect && onEntitySelect({ id: rel.target_id, name: rel.target_name })}
+                  title="Click to view target dossier"
+                >
+                  <div className="flex items-center gap-2 truncate max-w-[70%]">
+                    <span className="text-[9px] px-1.5 py-0.5 rounded bg-[var(--bg-card-hover)] text-[var(--text-accent)] shrink-0 font-mono tracking-tight">{rel.type}</span>
+                    <span className="truncate text-[var(--text-primary)] font-medium group-hover:text-[var(--text-accent)]">{rel.target_name || `Entity #${rel.target_id}`}</span>
+                  </div>
+                  <span className="text-[10px] text-[var(--text-secondary)] opacity-60 group-hover:opacity-100">Inspect →</span>
                 </li>
               ))}
               {relationships.length > 15 && (
@@ -210,8 +218,11 @@ export default function EntityDossier({ entityData }) {
 
       {/* Footer Action */}
       <div className="p-3 border-t border-[var(--border)] bg-[var(--bg-card)]">
-        <button className="w-full py-2 bg-[var(--bg-primary)] border border-[var(--border)] text-[var(--text-primary)] hover:border-[var(--text-accent)] hover:text-[var(--text-accent)] transition-colors rounded text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2">
-          <FiActivity /> Expand Network
+        <button 
+          onClick={() => onExpandNetwork && onExpandNetwork(entity?.id)}
+          className="w-full py-2 bg-[var(--bg-primary)] border border-[var(--border)] text-[var(--text-primary)] hover:border-[var(--text-accent)] hover:text-[var(--text-accent)] transition-colors rounded text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2"
+        >
+          <FiActivity /> Focus Subnetwork
         </button>
       </div>
     </div>
