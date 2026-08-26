@@ -29,7 +29,8 @@ export default function UploadModal({ onClose, onSuccess }) {
       }, 2000);
     } catch (err) {
       console.error(err);
-      setResult({ success: false, error: 'Upload failed. Please check server logs.' });
+      const msg = err.response?.data?.message || 'Upload failed. Please check server logs.';
+      setResult({ success: false, error: msg });
     } finally {
       setIsUploading(false);
     }
