@@ -58,3 +58,24 @@ export const uploadFile = (type, file) => {
 export const getShortestPath = (sourceId, targetId) => {
   return client.get('/api/graph/shortest-path', { params: { source_id: sourceId, target_id: targetId } }).then(res => res.data);
 };
+
+export const getDecapitation = (maxTargets = 3) => {
+  return client.get('/api/experimental/decapitation', { params: { max_targets: maxTargets } }).then(res => res.data);
+};
+
+export const getGhostRendezvous = (maxHours = 48) => {
+  return client.get('/api/experimental/ghost-rendezvous', { params: { max_time_diff_hours: maxHours } }).then(res => res.data);
+};
+
+export const matchStylometry = (text) => {
+  return client.post('/api/experimental/stylometry/match', { text }).then(res => res.data);
+};
+
+export const interrogateSuspect = (entityId, question, history = []) => {
+  return client.post('/api/experimental/interrogate', { entity_id: entityId, question, history }).then(res => res.data);
+};
+
+export const getSuspectsList = () => {
+  return client.get('/api/experimental/suspects').then(res => res.data);
+};
+

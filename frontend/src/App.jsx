@@ -6,6 +6,7 @@ import RightPanel from './components/RightPanel';
 import UploadModal from './components/UploadModal';
 import NodeLegend from './components/NodeLegend';
 import PathFinder from './components/PathFinder';
+import ExperimentalLabsModal from './components/ExperimentalLabsModal';
 import { getFullGraph, getDashboardStats, getPredictedLinks } from './api/client';
 
 function App() {
@@ -13,6 +14,7 @@ function App() {
   const [graphData, setGraphData] = useState({ nodes: [], edges: [] });
   const [stats, setStats] = useState(null);
   const [showUploadModal, setShowUploadModal] = useState(false);
+  const [showExperimentalModal, setShowExperimentalModal] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [highlightPath, setHighlightPath] = useState(null);
   const [toast, setToast] = useState(null);
@@ -91,9 +93,18 @@ function App() {
     }
   };
 
+  const handleHighlightNodes = (nodeIds) => {
+    setHighlightPath(nodeIds.map(String));
+    showToast(`Spotlighted ${nodeIds.length} tactical strike targets on canvas`, 'info');
+  };
+
   return (
     <div className="flex flex-col h-screen w-screen overflow-hidden bg-[var(--bg-primary)] text-[var(--text-primary)]">
-      <Header onUploadClick={() => setShowUploadModal(true)} onSearchResultSelect={handleNodeSelect} />
+      <Header 
+        onUploadClick={() => setShowUploadModal(true)} 
+        onSearchResultSelect={handleNodeSelect}
+        onExperimentalClick={() => setShowExperimentalModal(true)}
+      />
       
       <div className="flex flex-1 overflow-hidden relative">
         <LeftPanel stats={stats} onEntitySelect={handleNodeSelect} />
@@ -126,6 +137,13 @@ function App() {
         <UploadModal 
           onClose={() => setShowUploadModal(false)} 
           onSuccess={handleUploadSuccess} 
+        />
+      )}
+
+      {showExperimentalModal && (
+        <ExperimentalLabsModal 
+          onClose={() => setShowExperimentalModal(false)}
+          onHighlightNodes={handleHighlightNodes}
         />
       )}
 

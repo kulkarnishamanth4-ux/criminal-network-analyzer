@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { FiSearch, FiUploadCloud, FiShield, FiFileText } from 'react-icons/fi';
+import { FiSearch, FiUploadCloud, FiShield, FiFileText, FiCpu } from 'react-icons/fi';
 import { searchEntities } from '../api/client';
 
-export default function Header({ onUploadClick, onSearchResultSelect }) {
+export default function Header({ onUploadClick, onSearchResultSelect, onExperimentalClick }) {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
@@ -78,6 +78,13 @@ export default function Header({ onUploadClick, onSearchResultSelect }) {
       </div>
 
       <div className="flex items-center gap-2">
+        <button 
+          onClick={onExperimentalClick}
+          className="flex items-center gap-2 bg-[var(--bg-primary)] border border-red-500/50 text-red-400 hover:bg-red-500 hover:text-white px-3 py-1.5 rounded-md transition-all text-sm font-semibold shadow-[0_0_10px_rgba(255,0,64,0.2)] hover:shadow-[0_0_15px_rgba(255,0,64,0.5)]"
+        >
+          <FiCpu className="animate-pulse" />
+          <span className="hidden md:inline">🧪 Experimental Labs</span>
+        </button>
         <button 
           onClick={() => window.open(`${API_URL}/api/report/generate`, '_blank')}
           className="flex items-center gap-2 bg-[var(--bg-primary)] border border-[var(--border)] text-[var(--text-secondary)] px-3 py-1.5 rounded-md hover:border-[var(--neon-gold)] hover:text-[var(--neon-gold)] transition-all text-sm font-semibold"

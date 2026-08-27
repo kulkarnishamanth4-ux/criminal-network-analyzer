@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from backend.config import CORS_ORIGINS
 from backend.database.schema import init_db, get_db
 from backend.database.models import Base, Entity
-from backend.api import routes_upload, routes_network, routes_analytics, routes_search, routes_report
+from backend.api import routes_upload, routes_network, routes_analytics, routes_search, routes_report, routes_experimental
 
 app = FastAPI(title="CrimeNet Intelligence Platform")
 
@@ -20,6 +20,7 @@ app.include_router(routes_network.router, prefix="/api", tags=["Network"])
 app.include_router(routes_analytics.router, prefix="/api", tags=["Analytics"])
 app.include_router(routes_search.router, prefix="/api", tags=["Search"])
 app.include_router(routes_report.router, prefix="/api", tags=["Report"])
+app.include_router(routes_experimental.router, prefix="/api", tags=["Experimental"])
 
 @app.on_event("startup")
 def startup_event():
