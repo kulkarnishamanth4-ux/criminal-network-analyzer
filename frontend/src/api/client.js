@@ -103,3 +103,24 @@ export const getZkFederation = () => {
   return client.get('/api/experimental/zk-federation').then(res => res.data);
 };
 
+export const simulateHoneypotSting = (threatMessage, turnIndex = 1) => {
+  return client.post('/api/experimental/honeypot-sting/simulate', { threat_message: threatMessage, turn_index: turnIndex }).then(res => res.data);
+};
+
+export const getDynastyPedigree = () => {
+  return client.get('/api/experimental/dynasty-pedigree').then(res => res.data);
+};
+
+export const getPlateCloningResolver = () => {
+  return client.get('/api/experimental/plate-cloning-resolver').then(res => res.data);
+};
+
+export const forecastGangwarCascade = (triggerEvent = "FIR_001_VIKRAM_SHARMA_NARCOTICS_CRACKDOWN") => {
+  return client.post('/api/experimental/gangwar-cascade/forecast', { trigger_event: triggerEvent }).then(res => res.data);
+};
+
+export const runMoriartyRedteam = (attackVector = "HAWALA_MICRO_SMURFING_EVASION") => {
+  return client.post('/api/experimental/moriarty-redteam/attack-and-patch', { attack_vector: attackVector }).then(res => res.data);
+};
+
+

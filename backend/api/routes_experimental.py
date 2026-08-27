@@ -12,6 +12,11 @@ from backend.analytics.panic_entropy import calculate_panic_profile
 from backend.graph.quantum_mole import detect_internal_leaks
 from backend.nlp.cryptolalia import decode_dark_slang
 from backend.crypto.zk_federation import execute_zk_federation_query
+from backend.nlp.honeypot_sting import simulate_honeypot_exchange
+from backend.graph.dynasty_pedigree import analyze_dynasty_pedigree
+from backend.graph.plate_cloning import resolve_plate_cloning_paradoxes
+from backend.analytics.gangwar_cascade import forecast_gangwar_cascade
+from backend.nlp.moriarty_redteam import execute_moriarty_redteam_attack
 from pydantic import BaseModel
 from typing import List, Optional
 
@@ -33,6 +38,16 @@ class HawalaFluidRequest(BaseModel):
 
 class CryptolaliaRequest(BaseModel):
     text: str
+
+class HoneypotRequest(BaseModel):
+    threat_message: str
+    turn_index: Optional[int] = 1
+
+class GangwarRequest(BaseModel):
+    trigger_event: Optional[str] = "FIR_001_VIKRAM_SHARMA_NARCOTICS_CRACKDOWN"
+
+class MoriartyRequest(BaseModel):
+    attack_vector: Optional[str] = "HAWALA_MICRO_SMURFING_EVASION"
 
 @router.get("/experimental/decapitation")
 def get_decapitation(max_targets: int = 3, db: Session = Depends(get_db)):
@@ -94,3 +109,28 @@ def decode_cryptolalia(req: CryptolaliaRequest):
 def get_zk_federation():
     """Zero-Knowledge Blind Graph Federation across state police agency nodes."""
     return execute_zk_federation_query()
+
+@router.post("/experimental/honeypot-sting/simulate")
+def run_honeypot_sting(req: HoneypotRequest):
+    """Autonomous Voice-Cloned Sting Honeypot against extortionists."""
+    return simulate_honeypot_exchange(req.threat_message, req.turn_index)
+
+@router.get("/experimental/dynasty-pedigree")
+def get_dynasty_pedigree():
+    """Multi-Generational Crime Dynasty Pedigree Engine (30-Year Lineage)."""
+    return analyze_dynasty_pedigree()
+
+@router.get("/experimental/plate-cloning-resolver")
+def get_plate_cloning_resolution():
+    """Optical Plate-Cloning Paradox Resolver (Kinematic Velocity Splitter)."""
+    return resolve_plate_cloning_paradoxes()
+
+@router.post("/experimental/gangwar-cascade/forecast")
+def get_gangwar_forecast(req: GangwarRequest):
+    """Macro Chaos-Theory Gang War Cascade Forecaster (Hawkes Point Processes)."""
+    return forecast_gangwar_cascade(req.trigger_event)
+
+@router.post("/experimental/moriarty-redteam/attack-and-patch")
+def run_moriarty_redteam(req: MoriartyRequest):
+    """Project Moriarty: Autonomous Counter-Forensic Red-Team AI."""
+    return execute_moriarty_redteam_attack(req.attack_vector)

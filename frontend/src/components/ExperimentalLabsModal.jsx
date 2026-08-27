@@ -2,27 +2,29 @@ import React, { useState, useEffect } from 'react';
 import { 
   FiX, FiTarget, FiCompass, FiCpu, FiCode, FiAlertTriangle, 
   FiCheckCircle, FiSend, FiArrowRight, FiShield, FiZap, FiRadio, 
-  FiActivity, FiDroplet, FiMic, FiLock, FiEye, FiVolume2, FiSearch, FiFileText
+  FiActivity, FiDroplet, FiMic, FiLock, FiEye, FiVolume2, FiTrendingUp,
+  FiShare2, FiTruck, FiCrosshair, FiTerminal
 } from 'react-icons/fi';
 import { 
   getDecapitation, getGhostRendezvous, matchStylometry, 
   interrogateSuspect, getSuspectsList, analyzeAcoustics,
   simulateHawalaFluid, getPanicEntropy, getQuantumMole,
-  decodeCryptolalia, getZkFederation
+  decodeCryptolalia, getZkFederation, simulateHoneypotSting,
+  getDynastyPedigree, getPlateCloningResolver,
+  forecastGangwarCascade, runMoriartyRedteam
 } from '../api/client';
 
 export default function ExperimentalLabsModal({ onClose, onHighlightNodes }) {
+  const [activeCategory, setActiveCategory] = useState('tactical');
   const [activeTab, setActiveTab] = useState('decapitation');
   
-  // ── 1. Decapitation State ──
+  // ── States for all 15 modules ──
   const [decapData, setDecapData] = useState(null);
   const [decapLoading, setDecapLoading] = useState(false);
 
-  // ── 2. Ghost Rendezvous State ──
   const [ghostData, setGhostData] = useState(null);
   const [ghostLoading, setGhostLoading] = useState(false);
 
-  // ── 3. Interrogation State ──
   const [suspects, setSuspects] = useState([]);
   const [selectedSuspectId, setSelectedSuspectId] = useState('');
   const [interrogationInput, setInterrogationInput] = useState('');
@@ -30,39 +32,50 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes }) {
   const [interrogationLoading, setInterrogationLoading] = useState(false);
   const [activeContradiction, setActiveContradiction] = useState(null);
 
-  // ── 4. Stylometry State ──
   const [stylometryInput, setStylometryInput] = useState('');
   const [stylometryResult, setStylometryResult] = useState(null);
   const [stylometryLoading, setStylometryLoading] = useState(false);
 
-  // ── 5. Ghost Acoustic State ──
   const [acousticResult, setAcousticResult] = useState(null);
   const [acousticLoading, setAcousticLoading] = useState(false);
   const [selectedAudioCall, setSelectedAudioCall] = useState('intercept_call_001');
 
-  // ── 6. Hawala Fluid Dynamics State ──
   const [hawalaResult, setHawalaResult] = useState(null);
   const [hawalaLoading, setHawalaLoading] = useState(false);
 
-  // ── 7. Panic Entropy State ──
   const [panicResult, setPanicResult] = useState(null);
   const [panicLoading, setPanicLoading] = useState(false);
   const [selectedPanicSuspectId, setSelectedPanicSuspectId] = useState('');
 
-  // ── 8. Quantum Mole Hunter State ──
   const [moleResult, setMoleResult] = useState(null);
   const [moleLoading, setMoleLoading] = useState(false);
 
-  // ── 9. Cryptolalia Slang State ──
   const [cryptolaliaInput, setCryptolaliaInput] = useState('bhaiji 50 peti aur gulab jamun ready hai... chidiya ka arrangement karlo jaldi');
   const [cryptolaliaResult, setCryptolaliaResult] = useState(null);
   const [cryptolaliaLoading, setCryptolaliaLoading] = useState(false);
 
-  // ── 10. ZK Federation State ──
   const [zkResult, setZkResult] = useState(null);
   const [zkLoading, setZkLoading] = useState(false);
 
-  // Load Suspects List on mount for Interrogation & Panic tabs
+  // ── Final 5 States ──
+  const [honeypotInput, setHoneypotInput] = useState('Aakhri baar bol raha hu, 10 lakh rupay is UPI par bhej mule_merchant@sbi nahi toh parivar khatam!');
+  const [honeypotResult, setHoneypotResult] = useState(null);
+  const [honeypotLoading, setHoneypotLoading] = useState(false);
+
+  const [dynastyResult, setDynastyResult] = useState(null);
+  const [dynastyLoading, setDynastyLoading] = useState(false);
+
+  const [plateResult, setPlateResult] = useState(null);
+  const [plateLoading, setPlateLoading] = useState(false);
+
+  const [gangwarResult, setGangwarResult] = useState(null);
+  const [gangwarLoading, setGangwarLoading] = useState(false);
+
+  const [moriartyResult, setMoriartyResult] = useState(null);
+  const [moriartyLoading, setMoriartyLoading] = useState(false);
+  const [selectedMoriartyVector, setSelectedMoriartyVector] = useState('HAWALA_MICRO_SMURFING_EVASION');
+
+  // Load Suspects
   useEffect(() => {
     getSuspectsList().then(res => {
       const sList = res.suspects || [];
@@ -78,7 +91,7 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes }) {
     });
   }, []);
 
-  // Fetch data on tab switch
+  // Fetch data on active tab switch
   useEffect(() => {
     if (activeTab === 'decapitation' && !decapData) {
       setDecapLoading(true);
@@ -100,6 +113,18 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes }) {
     } else if (activeTab === 'zk_federation' && !zkResult) {
       setZkLoading(true);
       getZkFederation().then(res => { setZkResult(res); setZkLoading(false); }).catch(() => setZkLoading(false));
+    } else if (activeTab === 'honeypot' && !honeypotResult) {
+      handleRunHoneypot(honeypotInput);
+    } else if (activeTab === 'dynasty' && !dynastyResult) {
+      setDynastyLoading(true);
+      getDynastyPedigree().then(res => { setDynastyResult(res); setDynastyLoading(false); }).catch(() => setDynastyLoading(false));
+    } else if (activeTab === 'plate_cloning' && !plateResult) {
+      setPlateLoading(true);
+      getPlateCloningResolver().then(res => { setPlateResult(res); setPlateLoading(false); }).catch(() => setPlateLoading(false));
+    } else if (activeTab === 'gangwar' && !gangwarResult) {
+      handleRunGangwar();
+    } else if (activeTab === 'moriarty' && !moriartyResult) {
+      handleRunMoriarty('HAWALA_MICRO_SMURFING_EVASION');
     }
   }, [activeTab]);
 
@@ -142,7 +167,6 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes }) {
     if (!txt.trim()) return;
     if (sampleText) setStylometryInput(sampleText);
     setStylometryLoading(true);
-    setStylometryResult(null);
     try {
       const res = await matchStylometry(txt);
       setStylometryResult(res);
@@ -191,43 +215,98 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes }) {
     setCryptolaliaLoading(false);
   };
 
-  const tabsList = [
-    // Tier 1: Tactical & Kinetic Operations
-    { id: 'decapitation', label: '⚔️ Decapitation', category: 'Tactical' },
-    { id: 'ghost', label: '🛰️ Ghost Rendezvous', category: 'Tactical' },
-    { id: 'hawala_fluid', label: '🌊 Hawala Fluid Dynamics', category: 'Tactical' },
-    // Tier 2: Cognitive, Audio & Forensic AI
-    { id: 'interrogate', label: '🎭 Digital Twin Interrogation', category: 'Cognitive & Audio' },
-    { id: 'acoustic', label: '🎙️ Ghost-Acoustic Geo-Triangulation', category: 'Cognitive & Audio' },
-    { id: 'panic', label: '🧠 Panic-Entropy Profiler', category: 'Cognitive & Audio' },
-    // Tier 3: Counter-Intel, Slang & Cryptography
-    { id: 'stylometry', label: '🧬 Syntax DNA Stylometry', category: 'Counter-Intel & Crypto' },
-    { id: 'cryptolalia', label: '🗣️ Cryptolalia Dark-Slang', category: 'Counter-Intel & Crypto' },
-    { id: 'quantum_mole', label: '🕳️ Quantum Mole-Hunter', category: 'Counter-Intel & Crypto' },
-    { id: 'zk_federation', label: '🔐 Zero-Knowledge PSI Federation', category: 'Counter-Intel & Crypto' }
-  ];
+  const handleRunHoneypot = async (msg) => {
+    const threat = msg || honeypotInput;
+    if (!threat.trim()) return;
+    if (msg) setHoneypotInput(msg);
+    setHoneypotLoading(true);
+    try {
+      const res = await simulateHoneypotSting(threat, 2);
+      setHoneypotResult(res);
+    } catch (err) { console.error(err); }
+    setHoneypotLoading(false);
+  };
+
+  const handleRunGangwar = async (trigger = "FIR_001_VIKRAM_SHARMA_NARCOTICS_CRACKDOWN") => {
+    setGangwarLoading(true);
+    try {
+      const res = await forecastGangwarCascade(trigger);
+      setGangwarResult(res);
+    } catch (err) { console.error(err); }
+    setGangwarLoading(false);
+  };
+
+  const handleRunMoriarty = async (vector) => {
+    const v = vector || selectedMoriartyVector;
+    setSelectedMoriartyVector(v);
+    setMoriartyLoading(true);
+    try {
+      const res = await runMoriartyRedteam(v);
+      setMoriartyResult(res);
+    } catch (err) { console.error(err); }
+    setMoriartyLoading(false);
+  };
+
+  // 15 Modules Categorized into 4 Command Tiers
+  const categories = {
+    tactical: {
+      name: '⚔️ Tactical & Kinetic Operations',
+      tabs: [
+        { id: 'decapitation', label: '⚔️ Decapitation Strike' },
+        { id: 'ghost', label: '🛰️ Ghost Rendezvous' },
+        { id: 'plate_cloning', label: '🚗 Optical Plate-Cloning' },
+        { id: 'hawala_fluid', label: '🌊 Hawala Fluid Dynamics' }
+      ]
+    },
+    cognitive: {
+      name: '🧠 Cognitive, Audio & Forensics',
+      tabs: [
+        { id: 'interrogate', label: '🎭 Digital Twin Interrogation' },
+        { id: 'acoustic', label: '🎙️ Ghost-Acoustic Triangulation' },
+        { id: 'panic', label: '🧠 Panic-Entropy Profiler' },
+        { id: 'honeypot', label: '🤖 Voice-Cloned Sting Honeypot' }
+      ]
+    },
+    wargaming: {
+      name: '🌪️ Chaos, Lineage & War-Gaming',
+      tabs: [
+        { id: 'gangwar', label: '🌪️ Gang War Hawkes Cascade' },
+        { id: 'dynasty', label: '🌳 30-Year Dynasty Pedigree' },
+        { id: 'moriarty', label: '😈 Project Moriarty Red-Team' }
+      ]
+    },
+    counterintel: {
+      name: '🛡️ Counter-Intel & Cryptography',
+      tabs: [
+        { id: 'stylometry', label: '🧬 Syntax DNA Stylometry' },
+        { id: 'cryptolalia', label: '🗣️ Cryptolalia Dark-Slang' },
+        { id: 'quantum_mole', label: '🕳️ Quantum Mole-Hunter' },
+        { id: 'zk_federation', label: '🔐 Zero-Knowledge PSI Federation' }
+      ]
+    }
+  };
 
   return (
-    <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
-      <div className="bg-[var(--bg-card)] border border-[var(--border)] rounded-xl w-full max-w-6xl h-[88vh] shadow-2xl overflow-hidden flex flex-col animate-in fade-in zoom-in-95 duration-200">
+    <div className="fixed inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-4">
+      <div className="bg-[var(--bg-card)] border border-[var(--border)] rounded-xl w-full max-w-6xl h-[90vh] shadow-2xl overflow-hidden flex flex-col animate-in fade-in zoom-in-95 duration-200">
         
-        {/* Top Bar */}
-        <div className="flex justify-between items-center px-6 py-3.5 border-b border-[var(--border)] bg-[var(--bg-primary)]">
+        {/* Top Header */}
+        <div className="flex justify-between items-center px-6 py-3 border-b border-[var(--border)] bg-[var(--bg-primary)]">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-[var(--text-accent)]/10 border border-[var(--text-accent)] rounded-lg text-[var(--text-accent)]">
-              <FiCpu size={22} />
+              <FiTerminal size={22} />
             </div>
             <div>
               <div className="flex items-center gap-2">
                 <h2 className="text-base font-bold tracking-wider text-[var(--text-primary)] uppercase">
-                  Black-Ops Experimental Labs
+                  Black-Ops Command Center Matrix (15 Modules)
                 </h2>
                 <span className="text-[9px] px-2 py-0.5 rounded-full bg-red-500/20 text-red-400 font-mono font-bold border border-red-500/30">
                   TOP SECRET / SIH-MHA
                 </span>
               </div>
               <p className="text-xs text-[var(--text-secondary)]">
-                10 Bleeding-Edge Computational Intelligence, Multi-Agent Wargaming, Acoustic Forensics & ZK-Crypto Engines
+                National Security Suite: Spectral Graph Decapitation, Hawkes Chaos Point Processes, Acoustic Forensics & ZK-PSI Federation
               </p>
             </div>
           </div>
@@ -237,13 +316,33 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes }) {
           </button>
         </div>
 
-        {/* Tab Navigation Scrollbar */}
-        <div className="flex overflow-x-auto border-b border-[var(--border)] bg-[var(--bg-card)] px-2 py-1 gap-1">
-          {tabsList.map(tab => (
+        {/* 4 Category Level Switcher */}
+        <div className="flex bg-[#050512] border-b border-[var(--border)] px-4 py-1.5 gap-2 overflow-x-auto">
+          {Object.entries(categories).map(([catKey, catData]) => (
+            <button
+              key={catKey}
+              onClick={() => {
+                setActiveCategory(catKey);
+                setActiveTab(catData.tabs[0].id);
+              }}
+              className={`px-3 py-1.5 rounded text-xs font-semibold whitespace-nowrap transition-all ${
+                activeCategory === catKey
+                  ? 'bg-[var(--text-accent)]/20 text-[var(--text-accent)] border border-[var(--text-accent)]'
+                  : 'text-[var(--text-secondary)] hover:text-white'
+              }`}
+            >
+              {catData.name}
+            </button>
+          ))}
+        </div>
+
+        {/* Sub-Tabs under Active Category */}
+        <div className="flex overflow-x-auto border-b border-[var(--border)] bg-[var(--bg-card)] px-4 py-1 gap-1.5">
+          {categories[activeCategory].tabs.map(tab => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`px-3 py-2 text-xs font-semibold whitespace-nowrap rounded-md transition-all flex items-center gap-1.5 ${
+              className={`px-3 py-1.5 text-xs font-semibold whitespace-nowrap rounded-md transition-all ${
                 activeTab === tab.id
                   ? 'bg-[var(--text-accent)] text-[#0a0a1a] shadow-[0_0_10px_rgba(100,255,218,0.4)]'
                   : 'text-[var(--text-secondary)] hover:bg-[var(--bg-primary)] hover:text-white'
@@ -254,391 +353,477 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes }) {
           ))}
         </div>
 
-        {/* Modal Body */}
+        {/* Main Body */}
         <div className="flex-1 overflow-y-auto p-6 bg-[#070714]">
 
-          {/* ══════════════════════════════════════════════════════════════
-              TAB 1: DECAPITATION
-          ══════════════════════════════════════════════════════════════ */}
+          {/* 1. DECAPITATION */}
           {activeTab === 'decapitation' && (
             <div className="space-y-6">
-              <div className="bg-[var(--bg-primary)] p-4 rounded-lg border border-[var(--border)] flex items-start justify-between">
+              <div className="bg-[var(--bg-primary)] p-4 rounded-lg border border-[var(--border)] flex justify-between">
                 <div>
-                  <h3 className="text-sm font-bold text-[var(--text-accent)] uppercase tracking-wider flex items-center gap-2">
-                    <FiZap /> Critical Cut-Set Spectral Percolation
-                  </h3>
-                  <p className="text-xs text-[var(--text-secondary)] mt-1 max-w-2xl">
-                    Solves the Minimum-Cut problem on the Graph Laplacian matrix to find the exact strike sequence of warrants that shatters the cartel into isolated fragments.
-                  </p>
+                  <h3 className="text-sm font-bold text-[var(--text-accent)] uppercase flex items-center gap-2"><FiZap /> Critical Cut-Set Spectral Percolation</h3>
+                  <p className="text-xs text-[var(--text-secondary)] mt-1">Solves the Minimum-Cut problem on the Graph Laplacian to find the minimal strike sequence that shatters the cartel.</p>
                 </div>
                 <div className="text-right">
-                  <div className="text-2xl font-mono font-bold text-[var(--neon-red)]">
-                    {decapData?.syndicate_disruption_efficiency_pct || 0}%
-                  </div>
+                  <div className="text-2xl font-mono font-bold text-[var(--neon-red)]">{decapData?.syndicate_disruption_efficiency_pct || 0}%</div>
                   <div className="text-[10px] text-[var(--text-secondary)] uppercase">Disruption Efficiency</div>
                 </div>
               </div>
-
-              {decapLoading ? (
-                <div className="py-20 flex flex-col items-center justify-center text-[var(--text-secondary)]">
-                  <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[var(--text-accent)] mb-3"></div>
-                  <span className="text-xs">Computing Spectral Graph Laplacian cuts...</span>
-                </div>
-              ) : decapData?.targets?.length > 0 ? (
-                <div className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    {decapData.targets.map((target) => (
-                      <div key={target.id} className="bg-[var(--bg-card)] border border-[var(--border)] rounded-lg p-4 relative overflow-hidden flex flex-col justify-between hover:border-[var(--neon-red)] transition-colors">
-                        <div className="absolute top-0 right-0 bg-red-500/20 text-red-400 font-mono text-[10px] font-bold px-2 py-0.5 rounded-bl">
-                          STRIKE #{target.strike_order}
+              {decapData?.targets?.length > 0 && (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {decapData.targets.map(target => (
+                    <div key={target.id} className="bg-[var(--bg-card)] border border-[var(--border)] rounded-lg p-4 relative flex flex-col justify-between hover:border-[var(--neon-red)]">
+                      <div>
+                        <div className="text-xs text-[var(--text-secondary)] uppercase">{target.type}</div>
+                        <div className="text-base font-bold text-white mt-1">{target.name}</div>
+                        <div className="mt-2 text-xs space-y-1 text-[var(--text-secondary)]">
+                          <div>Post-Strike LCC: <span className="text-[var(--text-accent)] font-mono">{target.post_strike_lcc} nodes</span></div>
+                          <div>Cumulative Collapse: <span className="text-red-400 font-mono font-bold">{target.cumulative_fragmentation_pct}%</span></div>
                         </div>
-                        <div>
-                          <div className="text-xs text-[var(--text-secondary)] uppercase">{target.type}</div>
-                          <div className="text-base font-bold text-[var(--text-primary)] mt-1">{target.name}</div>
-                          
-                          <div className="mt-3 space-y-1 text-xs">
-                            <div className="flex justify-between text-[11px]">
-                              <span className="text-[var(--text-secondary)]">Post-Strike LCC:</span>
-                              <span className="font-mono text-[var(--text-accent)]">{target.post_strike_lcc} nodes</span>
-                            </div>
-                            <div className="flex justify-between text-[11px]">
-                              <span className="text-[var(--text-secondary)]">Cumulative Collapse:</span>
-                              <span className="font-mono font-bold text-red-400">{target.cumulative_fragmentation_pct}%</span>
-                            </div>
-                          </div>
-
-                          <div className="mt-3 p-2 bg-[var(--bg-primary)] rounded border border-[var(--border)] text-[10px] text-[var(--text-secondary)] italic">
-                            "{target.tactical_rationale}"
-                          </div>
-                        </div>
-
-                        {onHighlightNodes && (
-                          <button
-                            onClick={() => { onHighlightNodes([target.id]); onClose(); }}
-                            className="mt-4 w-full py-1.5 bg-[var(--bg-primary)] hover:bg-[var(--text-accent)] hover:text-[#0a0a1a] text-[var(--text-accent)] border border-[var(--text-accent)] rounded text-xs font-semibold transition-all flex items-center justify-center gap-1.5"
-                          >
-                            <FiTarget size={12} /> Spotlight on Canvas
-                          </button>
-                        )}
                       </div>
-                    ))}
-                  </div>
-                  <div className="p-3 bg-[var(--bg-card)] border border-[var(--border)] rounded text-xs text-[var(--text-secondary)]">
-                    <span className="text-[var(--text-accent)] font-bold">Strategic Summary: </span>{decapData.summary}
-                  </div>
+                      {onHighlightNodes && (
+                        <button onClick={() => { onHighlightNodes([target.id]); onClose(); }} className="mt-4 py-1 bg-[var(--bg-primary)] border border-[var(--text-accent)] text-[var(--text-accent)] rounded text-xs font-semibold">
+                          Spotlight on Canvas
+                        </button>
+                      )}
+                    </div>
+                  ))}
                 </div>
-              ) : null}
+              )}
             </div>
           )}
 
-          {/* ══════════════════════════════════════════════════════════════
-              TAB 2: GHOST RENDEZVOUS
-          ══════════════════════════════════════════════════════════════ */}
+          {/* 2. GHOST RENDEZVOUS */}
           {activeTab === 'ghost' && (
             <div className="space-y-4">
               <div className="bg-[var(--bg-primary)] p-4 rounded-lg border border-[var(--border)] flex justify-between">
                 <div>
-                  <h3 className="text-sm font-bold text-[var(--text-accent)] uppercase flex items-center gap-2">
-                    <FiRadio /> 4D Spatiotemporal Trajectory Intersection
-                  </h3>
-                  <p className="text-xs text-[var(--text-secondary)] mt-1">
-                    Detects physical encounters between suspects maintaining total radio silence (zero calls/transfers).
-                  </p>
+                  <h3 className="text-sm font-bold text-[var(--text-accent)] uppercase flex items-center gap-2"><FiRadio /> 4D Spatiotemporal Trajectory Intersection</h3>
+                  <p className="text-xs text-[var(--text-secondary)] mt-1">Exposes covert physical meetups between suspects maintaining total digital radio silence.</p>
                 </div>
-                <div className="text-right">
-                  <div className="text-2xl font-mono font-bold text-[var(--text-accent)]">{ghostData?.count || 0}</div>
-                  <div className="text-[10px] text-[var(--text-secondary)] uppercase">Covert Events</div>
-                </div>
+                <div className="text-2xl font-mono font-bold text-[var(--text-accent)]">{ghostData?.count || 0} Events</div>
               </div>
-
               {ghostData?.rendezvous_events?.map((ev, i) => (
-                <div key={i} className="bg-[var(--bg-card)] border border-[var(--border)] rounded-lg p-3.5 hover:border-[var(--text-accent)]">
-                  <div className="flex justify-between items-center mb-1.5">
-                    <div className="text-sm font-bold text-[var(--text-primary)]">
-                      {ev.person_1_name} <span className="text-[var(--text-accent)]">⟷</span> {ev.person_2_name} 
-                      <span className="ml-2 text-[10px] px-2 py-0.5 rounded bg-[var(--bg-primary)] text-[var(--neon-gold)]">📍 {ev.location}</span>
-                    </div>
-                    <span className="text-xs font-mono font-bold text-[var(--severity-critical)]">{ev.suspicion_score}% SUSPICION</span>
+                <div key={i} className="bg-[var(--bg-card)] border border-[var(--border)] rounded-lg p-3.5 flex justify-between items-center">
+                  <div>
+                    <div className="text-sm font-bold text-white">{ev.person_1_name} ⟷ {ev.person_2_name} <span className="text-xs text-[var(--neon-gold)] ml-2">📍 {ev.location}</span></div>
+                    <div className="text-xs text-[var(--text-secondary)] mt-1">{ev.evidence_chain[0]}</div>
                   </div>
-                  <div className="text-xs text-[var(--text-secondary)] space-y-0.5">
-                    {ev.evidence_chain.map((ed, idx) => (
-                      <div key={idx}>• {ed}</div>
-                    ))}
-                  </div>
+                  <span className="text-xs font-mono font-bold text-[var(--severity-critical)]">{ev.suspicion_score}% SUSPICION</span>
                 </div>
               ))}
             </div>
           )}
 
-          {/* ══════════════════════════════════════════════════════════════
-              TAB 3: HAWALA FLUID DYNAMICS (NEW)
-          ══════════════════════════════════════════════════════════════ */}
-          {activeTab === 'hawala_fluid' && (
+          {/* 3. OPTICAL PLATE CLONING (NEW) */}
+          {activeTab === 'plate_cloning' && (
             <div className="space-y-6">
               <div className="bg-[var(--bg-primary)] p-4 rounded-lg border border-[var(--border)] flex justify-between items-start">
                 <div>
-                  <h3 className="text-sm font-bold text-[var(--neon-gold)] uppercase flex items-center gap-2">
-                    <FiDroplet /> Navier-Stokes Financial Fluid Dynamics & Flash-Crash Trap
-                  </h3>
-                  <p className="text-xs text-[var(--text-secondary)] mt-1 max-w-2xl">
-                    Models transaction conduits as compressible fluid pipes to simulate targeted account blockades and compute the internal syndicate betrayal probability.
-                  </p>
+                  <h3 className="text-sm font-bold text-[var(--neon-gold)] uppercase flex items-center gap-2"><FiTruck /> Optical Plate-Cloning Paradox Resolver</h3>
+                  <p className="text-xs text-[var(--text-secondary)] mt-1">Detects impossible kinematic velocities (&gt;200 km/h) across highway ANPR FASTag cameras to bifurcate cloned plates into True vs Phantom decoy routes.</p>
                 </div>
-                <button
-                  onClick={() => handleRunHawalaFluid()}
-                  disabled={hawalaLoading}
-                  className="px-4 py-2 bg-[var(--neon-gold)] hover:opacity-90 text-[#0a0a1a] font-bold text-xs rounded-lg transition-all"
-                >
-                  {hawalaLoading ? 'Simulating...' : 'Run Account Freeze Simulation'}
-                </button>
+                <div className="text-right">
+                  <div className="text-2xl font-mono font-bold text-[var(--neon-gold)]">{plateResult?.cloned_plate_paradoxes_detected || 0}</div>
+                  <div className="text-[10px] text-[var(--text-secondary)] uppercase">Cloned Networks</div>
+                </div>
               </div>
 
-              {hawalaResult && hawalaResult.status === 'success' && (
-                <div className="space-y-4 animate-in fade-in duration-300">
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                    <div className="bg-[var(--bg-card)] p-3.5 rounded border border-[var(--border)] text-center">
-                      <div className="text-[10px] text-[var(--text-secondary)] uppercase">Downstream Starvation</div>
-                      <div className="text-xl font-bold font-mono text-[var(--neon-red)]">
-                        {hawalaResult.fluid_pressure_metrics.downstream_liquidity_starvation_pct}%
+              {plateResult && (
+                <div className="space-y-4">
+                  {plateResult.resolved_paradox_cases.map((c, i) => (
+                    <div key={i} className="bg-[var(--bg-card)] border border-[var(--border)] rounded-lg p-4 space-y-3">
+                      <div className="flex justify-between items-center pb-2 border-b border-[var(--border)]">
+                        <span className="font-mono text-base font-bold text-[var(--neon-red)]">PLATE: {c.cloned_plate_identifier}</span>
+                        <span className="text-xs text-red-400 font-mono font-bold">{c.velocity_violation_status}</span>
                       </div>
-                    </div>
-                    <div className="bg-[var(--bg-card)] p-3.5 rounded border border-[var(--border)] text-center">
-                      <div className="text-[10px] text-[var(--text-secondary)] uppercase">Upstream Backlog</div>
-                      <div className="text-xl font-bold font-mono text-[var(--neon-gold)]">
-                        ₹{(hawalaResult.fluid_pressure_metrics.upstream_backlog_conduit_inr / 100000).toFixed(1)} Lakhs
+                      <div className="text-xs text-[var(--text-secondary)] font-mono">{c.kinematic_paradox}</div>
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+                        <div className="p-3 bg-[var(--bg-primary)] rounded border border-[var(--neon-green)]/40 space-y-1">
+                          <div className="font-bold text-[var(--neon-green)]">{c.bifurcated_trajectories.vehicle_alpha_true.designation}</div>
+                          <div>Vehicle Make: {c.bifurcated_trajectories.vehicle_alpha_true.detected_make}</div>
+                          <div className="text-[10px] text-[var(--text-secondary)]">Location: {c.bifurcated_trajectories.vehicle_alpha_true.sighting_location} at {c.bifurcated_trajectories.vehicle_alpha_true.timestamp}</div>
+                        </div>
+                        <div className="p-3 bg-[var(--bg-primary)] rounded border border-red-500/40 space-y-1">
+                          <div className="font-bold text-red-400">{c.bifurcated_trajectories.vehicle_ghost_decoy.designation}</div>
+                          <div>Vehicle Make: {c.bifurcated_trajectories.vehicle_ghost_decoy.detected_make}</div>
+                          <div className="text-[10px] text-[var(--text-secondary)]">Location: {c.bifurcated_trajectories.vehicle_ghost_decoy.sighting_location} at {c.bifurcated_trajectories.vehicle_ghost_decoy.timestamp}</div>
+                        </div>
                       </div>
-                    </div>
-                    <div className="bg-[var(--bg-card)] p-3.5 rounded border border-[var(--border)] text-center">
-                      <div className="text-[10px] text-[var(--text-secondary)] uppercase">Isolated Mule Accounts</div>
-                      <div className="text-xl font-bold font-mono text-[var(--text-accent)]">
-                        {hawalaResult.fluid_pressure_metrics.isolated_downstream_mules}
-                      </div>
-                    </div>
-                    <div className="bg-[var(--bg-card)] p-3.5 rounded border border-[var(--border)] text-center">
-                      <div className="text-[10px] text-[var(--text-secondary)] uppercase">Internal Betrayal Index</div>
-                      <div className="text-xl font-bold font-mono text-purple-400">
-                        {hawalaResult.fluid_pressure_metrics.syndicate_internal_betrayal_risk_index}%
-                      </div>
-                    </div>
-                  </div>
 
-                  <div className="p-4 bg-purple-950/20 border border-purple-500/30 rounded-lg text-xs leading-relaxed text-[var(--text-primary)]">
-                    <span className="text-purple-400 font-bold uppercase">Tactical Flash-Crash Assessment: </span>
-                    {hawalaResult.tactical_fluid_assessment}
+                      <div className="p-2.5 bg-red-950/20 border border-red-500/30 rounded text-xs text-white">
+                        <strong>Tactical Protocol: </strong>{c.tactical_interception_protocol}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* 4. HAWALA FLUID DYNAMICS */}
+          {activeTab === 'hawala_fluid' && (
+            <div className="space-y-6">
+              <div className="bg-[var(--bg-primary)] p-4 rounded-lg border border-[var(--border)] flex justify-between">
+                <div>
+                  <h3 className="text-sm font-bold text-[var(--neon-gold)] uppercase flex items-center gap-2"><FiDroplet /> Navier-Stokes Financial Fluid Dynamics</h3>
+                  <p className="text-xs text-[var(--text-secondary)] mt-1">Models financial conduits as fluid pipes to simulate account freeze cascades and calculate the internal betrayal risk index.</p>
+                </div>
+                <button onClick={() => handleRunHawalaFluid()} className="px-4 py-2 bg-[var(--neon-gold)] text-[#0a0a1a] font-bold text-xs rounded">
+                  Run Account Freeze Simulation
+                </button>
+              </div>
+              {hawalaResult && (
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                  <div className="bg-[var(--bg-card)] p-3 rounded border text-center">
+                    <div className="text-[10px] text-[var(--text-secondary)]">Liquidity Starvation</div>
+                    <div className="text-xl font-bold text-[var(--neon-red)]">{hawalaResult.fluid_pressure_metrics.downstream_liquidity_starvation_pct}%</div>
+                  </div>
+                  <div className="bg-[var(--bg-card)] p-3 rounded border text-center">
+                    <div className="text-[10px] text-[var(--text-secondary)]">Upstream Backlog</div>
+                    <div className="text-xl font-bold text-[var(--neon-gold)]">₹{(hawalaResult.fluid_pressure_metrics.upstream_backlog_conduit_inr/100000).toFixed(1)}L</div>
+                  </div>
+                  <div className="bg-[var(--bg-card)] p-3 rounded border text-center">
+                    <div className="text-[10px] text-[var(--text-secondary)]">Mules Starved</div>
+                    <div className="text-xl font-bold text-[var(--text-accent)]">{hawalaResult.fluid_pressure_metrics.isolated_downstream_mules}</div>
+                  </div>
+                  <div className="bg-[var(--bg-card)] p-3 rounded border text-center">
+                    <div className="text-[10px] text-[var(--text-secondary)]">Betrayal Risk Index</div>
+                    <div className="text-xl font-bold text-purple-400">{hawalaResult.fluid_pressure_metrics.syndicate_internal_betrayal_risk_index}%</div>
                   </div>
                 </div>
               )}
             </div>
           )}
 
-          {/* ══════════════════════════════════════════════════════════════
-              TAB 4: DIGITAL TWIN INTERROGATION
-          ══════════════════════════════════════════════════════════════ */}
+          {/* 5. DIGITAL TWIN INTERROGATION */}
           {activeTab === 'interrogate' && (
             <div className="h-full flex flex-col space-y-3">
               <div className="flex justify-between items-center bg-[var(--bg-primary)] p-2.5 rounded border border-[var(--border)]">
-                <div className="flex items-center gap-2">
-                  <label className="text-xs text-[var(--text-secondary)]">Suspect Twin:</label>
-                  <select 
-                    value={selectedSuspectId}
-                    onChange={handleSuspectChange}
-                    className="bg-[var(--bg-card)] border border-[var(--border)] text-[var(--text-accent)] rounded px-2.5 py-1 text-xs"
-                  >
-                    {suspects.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
-                  </select>
-                </div>
-                <div className="text-[10px] text-[var(--neon-green)] flex items-center gap-1.5 font-mono">
-                  <span className="w-2 h-2 rounded-full bg-[var(--neon-green)] animate-ping"></span>
-                  GROUND-TRUTH FACT VALIDATOR: ACTIVE
-                </div>
+                <select value={selectedSuspectId} onChange={handleSuspectChange} className="bg-[var(--bg-card)] border text-[var(--text-accent)] text-xs rounded px-2.5 py-1">
+                  {suspects.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
+                </select>
+                <div className="text-[10px] text-[var(--neon-green)] font-mono">GROUND-TRUTH FACT VALIDATOR: ACTIVE</div>
               </div>
-
-              <div className="flex-1 min-h-[260px] bg-[var(--bg-card)] border border-[var(--border)] rounded p-3.5 overflow-y-auto space-y-2.5">
+              <div className="flex-1 min-h-[260px] bg-[var(--bg-card)] border rounded p-3 overflow-y-auto space-y-2">
                 {messages.map((m, i) => (
                   <div key={i} className={`flex flex-col ${m.sender === 'investigator' ? 'items-end' : m.sender === 'suspect' ? 'items-start' : 'items-center'}`}>
-                    <div className={`max-w-[80%] rounded p-2.5 text-xs ${m.sender === 'investigator' ? 'bg-[var(--text-accent)] text-[#070714] font-medium' : m.sender === 'suspect' ? 'bg-[var(--bg-primary)] border border-[var(--border)] text-white' : 'text-[10px] text-[var(--text-secondary)]'}`}>
+                    <div className={`max-w-[80%] rounded p-2.5 text-xs ${m.sender === 'investigator' ? 'bg-[var(--text-accent)] text-[#070714] font-medium' : m.sender === 'suspect' ? 'bg-[var(--bg-primary)] border text-white' : 'text-[10px] text-[var(--text-secondary)]'}`}>
                       {m.text}
                     </div>
                   </div>
                 ))}
               </div>
-
               {activeContradiction && (
-                <div className="bg-red-950/40 border-2 border-red-500/80 rounded p-2.5 text-xs">
-                  <div className="text-red-400 font-bold flex items-center gap-1.5"><FiAlertTriangle /> LIE DETECTED: Ground-Truth Contradiction</div>
-                  <div className="text-white mt-1"><strong>Evidence: </strong>{activeContradiction.ground_truth}</div>
-                  <div className="text-[var(--neon-gold)] mt-1"><strong>🎯 Recommended Trap: </strong>{activeContradiction.recommended_trap_question}</div>
+                <div className="bg-red-950/40 border-2 border-red-500/80 rounded p-2 text-xs text-white">
+                  <div className="text-red-400 font-bold"><FiAlertTriangle /> LIE DETECTED: Ground-Truth Contradiction</div>
+                  <div><strong>Evidence: </strong>{activeContradiction.ground_truth}</div>
+                  <div className="text-[var(--neon-gold)] mt-1"><strong>🎯 Trap: </strong>{activeContradiction.recommended_trap_question}</div>
                 </div>
               )}
-
               <div className="flex gap-2">
-                <input
-                  type="text"
-                  placeholder="Ask interrogation question..."
-                  value={interrogationInput}
-                  onChange={e => setInterrogationInput(e.target.value)}
-                  onKeyDown={e => e.key === 'Enter' && handleSendQuestion()}
-                  className="flex-1 bg-[var(--bg-primary)] border border-[var(--border)] rounded px-3 py-1.5 text-xs text-white"
-                />
-                <button onClick={() => handleSendQuestion()} className="px-4 py-1.5 bg-[var(--text-accent)] text-[#0a0a1a] font-bold text-xs rounded flex items-center gap-1">
-                  <FiSend /> Interrogate
-                </button>
+                <input type="text" placeholder="Ask question..." value={interrogationInput} onChange={e => setInterrogationInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && handleSendQuestion()} className="flex-1 bg-[var(--bg-primary)] border rounded px-3 py-1.5 text-xs text-white" />
+                <button onClick={() => handleSendQuestion()} className="px-4 py-1.5 bg-[var(--text-accent)] text-[#0a0a1a] font-bold text-xs rounded">Interrogate</button>
               </div>
             </div>
           )}
 
-          {/* ══════════════════════════════════════════════════════════════
-              TAB 5: PROJECT GHOST-ACOUSTIC (NEW)
-          ══════════════════════════════════════════════════════════════ */}
+          {/* 6. GHOST ACOUSTIC */}
           {activeTab === 'acoustic' && (
             <div className="space-y-6">
-              <div className="bg-[var(--bg-primary)] p-4 rounded-lg border border-[var(--border)] flex justify-between items-center">
+              <div className="bg-[var(--bg-primary)] p-4 rounded-lg border flex justify-between">
                 <div>
-                  <h3 className="text-sm font-bold text-[var(--text-accent)] uppercase flex items-center gap-2">
-                    <FiMic /> Micro-Ambient Acoustic Geo-Triangulation
-                  </h3>
-                  <p className="text-xs text-[var(--text-secondary)] mt-1">
-                    Decomposes sub-audible background noise behind intercepted calls (50Hz grid micro-drift, railway horn resonance, room reverberation decay).
-                  </p>
+                  <h3 className="text-sm font-bold text-[var(--text-accent)] uppercase flex items-center gap-2"><FiMic /> Micro-Ambient Acoustic Geo-Triangulation</h3>
+                  <p className="text-xs text-[var(--text-secondary)] mt-1">Decomposes 50Hz mains power grid micro-drift, railway horn resonance, and room acoustics.</p>
                 </div>
                 <div className="flex gap-2">
                   {['intercept_call_001', 'intercept_call_002', 'intercept_call_003'].map((callId, idx) => (
-                    <button
-                      key={idx}
-                      onClick={() => handleRunAcoustics(callId)}
-                      className={`text-xs px-3 py-1.5 rounded border transition-all ${selectedAudioCall === callId ? 'bg-[var(--text-accent)] text-[#0a0a1a] font-bold border-transparent' : 'border-[var(--border)] text-[var(--text-secondary)]'}`}
-                    >
+                    <button key={idx} onClick={() => handleRunAcoustics(callId)} className={`text-xs px-3 py-1 rounded border ${selectedAudioCall === callId ? 'bg-[var(--text-accent)] text-[#0a0a1a] font-bold' : 'text-[var(--text-secondary)]'}`}>
                       Intercept #{idx+1}
                     </button>
                   ))}
                 </div>
               </div>
-
               {acousticResult && (
-                <div className="space-y-4 animate-in fade-in duration-300">
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                    <div className="bg-[var(--bg-card)] p-4 rounded border border-[var(--border)]">
-                      <div className="text-[10px] text-[var(--text-secondary)] uppercase">Triangulated Region</div>
-                      <div className="text-base font-bold text-[var(--text-accent)] mt-1">{acousticResult.triangulated_region}</div>
-                      <div className="text-xs text-[var(--neon-gold)] mt-1">📍 {acousticResult.estimated_coordinates.city}</div>
-                    </div>
-                    <div className="bg-[var(--bg-card)] p-4 rounded border border-[var(--border)]">
-                      <div className="text-[10px] text-[var(--text-secondary)] uppercase">Uncertainty Radius</div>
-                      <div className="text-2xl font-bold font-mono text-[var(--neon-green)] mt-1">{acousticResult.geo_uncertainty_radius_meters}m</div>
-                      <div className="text-[10px] text-[var(--text-secondary)] mt-1">Tightened via Doppler Harmonics</div>
-                    </div>
-                    <div className="bg-[var(--bg-card)] p-4 rounded border border-[var(--border)]">
-                      <div className="text-[10px] text-[var(--text-secondary)] uppercase">Acoustic Confidence</div>
-                      <div className="text-2xl font-bold font-mono text-purple-400 mt-1">{acousticResult.overall_acoustic_confidence_pct}%</div>
-                      <div className="text-[10px] text-[var(--text-secondary)] mt-1">Signal-to-Noise: {acousticResult.signal_to_noise_ratio_db} dB</div>
-                    </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                  <div className="bg-[var(--bg-card)] p-4 rounded border">
+                    <div className="text-[10px] text-[var(--text-secondary)] uppercase">Triangulated Region</div>
+                    <div className="text-base font-bold text-[var(--text-accent)] mt-1">{acousticResult.triangulated_region}</div>
+                    <div className="text-xs text-[var(--neon-gold)] mt-1">📍 {acousticResult.estimated_coordinates.city}</div>
                   </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
-                    <div className="bg-[var(--bg-card)] p-3.5 rounded border border-[var(--border)] space-y-1.5">
-                      <div className="font-bold text-[var(--text-accent)]">⚡ Layer 1: 50Hz Mains Electrical Grid Hum</div>
-                      <div>Fundamental: <strong>{acousticResult.decomposed_forensic_layers.layer_1_grid_hum.detected_fundamental_hz} Hz</strong></div>
-                      <div className="text-[11px] text-[var(--text-secondary)]">{acousticResult.decomposed_forensic_layers.layer_1_grid_hum.regional_grid_match}</div>
-                    </div>
-                    <div className="bg-[var(--bg-card)] p-3.5 rounded border border-[var(--border)] space-y-1.5">
-                      <div className="font-bold text-[var(--neon-gold)]">🚆 Layer 2: Locomotive Acoustic Signature</div>
-                      <div>Matched: <strong>{acousticResult.decomposed_forensic_layers.layer_2_locomotive_acoustics.detected_signatures[0]}</strong></div>
-                      <div className="text-[11px] text-[var(--text-secondary)]">{acousticResult.decomposed_forensic_layers.layer_2_locomotive_acoustics.railway_corridor_correlation}</div>
-                    </div>
+                  <div className="bg-[var(--bg-card)] p-4 rounded border">
+                    <div className="text-[10px] text-[var(--text-secondary)] uppercase">Uncertainty Radius</div>
+                    <div className="text-2xl font-bold font-mono text-[var(--neon-green)] mt-1">{acousticResult.geo_uncertainty_radius_meters}m</div>
                   </div>
-
-                  <div className="p-3 bg-[var(--bg-primary)] border border-[var(--border)] rounded text-xs text-[var(--text-primary)]">
-                    <span className="text-[var(--text-accent)] font-bold">Tactical Acoustic Assessment: </span>
-                    {acousticResult.tactical_assessment}
+                  <div className="bg-[var(--bg-card)] p-4 rounded border">
+                    <div className="text-[10px] text-[var(--text-secondary)] uppercase">Acoustic Confidence</div>
+                    <div className="text-2xl font-bold font-mono text-purple-400 mt-1">{acousticResult.overall_acoustic_confidence_pct}%</div>
                   </div>
                 </div>
               )}
             </div>
           )}
 
-          {/* ══════════════════════════════════════════════════════════════
-              TAB 6: COGNITIVE EXHAUST & PANIC ENTROPY (NEW)
-          ══════════════════════════════════════════════════════════════ */}
+          {/* 7. PANIC ENTROPY */}
           {activeTab === 'panic' && (
             <div className="space-y-6">
-              <div className="bg-[var(--bg-primary)] p-4 rounded-lg border border-[var(--border)] flex justify-between items-center">
+              <div className="bg-[var(--bg-primary)] p-4 rounded-lg border flex justify-between">
                 <div>
-                  <h3 className="text-sm font-bold text-red-400 uppercase flex items-center gap-2">
-                    <FiActivity /> Chronobiological Shannon Entropy & Confession Window Predictor
-                  </h3>
-                  <p className="text-xs text-[var(--text-secondary)] mt-1">
-                    Measures temporal entropy and circadian decay to pinpoint the golden window when suspect will confess.
-                  </p>
+                  <h3 className="text-sm font-bold text-red-400 uppercase flex items-center gap-2"><FiActivity /> Chronobiological Shannon Entropy Profiler</h3>
+                  <p className="text-xs text-[var(--text-secondary)] mt-1">Measures temporal entropy and circadian decay to pinpoint the golden confession window.</p>
                 </div>
-                <div className="flex items-center gap-2">
-                  <select
-                    value={selectedPanicSuspectId}
-                    onChange={e => handleRunPanic(e.target.value)}
-                    className="bg-[var(--bg-card)] border border-[var(--border)] text-[var(--text-accent)] text-xs rounded px-3 py-1.5"
-                  >
-                    {suspects.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
-                  </select>
+                <select value={selectedPanicSuspectId} onChange={e => handleRunPanic(e.target.value)} className="bg-[var(--bg-card)] border text-[var(--text-accent)] text-xs rounded px-3 py-1.5">
+                  {suspects.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
+                </select>
+              </div>
+              {panicResult && (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                  <div className="bg-[var(--bg-card)] p-4 rounded border text-center">
+                    <div className="text-[10px] text-[var(--text-secondary)] uppercase">Panic Entropy Index</div>
+                    <div className="text-3xl font-bold text-red-500 mt-1">{panicResult.panic_entropy_metrics.panic_entropy_index_pct}%</div>
+                  </div>
+                  <div className="bg-[var(--bg-card)] p-4 rounded border text-center">
+                    <div className="text-[10px] text-[var(--text-secondary)] uppercase">Confession Probability</div>
+                    <div className="text-3xl font-bold text-[var(--neon-green)] mt-1">{panicResult.panic_entropy_metrics.confession_approver_probability_pct}%</div>
+                  </div>
+                  <div className="bg-[var(--bg-card)] p-4 rounded border text-center">
+                    <div className="text-[10px] text-[var(--text-secondary)] uppercase">Temporal Shannon Entropy</div>
+                    <div className="text-3xl font-bold text-[var(--neon-gold)] mt-1">{panicResult.panic_entropy_metrics.temporal_shannon_entropy_bits} bits</div>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* 8. VOICE-CLONED STING HONEYPOT (NEW) */}
+          {activeTab === 'honeypot' && (
+            <div className="space-y-6">
+              <div className="bg-[var(--bg-primary)] p-4 rounded-lg border border-[var(--border)] flex justify-between items-start">
+                <div>
+                  <h3 className="text-sm font-bold text-[var(--text-accent)] uppercase flex items-center gap-2"><FiMic /> Autonomous Voice-Cloned Sting Honeypot</h3>
+                  <p className="text-xs text-[var(--text-secondary)] mt-1 max-w-2xl">
+                    Autonomous conversational AI victim persona stalling extortionists and cyber-scammers while live-extracting UPI handles, mule accounts, and physical meetup coordinates.
+                  </p>
                 </div>
               </div>
 
-              {panicResult && panicResult.status === 'success' && (
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={honeypotInput}
+                  onChange={e => setHoneypotInput(e.target.value)}
+                  placeholder="Simulate extortionist threat message..."
+                  className="flex-1 bg-[var(--bg-primary)] border border-[var(--border)] rounded px-4 py-2 text-xs text-white"
+                />
+                <button
+                  onClick={() => handleRunHoneypot()}
+                  className="px-5 py-2 bg-[var(--text-accent)] text-[#0a0a1a] font-bold text-xs rounded hover:opacity-90"
+                >
+                  Deploy Sting Persona
+                </button>
+              </div>
+
+              {honeypotResult && (
                 <div className="space-y-4 animate-in fade-in duration-300">
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                    <div className="bg-[var(--bg-card)] p-4 rounded border border-[var(--border)] text-center">
-                      <div className="text-[10px] text-[var(--text-secondary)] uppercase">Panic Entropy Index</div>
-                      <div className="text-3xl font-bold font-mono text-red-500 mt-1">
-                        {panicResult.panic_entropy_metrics.panic_entropy_index_pct}%
-                      </div>
-                      <div className="text-[10px] text-red-400 mt-1">{panicResult.panic_entropy_metrics.circadian_regularity_status}</div>
+                    <div className="bg-[var(--bg-card)] p-3.5 rounded border border-[var(--border)]">
+                      <div className="text-[10px] text-[var(--text-secondary)] uppercase">Stall Duration</div>
+                      <div className="text-2xl font-bold font-mono text-[var(--neon-green)] mt-1">{honeypotResult.simulated_call_duration_minutes} min</div>
+                      <div className="text-[10px] text-[var(--text-secondary)] mt-1">Victim Persona: {honeypotResult.victim_persona_used}</div>
                     </div>
-                    <div className="bg-[var(--bg-card)] p-4 rounded border border-[var(--border)] text-center">
-                      <div className="text-[10px] text-[var(--text-secondary)] uppercase">Approver / Confession Probability</div>
-                      <div className="text-3xl font-bold font-mono text-[var(--neon-green)] mt-1">
-                        {panicResult.panic_entropy_metrics.confession_approver_probability_pct}%
-                      </div>
-                      <div className="text-[10px] text-[var(--text-secondary)] mt-1">Section 306 CrPC / BNSS Candidate</div>
+                    <div className="bg-[var(--bg-card)] p-3.5 rounded border border-[var(--border)]">
+                      <div className="text-[10px] text-[var(--text-secondary)] uppercase">Extracted UPI / Accounts</div>
+                      <div className="text-sm font-bold font-mono text-[var(--neon-gold)] mt-1 truncate">{honeypotResult.harvested_intelligence.extracted_upi_handles[0]}</div>
+                      <div className="text-[10px] text-[var(--text-secondary)] mt-1">IFSC: Bank Account Captured</div>
                     </div>
-                    <div className="bg-[var(--bg-card)] p-4 rounded border border-[var(--border)] text-center">
-                      <div className="text-[10px] text-[var(--text-secondary)] uppercase">Temporal Shannon Entropy</div>
-                      <div className="text-3xl font-bold font-mono text-[var(--neon-gold)] mt-1">
-                        {panicResult.panic_entropy_metrics.temporal_shannon_entropy_bits} bits
-                      </div>
-                      <div className="text-[10px] text-[var(--text-secondary)] mt-1">{panicResult.panic_entropy_metrics.nocturnal_call_spike_ratio}</div>
+                    <div className="bg-[var(--bg-card)] p-3.5 rounded border border-[var(--border)]">
+                      <div className="text-[10px] text-[var(--text-secondary)] uppercase">Caller Aggression</div>
+                      <div className="text-xl font-bold font-mono text-red-400 mt-1">{honeypotResult.voice_biomarkers_telemetry.caller_aggression_level}</div>
+                      <div className="text-[10px] text-[var(--text-secondary)] mt-1">Acoustic: Call-Center Echo</div>
                     </div>
                   </div>
 
-                  <div className="p-4 bg-red-950/20 border border-red-500/40 rounded-lg text-xs leading-relaxed text-white">
-                    <span className="text-red-400 font-bold uppercase">🚨 Golden Arrest Window: </span>
-                    {panicResult.tactical_psychological_assessment}
+                  <div className="p-4 bg-[var(--bg-card)] border border-[var(--border)] rounded-lg space-y-2">
+                    <div className="text-[10px] text-[var(--text-secondary)] uppercase">Synthetic Honeypot Voice Response:</div>
+                    <div className="text-xs italic leading-relaxed text-white p-3 bg-[var(--bg-primary)] rounded border border-[var(--border)]">
+                      "{honeypotResult.honeypot_synthetic_response}"
+                    </div>
                   </div>
                 </div>
               )}
             </div>
           )}
 
-          {/* ══════════════════════════════════════════════════════════════
-              TAB 7: STYLOMETRY
-          ══════════════════════════════════════════════════════════════ */}
+          {/* 9. GANG WAR HAWKES CASCADE (NEW) */}
+          {activeTab === 'gangwar' && (
+            <div className="space-y-6">
+              <div className="bg-[var(--bg-primary)] p-4 rounded-lg border border-[var(--border)] flex justify-between items-start">
+                <div>
+                  <h3 className="text-sm font-bold text-red-500 uppercase flex items-center gap-2"><FiTrendingUp /> Macro Chaos-Theory Gang War Cascade Forecaster</h3>
+                  <p className="text-xs text-[var(--text-secondary)] mt-1 max-w-2xl">
+                    Implements Spatiotemporal Hawkes Point Processes (earthquake aftershock math) to forecast non-linear 14-day retaliatory shooting cascades and target strike zones.
+                  </p>
+                </div>
+                <button onClick={() => handleRunGangwar()} className="px-4 py-2 bg-red-600 hover:bg-red-500 text-white font-bold text-xs rounded">
+                  Re-compute Hawkes Waveform
+                </button>
+              </div>
+
+              {gangwarResult && (
+                <div className="space-y-4 animate-in fade-in duration-300">
+                  <div className="p-3 bg-[var(--bg-card)] border border-[var(--border)] rounded flex justify-between items-center text-xs">
+                    <div>Trigger Event: <strong>{gangwarResult.trigger_event}</strong></div>
+                    <div className="text-[var(--neon-gold)] font-bold">Peak Hazard: {gangwarResult.hawkes_point_process_metrics.peak_syndicate_shockwave_window}</div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <div className="text-xs font-semibold uppercase tracking-wider text-[var(--text-secondary)]">Predicted Strike Target Sectors</div>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                      {gangwarResult.predicted_strike_targets.map((st, i) => (
+                        <div key={i} className="bg-[var(--bg-card)] p-3.5 rounded border border-[var(--border)] space-y-1.5">
+                          <div className="flex justify-between items-center">
+                            <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-red-500/20 text-red-400">PRIORITY #{st.priority}</span>
+                            <span className="font-mono font-bold text-xs text-red-400">{st.probability_pct}% RISK</span>
+                          </div>
+                          <div className="font-bold text-sm text-white">{st.target_sector}</div>
+                          <div className="text-xs text-[var(--text-secondary)]">Faction: {st.suspected_instigator}</div>
+                          <div className="text-[10px] text-[var(--neon-gold)]">Window: {st.peak_risk_window}</div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="p-3 bg-red-950/20 border border-red-500/30 rounded text-xs text-white">
+                    <strong>Pre-Emptive Action: </strong>{gangwarResult.tactical_deterrence_protocol}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* 10. 30-YEAR DYNASTY PEDIGREE (NEW) */}
+          {activeTab === 'dynasty' && (
+            <div className="space-y-6">
+              <div className="bg-[var(--bg-primary)] p-4 rounded-lg border border-[var(--border)] flex justify-between items-start">
+                <div>
+                  <h3 className="text-sm font-bold text-[var(--neon-gold)] uppercase flex items-center gap-2"><FiShare2 /> 30-Year Multi-Generational Crime Dynasty Pedigree</h3>
+                  <p className="text-xs text-[var(--text-secondary)] mt-1 max-w-2xl">
+                    Hypergraph kinship & corporate proxy mapping predicting clean-record next-generation cartel successors before they register their first police offence.
+                  </p>
+                </div>
+                <div className="text-right">
+                  <div className="text-2xl font-mono font-bold text-[var(--neon-gold)]">{dynastyResult?.average_generation_3_succession_risk_pct}%</div>
+                  <div className="text-[10px] text-[var(--text-secondary)] uppercase">Gen-3 Succession Risk</div>
+                </div>
+              </div>
+
+              {dynastyResult && (
+                <div className="space-y-4 animate-in fade-in duration-300">
+                  <div className="space-y-3">
+                    {dynastyResult.lineage_breakdown.map((gen, idx) => (
+                      <div key={idx} className="bg-[var(--bg-card)] border border-[var(--border)] rounded-lg p-4 space-y-2">
+                        <div className="text-xs font-bold uppercase tracking-wider text-[var(--text-accent)] pb-1 border-b border-[var(--border)]">
+                          {gen.generation_tier}
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-2">
+                          {gen.members.map((m, mIdx) => (
+                            <div key={mIdx} className="p-3 bg-[var(--bg-primary)] rounded border border-[var(--border)] space-y-1 text-xs">
+                              <div className="font-bold text-sm text-white flex justify-between items-center">
+                                <span>{m.name}</span>
+                                {m.succession_probability_pct && (
+                                  <span className="text-[10px] font-mono text-[var(--neon-gold)]">{m.succession_probability_pct}% RISK</span>
+                                )}
+                              </div>
+                              <div className="text-[var(--text-secondary)]">{m.relation || m.role}</div>
+                              {m.tactical_threat && (
+                                <div className="text-[10px] text-red-400 mt-1 italic">"{m.tactical_threat}"</div>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="p-3 bg-[var(--bg-card)] border border-[var(--border)] rounded text-xs text-white">
+                    <span className="text-[var(--neon-gold)] font-bold uppercase">Succession Threat Assessment: </span>
+                    {dynastyResult.tactical_succession_assessment}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* 11. PROJECT MORIARTY RED-TEAM AI (NEW) */}
+          {activeTab === 'moriarty' && (
+            <div className="space-y-6">
+              <div className="bg-[var(--bg-primary)] p-4 rounded-lg border border-[var(--border)] flex justify-between items-start">
+                <div>
+                  <h3 className="text-sm font-bold text-red-500 uppercase flex items-center gap-2"><FiCrosshair /> Project Moriarty: Autonomous Counter-Forensic Red-Team AI</h3>
+                  <p className="text-xs text-[var(--text-secondary)] mt-1 max-w-2xl">
+                    Adversarial underworld AI that attacks CrimeNet from the outside to discover algorithmic blind spots and auto-generates defensive anomaly heuristics to patch them.
+                  </p>
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => handleRunMoriarty('HAWALA_MICRO_SMURFING_EVASION')}
+                    className={`text-xs px-3 py-1.5 rounded border ${selectedMoriartyVector === 'HAWALA_MICRO_SMURFING_EVASION' ? 'bg-red-500 text-white font-bold' : 'border-[var(--border)] text-[var(--text-secondary)]'}`}
+                  >
+                    Smurfing Attack
+                  </button>
+                  <button
+                    onClick={() => handleRunMoriarty('BURNER_SIM_ROUND_ROBIN')}
+                    className={`text-xs px-3 py-1.5 rounded border ${selectedMoriartyVector === 'BURNER_SIM_ROUND_ROBIN' ? 'bg-red-500 text-white font-bold' : 'border-[var(--border)] text-[var(--text-secondary)]'}`}
+                  >
+                    SIM Round-Robin
+                  </button>
+                </div>
+              </div>
+
+              {moriartyResult && (
+                <div className="space-y-4 animate-in fade-in duration-300">
+                  <div className="p-4 bg-[var(--bg-card)] border border-[var(--border)] rounded-lg space-y-3">
+                    <div className="flex justify-between items-center pb-2 border-b border-[var(--border)]">
+                      <div className="font-bold text-sm text-red-400">⚔️ {moriartyResult.attack_simulation_executed}</div>
+                      <span className="text-xs font-mono font-bold text-[var(--neon-green)]">+{moriartyResult.system_resilience_gain_pct}% RESILIENCE</span>
+                    </div>
+                    <div className="text-xs text-[var(--text-secondary)]"><strong>Moriarty Exploit Logic: </strong>{moriartyResult.moriarty_adversarial_exploit}</div>
+                    <div className="text-xs text-red-300"><strong>Algorithmic Blindspot Exposed: </strong>{moriartyResult.algorithmic_blindspot_exposed}</div>
+                  </div>
+
+                  <div className="p-4 bg-[var(--bg-primary)] border border-[var(--neon-green)]/40 rounded-lg space-y-2 text-xs">
+                    <div className="flex justify-between items-center text-[var(--neon-green)] font-bold">
+                      <span>🛡️ Auto-Synthesized Defensive Patch Deployed:</span>
+                      <span className="font-mono text-[10px] bg-[var(--neon-green)]/20 px-2 py-0.5 rounded">RUNTIME ACTIVE</span>
+                    </div>
+                    <div className="font-mono font-bold text-white text-sm">{moriartyResult.auto_synthesized_defensive_patch.rule_name}</div>
+                    <div className="text-[var(--text-secondary)]">Condition: {moriartyResult.auto_synthesized_defensive_patch.patch_architecture.trigger_condition}</div>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* 12. STYLOMETRY */}
           {activeTab === 'stylometry' && (
             <div className="space-y-4">
-              <div className="bg-[var(--bg-primary)] p-4 rounded border border-[var(--border)]">
+              <div className="bg-[var(--bg-primary)] p-4 rounded border">
                 <h3 className="text-sm font-bold text-[var(--text-accent)] uppercase flex items-center gap-2"><FiCode /> Hinglish Syntax DNA Matcher</h3>
                 <p className="text-xs text-[var(--text-secondary)] mt-1">Attributes extortion SMS & dark-web posts to known suspects based on dialect syntax markers.</p>
               </div>
-
               <div className="flex gap-2">
                 {[
                   { label: 'Extortion Threat', text: 'CALL KYUN NAHI UTHA RAHA HAI?! Aakhri baar bol raha hu... hafta nahi diya toh parivar khatam!!' },
                   { label: 'Hawala Ledger', text: 'account number bhej diya... party se 50 peti confirm karo... entry match honi chahiye' }
                 ].map((s, i) => (
-                  <button key={i} onClick={() => handleRunStylometry(s.text)} className="text-xs bg-[var(--bg-card)] px-3 py-1.5 rounded border border-[var(--border)] hover:text-white">
+                  <button key={i} onClick={() => handleRunStylometry(s.text)} className="text-xs bg-[var(--bg-card)] px-3 py-1.5 rounded border text-[var(--text-secondary)] hover:text-white">
                     {s.label}
                   </button>
                 ))}
               </div>
-
               {stylometryResult && (
-                <div className="p-4 bg-[var(--bg-card)] border border-[var(--border)] rounded space-y-2">
+                <div className="p-4 bg-[var(--bg-card)] border rounded space-y-2">
                   <div className="text-sm font-bold text-[var(--neon-green)]">Top Attribution: {stylometryResult.top_attribution} ({stylometryResult.top_confidence}%)</div>
                   <div className="text-xs text-[var(--text-secondary)]">{stylometryResult.summary}</div>
                 </div>
@@ -646,164 +831,67 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes }) {
             </div>
           )}
 
-          {/* ══════════════════════════════════════════════════════════════
-              TAB 8: CRYPTOLALIA DARK-SLANG (NEW)
-          ══════════════════════════════════════════════════════════════ */}
+          {/* 13. CRYPTOLALIA DARK SLANG */}
           {activeTab === 'cryptolalia' && (
-            <div className="space-y-6">
-              <div className="bg-[var(--bg-primary)] p-4 rounded-lg border border-[var(--border)]">
-                <h3 className="text-sm font-bold text-[var(--neon-gold)] uppercase flex items-center gap-2">
-                  <FiVolume2 /> Autonomous Dark-Slang Evolving Decryption (Cryptolalia Radar)
-                </h3>
-                <p className="text-xs text-[var(--text-secondary)] mt-1">
-                  Auto-translates masked underworld code words (mithai, gulab jamun, peti, chidiya, patakha) into plain English intelligence.
-                </p>
+            <div className="space-y-4">
+              <div className="bg-[var(--bg-primary)] p-4 rounded border">
+                <h3 className="text-sm font-bold text-[var(--neon-gold)] uppercase flex items-center gap-2"><FiVolume2 /> Autonomous Dark-Slang Decryption</h3>
+                <p className="text-xs text-[var(--text-secondary)] mt-1">Auto-translates masked underworld code words into plain English intelligence.</p>
               </div>
-
               <div className="flex gap-2">
-                <input
-                  type="text"
-                  value={cryptolaliaInput}
-                  onChange={e => setCryptolaliaInput(e.target.value)}
-                  placeholder="Paste intercepted coded underworld slang..."
-                  className="flex-1 bg-[var(--bg-primary)] border border-[var(--border)] rounded px-4 py-2 text-xs font-mono text-white"
-                />
-                <button
-                  onClick={() => handleRunCryptolalia()}
-                  className="px-5 py-2 bg-[var(--neon-gold)] text-[#0a0a1a] font-bold text-xs rounded hover:opacity-90"
-                >
-                  Decipher Coded Slang
-                </button>
+                <input type="text" value={cryptolaliaInput} onChange={e => setCryptolaliaInput(e.target.value)} className="flex-1 bg-[var(--bg-primary)] border rounded px-3 py-1.5 text-xs text-white" />
+                <button onClick={() => handleRunCryptolalia()} className="px-4 py-1.5 bg-[var(--neon-gold)] text-[#0a0a1a] font-bold text-xs rounded">Decipher</button>
               </div>
-
               {cryptolaliaResult && (
-                <div className="space-y-4 animate-in fade-in duration-300">
-                  <div className="p-4 bg-[var(--bg-card)] border border-[var(--border)] rounded-lg space-y-2">
-                    <div className="text-[10px] text-[var(--text-secondary)] uppercase">Decrypted Plain-Text Intelligence Summary:</div>
-                    <div className="text-sm font-mono leading-relaxed text-[var(--text-accent)] p-3 bg-[var(--bg-primary)] rounded border border-[var(--border)]">
-                      {cryptolaliaResult.decrypted_intelligence_translation}
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                    {cryptolaliaResult.decrypted_lexicon_breakdown.map((t, idx) => (
-                      <div key={idx} className="bg-[var(--bg-card)] p-3 rounded border border-[var(--border)]">
-                        <div className="flex justify-between items-center mb-1">
-                          <span className="font-mono font-bold text-[var(--neon-gold)]">"{t.slang_term}"</span>
-                          <span className="text-[9px] px-1.5 py-0.5 rounded bg-red-500/20 text-red-400 font-bold">{t.threat_severity}</span>
-                        </div>
-                        <div className="text-xs font-semibold text-white">{t.decrypted_meaning}</div>
-                        <div className="text-[10px] text-[var(--text-secondary)] mt-1">Category: {t.category}</div>
-                      </div>
-                    ))}
-                  </div>
+                <div className="p-4 bg-[var(--bg-card)] border rounded space-y-2">
+                  <div className="text-xs text-[var(--text-secondary)]">Decrypted Intelligence:</div>
+                  <div className="text-sm font-mono text-[var(--text-accent)] p-2.5 bg-[var(--bg-primary)] rounded">{cryptolaliaResult.decrypted_intelligence_translation}</div>
                 </div>
               )}
             </div>
           )}
 
-          {/* ══════════════════════════════════════════════════════════════
-              TAB 9: QUANTUM MOLE-HUNTER (NEW)
-          ══════════════════════════════════════════════════════════════ */}
+          {/* 14. QUANTUM MOLE HUNTER */}
           {activeTab === 'quantum_mole' && (
-            <div className="space-y-6">
-              <div className="bg-[var(--bg-primary)] p-4 rounded-lg border border-[var(--border)] flex justify-between items-start">
+            <div className="space-y-4">
+              <div className="bg-[var(--bg-primary)] p-4 rounded border flex justify-between">
                 <div>
-                  <h3 className="text-sm font-bold text-red-400 uppercase flex items-center gap-2">
-                    <FiEye /> Quantum Mole-Hunter: Negative-Topology Insider Leak Radar
-                  </h3>
-                  <p className="text-xs text-[var(--text-secondary)] mt-1 max-w-2xl">
-                    Detects compromised police personnel by correlating confidential internal database file lookups with immediate external cartel defensive shifts occurring within 120 minutes.
-                  </p>
+                  <h3 className="text-sm font-bold text-red-400 uppercase flex items-center gap-2"><FiEye /> Quantum Mole-Hunter Radar</h3>
+                  <p className="text-xs text-[var(--text-secondary)] mt-1">Correlates internal file lookups with external cartel evasions within 120 minutes.</p>
                 </div>
-                <div className="text-right">
-                  <div className="text-2xl font-mono font-bold text-red-500">{moleResult?.flagged_insider_anomalies || 0}</div>
-                  <div className="text-[10px] text-[var(--text-secondary)] uppercase">Compromised Leads</div>
-                </div>
+                <div className="text-2xl font-mono font-bold text-red-500">{moleResult?.flagged_insider_anomalies || 0} Leads</div>
               </div>
-
-              {moleResult && (
-                <div className="space-y-3 animate-in fade-in duration-300">
-                  {moleResult.leak_detections.map((m, idx) => (
-                    <div key={idx} className="bg-[var(--bg-card)] p-4 rounded-lg border border-[var(--border)] hover:border-red-500 transition-colors">
-                      <div className="flex justify-between items-center mb-2">
-                        <div className="font-bold text-sm text-white flex items-center gap-2">
-                          <span>{m.officer_name}</span>
-                          <span className="text-[10px] px-2 py-0.5 bg-[var(--bg-primary)] rounded text-[var(--text-secondary)] font-mono">{m.officer_badge}</span>
-                          <span className="text-xs text-[var(--neon-gold)]">📍 {m.department}</span>
-                        </div>
-                        <div className="text-sm font-bold font-mono text-red-400">{m.leak_correlation_index_pct}% LEAK CORRELATION</div>
-                      </div>
-
-                      <div className="text-xs text-[var(--text-secondary)] space-y-1">
-                        <div>• <strong>File Looked Up: </strong><span className="font-mono text-white">{m.compromised_file}</span> at {m.access_timestamp}</div>
-                        <div>• <strong>Cartel Evasion Action: </strong><span className="text-red-300">{m.cartel_defensive_action}</span></div>
-                      </div>
-                    </div>
-                  ))}
-
-                  <div className="p-3 bg-red-950/20 border border-red-500/30 rounded text-xs text-white">
-                    <span className="text-red-400 font-bold uppercase">Counter-Espionage Action: </span>
-                    {moleResult.tactical_counter_espionage_guidance}
+              {moleResult?.leak_detections?.map((m, i) => (
+                <div key={i} className="bg-[var(--bg-card)] border rounded p-3 text-xs space-y-1">
+                  <div className="flex justify-between font-bold text-white">
+                    <span>{m.officer_name} ({m.officer_badge})</span>
+                    <span className="text-red-400 font-mono">{m.leak_correlation_index_pct}% LEAK CORRELATION</span>
                   </div>
+                  <div className="text-[var(--text-secondary)]">File Looked Up: {m.compromised_file} ⟷ Evasion: {m.cartel_defensive_action}</div>
                 </div>
-              )}
+              ))}
             </div>
           )}
 
-          {/* ══════════════════════════════════════════════════════════════
-              TAB 10: ZERO-KNOWLEDGE FEDERATION (NEW)
-          ══════════════════════════════════════════════════════════════ */}
+          {/* 15. ZERO KNOWLEDGE PSI FEDERATION */}
           {activeTab === 'zk_federation' && (
-            <div className="space-y-6">
-              <div className="bg-[var(--bg-primary)] p-4 rounded-lg border border-[var(--border)] flex justify-between items-start">
+            <div className="space-y-4">
+              <div className="bg-[var(--bg-primary)] p-4 rounded border flex justify-between">
                 <div>
-                  <h3 className="text-sm font-bold text-[var(--text-accent)] uppercase flex items-center gap-2">
-                    <FiLock /> Zero-Knowledge Private Set Intersection (PSI) Graph Federation
-                  </h3>
-                  <p className="text-xs text-[var(--text-secondary)] mt-1 max-w-2xl">
-                    Allows Maharashtra ATS, UP-STF, and Delhi Police to discover intersecting syndicate identifiers across state borders without disclosing confidential non-matching records.
-                  </p>
+                  <h3 className="text-sm font-bold text-[var(--text-accent)] uppercase flex items-center gap-2"><FiLock /> Zero-Knowledge PSI Federation</h3>
+                  <p className="text-xs text-[var(--text-secondary)] mt-1">Discovers cross-state syndicate identifiers without disclosing non-matching confidential records.</p>
                 </div>
-                <div className="text-right">
-                  <div className="text-2xl font-mono font-bold text-[var(--text-accent)]">{zkResult?.verified_cross_agency_intersections || 0}</div>
-                  <div className="text-[10px] text-[var(--text-secondary)] uppercase">Verified PSI Matches</div>
-                </div>
+                <div className="text-2xl font-mono font-bold text-[var(--text-accent)]">{zkResult?.verified_cross_agency_intersections || 0} Matches</div>
               </div>
-
-              {zkResult && (
-                <div className="space-y-3 animate-in fade-in duration-300">
-                  {zkResult.federation_events.map((ev, idx) => (
-                    <div key={idx} className="bg-[var(--bg-card)] p-4 rounded-lg border border-[var(--border)] hover:border-[var(--text-accent)] transition-colors">
-                      <div className="flex justify-between items-center mb-2">
-                        <div className="font-bold text-sm text-[var(--text-accent)] font-mono flex items-center gap-2">
-                          <span className="text-[10px] px-2 py-0.5 rounded bg-[var(--bg-primary)] text-white">{ev.entity_type}</span>
-                          <span>{ev.matched_identifier}</span>
-                        </div>
-                        <span className="text-[10px] font-mono text-[var(--neon-green)] bg-[var(--neon-green)]/10 px-2 py-0.5 rounded border border-[var(--neon-green)]/30">
-                          {ev.cryptographic_proof_hash}
-                        </span>
-                      </div>
-
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs">
-                        <div className="p-2 bg-[var(--bg-primary)] rounded border border-[var(--border)]">
-                          <span className="text-[10px] text-[var(--text-secondary)] uppercase">Jurisdiction 1: </span>
-                          <div className="font-medium text-white mt-0.5">{ev.agency_1_case}</div>
-                        </div>
-                        <div className="p-2 bg-[var(--bg-primary)] rounded border border-[var(--border)]">
-                          <span className="text-[10px] text-[var(--text-secondary)] uppercase">Jurisdiction 2: </span>
-                          <div className="font-medium text-white mt-0.5">{ev.agency_2_case}</div>
-                        </div>
-                      </div>
-
-                      <div className="mt-2 text-[10px] text-[var(--neon-gold)] flex justify-between">
-                        <span>🛡️ {ev.zero_knowledge_guarantee}</span>
-                        <span className="font-bold text-red-400">{ev.syndicate_interstate_threat}</span>
-                      </div>
-                    </div>
-                  ))}
+              {zkResult?.federation_events?.map((ev, i) => (
+                <div key={i} className="bg-[var(--bg-card)] border rounded p-3 text-xs space-y-1">
+                  <div className="flex justify-between font-mono text-[var(--text-accent)] font-bold">
+                    <span>[{ev.entity_type}] {ev.matched_identifier}</span>
+                    <span className="text-[10px] text-[var(--neon-green)]">{ev.cryptographic_proof_hash}</span>
+                  </div>
+                  <div className="text-[var(--text-secondary)]">{ev.agency_1_case} ⟷ {ev.agency_2_case}</div>
                 </div>
-              )}
+              ))}
             </div>
           )}
 
