@@ -13,6 +13,7 @@ import {
   getDynastyPedigree, getPlateCloningResolver,
   forecastGangwarCascade, runMoriartyRedteam
 } from '../api/client';
+import Dock from './Dock';
 
 export default function ExperimentalLabsModal({ onClose, onHighlightNodes }) {
   const [activeCategory, setActiveCategory] = useState('tactical');
@@ -316,28 +317,39 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes }) {
           </button>
         </div>
 
-        {/* 4 Category Level Switcher */}
-        <div className="flex bg-[#050512] border-b border-[var(--border)] px-4 py-1.5 gap-2 overflow-x-auto">
-          {Object.entries(categories).map(([catKey, catData]) => (
-            <button
-              key={catKey}
-              onClick={() => {
-                setActiveCategory(catKey);
-                setActiveTab(catData.tabs[0].id);
-              }}
-              className={`px-3 py-1.5 rounded text-xs font-semibold whitespace-nowrap transition-all ${
-                activeCategory === catKey
-                  ? 'bg-[var(--text-accent)]/20 text-[var(--text-accent)] border border-[var(--text-accent)]'
-                  : 'text-[var(--text-secondary)] hover:text-white'
-              }`}
-            >
-              {catData.name}
-            </button>
-          ))}
+        {/* 4 Category Level Switcher (Dock) */}
+        <div className="relative h-24 bg-[#050512] border-b border-[var(--border)] w-full flex items-center justify-center overflow-hidden">
+          <Dock
+            items={[
+              {
+                icon: <FiTarget size={22} />,
+                label: categories['tactical'].name,
+                onClick: () => { setActiveCategory('tactical'); setActiveTab(categories['tactical'].tabs[0].id); }
+              },
+              {
+                icon: <FiActivity size={22} />,
+                label: categories['cognitive'].name,
+                onClick: () => { setActiveCategory('cognitive'); setActiveTab(categories['cognitive'].tabs[0].id); }
+              },
+              {
+                icon: <FiCompass size={22} />,
+                label: categories['wargaming'].name,
+                onClick: () => { setActiveCategory('wargaming'); setActiveTab(categories['wargaming'].tabs[0].id); }
+              },
+              {
+                icon: <FiLock size={22} />,
+                label: categories['counterintel'].name,
+                onClick: () => { setActiveCategory('counterintel'); setActiveTab(categories['counterintel'].tabs[0].id); }
+              }
+            ]}
+            panelHeight={60}
+            baseItemSize={46}
+            magnification={65}
+          />
         </div>
 
         {/* Sub-Tabs under Active Category */}
-        <div className="flex overflow-x-auto border-b border-[var(--border)] bg-[var(--bg-card)] px-4 py-1 gap-1.5">
+        <div className="flex overflow-x-auto border-b border-[var(--border)] bg-[var(--bg-card)] px-4 py-2 gap-2">
           {categories[activeCategory].tabs.map(tab => (
             <button
               key={tab.id}
