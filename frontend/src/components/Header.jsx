@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FiSearch, FiUploadCloud, FiShield, FiFileText, FiCpu } from 'react-icons/fi';
 import { searchEntities } from '../api/client';
+import SpecularButton from './SpecularButton';
 
 export default function Header({ onUploadClick, onSearchResultSelect, onExperimentalClick }) {
   const [query, setQuery] = useState('');
@@ -92,16 +93,18 @@ export default function Header({ onUploadClick, onSearchResultSelect, onExperime
           <FiFileText />
           <span className="hidden lg:inline">Report</span>
         </button>
-        <button 
+        <SpecularButton 
           onClick={onUploadClick}
-          className="specular-button specular-button--md"
+          size="md"
+          radius={6}
+          textColor="var(--text-accent)"
+          lineColor="#00ff41"
+          baseColor="#1a2f1a"
+          intensity={1.5}
         >
-          <span className="specular-button__label">
-            <FiUploadCloud />
-            <span>Data Ingestion</span>
-          </span>
-          <div className="specular-button__fx"><canvas></canvas></div>
-        </button>
+          <FiUploadCloud />
+          <span>Data Ingestion</span>
+        </SpecularButton>
       </div>
     </header>
   );
