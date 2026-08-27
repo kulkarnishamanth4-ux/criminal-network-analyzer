@@ -79,3 +79,27 @@ export const getSuspectsList = () => {
   return client.get('/api/experimental/suspects').then(res => res.data);
 };
 
+export const analyzeAcoustics = (audioProfileId = "intercept_call_001") => {
+  return client.post('/api/experimental/ghost-acoustic/analyze', { audio_profile_id: audioProfileId }).then(res => res.data);
+};
+
+export const simulateHawalaFluid = (frozenAccountIds = []) => {
+  return client.post('/api/experimental/hawala-fluid/simulate', { frozen_account_ids: frozenAccountIds }).then(res => res.data);
+};
+
+export const getPanicEntropy = (entityId) => {
+  return client.get(`/api/experimental/panic-entropy/${entityId}`).then(res => res.data);
+};
+
+export const getQuantumMole = () => {
+  return client.get('/api/experimental/quantum-mole').then(res => res.data);
+};
+
+export const decodeCryptolalia = (text) => {
+  return client.post('/api/experimental/cryptolalia/decode', { text }).then(res => res.data);
+};
+
+export const getZkFederation = () => {
+  return client.get('/api/experimental/zk-federation').then(res => res.data);
+};
+

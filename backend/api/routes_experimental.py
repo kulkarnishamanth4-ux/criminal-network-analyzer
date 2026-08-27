@@ -6,6 +6,12 @@ from backend.graph.decapitation import compute_decapitation_strategy
 from backend.graph.ghost_rendezvous import detect_ghost_rendezvous
 from backend.nlp.stylometry import analyze_stylometry
 from backend.nlp.interrogation_engine import interrogate_suspect
+from backend.nlp.ghost_acoustic import analyze_ambient_acoustics
+from backend.graph.hawala_fluid import simulate_hawala_fluid_dynamics
+from backend.analytics.panic_entropy import calculate_panic_profile
+from backend.graph.quantum_mole import detect_internal_leaks
+from backend.nlp.cryptolalia import decode_dark_slang
+from backend.crypto.zk_federation import execute_zk_federation_query
 from pydantic import BaseModel
 from typing import List, Optional
 
@@ -18,6 +24,15 @@ class InterrogationRequest(BaseModel):
     entity_id: int
     question: str
     history: Optional[List[dict]] = []
+
+class AcousticRequest(BaseModel):
+    audio_profile_id: Optional[str] = "intercept_call_001"
+
+class HawalaFluidRequest(BaseModel):
+    frozen_account_ids: Optional[List[int]] = []
+
+class CryptolaliaRequest(BaseModel):
+    text: str
 
 @router.get("/experimental/decapitation")
 def get_decapitation(max_targets: int = 3, db: Session = Depends(get_db)):
@@ -49,3 +64,33 @@ def list_suspects(db: Session = Depends(get_db)):
             for s in suspects
         ]
     }
+
+@router.post("/experimental/ghost-acoustic/analyze")
+def analyze_acoustics(req: AcousticRequest):
+    """Project Ghost-Acoustic: micro-ambient acoustic geo-triangulation."""
+    return analyze_ambient_acoustics(req.audio_profile_id)
+
+@router.post("/experimental/hawala-fluid/simulate")
+def simulate_hawala_fluid(req: HawalaFluidRequest, db: Session = Depends(get_db)):
+    """Hawala Fluid Dynamics & Synthetic Liquidity Flash-Crash simulation."""
+    return simulate_hawala_fluid_dynamics(db, req.frozen_account_ids)
+
+@router.get("/experimental/panic-entropy/{entity_id}")
+def get_panic_entropy(entity_id: int, db: Session = Depends(get_db)):
+    """Cognitive Exhaust & Panic-Entropy Profiler calculating confession probability."""
+    return calculate_panic_profile(db, entity_id)
+
+@router.get("/experimental/quantum-mole")
+def get_quantum_mole(db: Session = Depends(get_db)):
+    """Quantum Mole-Hunter: Negative-topology internal leak detector."""
+    return detect_internal_leaks(db)
+
+@router.post("/experimental/cryptolalia/decode")
+def decode_cryptolalia(req: CryptolaliaRequest):
+    """Autonomous Dark-Slang Evolving Decryption (Cryptolalia Radar)."""
+    return decode_dark_slang(req.text)
+
+@router.get("/experimental/zk-federation")
+def get_zk_federation():
+    """Zero-Knowledge Blind Graph Federation across state police agency nodes."""
+    return execute_zk_federation_query()
