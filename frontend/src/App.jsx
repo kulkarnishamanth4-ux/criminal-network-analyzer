@@ -155,8 +155,8 @@ function App() {
           'bg-red-500 text-white'
         }`}>
           {toast.type === 'success' && '✓'}
-          {toast.type === 'info' && '🔗'}
-          {toast.type === 'error' && '⚠'}
+          {toast.type === 'info' && ''}
+          {toast.type === 'error' && ''}
           {toast.message}
         </div>
       )}

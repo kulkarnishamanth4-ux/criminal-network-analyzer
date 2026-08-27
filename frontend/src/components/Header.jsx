@@ -80,10 +80,10 @@ export default function Header({ onUploadClick, onSearchResultSelect, onExperime
       <div className="flex items-center gap-2">
         <button 
           onClick={onExperimentalClick}
-          className="flex items-center gap-2 bg-[var(--bg-primary)] border border-red-500/50 text-red-400 hover:bg-red-500 hover:text-white px-3 py-1.5 rounded-md transition-all text-sm font-semibold shadow-[0_0_10px_rgba(255,0,64,0.2)] hover:shadow-[0_0_15px_rgba(255,0,64,0.5)]"
+          className="flex items-center gap-2 bg-[var(--bg-primary)] border border-green-500/50 text-green-400 hover:bg-green-500 hover:text-white px-3 py-1.5 rounded-md transition-all text-sm font-semibold shadow-[0_0_10px_rgba(255,0,64,0.2)] hover:shadow-[0_0_15px_rgba(255,0,64,0.5)]"
         >
           <FiCpu className="animate-pulse" />
-          <span className="hidden md:inline">🧪 Experimental Labs</span>
+          <span className="hidden md:inline"> Experimental Labs</span>
         </button>
         <button 
           onClick={() => window.open(`${API_URL}/api/report/generate`, '_blank')}

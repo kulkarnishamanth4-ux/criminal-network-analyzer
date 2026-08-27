@@ -157,7 +157,7 @@ export default function PathFinder({ onPathFound }) {
                 ))}
               </div>
             ) : (
-              <div className="text-xs text-red-400 bg-red-500/10 p-2 rounded border border-red-500/30 text-center">
+              <div className="text-xs text-green-400 bg-green-500/10 p-2 rounded border border-green-500/30 text-center">
                 {pathResult.message || 'No path found'}
               </div>
             )}

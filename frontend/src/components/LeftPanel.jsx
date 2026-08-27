@@ -5,12 +5,12 @@ import { getTopInfluencers, getCommunities, getCrimePredictions } from '../api/c
 function StatCard({ title, value, icon, highlight }) {
   return (
     <div className="bg-[var(--bg-primary)] p-3 rounded-lg border border-[var(--border)] flex items-center gap-3">
-      <div className={`p-2 rounded-md ${highlight ? 'bg-red-500/20 text-red-500' : 'bg-[var(--bg-card-hover)] text-[var(--text-accent)]'}`}>
+      <div className={`p-2 rounded-md ${highlight ? 'bg-green-500/20 text-green-500' : 'bg-[var(--bg-card-hover)] text-[var(--text-accent)]'}`}>
         {icon}
       </div>
       <div>
         <div className="text-[10px] text-[var(--text-secondary)] uppercase tracking-wider">{title}</div>
-        <div className={`text-xl font-bold ${highlight ? 'text-red-500' : 'text-[var(--text-primary)]'}`}>
+        <div className={`text-xl font-bold ${highlight ? 'text-green-500' : 'text-[var(--text-primary)]'}`}>
           {value || 0}
         </div>
       </div>

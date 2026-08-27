@@ -250,38 +250,38 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes }) {
   // 15 Modules Categorized into 4 Command Tiers
   const categories = {
     tactical: {
-      name: '⚔️ Tactical & Kinetic Operations',
+      name: ' Tactical & Kinetic Operations',
       tabs: [
-        { id: 'decapitation', label: '⚔️ Decapitation Strike' },
-        { id: 'ghost', label: '🛰️ Ghost Rendezvous' },
-        { id: 'plate_cloning', label: '🚗 Optical Plate-Cloning' },
-        { id: 'hawala_fluid', label: '🌊 Hawala Fluid Dynamics' }
+        { id: 'decapitation', label: ' Decapitation Strike' },
+        { id: 'ghost', label: ' Ghost Rendezvous' },
+        { id: 'plate_cloning', label: ' Optical Plate-Cloning' },
+        { id: 'hawala_fluid', label: ' Hawala Fluid Dynamics' }
       ]
     },
     cognitive: {
-      name: '🧠 Cognitive, Audio & Forensics',
+      name: ' Cognitive, Audio & Forensics',
       tabs: [
-        { id: 'interrogate', label: '🎭 Digital Twin Interrogation' },
-        { id: 'acoustic', label: '🎙️ Ghost-Acoustic Triangulation' },
-        { id: 'panic', label: '🧠 Panic-Entropy Profiler' },
-        { id: 'honeypot', label: '🤖 Voice-Cloned Sting Honeypot' }
+        { id: 'interrogate', label: ' Digital Twin Interrogation' },
+        { id: 'acoustic', label: ' Ghost-Acoustic Triangulation' },
+        { id: 'panic', label: ' Panic-Entropy Profiler' },
+        { id: 'honeypot', label: ' Voice-Cloned Sting Honeypot' }
       ]
     },
     wargaming: {
-      name: '🌪️ Chaos, Lineage & War-Gaming',
+      name: ' Chaos, Lineage & War-Gaming',
       tabs: [
-        { id: 'gangwar', label: '🌪️ Gang War Hawkes Cascade' },
-        { id: 'dynasty', label: '🌳 30-Year Dynasty Pedigree' },
-        { id: 'moriarty', label: '😈 Project Moriarty Red-Team' }
+        { id: 'gangwar', label: ' Gang War Hawkes Cascade' },
+        { id: 'dynasty', label: ' 30-Year Dynasty Pedigree' },
+        { id: 'moriarty', label: ' Project Moriarty Red-Team' }
       ]
     },
     counterintel: {
-      name: '🛡️ Counter-Intel & Cryptography',
+      name: ' Counter-Intel & Cryptography',
       tabs: [
-        { id: 'stylometry', label: '🧬 Syntax DNA Stylometry' },
-        { id: 'cryptolalia', label: '🗣️ Cryptolalia Dark-Slang' },
-        { id: 'quantum_mole', label: '🕳️ Quantum Mole-Hunter' },
-        { id: 'zk_federation', label: '🔐 Zero-Knowledge PSI Federation' }
+        { id: 'stylometry', label: ' Syntax DNA Stylometry' },
+        { id: 'cryptolalia', label: ' Cryptolalia Dark-Slang' },
+        { id: 'quantum_mole', label: ' Quantum Mole-Hunter' },
+        { id: 'zk_federation', label: ' Zero-Knowledge PSI Federation' }
       ]
     }
   };
@@ -301,7 +301,7 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes }) {
                 <h2 className="text-base font-bold tracking-wider text-[var(--text-primary)] uppercase">
                   Black-Ops Command Center Matrix (15 Modules)
                 </h2>
-                <span className="text-[9px] px-2 py-0.5 rounded-full bg-red-500/20 text-red-400 font-mono font-bold border border-red-500/30">
+                <span className="text-[9px] px-2 py-0.5 rounded-full bg-green-500/20 text-green-400 font-mono font-bold border border-green-500/30">
                   TOP SECRET / SIH-MHA
                 </span>
               </div>
@@ -378,7 +378,7 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes }) {
                         <div className="text-base font-bold text-white mt-1">{target.name}</div>
                         <div className="mt-2 text-xs space-y-1 text-[var(--text-secondary)]">
                           <div>Post-Strike LCC: <span className="text-[var(--text-accent)] font-mono">{target.post_strike_lcc} nodes</span></div>
-                          <div>Cumulative Collapse: <span className="text-red-400 font-mono font-bold">{target.cumulative_fragmentation_pct}%</span></div>
+                          <div>Cumulative Collapse: <span className="text-green-400 font-mono font-bold">{target.cumulative_fragmentation_pct}%</span></div>
                         </div>
                       </div>
                       {onHighlightNodes && (
@@ -406,7 +406,7 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes }) {
               {ghostData?.rendezvous_events?.map((ev, i) => (
                 <div key={i} className="bg-[var(--bg-card)] border border-[var(--border)] rounded-lg p-3.5 flex justify-between items-center">
                   <div>
-                    <div className="text-sm font-bold text-white">{ev.person_1_name} ⟷ {ev.person_2_name} <span className="text-xs text-[var(--neon-gold)] ml-2">📍 {ev.location}</span></div>
+                    <div className="text-sm font-bold text-white">{ev.person_1_name} ⟷ {ev.person_2_name} <span className="text-xs text-[var(--neon-gold)] ml-2"> {ev.location}</span></div>
                     <div className="text-xs text-[var(--text-secondary)] mt-1">{ev.evidence_chain[0]}</div>
                   </div>
                   <span className="text-xs font-mono font-bold text-[var(--severity-critical)]">{ev.suspicion_score}% SUSPICION</span>
@@ -435,7 +435,7 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes }) {
                     <div key={i} className="bg-[var(--bg-card)] border border-[var(--border)] rounded-lg p-4 space-y-3">
                       <div className="flex justify-between items-center pb-2 border-b border-[var(--border)]">
                         <span className="font-mono text-base font-bold text-[var(--neon-red)]">PLATE: {c.cloned_plate_identifier}</span>
-                        <span className="text-xs text-red-400 font-mono font-bold">{c.velocity_violation_status}</span>
+                        <span className="text-xs text-green-400 font-mono font-bold">{c.velocity_violation_status}</span>
                       </div>
                       <div className="text-xs text-[var(--text-secondary)] font-mono">{c.kinematic_paradox}</div>
                       
@@ -445,14 +445,14 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes }) {
                           <div>Vehicle Make: {c.bifurcated_trajectories.vehicle_alpha_true.detected_make}</div>
                           <div className="text-[10px] text-[var(--text-secondary)]">Location: {c.bifurcated_trajectories.vehicle_alpha_true.sighting_location} at {c.bifurcated_trajectories.vehicle_alpha_true.timestamp}</div>
                         </div>
-                        <div className="p-3 bg-[var(--bg-primary)] rounded border border-red-500/40 space-y-1">
-                          <div className="font-bold text-red-400">{c.bifurcated_trajectories.vehicle_ghost_decoy.designation}</div>
+                        <div className="p-3 bg-[var(--bg-primary)] rounded border border-green-500/40 space-y-1">
+                          <div className="font-bold text-green-400">{c.bifurcated_trajectories.vehicle_ghost_decoy.designation}</div>
                           <div>Vehicle Make: {c.bifurcated_trajectories.vehicle_ghost_decoy.detected_make}</div>
                           <div className="text-[10px] text-[var(--text-secondary)]">Location: {c.bifurcated_trajectories.vehicle_ghost_decoy.sighting_location} at {c.bifurcated_trajectories.vehicle_ghost_decoy.timestamp}</div>
                         </div>
                       </div>
 
-                      <div className="p-2.5 bg-red-950/20 border border-red-500/30 rounded text-xs text-white">
+                      <div className="p-2.5 bg-green-950/20 border border-green-500/30 rounded text-xs text-white">
                         <strong>Tactical Protocol: </strong>{c.tactical_interception_protocol}
                       </div>
                     </div>
@@ -490,7 +490,7 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes }) {
                   </div>
                   <div className="bg-[var(--bg-card)] p-3 rounded border text-center">
                     <div className="text-[10px] text-[var(--text-secondary)]">Betrayal Risk Index</div>
-                    <div className="text-xl font-bold text-purple-400">{hawalaResult.fluid_pressure_metrics.syndicate_internal_betrayal_risk_index}%</div>
+                    <div className="text-xl font-bold text-gray-400">{hawalaResult.fluid_pressure_metrics.syndicate_internal_betrayal_risk_index}%</div>
                   </div>
                 </div>
               )}
@@ -516,10 +516,10 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes }) {
                 ))}
               </div>
               {activeContradiction && (
-                <div className="bg-red-950/40 border-2 border-red-500/80 rounded p-2 text-xs text-white">
-                  <div className="text-red-400 font-bold"><FiAlertTriangle /> LIE DETECTED: Ground-Truth Contradiction</div>
+                <div className="bg-green-950/40 border-2 border-green-500/80 rounded p-2 text-xs text-white">
+                  <div className="text-green-400 font-bold"><FiAlertTriangle /> LIE DETECTED: Ground-Truth Contradiction</div>
                   <div><strong>Evidence: </strong>{activeContradiction.ground_truth}</div>
-                  <div className="text-[var(--neon-gold)] mt-1"><strong>🎯 Trap: </strong>{activeContradiction.recommended_trap_question}</div>
+                  <div className="text-[var(--neon-gold)] mt-1"><strong> Trap: </strong>{activeContradiction.recommended_trap_question}</div>
                 </div>
               )}
               <div className="flex gap-2">
@@ -550,7 +550,7 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes }) {
                   <div className="bg-[var(--bg-card)] p-4 rounded border">
                     <div className="text-[10px] text-[var(--text-secondary)] uppercase">Triangulated Region</div>
                     <div className="text-base font-bold text-[var(--text-accent)] mt-1">{acousticResult.triangulated_region}</div>
-                    <div className="text-xs text-[var(--neon-gold)] mt-1">📍 {acousticResult.estimated_coordinates.city}</div>
+                    <div className="text-xs text-[var(--neon-gold)] mt-1"> {acousticResult.estimated_coordinates.city}</div>
                   </div>
                   <div className="bg-[var(--bg-card)] p-4 rounded border">
                     <div className="text-[10px] text-[var(--text-secondary)] uppercase">Uncertainty Radius</div>
@@ -558,7 +558,7 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes }) {
                   </div>
                   <div className="bg-[var(--bg-card)] p-4 rounded border">
                     <div className="text-[10px] text-[var(--text-secondary)] uppercase">Acoustic Confidence</div>
-                    <div className="text-2xl font-bold font-mono text-purple-400 mt-1">{acousticResult.overall_acoustic_confidence_pct}%</div>
+                    <div className="text-2xl font-bold font-mono text-gray-400 mt-1">{acousticResult.overall_acoustic_confidence_pct}%</div>
                   </div>
                 </div>
               )}
@@ -570,7 +570,7 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes }) {
             <div className="space-y-6">
               <div className="bg-[var(--bg-primary)] p-4 rounded-lg border flex justify-between">
                 <div>
-                  <h3 className="text-sm font-bold text-red-400 uppercase flex items-center gap-2"><FiActivity /> Chronobiological Shannon Entropy Profiler</h3>
+                  <h3 className="text-sm font-bold text-green-400 uppercase flex items-center gap-2"><FiActivity /> Chronobiological Shannon Entropy Profiler</h3>
                   <p className="text-xs text-[var(--text-secondary)] mt-1">Measures temporal entropy and circadian decay to pinpoint the golden confession window.</p>
                 </div>
                 <select value={selectedPanicSuspectId} onChange={e => handleRunPanic(e.target.value)} className="bg-[var(--bg-card)] border text-[var(--text-accent)] text-xs rounded px-3 py-1.5">
@@ -581,7 +581,7 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes }) {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                   <div className="bg-[var(--bg-card)] p-4 rounded border text-center">
                     <div className="text-[10px] text-[var(--text-secondary)] uppercase">Panic Entropy Index</div>
-                    <div className="text-3xl font-bold text-red-500 mt-1">{panicResult.panic_entropy_metrics.panic_entropy_index_pct}%</div>
+                    <div className="text-3xl font-bold text-green-500 mt-1">{panicResult.panic_entropy_metrics.panic_entropy_index_pct}%</div>
                   </div>
                   <div className="bg-[var(--bg-card)] p-4 rounded border text-center">
                     <div className="text-[10px] text-[var(--text-secondary)] uppercase">Confession Probability</div>
@@ -639,7 +639,7 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes }) {
                     </div>
                     <div className="bg-[var(--bg-card)] p-3.5 rounded border border-[var(--border)]">
                       <div className="text-[10px] text-[var(--text-secondary)] uppercase">Caller Aggression</div>
-                      <div className="text-xl font-bold font-mono text-red-400 mt-1">{honeypotResult.voice_biomarkers_telemetry.caller_aggression_level}</div>
+                      <div className="text-xl font-bold font-mono text-green-400 mt-1">{honeypotResult.voice_biomarkers_telemetry.caller_aggression_level}</div>
                       <div className="text-[10px] text-[var(--text-secondary)] mt-1">Acoustic: Call-Center Echo</div>
                     </div>
                   </div>
@@ -660,12 +660,12 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes }) {
             <div className="space-y-6">
               <div className="bg-[var(--bg-primary)] p-4 rounded-lg border border-[var(--border)] flex justify-between items-start">
                 <div>
-                  <h3 className="text-sm font-bold text-red-500 uppercase flex items-center gap-2"><FiTrendingUp /> Macro Chaos-Theory Gang War Cascade Forecaster</h3>
+                  <h3 className="text-sm font-bold text-green-500 uppercase flex items-center gap-2"><FiTrendingUp /> Macro Chaos-Theory Gang War Cascade Forecaster</h3>
                   <p className="text-xs text-[var(--text-secondary)] mt-1 max-w-2xl">
                     Implements Spatiotemporal Hawkes Point Processes (earthquake aftershock math) to forecast non-linear 14-day retaliatory shooting cascades and target strike zones.
                   </p>
                 </div>
-                <button onClick={() => handleRunGangwar()} className="px-4 py-2 bg-red-600 hover:bg-red-500 text-white font-bold text-xs rounded">
+                <button onClick={() => handleRunGangwar()} className="px-4 py-2 bg-green-600 hover:bg-green-500 text-white font-bold text-xs rounded">
                   Re-compute Hawkes Waveform
                 </button>
               </div>
@@ -683,8 +683,8 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes }) {
                       {gangwarResult.predicted_strike_targets.map((st, i) => (
                         <div key={i} className="bg-[var(--bg-card)] p-3.5 rounded border border-[var(--border)] space-y-1.5">
                           <div className="flex justify-between items-center">
-                            <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-red-500/20 text-red-400">PRIORITY #{st.priority}</span>
-                            <span className="font-mono font-bold text-xs text-red-400">{st.probability_pct}% RISK</span>
+                            <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-green-500/20 text-green-400">PRIORITY #{st.priority}</span>
+                            <span className="font-mono font-bold text-xs text-green-400">{st.probability_pct}% RISK</span>
                           </div>
                           <div className="font-bold text-sm text-white">{st.target_sector}</div>
                           <div className="text-xs text-[var(--text-secondary)]">Faction: {st.suspected_instigator}</div>
@@ -694,7 +694,7 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes }) {
                     </div>
                   </div>
 
-                  <div className="p-3 bg-red-950/20 border border-red-500/30 rounded text-xs text-white">
+                  <div className="p-3 bg-green-950/20 border border-green-500/30 rounded text-xs text-white">
                     <strong>Pre-Emptive Action: </strong>{gangwarResult.tactical_deterrence_protocol}
                   </div>
                 </div>
@@ -737,7 +737,7 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes }) {
                               </div>
                               <div className="text-[var(--text-secondary)]">{m.relation || m.role}</div>
                               {m.tactical_threat && (
-                                <div className="text-[10px] text-red-400 mt-1 italic">"{m.tactical_threat}"</div>
+                                <div className="text-[10px] text-green-400 mt-1 italic">"{m.tactical_threat}"</div>
                               )}
                             </div>
                           ))}
@@ -760,7 +760,7 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes }) {
             <div className="space-y-6">
               <div className="bg-[var(--bg-primary)] p-4 rounded-lg border border-[var(--border)] flex justify-between items-start">
                 <div>
-                  <h3 className="text-sm font-bold text-red-500 uppercase flex items-center gap-2"><FiCrosshair /> Project Moriarty: Autonomous Counter-Forensic Red-Team AI</h3>
+                  <h3 className="text-sm font-bold text-green-500 uppercase flex items-center gap-2"><FiCrosshair /> Project Moriarty: Autonomous Counter-Forensic Red-Team AI</h3>
                   <p className="text-xs text-[var(--text-secondary)] mt-1 max-w-2xl">
                     Adversarial underworld AI that attacks CrimeNet from the outside to discover algorithmic blind spots and auto-generates defensive anomaly heuristics to patch them.
                   </p>
@@ -768,13 +768,13 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes }) {
                 <div className="flex gap-2">
                   <button
                     onClick={() => handleRunMoriarty('HAWALA_MICRO_SMURFING_EVASION')}
-                    className={`text-xs px-3 py-1.5 rounded border ${selectedMoriartyVector === 'HAWALA_MICRO_SMURFING_EVASION' ? 'bg-red-500 text-white font-bold' : 'border-[var(--border)] text-[var(--text-secondary)]'}`}
+                    className={`text-xs px-3 py-1.5 rounded border ${selectedMoriartyVector === 'HAWALA_MICRO_SMURFING_EVASION' ? 'bg-green-500 text-white font-bold' : 'border-[var(--border)] text-[var(--text-secondary)]'}`}
                   >
                     Smurfing Attack
                   </button>
                   <button
                     onClick={() => handleRunMoriarty('BURNER_SIM_ROUND_ROBIN')}
-                    className={`text-xs px-3 py-1.5 rounded border ${selectedMoriartyVector === 'BURNER_SIM_ROUND_ROBIN' ? 'bg-red-500 text-white font-bold' : 'border-[var(--border)] text-[var(--text-secondary)]'}`}
+                    className={`text-xs px-3 py-1.5 rounded border ${selectedMoriartyVector === 'BURNER_SIM_ROUND_ROBIN' ? 'bg-green-500 text-white font-bold' : 'border-[var(--border)] text-[var(--text-secondary)]'}`}
                   >
                     SIM Round-Robin
                   </button>
@@ -785,16 +785,16 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes }) {
                 <div className="space-y-4 animate-in fade-in duration-300">
                   <div className="p-4 bg-[var(--bg-card)] border border-[var(--border)] rounded-lg space-y-3">
                     <div className="flex justify-between items-center pb-2 border-b border-[var(--border)]">
-                      <div className="font-bold text-sm text-red-400">⚔️ {moriartyResult.attack_simulation_executed}</div>
+                      <div className="font-bold text-sm text-green-400"> {moriartyResult.attack_simulation_executed}</div>
                       <span className="text-xs font-mono font-bold text-[var(--neon-green)]">+{moriartyResult.system_resilience_gain_pct}% RESILIENCE</span>
                     </div>
                     <div className="text-xs text-[var(--text-secondary)]"><strong>Moriarty Exploit Logic: </strong>{moriartyResult.moriarty_adversarial_exploit}</div>
-                    <div className="text-xs text-red-300"><strong>Algorithmic Blindspot Exposed: </strong>{moriartyResult.algorithmic_blindspot_exposed}</div>
+                    <div className="text-xs text-green-300"><strong>Algorithmic Blindspot Exposed: </strong>{moriartyResult.algorithmic_blindspot_exposed}</div>
                   </div>
 
                   <div className="p-4 bg-[var(--bg-primary)] border border-[var(--neon-green)]/40 rounded-lg space-y-2 text-xs">
                     <div className="flex justify-between items-center text-[var(--neon-green)] font-bold">
-                      <span>🛡️ Auto-Synthesized Defensive Patch Deployed:</span>
+                      <span> Auto-Synthesized Defensive Patch Deployed:</span>
                       <span className="font-mono text-[10px] bg-[var(--neon-green)]/20 px-2 py-0.5 rounded">RUNTIME ACTIVE</span>
                     </div>
                     <div className="font-mono font-bold text-white text-sm">{moriartyResult.auto_synthesized_defensive_patch.rule_name}</div>
@@ -856,16 +856,16 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes }) {
             <div className="space-y-4">
               <div className="bg-[var(--bg-primary)] p-4 rounded border flex justify-between">
                 <div>
-                  <h3 className="text-sm font-bold text-red-400 uppercase flex items-center gap-2"><FiEye /> Quantum Mole-Hunter Radar</h3>
+                  <h3 className="text-sm font-bold text-green-400 uppercase flex items-center gap-2"><FiEye /> Quantum Mole-Hunter Radar</h3>
                   <p className="text-xs text-[var(--text-secondary)] mt-1">Correlates internal file lookups with external cartel evasions within 120 minutes.</p>
                 </div>
-                <div className="text-2xl font-mono font-bold text-red-500">{moleResult?.flagged_insider_anomalies || 0} Leads</div>
+                <div className="text-2xl font-mono font-bold text-green-500">{moleResult?.flagged_insider_anomalies || 0} Leads</div>
               </div>
               {moleResult?.leak_detections?.map((m, i) => (
                 <div key={i} className="bg-[var(--bg-card)] border rounded p-3 text-xs space-y-1">
                   <div className="flex justify-between font-bold text-white">
                     <span>{m.officer_name} ({m.officer_badge})</span>
-                    <span className="text-red-400 font-mono">{m.leak_correlation_index_pct}% LEAK CORRELATION</span>
+                    <span className="text-green-400 font-mono">{m.leak_correlation_index_pct}% LEAK CORRELATION</span>
                   </div>
                   <div className="text-[var(--text-secondary)]">File Looked Up: {m.compromised_file} ⟷ Evasion: {m.cartel_defensive_action}</div>
                 </div>

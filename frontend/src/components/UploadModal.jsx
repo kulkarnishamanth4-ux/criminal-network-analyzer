@@ -117,7 +117,7 @@ export default function UploadModal({ onClose, onSuccess }) {
           )}
 
           {result?.error && (
-            <div className="mt-4 p-3 bg-red-500/10 border border-red-500/30 rounded text-red-500 text-sm text-center">
+            <div className="mt-4 p-3 bg-green-500/10 border border-green-500/30 rounded text-green-500 text-sm text-center">
               {result.error}
             </div>
           )}

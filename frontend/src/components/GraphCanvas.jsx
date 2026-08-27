@@ -289,7 +289,7 @@ export default function GraphCanvas({ elements, onNodeSelect, onClearSelection, 
     <div className="w-full h-full bg-[#05050f] absolute inset-0 z-0">
       {cyElements.length === 0 ? (
         <div className="flex flex-col items-center justify-center h-full text-center select-none">
-          <div className="text-6xl mb-6 opacity-20">🕸️</div>
+          <div className="text-6xl mb-6 opacity-20"></div>
           <h2 className="text-xl font-bold text-[var(--text-secondary)] mb-2">No Intelligence Data Loaded</h2>
           <p className="text-sm text-[var(--text-secondary)] opacity-60 max-w-md mb-6">
             Upload FIR documents, CDR logs, financial records, or vehicle data to begin building the criminal network graph.
