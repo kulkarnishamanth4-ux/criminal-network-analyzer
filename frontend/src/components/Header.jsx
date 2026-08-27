@@ -94,10 +94,13 @@ export default function Header({ onUploadClick, onSearchResultSelect, onExperime
         </button>
         <button 
           onClick={onUploadClick}
-          className="flex items-center gap-2 bg-[var(--bg-primary)] border border-[var(--text-accent)] text-[var(--text-accent)] px-4 py-1.5 rounded-md hover:bg-[var(--text-accent)] hover:text-[var(--bg-primary)] transition-all text-sm font-semibold"
+          className="specular-button specular-button--md"
         >
-          <FiUploadCloud />
-          <span>Data Ingestion</span>
+          <span className="specular-button__label">
+            <FiUploadCloud />
+            <span>Data Ingestion</span>
+          </span>
+          <div className="specular-button__fx"><canvas></canvas></div>
         </button>
       </div>
     </header>
