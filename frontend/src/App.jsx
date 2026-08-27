@@ -7,9 +7,11 @@ import UploadModal from './components/UploadModal';
 import NodeLegend from './components/NodeLegend';
 import PathFinder from './components/PathFinder';
 import ExperimentalLabsModal from './components/ExperimentalLabsModal';
+import LandingPage from './components/LandingPage';
 import { getFullGraph, getDashboardStats, getPredictedLinks } from './api/client';
 
 function App() {
+  const [showApp, setShowApp] = useState(false);
   const [selectedEntity, setSelectedEntity] = useState(null);
   const [graphData, setGraphData] = useState({ nodes: [], edges: [] });
   const [stats, setStats] = useState(null);
@@ -56,8 +58,10 @@ function App() {
   };
 
   useEffect(() => {
-    loadData();
-  }, []);
+    if (showApp) {
+      loadData();
+    }
+  }, [showApp]);
 
   const handleNodeSelect = (node) => {
     setSelectedEntity(node);
@@ -97,6 +101,10 @@ function App() {
     setHighlightPath(nodeIds.map(String));
     showToast(`Spotlighted ${nodeIds.length} tactical strike targets on canvas`, 'info');
   };
+
+  if (!showApp) {
+    return <LandingPage onEnter={() => setShowApp(true)} />;
+  }
 
   return (
     <div className="flex flex-col h-screen w-screen overflow-hidden bg-[var(--bg-primary)] text-[var(--text-primary)]">
