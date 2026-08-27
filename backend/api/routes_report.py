@@ -3,7 +3,7 @@ from fastapi.responses import HTMLResponse
 from sqlalchemy.orm import Session
 from backend.database.schema import get_db
 from backend.database.crud import get_dashboard_stats, get_all_anomalies
-from backend.database.models import Entity, Relationship, FIR
+from backend.database.models import FIR
 from backend.graph.builder import build_graph_from_db
 from backend.graph.algorithms import get_top_influencers, get_communities_summary
 from backend.graph.crime_predictor import predict_crime_types

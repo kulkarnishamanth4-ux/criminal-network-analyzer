@@ -61,9 +61,10 @@ def get_all_anomalies(db: Session) -> list[Anomaly]:
     return db.query(Anomaly).all()
 
 def get_dashboard_stats(db: Session) -> dict:
+    from sqlalchemy import func
     total_entities = db.query(Entity).count()
-    types = db.query(Entity.entity_type).distinct().all()
-    entities_by_type = {t[0]: db.query(Entity).filter(Entity.entity_type == t[0]).count() for t in types}
+    counts = db.query(Entity.entity_type, func.count(Entity.id)).group_by(Entity.entity_type).all()
+    entities_by_type = {t[0]: t[1] for t in counts}
     total_relationships = db.query(Relationship).count()
     communities_count = db.query(Entity.community_id).distinct().count()
     anomalies_count = db.query(Anomaly).count()
@@ -83,12 +84,11 @@ def get_entity_dossier(db: Session, entity_id: int) -> dict:
     if not entity:
         return {}
     rels = get_entity_relationships(db, entity_id)
-    firs = db.query(FIR).all() 
-    # naive matching for demo
-    matched_firs = [f for f in firs if f.raw_text and entity.name.lower() in f.raw_text.lower()]
+    # Push FIR text search to DB instead of loading all into memory
+    matched_firs = db.query(FIR).filter(FIR.raw_text.ilike(f"%{entity.name}%")).all()
     
     anoms = db.query(Anomaly).all()
-    related_anomalies = [a for a in anoms if entity_id in (a.entity_ids or [])]
+    related_anomalies = [a for a in anoms if a.entity_ids and entity_id in a.entity_ids]
 
     return {
         "entity": entity,

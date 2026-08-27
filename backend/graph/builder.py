@@ -2,7 +2,17 @@ import networkx as nx
 from sqlalchemy.orm import Session
 from backend.database.models import Entity, Relationship
 
-def build_graph_from_db(db: Session) -> nx.Graph:
+_cached_graph = None
+
+def invalidate_graph_cache():
+    global _cached_graph
+    _cached_graph = None
+
+def build_graph_from_db(db: Session, force_rebuild: bool = False) -> nx.Graph:
+    global _cached_graph
+    if _cached_graph is not None and not force_rebuild:
+        return _cached_graph
+
     G = nx.DiGraph()
     entities = db.query(Entity).all()
     for e in entities:
@@ -12,6 +22,7 @@ def build_graph_from_db(db: Session) -> nx.Graph:
     for r in relationships:
         G.add_edge(r.source_id, r.target_id, id=r.id, rel_type=r.rel_type, weight=r.weight, properties=r.properties, timestamp=r.timestamp)
         
+    _cached_graph = G
     return G
 
 def get_ego_network(G: nx.Graph, node_id: int, depth: int = 2) -> dict:

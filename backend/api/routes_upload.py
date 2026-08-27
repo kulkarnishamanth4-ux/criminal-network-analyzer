@@ -6,7 +6,7 @@ from backend.database import crud
 from backend.nlp.pipeline import extract_entities_from_text, classify_crime
 from backend.nlp.parsers import parse_cdr_csv, parse_financial_csv, parse_vehicle_csv
 from backend.main_helpers import compute_all_analytics
-import json
+
 import traceback
 
 router = APIRouter()
