@@ -120,3 +120,16 @@ body {
   gap: 0.5rem;
 }
 
+
+/* Ensure all interactive elements show pointing hand cursor */
+button, 
+[role="button"], 
+input[type="button"], 
+input[type="submit"], 
+input[type="reset"], 
+a,
+select,
+.cursor-pointer {
+  cursor: pointer !important;
+}
+
