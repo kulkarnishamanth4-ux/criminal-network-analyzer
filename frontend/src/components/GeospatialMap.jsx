@@ -64,34 +64,63 @@ export default function GeospatialMap({ elements, onNodeSelect, selectedEntity }
       }
     });
 
-    // 2. Attach non-location entities to locations they interact with
-    // e.g. "SPOTTED_AT"
+    // 2. Attach entities directly connected to locations
     const nodeCoords = { ...locations };
+    
+    // Pass 1: Direct location links (SPOTTED_AT)
     edges.forEach(e => {
       const data = e.data || e;
-      if (data.type === 'SPOTTED_AT') {
-        const source = nodes.find(n => (n.data?.id || n.id) === data.source);
-        const target = nodes.find(n => (n.data?.id || n.id) === data.target);
-        if (source && target) {
-          let sData = source.data || source;
-          let tData = target.data || target;
-          
-          if (locations[tData.id] && !locations[sData.id]) {
-            // Jitter the coordinates slightly so they don't overlap completely
-            const jx = (Math.random() - 0.5) * 0.01;
-            const jy = (Math.random() - 0.5) * 0.01;
-            const c = locations[tData.id].coords;
-            const newCoords = [c[0] + jx, c[1] + jy];
-            nodeCoords[sData.id] = { ...sData, coords: newCoords };
-            geoNodes.push({ ...sData, coords: newCoords });
-            
-            geoEdges.push({
-              id: data.id,
-              sourceCoords: newCoords,
-              targetCoords: c,
-              type: data.type
-            });
-          }
+      const source = nodes.find(n => (n.data?.id || n.id) === data.source);
+      const target = nodes.find(n => (n.data?.id || n.id) === data.target);
+      if (source && target) {
+        let sData = source.data || source;
+        let tData = target.data || target;
+        
+        // If target is a location and source is not yet placed
+        if (locations[tData.id] && !nodeCoords[sData.id]) {
+          const jx = (Math.random() - 0.5) * 0.05; // Slightly larger jitter
+          const jy = (Math.random() - 0.5) * 0.05;
+          const c = locations[tData.id].coords;
+          const newCoords = [c[0] + jx, c[1] + jy];
+          nodeCoords[sData.id] = { ...sData, coords: newCoords };
+          geoNodes.push({ ...sData, coords: newCoords });
+        }
+        // If source is a location and target is not yet placed
+        if (locations[sData.id] && !nodeCoords[tData.id]) {
+          const jx = (Math.random() - 0.5) * 0.05;
+          const jy = (Math.random() - 0.5) * 0.05;
+          const c = locations[sData.id].coords;
+          const newCoords = [c[0] + jx, c[1] + jy];
+          nodeCoords[tData.id] = { ...tData, coords: newCoords };
+          geoNodes.push({ ...tData, coords: newCoords });
+        }
+      }
+    });
+
+    // Pass 2: Inherited locations (e.g. Phone owned by Person at Location)
+    edges.forEach(e => {
+      const data = e.data || e;
+      const source = nodes.find(n => (n.data?.id || n.id) === data.source);
+      const target = nodes.find(n => (n.data?.id || n.id) === data.target);
+      if (source && target) {
+        let sData = source.data || source;
+        let tData = target.data || target;
+        
+        if (nodeCoords[tData.id] && !nodeCoords[sData.id]) {
+          const jx = (Math.random() - 0.5) * 0.03;
+          const jy = (Math.random() - 0.5) * 0.03;
+          const c = nodeCoords[tData.id].coords;
+          const newCoords = [c[0] + jx, c[1] + jy];
+          nodeCoords[sData.id] = { ...sData, coords: newCoords };
+          geoNodes.push({ ...sData, coords: newCoords });
+        }
+        if (nodeCoords[sData.id] && !nodeCoords[tData.id]) {
+          const jx = (Math.random() - 0.5) * 0.03;
+          const jy = (Math.random() - 0.5) * 0.03;
+          const c = nodeCoords[sData.id].coords;
+          const newCoords = [c[0] + jx, c[1] + jy];
+          nodeCoords[tData.id] = { ...tData, coords: newCoords };
+          geoNodes.push({ ...tData, coords: newCoords });
         }
       }
     });
@@ -99,7 +128,7 @@ export default function GeospatialMap({ elements, onNodeSelect, selectedEntity }
     // 3. For any edges between geolocated nodes, add a polyline
     edges.forEach(e => {
       const data = e.data || e;
-      if (data.type !== 'SPOTTED_AT' && nodeCoords[data.source] && nodeCoords[data.target]) {
+      if (nodeCoords[data.source] && nodeCoords[data.target]) {
         geoEdges.push({
           id: data.id,
           sourceCoords: nodeCoords[data.source].coords,
@@ -137,8 +166,9 @@ export default function GeospatialMap({ elements, onNodeSelect, selectedEntity }
         zoomControl={false}
       >
         <TileLayer
-          url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+          className="map-tiles"
         />
 
         {mapData.geoEdges.map(edge => (
@@ -177,6 +207,7 @@ export default function GeospatialMap({ elements, onNodeSelect, selectedEntity }
         .leaflet-popup-content-wrapper, .leaflet-popup-tip { background: #111; color: white; border: 1px solid #333; }
         .leaflet-popup-content { margin: 0; }
         .leaflet-popup-close-button { display: none; }
+        .map-tiles { filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%); }
       `}</style>
     </div>
   );
