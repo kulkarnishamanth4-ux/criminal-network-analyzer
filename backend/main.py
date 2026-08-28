@@ -1,9 +1,10 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from backend.config import CORS_ORIGINS
-from backend.database.schema import init_db, get_db
+from backend.database.schema import init_db, get_db, SessionLocal
 from backend.database.models import Base, Entity
 from backend.api import routes_upload, routes_network, routes_analytics, routes_search, routes_report, routes_experimental
+from scripts.seed_rich_data import seed_data
 
 app = FastAPI(title="CrimeNet Intelligence Platform")
 
@@ -25,4 +26,9 @@ app.include_router(routes_experimental.router, prefix="/api", tags=["Experimenta
 @app.on_event("startup")
 def startup_event():
     init_db()
-    # Can load initial synthetic data here if DB is empty
+    db = SessionLocal()
+    # If the database is empty, seed it with the rich narrative data
+    if db.query(Entity).first() is None:
+        print("Database is empty. Seeding rich synthetic narrative data...")
+        seed_data()
+    db.close()

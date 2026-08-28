@@ -156,6 +156,7 @@ def seed_data():
 
     db.commit()
     print("Database seeding completed successfully.")
+    db.close()
 
 if __name__ == "__main__":
     reset_database()
