@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FiUser, FiPhone, FiMapPin, FiBriefcase, FiDollarSign, FiActivity, FiChevronDown, FiChevronUp, FiAlertTriangle, FiTrendingUp, FiUsers, FiClock } from 'react-icons/fi';
+import { FiUser, FiPhone, FiMapPin, FiBriefcase, FiDollarSign, FiActivity, FiChevronDown, FiChevronUp, FiAlertTriangle, FiTrendingUp, FiUsers, FiClock, FiArrowRight } from 'react-icons/fi';
 import { getEntityDossier } from '../api/client';
 
 const getIcon = (type) => {
@@ -140,12 +140,16 @@ export default function EntityDossier({ entityData, onEntitySelect, onExpandNetw
               <span className="text-[var(--text-secondary)]">ID:</span>
               <span className="font-mono text-[10px] text-[var(--text-primary)]">{entity?.id}</span>
             </div>
-            {Object.entries(entity?.properties || {}).map(([key, val]) => (
-              <div key={key} className="flex justify-between text-xs">
-                <span className="text-[var(--text-secondary)] capitalize">{key.replace(/_/g, ' ')}:</span>
-                <span className="text-[var(--text-primary)] text-right max-w-[60%] truncate" title={String(val)}>{String(val)}</span>
-              </div>
-            ))}
+            {Object.keys(entity?.properties || {}).length === 0 ? (
+              <div className="text-[10px] text-[var(--text-secondary)] italic text-center py-2 opacity-50">No additional intelligence logged.</div>
+            ) : (
+              Object.entries(entity.properties).map(([key, val]) => (
+                <div key={key} className="flex justify-between text-xs">
+                  <span className="text-[var(--text-secondary)] capitalize">{key.replace(/_/g, ' ')}:</span>
+                  <span className="text-[var(--text-primary)] text-right max-w-[60%] truncate" title={String(val)}>{String(val)}</span>
+                </div>
+              ))
+            )}
           </div>
         </Section>
 
@@ -203,7 +207,9 @@ export default function EntityDossier({ entityData, onEntitySelect, onExpandNetw
                     <span className="text-[9px] px-1.5 py-0.5 rounded bg-[var(--bg-card-hover)] text-[var(--text-accent)] shrink-0 font-mono tracking-tight">{rel.type}</span>
                     <span className="truncate text-[var(--text-primary)] font-medium group-hover:text-[var(--text-accent)]">{rel.target_name || `Entity #${rel.target_id}`}</span>
                   </div>
-                  <span className="text-[10px] text-[var(--text-secondary)] opacity-60 group-hover:opacity-100">Inspect →</span>
+                  <span className="text-[10px] text-[var(--text-secondary)] opacity-60 group-hover:opacity-100 flex items-center gap-1 border border-transparent group-hover:border-[var(--text-accent)] group-hover:text-[var(--text-accent)] px-1.5 py-0.5 rounded transition-all">
+                    INSPECT <FiArrowRight size={10} />
+                  </span>
                 </li>
               ))}
               {relationships.length > 15 && (

@@ -92,7 +92,13 @@ def get_entity_dossier(db: Session, entity_id: int) -> dict:
 
     return {
         "entity": entity,
-        "relationships": [{"id": r["relationship"].id, "type": r["relationship"].rel_type, "related_name": r["related_entity"].name, "direction": r["direction"]} for r in rels],
+        "relationships": [{
+            "id": r["relationship"].id, 
+            "type": r["relationship"].rel_type, 
+            "target_id": r["related_entity"].id,
+            "target_name": r["related_entity"].name, 
+            "direction": r["direction"]
+        } for r in rels],
         "firs": matched_firs,
         "anomalies": related_anomalies
     }
