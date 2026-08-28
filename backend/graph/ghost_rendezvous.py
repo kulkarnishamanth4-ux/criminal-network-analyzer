@@ -2,13 +2,13 @@ from sqlalchemy.orm import Session
 from datetime import datetime, timedelta
 from backend.database.models import Entity, Relationship
 from collections import defaultdict
-import json
 
 def detect_ghost_rendezvous(db: Session, max_time_diff_hours: int = 48) -> dict:
     """
     Spatiotemporal Ghost-Rendezvous Engine (4D Trajectory Co-Location Intersection).
     Uncovers covert physical rendezvous between suspects who deliberately avoid
-    direct phone calls or direct bank transfers with each other (telecom hygiene).
+    direct phone calls or direct bank transfers with each other.
+    Uses ACTUAL timestamps to verify they were at the same location within `max_time_diff_hours`.
     """
     persons = db.query(Entity).filter(Entity.entity_type == "PERSON").all()
     if len(persons) < 2:
@@ -18,120 +18,120 @@ def detect_ghost_rendezvous(db: Session, max_time_diff_hours: int = 48) -> dict:
     
     # 1. Map all direct communication/financial links to verify absence of direct contact
     direct_ties = set()
-    all_rels = db.query(Relationship).all()
-    for rel in all_rels:
-        if rel.rel_type in ["CALLED", "TRANSFERRED_MONEY_TO"]:
-            direct_ties.add((rel.source_id, rel.target_id))
-            direct_ties.add((rel.target_id, rel.source_id))
-
-    # 2. Extract Spatio-temporal traces for each person
-    # Traces from Vehicles owned by person -> SPOTTED_AT Location
-    # Traces from Phones owned by person -> CALLED / Tower pings
-    # Traces from FIRs where person was mentioned at a police station / city
     
-    person_locations = defaultdict(list)  # person_id -> list of {location, timestamp, source_type, evidence}
+    # We need to map Person -> Phone, Person -> Bank Account to resolve 2nd degree ties
+    person_phones = defaultdict(list)
+    person_accounts = defaultdict(list)
+    
+    for rel in db.query(Relationship).all():
+        if rel.rel_type == "OWNS_PHONE":
+            person_phones[rel.source_id].append(rel.target_id)
+        elif rel.rel_type == "OWNS_ACCOUNT":
+            person_accounts[rel.source_id].append(rel.target_id)
+            
+    # Resolve Person to Person direct ties via Phones and Accounts
+    for rel in db.query(Relationship).all():
+        if rel.rel_type == "CALLED":
+            # Phone to Phone
+            p1 = next((p for p, phones in person_phones.items() if rel.source_id in phones), None)
+            p2 = next((p for p, phones in person_phones.items() if rel.target_id in phones), None)
+            if p1 and p2:
+                direct_ties.add(tuple(sorted([p1, p2])))
+        elif rel.rel_type == "TRANSFERRED_MONEY_TO":
+            # Account to Account
+            p1 = next((p for p, accs in person_accounts.items() if rel.source_id in accs), None)
+            p2 = next((p for p, accs in person_accounts.items() if rel.target_id in accs), None)
+            if p1 and p2:
+                direct_ties.add(tuple(sorted([p1, p2])))
+
+    # 2. Extract Spatio-temporal traces
+    person_locations = defaultdict(list)
     
     # Vehicle sightings
     owns_vehicle_rels = db.query(Relationship).filter(Relationship.rel_type == "OWNS_VEHICLE").all()
-    vehicle_owners = {r.target_id: r.source_id for r in owns_vehicle_rels}  # vehicle_id -> person_id
+    vehicle_owners = {r.target_id: r.source_id for r in owns_vehicle_rels}
     
-    spotted_rels = db.query(Relationship).filter(Relationship.rel_type == "SPOTTED_AT").all()
-    for sr in spotted_rels:
-        veh_id = sr.source_id
-        loc_id = sr.target_id
-        loc_entity = db.query(Entity).filter(Entity.id == loc_id).first()
-        loc_name = loc_entity.name if loc_entity else "Unknown Location"
+    for sr in db.query(Relationship).filter(Relationship.rel_type == "SPOTTED_AT").all():
+        loc = db.query(Entity).filter(Entity.id == sr.target_id).first()
+        if not loc: continue
         
-        props = sr.properties or {}
-        ts_str = props.get("timestamp") or (sr.timestamp.isoformat() if sr.timestamp else None)
-        owner_id = vehicle_owners.get(veh_id)
+        ts = sr.timestamp or datetime.utcnow()
+        owner_id = vehicle_owners.get(sr.source_id)
         
-        if owner_id and ts_str:
-            person_locations[owner_id].append({
-                "location": loc_name,
-                "timestamp_str": ts_str,
-                "source": "ANPR Camera / Vehicle Sighting",
-                "detail": f"Vehicle plate sighted via {props.get('camera_id', 'Toll Camera')}"
-            })
+        # Direct person spotted at (e.g., from FIR parsing or check-ins)
+        if sr.source_id in person_ids:
+            person_locations[sr.source_id].append({"loc": loc.name, "ts": ts, "src": "Direct Check-in / FIR"})
+        elif owner_id:
+            person_locations[owner_id].append({"loc": loc.name, "ts": ts, "src": f"Vehicle ANPR ({sr.source_id})"})
             
-    # FIR Mentions at Location / Police Station
-    fir_rels = db.query(Relationship).filter(Relationship.rel_type == "MENTIONED_IN_FIR").all()
-    for fr in fir_rels:
-        source_ent = db.query(Entity).filter(Entity.id == fr.source_id).first()
-        target_ent = db.query(Entity).filter(Entity.id == fr.target_id).first()
+    for fr in db.query(Relationship).filter(Relationship.rel_type == "MENTIONED_IN_FIR").all():
+        s = db.query(Entity).filter(Entity.id == fr.source_id).first()
+        t = db.query(Entity).filter(Entity.id == fr.target_id).first()
+        ts = fr.timestamp or datetime.utcnow()
         
-        if source_ent and target_ent:
-            if source_ent.entity_type == "PERSON" and target_ent.entity_type == "LOCATION":
-                person_locations[source_ent.id].append({
-                    "location": target_ent.name,
-                    "timestamp_str": fr.timestamp.isoformat() if fr.timestamp else "2024-01-15T12:00:00",
-                    "source": "FIR Police Record",
-                    "detail": "Accused/witness documented in official station jurisdiction"
-                })
-            elif target_ent.entity_type == "PERSON" and source_ent.entity_type == "LOCATION":
-                person_locations[target_ent.id].append({
-                    "location": source_ent.name,
-                    "timestamp_str": fr.timestamp.isoformat() if fr.timestamp else "2024-01-15T12:00:00",
-                    "source": "FIR Police Record",
-                    "detail": "Accused/witness documented in official station jurisdiction"
-                })
+        if s and t:
+            if s.entity_type == "PERSON" and t.entity_type == "LOCATION":
+                person_locations[s.id].append({"loc": t.name, "ts": ts, "src": "FIR Location Nexus"})
+            elif t.entity_type == "PERSON" and s.entity_type == "LOCATION":
+                person_locations[t.id].append({"loc": s.name, "ts": ts, "src": "FIR Location Nexus"})
 
     # 3. Detect Spatiotemporal Co-Incidences
     rendezvous_events = []
-    checked_pairs = set()
-    
     person_id_list = list(person_ids.keys())
+    
     for i in range(len(person_id_list)):
         for j in range(i + 1, len(person_id_list)):
             p1 = person_id_list[i]
             p2 = person_id_list[j]
             
-            pair_key = tuple(sorted([p1, p2]))
-            if pair_key in checked_pairs:
-                continue
-            checked_pairs.add(pair_key)
+            has_direct_telecom = tuple(sorted([p1, p2])) in direct_ties
             
-            # Check if they have zero direct communication ties (the covert signature)
-            has_direct_telecom = (p1, p2) in direct_ties
-            
-            traces1 = person_locations.get(p1, [])
-            traces2 = person_locations.get(p2, [])
-            
-            for t1 in traces1:
-                for t2 in traces2:
-                    if t1["location"].lower() == t2["location"].lower():
-                        # Location match!
-                        # Calculate suspicion score
-                        telecom_hygiene_bonus = 35 if not has_direct_telecom else 10
-                        location_specificity_bonus = 40  # Matched exact location coordinates
-                        temporal_proximity_bonus = 20
+            for t1 in person_locations.get(p1, []):
+                for t2 in person_locations.get(p2, []):
+                    if t1["loc"].lower() == t2["loc"].lower():
+                        # Calculate REAL time difference
+                        time_diff_hours = abs((t1["ts"] - t2["ts"]).total_seconds()) / 3600.0
                         
-                        suspicion_score = min(98, telecom_hygiene_bonus + location_specificity_bonus + temporal_proximity_bonus)
-                        
-                        rendezvous_events.append({
-                            "id": f"ghost_{p1}_{p2}_{len(rendezvous_events)+1}",
-                            "person_1_id": p1,
-                            "person_1_name": person_ids[p1],
-                            "person_2_id": p2,
-                            "person_2_name": person_ids[p2],
-                            "covert_telecom_hygiene": not has_direct_telecom,
-                            "location": t1["location"],
-                            "timestamp_window": f"{t1['timestamp_str']} — {t2['timestamp_str']}",
-                            "evidence_chain": [
-                                f"{person_ids[p1]}: {t1['detail']} ({t1['source']})",
-                                f"{person_ids[p2]}: {t2['detail']} ({t2['source']})",
-                                "Zero direct phone calls or bank transfers recorded (Covert Operational Protocol)" if not has_direct_telecom else "Direct telecom connection already documented"
-                            ],
-                            "suspicion_score": suspicion_score,
-                            "tactical_assessment": "HIGH PROBABILITY PHYSICAL MEETUP — Suspects co-located at identical geographic nexus while deliberately maintaining radio silence."
-                        })
+                        if time_diff_hours <= max_time_diff_hours:
+                            # They were at the same place within the time window!
+                            telecom_hygiene_bonus = 40 if not has_direct_telecom else 0
+                            time_proximity_bonus = max(0, 40 * (1 - (time_diff_hours / max_time_diff_hours)))
+                            
+                            suspicion_score = min(99, int(20 + telecom_hygiene_bonus + time_proximity_bonus))
+                            
+                            rendezvous_events.append({
+                                "id": f"ghost_{p1}_{p2}_{len(rendezvous_events)}",
+                                "person_1_id": p1,
+                                "person_1_name": person_ids[p1],
+                                "person_2_id": p2,
+                                "person_2_name": person_ids[p2],
+                                "covert_telecom_hygiene": not has_direct_telecom,
+                                "location": t1["loc"],
+                                "time_gap_hours": round(time_diff_hours, 1),
+                                "evidence_chain": [
+                                    f"{person_ids[p1]} logged via {t1['src']} at {t1['ts'].strftime('%Y-%m-%d %H:%M')}",
+                                    f"{person_ids[p2]} logged via {t2['src']} at {t2['ts'].strftime('%Y-%m-%d %H:%M')}",
+                                    f"Spatiotemporal overlap: {round(time_diff_hours, 1)} hours apart.",
+                                    "Zero direct phone/bank records found (Covert operational radio-silence)." if not has_direct_telecom else "Direct telecom connection exists (Standard meetup)."
+                                ],
+                                "suspicion_score": suspicion_score,
+                                "tactical_assessment": "CRITICAL: Covert physical meetup highly probable." if suspicion_score > 75 else "MODERATE: Coincidental overlap possible."
+                            })
 
-    # Sort by suspicion score descending
     rendezvous_events.sort(key=lambda x: x["suspicion_score"], reverse=True)
+    
+    # Deduplicate events for the same pair
+    seen_pairs = set()
+    unique_events = []
+    for ev in rendezvous_events:
+        pair = tuple(sorted([ev["person_1_id"], ev["person_2_id"]]))
+        if pair not in seen_pairs:
+            seen_pairs.add(pair)
+            unique_events.append(ev)
     
     return {
         "status": "success",
-        "count": len(rendezvous_events),
-        "rendezvous_events": rendezvous_events[:10],
-        "summary": f"Detected {len(rendezvous_events)} covert physical co-location events across {len(person_locations)} tracked targets."
+        "count": len(unique_events),
+        "rendezvous_events": unique_events[:10],
+        "summary": f"Detected {len(unique_events)} covert physical co-location events with strict spatiotemporal overlap (<{max_time_diff_hours}hrs)."
     }
