@@ -19,19 +19,10 @@ def get_entity_ruler_patterns() -> list[dict]:
     
     cities = [line.split(',')[0].strip() for line in cities_lines]
     
-    # 1. PERSON patterns from first names
-    for fn in first_names:
-        patterns.append({
-            "label": "PERSON",
-            "pattern": [{"LOWER": fn.lower()}, {"IS_ALPHA": True}]
-        })
-        patterns.append({
-            "label": "PERSON",
-            "pattern": [{"LOWER": fn.lower()}, {"IS_ALPHA": True}, {"IS_ALPHA": True}]
-        })
-
-    # Add last names as well for robustness if needed, but not strictly requested
-    # We will add standalone first name just in case
+    # 1. PERSON patterns
+    # Instead of greedy arbitrary matching, we match precise first names,
+    # last names, or specific First Name + Last Name combinations.
+    # This prevents false positives like "Rahul went".
     for fn in first_names:
         patterns.append({"label": "PERSON", "pattern": [{"LOWER": fn.lower()}]})
         

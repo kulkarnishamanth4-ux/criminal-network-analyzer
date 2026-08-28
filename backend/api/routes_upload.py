@@ -23,7 +23,10 @@ async def upload_fir(file: UploadFile = File(...), db: Session = Depends(get_db)
         if not text.strip():
             return JSONResponse(status_code=400, content={"status": "error", "message": "Empty file uploaded"})
         
-        extracted = extract_entities_from_text(text)
+        # Get existing entities for fuzzy matching (typo snapping)
+        existing_entities = {e.name for e in db.query(crud.Entity).all()}
+        extracted = extract_entities_from_text(text, known_entities=existing_entities)
+        
         classification = classify_crime(text)
         
         fir = crud.create_fir(
