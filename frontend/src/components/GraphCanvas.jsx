@@ -33,36 +33,55 @@ const stylesheet = [
     'transition-duration': '0.2s',
   }},
 
-  // ── NODE TYPES ──
+  // ── ICONS (URL Encoded SVGs) ──
+  // Note: %23 is # in URL encoding
+  // PERSON (Red)
   { selector: 'node[type="PERSON"]', style: {
-    'background-color': '#ff6b6b',
-    'border-color': '#ff6b6b40',
+    'background-image': 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%23ff6b6b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>',
+    'background-fit': 'contain',
+    'background-opacity': 0,
+    'border-width': 0,
     'shape': 'ellipse',
   }},
+  // PHONE (Teal)
   { selector: 'node[type="PHONE"]', style: {
-    'background-color': '#4ecdc4',
-    'border-color': '#4ecdc440',
-    'shape': 'diamond',
+    'background-image': 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%234ecdc4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>',
+    'background-fit': 'contain',
+    'background-opacity': 0,
+    'border-width': 0,
+    'shape': 'rectangle',
   }},
+  // LOCATION (Blue)
   { selector: 'node[type="LOCATION"]', style: {
-    'background-color': '#45b7d1',
-    'border-color': '#45b7d140',
-    'shape': 'round-rectangle',
+    'background-image': 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%2345b7d1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>',
+    'background-fit': 'contain',
+    'background-opacity': 0,
+    'border-width': 0,
+    'shape': 'rectangle',
   }},
+  // VEHICLE (Green)
   { selector: 'node[type="VEHICLE"]', style: {
-    'background-color': '#96c93d',
-    'border-color': '#96c93d40',
-    'shape': 'pentagon',
+    'background-image': 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%2396c93d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 16H9m10 0h3v-3.15a1 1 0 0 0-.84-.99L16 11l-2.7-3.6a2 2 0 0 0-1.6-.8H8.3a2 2 0 0 0-1.6.8L4 11l-5.16.86a1 1 0 0 0-.84.99V16h3m10 0a2 2 0 1 0-4 0 2 2 0 0 0 4 0zm-10 0a2 2 0 1 0-4 0 2 2 0 0 0 4 0z"></path></svg>',
+    'background-fit': 'contain',
+    'background-opacity': 0,
+    'border-width': 0,
+    'shape': 'rectangle',
   }},
+  // BANK ACCOUNT (Gold)
   { selector: 'node[type="BANK_ACCOUNT"]', style: {
-    'background-color': '#f9ca24',
-    'border-color': '#f9ca2440',
-    'shape': 'hexagon',
+    'background-image': 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%23f9ca24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>',
+    'background-fit': 'contain',
+    'background-opacity': 0,
+    'border-width': 0,
+    'shape': 'rectangle',
   }},
+  // ORGANIZATION (Purple)
   { selector: 'node[type="ORGANIZATION"]', style: {
-    'background-color': '#a29bfe',
-    'border-color': '#a29bfe40',
-    'shape': 'round-rectangle',
+    'background-image': 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%23a29bfe" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect><path d="M9 22v-4h6v4"></path><path d="M8 6h.01"></path><path d="M16 6h.01"></path><path d="M12 6h.01"></path><path d="M12 10h.01"></path><path d="M12 14h.01"></path><path d="M16 10h.01"></path><path d="M16 14h.01"></path><path d="M8 10h.01"></path><path d="M8 14h.01"></path></svg>',
+    'background-fit': 'contain',
+    'background-opacity': 0,
+    'border-width': 0,
+    'shape': 'rectangle',
   }},
 
   // ── HIGH-RISK GLOW ──
