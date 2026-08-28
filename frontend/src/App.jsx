@@ -8,10 +8,13 @@ import NodeLegend from './components/NodeLegend';
 import PathFinder from './components/PathFinder';
 import ExperimentalLabsModal from './components/ExperimentalLabsModal';
 import LandingPage from './components/LandingPage';
+import GeospatialMap from './components/GeospatialMap';
+import { FiShare2, FiMap } from 'react-icons/fi';
 import { getFullGraph, getDashboardStats, getPredictedLinks } from './api/client';
 
 function App() {
   const [showApp, setShowApp] = useState(false);
+  const [viewMode, setViewMode] = useState('network');
   const [selectedEntity, setSelectedEntity] = useState(null);
   const [graphData, setGraphData] = useState({ nodes: [], edges: [] });
   const [stats, setStats] = useState(null);
@@ -117,21 +120,45 @@ function App() {
       <div className="flex flex-1 overflow-hidden relative">
         <LeftPanel stats={stats} onEntitySelect={handleNodeSelect} />
         
-        <main className="flex-1 relative flex">
+        <main className="flex-1 relative flex flex-col bg-[#05050f]">
+          {/* View Toggle */}
+          <div className="absolute top-4 right-4 z-50 flex bg-[#111] p-1 rounded-lg border border-[#333] shadow-lg">
+            <button 
+              onClick={() => setViewMode('network')}
+              className={`flex items-center gap-2 px-3 py-1.5 text-xs font-bold rounded-md transition-colors ${viewMode === 'network' ? 'bg-[var(--text-accent)] text-[#000]' : 'text-gray-400 hover:text-white'}`}
+            >
+              <FiShare2 size={14} /> Network View
+            </button>
+            <button 
+              onClick={() => setViewMode('map')}
+              className={`flex items-center gap-2 px-3 py-1.5 text-xs font-bold rounded-md transition-colors ${viewMode === 'map' ? 'bg-[var(--text-accent)] text-[#000]' : 'text-gray-400 hover:text-white'}`}
+            >
+              <FiMap size={14} /> Map View
+            </button>
+          </div>
+
           {isLoading ? (
             <div className="flex-1 flex items-center justify-center">
               <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[var(--text-accent)]"></div>
             </div>
+          ) : viewMode === 'network' ? (
+            <>
+              <GraphCanvas 
+                elements={graphData} 
+                onNodeSelect={handleNodeSelect} 
+                onClearSelection={handleClearSelection}
+                highlightPath={highlightPath}
+              />
+              <NodeLegend />
+              <PathFinder onPathFound={handlePathFound} />
+            </>
           ) : (
-            <GraphCanvas 
+            <GeospatialMap 
               elements={graphData} 
-              onNodeSelect={handleNodeSelect} 
-              onClearSelection={handleClearSelection}
-              highlightPath={highlightPath}
+              onNodeSelect={handleNodeSelect}
+              selectedEntity={selectedEntity}
             />
           )}
-          <NodeLegend />
-          <PathFinder onPathFound={handlePathFound} />
         </main>
         
         <RightPanel 
