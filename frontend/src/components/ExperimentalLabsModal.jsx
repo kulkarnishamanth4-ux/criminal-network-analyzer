@@ -300,11 +300,8 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes }) {
             <div>
               <div className="flex items-center gap-2">
                 <h2 className="text-base font-bold tracking-wider text-[var(--text-primary)] uppercase">
-                  Black-Ops Command Center Matrix (15 Modules)
+                  Command Center
                 </h2>
-                <span className="text-[9px] px-2 py-0.5 rounded-full bg-green-500/20 text-green-400 font-mono font-bold border border-green-500/30">
-                  TOP SECRET / SIH-MHA
-                </span>
               </div>
               <p className="text-xs text-[var(--text-secondary)]">
                 National Security Suite: Spectral Graph Decapitation, Hawkes Chaos Point Processes, Acoustic Forensics & ZK-PSI Federation
@@ -312,13 +309,13 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes }) {
             </div>
           </div>
 
-          <button onClick={onClose} className="text-[var(--text-secondary)] hover:text-white p-2 rounded-lg hover:bg-[var(--bg-card-hover)] transition-colors">
+          <button onClick={onClose} className="text-[var(--text-secondary)] hover:text-white p-2 rounded-lg hover:bg-[var(--bg-card-hover)] transition-colors z-[60]">
             <FiX size={20} />
           </button>
         </div>
 
         {/* 4 Category Level Switcher (Dock) */}
-        <div className="relative h-24 bg-[#050512] border-b border-[var(--border)] w-full flex items-center justify-center overflow-hidden">
+        <div className="relative h-28 bg-[#050512] border-b border-[var(--border)] w-full flex items-end pb-4 justify-center">
           <Dock
             items={[
               {

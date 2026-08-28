@@ -58,3 +58,8 @@
   transform: translateX(-50%);
   font-weight: bold;
 }
+
+.dock-label {
+  z-index: 50;
+}
+
