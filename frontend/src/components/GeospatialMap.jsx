@@ -115,7 +115,10 @@ export default function GeospatialMap({ elements, onNodeSelect, selectedEntity }
   if (mapData.geoNodes.length === 0) {
     return (
       <div className="flex-1 flex flex-col items-center justify-center bg-[#0a0a0a] text-gray-400">
-        <ICONS.LOCATION />
+        <div 
+          className="w-16 h-16 opacity-50" 
+          dangerouslySetInnerHTML={{ __html: ICONS.LOCATION }} 
+        />
         <p className="mt-4 text-sm font-medium">No geospatial data available for Map View.</p>
         <p className="text-xs mt-2 text-gray-500">Entities must have LOCATION or SPOTTED_AT links.</p>
       </div>
