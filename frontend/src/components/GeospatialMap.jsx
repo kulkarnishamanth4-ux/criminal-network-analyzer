@@ -52,7 +52,7 @@ export default function GeospatialMap({ elements, onNodeSelect, selectedEntity }
     nodes.forEach(n => {
       const data = n.data || n;
       if (data.type === 'LOCATION') {
-        const name = (data.name || "").toLowerCase();
+        const name = (data.label || "").toLowerCase();
         let coords = null;
         for (const [key, val] of Object.entries(GEO_DICT)) {
           if (name.includes(key)) coords = val;
@@ -162,7 +162,7 @@ export default function GeospatialMap({ elements, onNodeSelect, selectedEntity }
             >
               <Popup className="custom-leaflet-popup">
                 <div className="bg-[#111] text-white p-2 rounded border border-[#333]">
-                  <strong className="text-[var(--text-accent)] block mb-1">{node.name || node.id}</strong>
+                  <strong className="text-[var(--text-accent)] block mb-1">{node.label || node.id}</strong>
                   <span className="text-xs text-gray-400">{node.type}</span>
                 </div>
               </Popup>
