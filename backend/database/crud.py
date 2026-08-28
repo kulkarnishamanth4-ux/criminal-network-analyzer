@@ -97,7 +97,9 @@ def get_entity_dossier(db: Session, entity_id: int) -> dict:
             "type": r["relationship"].rel_type, 
             "target_id": r["related_entity"].id,
             "target_name": r["related_entity"].name, 
-            "direction": r["direction"]
+            "direction": r["direction"],
+            "properties": r["relationship"].properties or {},
+            "timestamp": r["relationship"].timestamp.isoformat() if r["relationship"].timestamp else None
         } for r in rels],
         "firs": matched_firs,
         "anomalies": related_anomalies

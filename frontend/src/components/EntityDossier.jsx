@@ -45,6 +45,7 @@ function Section({ title, icon, count, children, defaultOpen = true }) {
 export default function EntityDossier({ entityData, onEntitySelect, onExpandNetwork }) {
   const [dossier, setDossier] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [expandedRelId, setExpandedRelId] = useState(null);
 
   useEffect(() => {
     if (!entityData?.id) return;
@@ -196,22 +197,49 @@ export default function EntityDossier({ entityData, onEntitySelect, onExpandNetw
         {relationships && relationships.length > 0 && (
           <Section title="Known Connections" icon={<FiActivity size={12} />} count={relationships.length}>
              <ul className="space-y-1.5">
-              {relationships.slice(0, 15).map((rel, i) => (
-                <li 
-                  key={i} 
-                  className="text-xs flex items-center justify-between p-2 bg-[var(--bg-card)] rounded border border-[var(--border)] cursor-pointer hover:border-[var(--text-accent)] hover:bg-[var(--bg-card-hover)] transition-all group"
-                  onClick={() => onEntitySelect && onEntitySelect({ id: rel.target_id, name: rel.target_name })}
-                  title="Click to view target dossier"
-                >
-                  <div className="flex items-center gap-2 truncate max-w-[70%]">
-                    <span className="text-[9px] px-1.5 py-0.5 rounded bg-[var(--bg-card-hover)] text-[var(--text-accent)] shrink-0 font-mono tracking-tight">{rel.type}</span>
-                    <span className="truncate text-[var(--text-primary)] font-medium group-hover:text-[var(--text-accent)]">{rel.target_name || `Entity #${rel.target_id}`}</span>
-                  </div>
-                  <span className="text-[10px] text-[var(--text-secondary)] opacity-60 group-hover:opacity-100 flex items-center gap-1 border border-transparent group-hover:border-[var(--text-accent)] group-hover:text-[var(--text-accent)] px-1.5 py-0.5 rounded transition-all">
-                    INSPECT <FiArrowRight size={10} />
-                  </span>
-                </li>
-              ))}
+                {relationships.slice(0, 15).map((rel, i) => (
+                  <li key={i} className="bg-[var(--bg-card)] rounded border border-[var(--border)] overflow-hidden transition-all group">
+                    <div className="text-xs flex items-center justify-between p-2 cursor-pointer hover:bg-[var(--bg-card-hover)]"
+                         onClick={() => onEntitySelect && onEntitySelect({ id: rel.target_id, name: rel.target_name })}>
+                      <div className="flex items-center gap-2 truncate max-w-[70%]">
+                        <span className="text-[9px] px-1.5 py-0.5 rounded bg-[var(--bg-card-hover)] text-[var(--text-accent)] shrink-0 font-mono tracking-tight">{rel.type}</span>
+                        <span className="truncate text-[var(--text-primary)] font-medium group-hover:text-[var(--text-accent)]" title="Click to view target dossier">{rel.target_name || `Entity #${rel.target_id}`}</span>
+                      </div>
+                      <button 
+                        onClick={(e) => { e.stopPropagation(); setExpandedRelId(expandedRelId === rel.id ? null : rel.id); }}
+                        className="text-[10px] text-[var(--text-secondary)] opacity-60 hover:opacity-100 flex items-center gap-1 border border-transparent hover:border-[var(--text-accent)] hover:text-[var(--text-accent)] px-1.5 py-0.5 rounded transition-all"
+                        title="Inspect connection details"
+                      >
+                        INSPECT {expandedRelId === rel.id ? <FiChevronUp size={10} /> : <FiChevronDown size={10} />}
+                      </button>
+                    </div>
+                    
+                    {/* Expanded Inline Details */}
+                    {expandedRelId === rel.id && (
+                      <div className="bg-[var(--bg-card-hover)] p-2 text-[10px] border-t border-[var(--border)]">
+                        <div className="font-bold text-[var(--text-primary)] mb-1 uppercase tracking-wider text-[9px] border-b border-[var(--border)] pb-1">Connection Analytics</div>
+                        <div className="space-y-1.5 mt-1.5">
+                           {rel.timestamp && (
+                             <div className="flex justify-between">
+                               <span className="text-[var(--text-secondary)]">Timestamp:</span>
+                               <span className="text-[var(--text-primary)] font-mono">{new Date(rel.timestamp).toLocaleString()}</span>
+                             </div>
+                           )}
+                           {Object.keys(rel.properties || {}).length === 0 && !rel.timestamp ? (
+                             <div className="text-[var(--text-secondary)] italic">No additional metadata available for this link.</div>
+                           ) : (
+                             Object.entries(rel.properties || {}).map(([k, v]) => (
+                               <div key={k} className="flex justify-between">
+                                 <span className="text-[var(--text-secondary)] capitalize">{k.replace(/_/g, ' ')}:</span>
+                                 <span className="text-[var(--text-primary)] font-mono text-right truncate max-w-[70%]" title={String(v)}>{String(v)}</span>
+                               </div>
+                             ))
+                           )}
+                        </div>
+                      </div>
+                    )}
+                  </li>
+                ))}
               {relationships.length > 15 && (
                 <li className="text-[10px] text-center text-[var(--text-secondary)] py-1">
                   +{relationships.length - 15} more connections
