@@ -1,41 +1,63 @@
-# 🕵️ CrimeNet Intelligence Platform
+# CrimeNet Intelligence Command Center
 
-**AI-Powered Criminal Network Analysis System** — SIH26189
+**AI-Powered Criminal Network Analysis System** - SIH26189
 
-> An intelligent system that analyzes unstructured crime data (FIRs, Call Detail Records, Financial Transactions) to uncover hidden criminal networks, identify key influencers, and detect suspicious patterns.
+> An advanced, hardware-accelerated intelligence suite that analyzes unstructured crime data (FIRs, Call Detail Records, Financial Transactions) to uncover hidden criminal networks, identify key influencers, and detect suspicious patterns.
 
 Built for the **Smart India Hackathon 2026** | Problem Statement sponsored by the **Ministry of Home Affairs**
 
 ---
 
-## 🚀 Features
+## Features
 
-- **NLP Entity Extraction** — Automatically extracts persons, locations, phone numbers, vehicles, and organizations from raw FIR text using SpaCy + custom Indian entity rules
-- **Crime Classification** — Classifies FIR text into crime categories (Drug Trafficking, Money Laundering, Extortion, etc.) with confidence scores
-- **Interactive Network Graph** — Cytoscape.js-powered visualization showing entity relationships with force-directed layouts
-- **Graph Analytics** — PageRank, Betweenness Centrality, and Louvain Community Detection to identify key influencers and criminal clusters
-- **Anomaly Detection** — Flags suspicious patterns: burst calling, circular transactions, geographic anomalies, ghost connectors
-- **Predictive Link Analysis** — Predicts hidden connections between suspects who have no direct contact
-- **Person 360° Dossier** — Complete profile of any entity with all known connections, criminal history, and risk score
-- **Multi-Source Data Fusion** — Upload FIRs (.txt), CDRs (.csv), Financial Records (.csv), and Vehicle Sightings (.csv)
+### Core Intelligence Engine
+- **NLP Entity Extraction** - Automatically extracts persons, locations, phone numbers, vehicles, and organizations from raw FIR text using SpaCy and custom Indian entity rules.
+- **Crime Classification** - Classifies FIR text into crime categories (Drug Trafficking, Money Laundering, Extortion, etc.) with confidence scores.
+- **Interactive Network Graph** - Cytoscape.js-powered visualization showing entity relationships with force-directed layouts. Features high-tech SVG literal icons for nodes (Persons, Phones, Vehicles, Bank Accounts, Locations).
+- **Graph Analytics** - PageRank, Betweenness Centrality, and Louvain Community Detection to identify key influencers and criminal clusters.
+- **Anomaly Detection** - Flags suspicious patterns: burst calling, circular transactions, geographic anomalies, and ghost connectors.
+- **Person 360 Dossier** - Complete profile of any entity with all known connections, criminal history, and risk score.
+
+### Experimental Command Center (15 Matrix Modules)
+A dedicated, hardware-accelerated MacOS-style dock interface housing 15 advanced mathematical and predictive modules:
+1. **Spectral Graph Decapitation** - Finds the minimal strike sequence to shatter cartel networks.
+2. **Ghost Rendezvous Triangulation** - Exposes covert physical meetups between suspects maintaining radio silence.
+3. **Optical Plate-Cloning Paradox** - Detects impossible kinematic highway velocities to flag cloned decoy vehicles.
+4. **Hawala Fluid Dynamics** - Models financial conduits as fluid pipes to simulate account freeze cascades.
+5. **Digital Twin Interrogation** - AI persona mimicking suspect linguistics for mock interrogations.
+6. **Acoustic Geo-Triangulation** - Decomposes 50Hz mains power micro-drift to geolocate audio intercepts.
+7. **Panic-Entropy Profiler** - Chronobiological Shannon Entropy tracking to pinpoint confession windows.
+8. **Voice-Cloned Sting Honeypot** - Autonomous AI victim persona stalling scammers to extract intelligence.
+9. **Gang War Hawkes Cascade** - Forecasts non-linear retaliatory shooting cascades using earthquake math.
+10. **30-Year Dynasty Pedigree** - Hypergraph kinship mapping predicting next-gen cartel successors.
+11. **Project Moriarty Red-Team** - Adversarial underworld AI that attacks CrimeNet to discover blind spots.
+12. **Syntax DNA Stylometry** - Linguistic fingerprinting to match anonymous manifestos to known suspects.
+13. **Cryptolalia Dark-Slang Decoder** - Translates underworld euphemisms in real-time.
+14. **Quantum Mole-Hunter** - Detects corrupt insider leaks via honeytoken beacon traps.
+15. **ZK-PSI Federation** - Zero-Knowledge Private Set Intersection for cross-agency intelligence sharing.
+
+### UI / UX Architecture
+- **Cosmic WebGL Landing Page** - A hardware-accelerated interactive particle system (`ogl` and `framer-motion`) welcoming users into the matrix.
+- **Matrix Colorway** - Pure black, white, and terminal green interface with zero emojis for a strictly professional, classified environment.
+- **Specular Buttons** - Custom GLSL-shaded UI components with reactive hover states.
 
 ---
 
-## 🏗️ Tech Stack
+## Tech Stack
 
 | Layer | Technology |
 |-------|-----------|
-| **Frontend** | React 18 + Vite + Tailwind CSS + Cytoscape.js |
+| **Frontend** | React 18 + Vite + Tailwind CSS + Cytoscape.js + Framer Motion + OGL (WebGL) |
 | **Backend** | Python + FastAPI |
 | **Database** | SQLite (via SQLAlchemy) |
 | **Graph Engine** | NetworkX + python-louvain |
 | **NLP** | SpaCy (en_core_web_sm) + Custom EntityRuler + Regex |
 
-**Zero cloud dependencies. Runs 100% offline on any laptop.**
+**Zero cloud dependencies. Runs 100% offline on any standard laptop.**
 
 ---
 
-## 📦 Setup & Installation
+## Setup & Installation
 
 ### Prerequisites
 - Python 3.10+
@@ -64,7 +86,7 @@ npm install
 
 ---
 
-## ▶️ Running the Application
+## Running the Application
 
 ### Start Backend (Terminal 1)
 ```bash
@@ -73,7 +95,7 @@ cd backend
 venv\Scripts\activate  # Windows
 uvicorn backend.main:app --host 0.0.0.0 --port 8000 --reload
 ```
-> Note: Run uvicorn from the **project root** (parent of backend/), not from inside backend/
+*Note: The backend is configured to automatically seed the database with a high-fidelity narrative Cartel dataset upon its first empty startup.*
 
 ### Start Frontend (Terminal 2)
 ```bash
@@ -85,80 +107,25 @@ Open **http://localhost:5173** in your browser.
 
 ---
 
-## 📊 Loading Demo Data
+## Automated Demo Data Seeding
 
-The project includes synthetic crime data for demonstration:
-- 30 FIR text files with realistic Indian crime reports
-- 500 Call Detail Records
-- 200 Financial Transactions  
-- 100 Vehicle Sightings
+The platform includes an advanced synthetic data generator (`scripts/seed_rich_data.py`). If the database is empty when the backend starts, it automatically injects a deeply interconnected narrative dataset ("The Syndicate X Takedown") designed specifically to mathematically trigger all 15 Experimental Modules.
 
-Upload these via the UI's upload button, or use the API:
-```bash
-# Upload all FIRs
-for file in backend/data/synthetic/firs/*.txt; do
-  curl -X POST http://localhost:8000/api/upload/fir -F "file=@$file"
-done
-
-# Upload CDR
-curl -X POST http://localhost:8000/api/upload/cdr -F "file=@backend/data/synthetic/cdr_records.csv"
-
-# Upload Financial Records
-curl -X POST http://localhost:8000/api/upload/financial -F "file=@backend/data/synthetic/financial_transactions.csv"
-```
+This dataset includes:
+- Complex Hawala financial loops (Smurfing)
+- Geo-temporal anomalies for Plate Cloning algorithms
+- Ghost Rendezvous timeline triggers
+- Retaliatory trigger FIRs for Gang War Cascades
+- Burst Calling networks for Panic Entropy tracking
 
 ---
 
-## 🔌 API Endpoints
+## Team
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/api/upload/fir` | Upload FIR text file |
-| POST | `/api/upload/cdr` | Upload CDR CSV |
-| POST | `/api/upload/financial` | Upload financial CSV |
-| POST | `/api/upload/vehicle` | Upload vehicle sighting CSV |
-| GET | `/api/search?q=rajesh` | Search entities |
-| GET | `/api/network/{id}?depth=2` | Get entity ego-network |
-| GET | `/api/graph/full` | Get full graph |
-| GET | `/api/entity/{id}/dossier` | Get entity 360° profile |
-| GET | `/api/analytics/top-influencers` | Top entities by PageRank |
-| GET | `/api/analytics/communities` | Detected communities |
-| GET | `/api/analytics/anomalies` | Flagged anomalies |
-| GET | `/api/analytics/crime-predictions` | Crime type predictions |
-| GET | `/api/analytics/predicted-links` | Predicted hidden links |
-| GET | `/api/analytics/dashboard-stats` | Dashboard summary |
+Built for **SIH 2026** - Problem Statement SIH26189
 
 ---
 
-## 🏛️ Architecture
-
-```
-┌────────────────────────────────────────────────────────┐
-│              React + Cytoscape.js Frontend              │
-│         Dark "Cyber Command Center" Dashboard           │
-└──────────────────────┬─────────────────────────────────┘
-                       │ REST API
-┌──────────────────────▼─────────────────────────────────┐
-│                  FastAPI Backend                        │
-│  ┌──────────┐  ┌───────────┐  ┌───────────────────┐   │
-│  │ NLP      │  │ Graph     │  │ Analytics         │   │
-│  │ Engine   │  │ Engine    │  │ Engine            │   │
-│  │ SpaCy +  │  │ NetworkX  │  │ Anomaly Detection │   │
-│  │ Regex    │  │ PageRank  │  │ Crime Prediction  │   │
-│  │ Gazetter │  │ Louvain   │  │ Link Prediction   │   │
-│  └──────────┘  └───────────┘  └───────────────────┘   │
-│                    SQLite                               │
-└────────────────────────────────────────────────────────┘
-```
-
----
-
-## 👨‍💻 Team
-
-Built for **SIH 2026** — Problem Statement SIH26189
-
----
-
-## 📄 License
+## License
 
 This project is built for educational and hackathon purposes.
