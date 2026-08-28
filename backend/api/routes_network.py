@@ -12,8 +12,15 @@ def get_entity_network(entity_id: int, depth: int = 2, db: Session = Depends(get
     return get_ego_network(G, entity_id, depth)
 
 @router.get("/graph/full")
-def get_full_graph(db: Session = Depends(get_db)):
+def get_full_graph(limit: int = 150, db: Session = Depends(get_db)):
     G = build_graph_from_db(db)
+    if limit and len(G.nodes) > limit:
+        # Virtualization: Instead of crashing the frontend with 500k nodes,
+        # we extract a subgraph of the top influential entities (Command Center view).
+        sorted_nodes = sorted(G.nodes(data=True), key=lambda x: x[1].get('pagerank', 0.0), reverse=True)
+        top_nodes = [n[0] for n in sorted_nodes[:limit]]
+        sub_G = G.subgraph(top_nodes)
+        return graph_to_json(sub_G)
     return graph_to_json(G)
 
 @router.get("/graph/shortest-path")

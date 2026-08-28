@@ -90,13 +90,29 @@ function App() {
     if (!entityId) return;
     try {
       const { getNetwork } = await import('./api/client');
-      const netRes = await getNetwork(entityId, 2);
+      const netRes = await getNetwork(entityId, 1); // Depth 1 expansion
       if (netRes && netRes.nodes && netRes.nodes.length > 0) {
-        setHighlightPath(netRes.nodes.map(n => n.id));
-        showToast(`Subnetwork isolated: ${netRes.nodes.length} connected entities`, 'info');
+        
+        // Virtualization: Merge the newly fetched subnetwork into the main graph state
+        setGraphData(prev => {
+          const existingNodeIds = new Set(prev.nodes.map(n => n.id));
+          const existingEdgeIds = new Set(prev.edges.map(e => e.id));
+          
+          const newNodes = netRes.nodes.filter(n => !existingNodeIds.has(n.id));
+          const newEdges = netRes.edges.filter(e => !existingEdgeIds.has(e.id));
+          
+          return {
+            nodes: [...prev.nodes, ...newNodes],
+            edges: [...prev.edges, ...newEdges]
+          };
+        });
+
+        // Highlight the expanded neighborhood
+        setHighlightPath(netRes.nodes.map(n => String(n.id)));
+        showToast(`Expanded Network: Loaded ${netRes.nodes.length} connected entities`, 'info');
       }
     } catch {
-      showToast('Could not isolate subnetwork', 'error');
+      showToast('Could not expand subnetwork', 'error');
     }
   };
 

@@ -156,7 +156,7 @@ const layout = {
   refresh: 20,
   fit: true,
   padding: 60,
-  randomize: true,
+  randomize: false, // Virtualization: Prevent scrambling when new nodes are loaded dynamically
   componentSpacing: 180,
   nodeRepulsion: 3000000,
   edgeElasticity: 45,
@@ -255,12 +255,6 @@ export default function GraphCanvas({ elements, onNodeSelect, onClearSelection, 
       cy.off('tap', handleTapBg);
     };
   }, [onNodeSelect, onClearSelection, highlightNeighborhood, clearHighlight]);
-
-  useEffect(() => {
-     if (cyRef.current && cyElements.length > 0) {
-        cyRef.current.layout(layout).run();
-     }
-  }, [cyElements]);
 
   // Highlight path from PathFinder
   useEffect(() => {
