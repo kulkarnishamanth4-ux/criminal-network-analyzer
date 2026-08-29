@@ -8,15 +8,15 @@
   --text-primary: #ffffff;
   --text-secondary: #888888;
   --text-accent: #00ff41;
-  --neon-red: #ffffff;
+  --neon-red: #ff3333;
   --neon-teal: #00ff41;
-  --neon-blue: #ffffff;
+  --neon-blue: #00e5ff;
   --neon-green: #00ff41;
-  --neon-gold: #ffffff;
+  --neon-gold: #ffcc00;
   --neon-purple: #00ff41;
-  --severity-critical: #ffffff;
-  --severity-high: #00ff41;
-  --severity-medium: #ffffff;
+  --severity-critical: #ff3333;
+  --severity-high: #ff8800;
+  --severity-medium: #ffcc00;
   --severity-low: #00ff41;
 }
 

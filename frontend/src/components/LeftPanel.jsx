@@ -4,13 +4,13 @@ import { getTopInfluencers, getCommunities, getCrimePredictions, searchEntities 
 
 function StatCard({ title, value, icon, highlight }) {
   return (
-    <div className="bg-[var(--bg-primary)] p-3 rounded-lg border border-[var(--border)] flex items-center gap-3">
-      <div className={`p-2 rounded-md ${highlight ? 'bg-[var(--severity-critical)] text-white' : 'bg-[var(--bg-card-hover)] text-[var(--text-accent)]'}`}>
+    <div className="bg-[var(--bg-primary)] p-3 rounded-lg border border-[var(--border)] flex items-center gap-2 overflow-hidden">
+      <div className={`p-2 rounded-md shrink-0 ${highlight ? 'bg-[var(--severity-critical)] text-[var(--bg-primary)]' : 'bg-[var(--bg-card-hover)] text-[var(--text-accent)]'}`}>
         {icon}
       </div>
-      <div>
-        <div className="text-[10px] text-[var(--text-secondary)] uppercase tracking-wider">{title}</div>
-        <div className={`text-xl font-bold ${highlight ? 'text-[var(--severity-critical)]' : 'text-[var(--text-primary)]'}`}>
+      <div className="min-w-0">
+        <div className="text-[9px] text-[var(--text-secondary)] uppercase tracking-wide truncate" title={title}>{title}</div>
+        <div className={`text-lg font-bold ${highlight ? 'text-[var(--severity-critical)]' : 'text-[var(--text-primary)]'}`}>
           {value || 0}
         </div>
       </div>
