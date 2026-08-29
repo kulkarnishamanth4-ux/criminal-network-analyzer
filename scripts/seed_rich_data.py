@@ -67,47 +67,46 @@ def seed_data():
     # ==========================================
     now = datetime.utcnow()
     
-    # Hierarchy & Affiliations
-    crud.create_relationship(db, vikram.id, rajesh.id, "ASSOCIATED_WITH", 0.9)
-    crud.create_relationship(db, vikram.id, mohan.id, "ASSOCIATED_WITH", 0.9)
-    crud.create_relationship(db, vikram.id, ahmed.id, "ASSOCIATED_WITH", 0.8)
-    crud.create_relationship(db, ahmed.id, diamond_corp.id, "CONTROLS", 1.0)
+        # Hierarchy & Affiliations
+    crud.create_relationship(db, vikram.id, rajesh.id, "ASSOCIATED_WITH", 0.9, properties={"status": "Active", "hierarchy": "Direct Report", "trust_level": "High"}, timestamp=now - timedelta(days=400))
+    crud.create_relationship(db, vikram.id, mohan.id, "ASSOCIATED_WITH", 0.9, properties={"status": "Active", "hierarchy": "Direct Report", "trust_level": "High"}, timestamp=now - timedelta(days=380))
+    crud.create_relationship(db, vikram.id, ahmed.id, "ASSOCIATED_WITH", 0.8, properties={"status": "Active", "hierarchy": "Contractor", "trust_level": "Medium"}, timestamp=now - timedelta(days=200))
+    crud.create_relationship(db, ahmed.id, diamond_corp.id, "CONTROLS", 1.0, properties={"legal_status": "Proxy Director", "shares": "100%", "incorporated": "2018-05-12"}, timestamp=now - timedelta(days=1500))
     
     # Dynasty Kinship
-    crud.create_relationship(db, vikram.id, karan.id, "FATHER_OF", 1.0)
-    crud.create_relationship(db, vikram.id, arjun.id, "UNCLE_OF", 0.8)
-    crud.create_relationship(db, karan.id, diamond_corp.id, "BOARD_MEMBER", 0.9)
+    crud.create_relationship(db, vikram.id, karan.id, "FATHER_OF", 1.0, properties={"bloodline": "Primary Heir", "status": "Confirmed"}, timestamp=now - timedelta(days=8000))
+    crud.create_relationship(db, vikram.id, arjun.id, "UNCLE_OF", 0.8, properties={"bloodline": "Nephew", "status": "Confirmed"}, timestamp=now - timedelta(days=9000))
+    crud.create_relationship(db, karan.id, diamond_corp.id, "BOARD_MEMBER", 0.9, properties={"designation": "Executive Director", "appointment_date": "2023-01-15"}, timestamp=now - timedelta(days=600))
     
     # Phone Ownership
-    crud.create_relationship(db, vikram.id, p_vikram.id, "OWNS_PHONE")
-    crud.create_relationship(db, rajesh.id, p_rajesh.id, "OWNS_PHONE")
-    crud.create_relationship(db, mohan.id, p_mohan.id, "OWNS_PHONE")
-    crud.create_relationship(db, ahmed.id, p_ahmed.id, "OWNS_PHONE")
+    crud.create_relationship(db, vikram.id, p_vikram.id, "OWNS_PHONE", properties={"provider": "Jio", "status": "Active", "activation_date": "2021-08-10"}, timestamp=now - timedelta(days=900))
+    crud.create_relationship(db, rajesh.id, p_rajesh.id, "OWNS_PHONE", properties={"provider": "Airtel", "status": "Burner", "activation_date": "2024-01-05"}, timestamp=now - timedelta(days=230))
+    crud.create_relationship(db, mohan.id, p_mohan.id, "OWNS_PHONE", properties={"provider": "Vodafone Idea", "status": "Active", "activation_date": "2023-11-20"}, timestamp=now - timedelta(days=280))
+    crud.create_relationship(db, ahmed.id, p_ahmed.id, "OWNS_PHONE", properties={"provider": "Etisalat (Roaming)", "status": "Active", "activation_date": "2022-05-15"}, timestamp=now - timedelta(days=800))
     
     # Communications (CDR)
-    crud.create_relationship(db, p_vikram.id, p_rajesh.id, "CALLED", weight=0.5, timestamp=now - timedelta(days=2))
-    crud.create_relationship(db, p_rajesh.id, p_mohan.id, "CALLED", weight=0.7, timestamp=now - timedelta(days=1))
+    crud.create_relationship(db, p_vikram.id, p_rajesh.id, "CALLED", weight=0.5, timestamp=now - timedelta(days=2), properties={"duration_seconds": 120, "cell_tower": "Bandra_West_04", "call_type": "Encrypted WhatsApp Audio"})
+    crud.create_relationship(db, p_rajesh.id, p_mohan.id, "CALLED", weight=0.7, timestamp=now - timedelta(days=1), properties={"duration_seconds": 45, "cell_tower": "Dharavi_South_12", "call_type": "Standard Cellular"})
     # Burst calling for Panic Entropy trigger (Mohan to Vikram)
     for i in range(15):
-        crud.create_relationship(db, p_mohan.id, p_vikram.id, "CALLED", weight=0.9, timestamp=now - timedelta(hours=3, minutes=i*2))
+        crud.create_relationship(db, p_mohan.id, p_vikram.id, "CALLED", weight=0.9, timestamp=now - timedelta(hours=3, minutes=i*2), properties={"duration_seconds": 15, "cell_tower": "Dharavi_South_12", "call_type": "Standard Cellular", "status": "Dropped/Unanswered"})
         
     # Financial Flow (Hawala)
-    crud.create_relationship(db, diamond_corp.id, acc_front.id, "OWNS_ACCOUNT")
-    crud.create_relationship(db, mule1.id, acc_mule1.id, "OWNS_ACCOUNT")
-    crud.create_relationship(db, mule2.id, acc_mule2.id, "OWNS_ACCOUNT")
+    crud.create_relationship(db, diamond_corp.id, acc_front.id, "OWNS_ACCOUNT", properties={"bank": "HDFC", "branch": "Nariman Point", "kyc_status": "Verified"}, timestamp=now - timedelta(days=1500))
+    crud.create_relationship(db, mule1.id, acc_mule1.id, "OWNS_ACCOUNT", properties={"bank": "ICICI", "branch": "Andheri East", "kyc_status": "Forged"}, timestamp=now - timedelta(days=100))
+    crud.create_relationship(db, mule2.id, acc_mule2.id, "OWNS_ACCOUNT", properties={"bank": "ICICI", "branch": "Andheri East", "kyc_status": "Forged"}, timestamp=now - timedelta(days=95))
     
-    crud.create_relationship(db, acc_front.id, acc_mule1.id, "TRANSFERRED_MONEY_TO", weight=0.8, timestamp=now - timedelta(days=5), properties={"amount": 500000})
-    crud.create_relationship(db, acc_front.id, acc_mule2.id, "TRANSFERRED_MONEY_TO", weight=0.8, timestamp=now - timedelta(days=5), properties={"amount": 500000})
-    crud.create_relationship(db, acc_mule1.id, acc_mule2.id, "TRANSFERRED_MONEY_TO", weight=0.6, timestamp=now - timedelta(days=4), properties={"amount": 490000}) # Smurfing
+    crud.create_relationship(db, acc_front.id, acc_mule1.id, "TRANSFERRED_MONEY_TO", weight=0.8, timestamp=now - timedelta(days=5), properties={"amount_inr": 500000, "transaction_id": "IMPS-987654321", "purpose": "Vendor Payment"})
+    crud.create_relationship(db, acc_front.id, acc_mule2.id, "TRANSFERRED_MONEY_TO", weight=0.8, timestamp=now - timedelta(days=5), properties={"amount_inr": 500000, "transaction_id": "IMPS-987654322", "purpose": "Logistics Fees"})
+    crud.create_relationship(db, acc_mule1.id, acc_mule2.id, "TRANSFERRED_MONEY_TO", weight=0.6, timestamp=now - timedelta(days=4), properties={"amount_inr": 490000, "transaction_id": "UPI-123456789", "purpose": "Loan Repayment"}) # Smurfing
     
     # Ghost Rendezvous (Rajesh & Ahmed at Taj Hotel, no phone contact)
-    crud.create_relationship(db, rajesh.id, loc_mumbai.id, "SPOTTED_AT", weight=1.0, timestamp=now - timedelta(days=10, hours=14))
-    crud.create_relationship(db, ahmed.id, loc_mumbai.id, "SPOTTED_AT", weight=1.0, timestamp=now - timedelta(days=10, hours=14, minutes=5))
+    crud.create_relationship(db, rajesh.id, loc_mumbai.id, "SPOTTED_AT", weight=1.0, timestamp=now - timedelta(days=10, hours=14), properties={"source": "CCTV Camera 04", "confidence": "98%"})
+    crud.create_relationship(db, ahmed.id, loc_mumbai.id, "SPOTTED_AT", weight=1.0, timestamp=now - timedelta(days=10, hours=14, minutes=5), properties={"source": "CCTV Camera 02", "confidence": "95%"})
     
     # Optical Plate Cloning Paradox (Same plate, two locations simultaneously)
-    crud.create_relationship(db, veh_cloned.id, loc_mumbai.id, "SPOTTED_AT", weight=1.0, timestamp=now - timedelta(days=1, hours=12))
-    crud.create_relationship(db, veh_cloned.id, loc_delhi.id, "SPOTTED_AT", weight=1.0, timestamp=now - timedelta(days=1, hours=12, minutes=15)) # Impossible travel time
-    
+    crud.create_relationship(db, veh_cloned.id, loc_mumbai.id, "SPOTTED_AT", weight=1.0, timestamp=now - timedelta(days=1, hours=12), properties={"source": "ANPR Toll Naka", "speed": "45 km/h", "lane": "Fastag-1"})
+    crud.create_relationship(db, veh_cloned.id, loc_delhi.id, "SPOTTED_AT", weight=1.0, timestamp=now - timedelta(days=1, hours=12, minutes=15), properties={"source": "ANPR Highway Cam", "speed": "60 km/h", "lane": "L2"}) # Impossible travel time
     # ==========================================
     # 3. FIR DATA (For NLP extraction & Gangwar cascade)
     # ==========================================
@@ -161,3 +160,4 @@ def seed_data():
 if __name__ == "__main__":
     reset_database()
     seed_data()
+
