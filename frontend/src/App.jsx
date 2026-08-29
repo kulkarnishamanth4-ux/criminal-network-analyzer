@@ -129,7 +129,6 @@ function App() {
     <div className="flex flex-col h-screen w-screen overflow-hidden bg-[var(--bg-primary)] text-[var(--text-primary)]">
       <Header 
         onUploadClick={() => setShowUploadModal(true)} 
-        onSearchResultSelect={handleNodeSelect}
         onExperimentalClick={() => setShowExperimentalModal(true)}
       />
       
