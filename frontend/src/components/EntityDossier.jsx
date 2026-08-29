@@ -180,10 +180,10 @@ export default function EntityDossier({ entityData, onEntitySelect, onExpandNetw
           <Section title="Criminal Records" icon={<FiClock size={12} />} count={firs.length}>
             <ul className="space-y-2">
               {firs.map((fir, i) => (
-                <li key={i} className="text-xs p-2 bg-[var(--bg-card)] rounded border border-[var(--border)]">
-                  <div className="flex justify-between items-center mb-1">
-                    <span className="font-bold text-[var(--neon-red)]">FIR #{fir.fir_number || fir.id}</span>
-                    {fir.crime_type && <span className="text-[9px] px-1.5 py-0.5 rounded bg-[var(--bg-card-hover)] text-[var(--neon-gold)]">{fir.crime_type}</span>}
+                <li key={i} className="text-xs p-2 bg-[var(--bg-card)] rounded border border-[var(--border)] overflow-hidden">
+                  <div className="flex justify-between items-start gap-2 mb-1">
+                    <span className="font-bold text-[var(--neon-red)] truncate" title={`FIR #${fir.fir_number || fir.id}`}>FIR #{fir.fir_number || fir.id}</span>
+                    {fir.crime_type && <span className="text-[9px] px-1.5 py-0.5 rounded bg-[var(--bg-card-hover)] text-[var(--neon-gold)] shrink-0 whitespace-nowrap">{fir.crime_type}</span>}
                   </div>
                   {fir.police_station && <div className="text-[10px] text-[var(--text-secondary)]"> {fir.police_station}{fir.district ? `, ${fir.district}` : ''}</div>}
                   {fir.raw_text && <div className="mt-1 line-clamp-2 text-[10px] text-[var(--text-secondary)] italic">"{fir.raw_text.slice(0, 120)}…"</div>}
