@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { FiUsers, FiLink, FiActivity, FiAlertTriangle, FiTrendingUp } from 'react-icons/fi';
-import { getTopInfluencers, getCommunities, getCrimePredictions } from '../api/client';
+import { FiUsers, FiLink, FiActivity, FiAlertTriangle, FiTrendingUp, FiSearch, FiX } from 'react-icons/fi';
+import { getTopInfluencers, getCommunities, getCrimePredictions, searchEntities } from '../api/client';
 
 function StatCard({ title, value, icon, highlight }) {
   return (
     <div className="bg-[var(--bg-primary)] p-3 rounded-lg border border-[var(--border)] flex items-center gap-3">
-      <div className={`p-2 rounded-md ${highlight ? 'bg-green-500/20 text-green-500' : 'bg-[var(--bg-card-hover)] text-[var(--text-accent)]'}`}>
+      <div className={`p-2 rounded-md ${highlight ? 'bg-[var(--severity-critical)] text-white' : 'bg-[var(--bg-card-hover)] text-[var(--text-accent)]'}`}>
         {icon}
       </div>
       <div>
         <div className="text-[10px] text-[var(--text-secondary)] uppercase tracking-wider">{title}</div>
-        <div className={`text-xl font-bold ${highlight ? 'text-green-500' : 'text-[var(--text-primary)]'}`}>
+        <div className={`text-xl font-bold ${highlight ? 'text-[var(--severity-critical)]' : 'text-[var(--text-primary)]'}`}>
           {value || 0}
         </div>
       </div>
@@ -23,6 +23,10 @@ export default function LeftPanel({ stats, onEntitySelect }) {
   const [communities, setCommunities] = useState([]);
   const [predictions, setPredictions] = useState([]);
   const [loading, setLoading] = useState(true);
+  
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
+  const [isSearching, setIsSearching] = useState(false);
 
   useEffect(() => {
     Promise.all([
@@ -30,17 +34,82 @@ export default function LeftPanel({ stats, onEntitySelect }) {
       getCommunities().catch(() => ({ communities: [] })),
       getCrimePredictions().catch(() => ({ predictions: [] }))
     ]).then(([infRes, comRes, predRes]) => {
-      setInfluencers(infRes.influencers || []);
-      setCommunities(comRes.communities || []);
-      setPredictions(predRes.predictions || []);
+      setInfluencers(Array.isArray(infRes) ? infRes : (infRes.influencers || []));
+      setCommunities(Array.isArray(comRes) ? comRes : (comRes.communities || []));
+      setPredictions(Array.isArray(predRes) ? predRes : (predRes.predictions || []));
       setLoading(false);
     });
   }, []);
+
+  useEffect(() => {
+    if (searchQuery.trim().length < 2) {
+      setSearchResults([]);
+      return;
+    }
+    const delay = setTimeout(() => {
+      setIsSearching(true);
+      searchEntities(searchQuery).then(res => {
+        setSearchResults(res.results || []);
+        setIsSearching(false);
+      }).catch(() => setIsSearching(false));
+    }, 300);
+    return () => clearTimeout(delay);
+  }, [searchQuery]);
 
   return (
     <aside className="w-[280px] bg-[var(--bg-card)] border-r border-[var(--border)] h-full overflow-y-auto flex flex-col z-10 shadow-lg shrink-0">
       <div className="p-4 space-y-6">
         
+        {/* Global Search */}
+        <div className="relative">
+          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-[var(--text-secondary)]">
+            <FiSearch size={14} />
+          </div>
+          <input
+            type="text"
+            className="w-full bg-[var(--bg-primary)] border border-[var(--border)] rounded p-2 pl-9 text-xs text-[var(--text-primary)] focus:outline-none focus:border-[var(--text-accent)] transition-colors"
+            placeholder="Search entities, phones, accounts..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+          {searchQuery && (
+            <button 
+              className="absolute inset-y-0 right-0 pr-3 flex items-center text-[var(--text-secondary)] hover:text-white"
+              onClick={() => { setSearchQuery(''); setSearchResults([]); }}
+            >
+              <FiX size={14} />
+            </button>
+          )}
+          
+          {/* Search Dropdown */}
+          {searchQuery.trim().length >= 2 && (
+            <div className="absolute top-full left-0 right-0 mt-1 bg-[var(--bg-card)] border border-[var(--border)] rounded shadow-xl max-h-60 overflow-y-auto z-50">
+              {isSearching ? (
+                <div className="p-3 text-xs text-center text-[var(--text-secondary)]">Searching...</div>
+              ) : searchResults.length === 0 ? (
+                <div className="p-3 text-xs text-center text-[var(--text-secondary)]">No matches found.</div>
+              ) : (
+                <ul className="py-1">
+                  {searchResults.map(result => (
+                    <li 
+                      key={result.id}
+                      className="px-3 py-2 text-xs hover:bg-[var(--bg-card-hover)] cursor-pointer flex justify-between items-center group"
+                      onClick={() => {
+                        onEntitySelect(result);
+                        setSearchQuery('');
+                        setSearchResults([]);
+                      }}
+                    >
+                      <span className="truncate text-[var(--text-primary)] group-hover:text-[var(--text-accent)]">{result.name}</span>
+                      <span className="text-[9px] px-1.5 py-0.5 rounded bg-[var(--bg-primary)] text-[var(--text-secondary)] uppercase">{result.type || result.entity_type}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          )}
+        </div>
+
         {/* Dashboard Stats */}
         <div>
           <h2 className="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider mb-3 flex items-center gap-2">
