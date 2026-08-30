@@ -63,6 +63,12 @@ function App() {
     }
   };
 
+  const handleCaseChange = (newCase) => {
+    setActiveCase(newCase);
+    setSelectedEntity(null);
+    setHighlightPath(null);
+  };
+
   useEffect(() => {
     if (showApp) {
       loadData(activeCase);
@@ -140,7 +146,7 @@ function App() {
         onUploadClick={() => setShowUploadModal(true)} 
         onExperimentalClick={() => setShowExperimentalModal(true)}
         activeCase={activeCase}
-        onCaseChange={setActiveCase}
+        onCaseChange={handleCaseChange}
       />
       
       <div className="flex flex-1 overflow-hidden relative">
@@ -174,6 +180,7 @@ function App() {
           ) : viewMode === 'network' ? (
             <>
               <GraphCanvas 
+                key={activeCase}
                 elements={graphData} 
                 onNodeSelect={handleNodeSelect} 
                 onClearSelection={handleClearSelection}

@@ -19,7 +19,7 @@ def build_graph_from_db(db: Session, force_rebuild: bool = False, case_id: str =
     entities = db.query(Entity).all()
     
     # Filter entities by case_id (defaulting to "dawood" for older records)
-    case_entities = {e.id: e for e in entities if e.properties.get('case_id', 'dawood') == case_id}
+    case_entities = {e.id: e for e in entities if (e.properties or {}).get('case_id', 'dawood') == case_id}
     
     for e in case_entities.values():
         G.add_node(e.id, entity_type=e.entity_type, name=e.name, properties=e.properties, risk_score=e.risk_score, pagerank=e.pagerank or 0.0, betweenness=e.betweenness or 0.0, community_id=e.community_id)
