@@ -57,6 +57,11 @@ def seed_dawood_case():
     salem_car = crud.get_or_create_entity(db, "VEHICLE", "MH-01-AB-1234", {"make": "Honda City", "color": "Silver"})
     shooter_bike = crud.get_or_create_entity(db, "VEHICLE", "MH-02-CD-5678", {"make": "Bajaj Pulsar", "color": "Black"})
 
+    # SOCMINT Nodes (Social Media Handles)
+    dawood_ig = crud.get_or_create_entity(db, "SOCIAL_HANDLE", "@d_boss_official", {"platform": "Instagram", "followers": 12500})
+    salem_x = crud.get_or_create_entity(db, "SOCIAL_HANDLE", "@captain_salem", {"platform": "X", "followers": 890})
+    shooter_fb = crud.get_or_create_entity(db, "SOCIAL_HANDLE", "Firoz_Bhai_Don", {"platform": "Facebook", "friends": 450})
+
     # ---------------------------------------------------------
     # 2. STRUCTURAL RELATIONSHIPS (Command & Control)
     # ---------------------------------------------------------
@@ -77,6 +82,13 @@ def seed_dawood_case():
     crud.create_relationship(db, shooter1.id, shooter_acc.id, "OWNS_ACCOUNT")
     crud.create_relationship(db, salem.id, salem_car.id, "OWNS_VEHICLE")
     crud.create_relationship(db, shooter1.id, shooter_bike.id, "OWNS_VEHICLE")
+
+    # SOCMINT Links
+    crud.create_relationship(db, dawood.id, dawood_ig.id, "OWNS_HANDLE")
+    crud.create_relationship(db, salem.id, salem_x.id, "OWNS_HANDLE")
+    crud.create_relationship(db, shooter1.id, shooter_fb.id, "OWNS_HANDLE")
+    crud.create_relationship(db, salem_x.id, dawood_ig.id, "TAGGED_IN_POST", 0.7, {"sentiment": "Praise"})
+    crud.create_relationship(db, shooter_fb.id, safehouse.id, "POSTED_FROM", 0.9, {"geo_accuracy": "15m radius"})
 
     # ---------------------------------------------------------
     # 3. TEMPORAL RELATIONSHIPS (The Extortion Plot & Panic)

@@ -134,3 +134,22 @@ def get_gangwar_forecast(req: GangwarRequest):
 def run_moriarty_redteam(req: MoriartyRequest):
     """Project Moriarty: Autonomous Counter-Forensic Red-Team AI."""
     return execute_moriarty_redteam_attack(req.attack_vector)
+
+class SocmintRequest(BaseModel):
+    posts: List[str]
+
+@router.post("/experimental/socmint/analyze")
+def analyze_socmint(req: SocmintRequest):
+    """SOCMINT Threat Scanner using mocked predictive analytics."""
+    # Since we can't easily rely on an external API here for a quick demo, we'll return a tactical breakdown directly.
+    return {
+        "threat_level": "CRITICAL",
+        "gang_escalation_probability": "87.4%",
+        "geo_anchoring": ["Dongri Safehouse A (15m radius)", "Karachi Port"],
+        "sentiment_analysis": "Highly aggressive, escalating praise for leadership.",
+        "insights": [
+            "Detected code words indicating a potential weapon smuggling run.",
+            "Cross-referenced tagging graph confirms active link between Abu Salem's and Dawood's cadres.",
+            "Location data extracted from photo EXIF places a shooter 500m from a known rival's compound."
+        ]
+    }

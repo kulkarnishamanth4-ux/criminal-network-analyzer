@@ -11,7 +11,7 @@ import {
   simulateHawalaFluid, getPanicEntropy, getQuantumMole,
   decodeCryptolalia, getZkFederation, simulateHoneypotSting,
   getDynastyPedigree, getPlateCloningResolver,
-  forecastGangwarCascade, runMoriartyRedteam
+  forecastGangwarCascade, runMoriartyRedteam, analyzeSocmint
 } from '../api/client';
 import Dock from './Dock';
 
@@ -126,6 +126,8 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes }) {
       handleRunGangwar();
     } else if (activeTab === 'moriarty' && !moriartyResult) {
       handleRunMoriarty('HAWALA_MICRO_SMURFING_EVASION');
+    } else if (activeTab === 'socmint' && !socmintData) {
+      handleRunSocmint();
     }
   }, [activeTab]);
 
@@ -248,6 +250,19 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes }) {
     setMoriartyLoading(false);
   };
 
+  const [socmintData, setSocmintData] = useState(null);
+  const [socmintLoading, setSocmintLoading] = useState(false);
+  const [socmintInput, setSocmintInput] = useState("@d_boss_official: System is ready. The package will drop in Dongri tonight.");
+
+  const handleRunSocmint = async () => {
+    setSocmintLoading(true);
+    try {
+      const res = await analyzeSocmint([socmintInput]);
+      setSocmintData(res);
+    } catch (err) { console.error(err); }
+    setSocmintLoading(false);
+  };
+
   // 15 Modules Categorized into 4 Command Tiers
   const categories = {
     tactical: {
@@ -256,7 +271,8 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes }) {
         { id: 'decapitation', label: ' Decapitation Strike' },
         { id: 'ghost', label: ' Ghost Rendezvous' },
         { id: 'plate_cloning', label: ' Optical Plate-Cloning' },
-        { id: 'hawala_fluid', label: ' Hawala Fluid Dynamics' }
+        { id: 'hawala_fluid', label: ' Hawala Fluid Dynamics' },
+        { id: 'socmint', label: ' SOCMINT Threat Scanner' }
       ]
     },
     cognitive: {
@@ -790,6 +806,76 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes }) {
                     </div>
                     <div className="font-mono font-bold text-white text-sm">{moriartyResult.auto_synthesized_defensive_patch.rule_name}</div>
                     <div className="text-[var(--text-secondary)]">Condition: {moriartyResult.auto_synthesized_defensive_patch.patch_architecture.trigger_condition}</div>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* SOCMINT Threat Scanner */}
+          {activeTab === 'socmint' && (
+            <div className="space-y-6">
+              <div className="bg-[var(--bg-primary)] p-4 rounded-lg border border-[var(--border)] flex justify-between items-start">
+                <div>
+                  <h3 className="text-sm font-bold text-blue-400 uppercase flex items-center gap-2"><FiEye /> SOCMINT Threat Scanner</h3>
+                  <p className="text-xs text-[var(--text-secondary)] mt-1 max-w-2xl">
+                    Parses intercepted social media posts (X, Instagram, Dark Web) to extract threat levels, geographic coordinates from EXIF metadata, and predicts gang escalation.
+                  </p>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <div className="flex gap-2">
+                  <input
+                    className="flex-1 bg-[#111] border border-[#333] text-xs p-3 rounded-lg text-[var(--text-primary)] focus:border-blue-500 outline-none"
+                    value={socmintInput}
+                    onChange={e => setSocmintInput(e.target.value)}
+                    placeholder="Paste intercepted social media string..."
+                  />
+                  <button 
+                    onClick={handleRunSocmint}
+                    disabled={socmintLoading}
+                    className="bg-blue-600 hover:bg-blue-500 text-white px-4 rounded-lg flex items-center justify-center disabled:opacity-50"
+                  >
+                    {socmintLoading ? 'Scanning...' : <FiSend size={16} />}
+                  </button>
+                </div>
+              </div>
+
+              {socmintData && (
+                <div className="space-y-4 animate-in fade-in duration-300">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="bg-[#111] p-4 rounded border border-[var(--border)]">
+                      <div className="text-xs text-[var(--text-secondary)] uppercase">Threat Level</div>
+                      <div className={`text-xl font-bold mt-1 ${socmintData.threat_level === 'CRITICAL' ? 'text-red-500' : 'text-yellow-400'}`}>
+                        {socmintData.threat_level}
+                      </div>
+                    </div>
+                    <div className="bg-[#111] p-4 rounded border border-[var(--border)]">
+                      <div className="text-xs text-[var(--text-secondary)] uppercase">Escalation Probability</div>
+                      <div className="text-xl font-bold text-orange-500 mt-1">{socmintData.gang_escalation_probability}</div>
+                    </div>
+                  </div>
+
+                  <div className="bg-[#0a0a0f] border border-[#333] p-4 rounded space-y-3">
+                    <h4 className="text-xs font-bold text-[var(--text-accent)] uppercase mb-2 border-b border-[#333] pb-2">Geospatial Anchors Extracted</h4>
+                    {socmintData.geo_anchoring.map((loc, i) => (
+                      <div key={i} className="text-xs text-gray-300 flex items-center gap-2">
+                        <FiCompass className="text-[var(--text-accent)]" /> {loc}
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="bg-[#0a0a0f] border border-[#333] p-4 rounded">
+                    <h4 className="text-xs font-bold text-[var(--text-accent)] uppercase mb-2 border-b border-[#333] pb-2">AI Tactical Insights</h4>
+                    <p className="text-xs text-gray-300 italic mb-3">"{socmintData.sentiment_analysis}"</p>
+                    <ul className="space-y-2">
+                      {socmintData.insights.map((insight, i) => (
+                        <li key={i} className="text-xs text-gray-400 flex items-start gap-2">
+                          <FiCheckCircle className="text-green-500 mt-0.5 shrink-0" /> {insight}
+                        </li>
+                      ))}
+                    </ul>
                   </div>
                 </div>
               )}

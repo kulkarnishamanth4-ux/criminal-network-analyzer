@@ -127,4 +127,8 @@ export const sendChatMessage = (message) => {
   return client.post('/api/chat', { message }).then(res => res.data);
 };
 
+export const analyzeSocmint = (posts) => {
+  return client.post('/api/experimental/socmint/analyze', { posts }).then(res => res.data);
+};
+
 
