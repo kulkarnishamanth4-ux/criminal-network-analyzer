@@ -5,7 +5,7 @@ import re
 
 # Suspect psychological profiles & predefined response strategies
 SUSPECT_PERSONAS = {
-    "Vikram Sharma": {
+    "Dawood Ibrahim": {
         "demeanor": "Cold, calculated, polite deflection, claims to be a legitimate interstate transport contractor.",
         "default_alibis": {
             "money": "I only handle legitimate freight payments and truck diesel expenses for my transport company.",
@@ -14,7 +14,7 @@ SUSPECT_PERSONAS = {
             "contraband": "Whatever was found in those trucks was loaded by the third-party client. We only provide the transport vehicle."
         }
     },
-    "Suresh Agarwal": {
+    "Tiger Memon": {
         "demeanor": "Nervous, technical financial evasion, claims all transactions are chartered accountant approved loans.",
         "default_alibis": {
             "money": "Those transfers were standard short-term inter-corporate commercial credit loans, completely audited.",
@@ -23,7 +23,7 @@ SUSPECT_PERSONAS = {
             "hawala": "I am a tax-paying registered GST merchant. Any cash flow is standard commodity advance payment."
         }
     },
-    "Mohammed Irfan": {
+    "Abu Salem": {
         "demeanor": "Aggressive, combative, claims political framing by rival local union factions.",
         "default_alibis": {
             "money": "I have never demanded a single rupee from anyone. These shopkeepers are lying under pressure.",
@@ -32,7 +32,7 @@ SUSPECT_PERSONAS = {
             "threats": "I don't make threats. I am a community leader resolving local disputes peacefully."
         }
     },
-    "Deepak Verma": {
+    "Tariq Parveen": {
         "demeanor": "Tech-evasive, plays dumb, claims his servers/SIMs were hacked or rented unknowingly.",
         "default_alibis": {
             "tech": "I only rent raw cloud servers and GSM hardware. What clients run on them is beyond my knowledge.",

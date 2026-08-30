@@ -29,7 +29,7 @@ def forecast_gangwar_cascade(trigger_event: str = "FIR_001_VIKRAM_SHARMA_NARCOTI
         {
             "priority": 1,
             "target_sector": "Transport Godowns & Freight Hubs (Jaipur Bypass)",
-            "suspected_instigator": "Vikram Sharma Faction",
+            "suspected_instigator": "Dawood Ibrahim Syndicate",
             "strike_nature": "Arson & Highway Hijacking of Rival Freight Convoys",
             "peak_risk_window": "Day 3 — Day 6",
             "probability_pct": 91.2
@@ -37,7 +37,7 @@ def forecast_gangwar_cascade(trigger_event: str = "FIR_001_VIKRAM_SHARMA_NARCOTI
         {
             "priority": 2,
             "target_sector": "Bullion Trading Houses (Chandni Chowk, Delhi)",
-            "suspected_instigator": "Suresh Agarwal Hawala Creditors",
+            "suspected_instigator": "Tiger Memon Hawala Network",
             "strike_nature": "Targeted Extortion & Armed Recovery Shakedowns",
             "peak_risk_window": "Day 4 — Day 8",
             "probability_pct": 86.5
@@ -45,7 +45,7 @@ def forecast_gangwar_cascade(trigger_event: str = "FIR_001_VIKRAM_SHARMA_NARCOTI
         {
             "priority": 3,
             "target_sector": "Local Union Offices (Noida Sector 62)",
-            "suspected_instigator": "Mohammed Irfan Extortion Cadre",
+            "suspected_instigator": "Abu Salem Extortion Cadre",
             "strike_nature": "Retaliatory Firearms Discharge & Territory Warning",
             "peak_risk_window": "Day 2 — Day 5",
             "probability_pct": 82.0

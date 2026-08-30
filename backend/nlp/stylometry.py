@@ -6,35 +6,35 @@ from backend.database.models import Entity, FIR
 
 # Distinct linguistic profiles for key syndicate archetypes
 SUSPECT_STYLOMETRIC_BASELINES = {
-    "Vikram Sharma": {
+    "Dawood Ibrahim": {
         "alias": "Victor / Syndicate Coordinator",
         "hinglish_markers": ["bhai", "bhaiji", "consignment", "delivery", "rajasthan", "border", "maal", "clearance", "truck", "saaman"],
         "punctuation_profile": {"ellipsis": 0.4, "exclamations": 0.1, "uppercase": 0.15},
         "cadence": "Direct, authoritative, operational, medium-length clauses",
         "sample_style": "bhaiji delivery border pe pahuch gayi hai... clearance jaldi karvao"
     },
-    "Suresh Agarwal": {
+    "Tiger Memon": {
         "alias": "Sethji / Hawala Operator",
         "hinglish_markers": ["peti", "khoka", "entry", "account", "transfer", "rtgs", "hawala", "benami", "settlement", "party", "paisa"],
         "punctuation_profile": {"ellipsis": 0.6, "exclamations": 0.05, "uppercase": 0.3},
         "cadence": "Financial code words, short cryptic confirmations, heavy use of ellipses",
         "sample_style": "account number bhej diya... party se 50 peti confirm karo... entry match honi chahiye"
     },
-    "Mohammed Irfan": {
+    "Abu Salem": {
         "alias": "Bhai / Extortion Lead",
         "hinglish_markers": ["hafta", "vasuli", "police", "khatam", "jaan", "pariwar", "dhamki", "call", "uthana", "aakhri", "warning"],
         "punctuation_profile": {"ellipsis": 0.2, "exclamations": 0.7, "uppercase": 0.5},
         "cadence": "Aggressive, high threat intensity, uppercase emphasis, multiple exclamation marks",
         "sample_style": "CALL KYUN NAHI UTHA RAHA HAI?! Aakhri baar bol raha hu... hafta nahi diya toh parivar khatam!!"
     },
-    "Deepak Verma": {
+    "Tariq Parveen": {
         "alias": "Hacker-D / Cyber Mule Fixer",
         "hinglish_markers": ["otp", "sim", "proxy", "bypass", "gateway", "telegram", "link", "crypto", "usdt", "wallet", "server"],
         "punctuation_profile": {"ellipsis": 0.3, "exclamations": 0.2, "uppercase": 0.2},
         "cadence": "Tech-jargon heavy, lowercase preference, wallet addresses, speed-focused",
         "sample_style": "64 channel sim box online hai... new otp bypass link ready... usdt wallet check karo bro"
     },
-    "Manoj Singh": {
+    "Firoz Khan": {
         "alias": "Munna / Field Logistics",
         "hinglish_markers": ["bhaiya", "gaadi", "toll", "chowk", "cash", "noida", "location", "drop", "ready", "pahuch"],
         "punctuation_profile": {"ellipsis": 0.3, "exclamations": 0.3, "uppercase": 0.1},

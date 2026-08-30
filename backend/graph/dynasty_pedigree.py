@@ -2,22 +2,22 @@ from typing import Dict, Any, List
 
 # Multi-Generational Syndicate Lineage Graph Data
 DYNASTY_PEDIGREE_DATABASE = {
-    "The Sharma-Agarwal Northern Syndicate": {
+    "D-Company Global Syndicate": {
         "founding_year": 1994,
-        "historical_jurisdiction": "Jaipur - Delhi-NCR Transport Corridor",
+        "historical_jurisdiction": "Mumbai - Dubai - Karachi Tri-State Area",
         "generations": [
             {
                 "generation_tier": "Generation 1 (Founders / Patriarchs: 1994–2008)",
                 "members": [
                     {
-                        "name": "Late Ramakant Sharma",
-                        "relation": "Clan Patriarch (Father of Vikram)",
+                        "name": "Ibrahim Kaskar",
+                        "relation": "Clan Patriarch (Father of Dawood)",
                         "criminal_history": "8 Historical FIRs (Interstate Bootlegging, Highway Extortion)",
                         "current_status": "Deceased (2009)"
                     },
                     {
-                        "name": "Ghanshyam Agarwal",
-                        "relation": "Financial Founding Partner (Father of Suresh)",
+                        "name": "Late Memon Patriarch",
+                        "relation": "Financial Founding Partner (Father of Tiger)",
                         "criminal_history": "4 Historical FIRs (Bullion Smuggling, Unaccounted Cash)",
                         "current_status": "Retired / Dormant Elder"
                     }
@@ -27,15 +27,15 @@ DYNASTY_PEDIGREE_DATABASE = {
                 "generation_tier": "Generation 2 (Current Operational Cartel: 2008–Present)",
                 "members": [
                     {
-                        "name": "Vikram Sharma",
-                        "relation": "Operational Kingpin (Son of Ramakant)",
+                        "name": "Dawood Sharma",
+                        "relation": "Operational Kingpin (Son of Ibrahim Kaskar)",
                         "role": "Logistics & Interstate Transport Cartel Controller",
                         "active_firs": "FIR No. 001/2024, FIR No. 014/2024 (NDPS, Extortion)",
                         "risk_score": 0.94
                     },
                     {
-                        "name": "Suresh Agarwal",
-                        "relation": "Chief Hawala Financier (Son of Ghanshyam)",
+                        "name": "Tiger Agarwal",
+                        "relation": "Chief Hawala Financier (Son of Memon Patriarch)",
                         "role": "Shell Corporation & Hawala Money Layering",
                         "active_firs": "FIR No. 003/2024, FIR No. 021/2024 (Money Laundering)",
                         "risk_score": 0.91
@@ -46,16 +46,16 @@ DYNASTY_PEDIGREE_DATABASE = {
                 "generation_tier": "Generation 3 (Next-Gen Clean Heirs / Asset Protectors: 2024+)",
                 "members": [
                     {
-                        "name": "Rohan Sharma",
-                        "relation": "Nephew of Vikram Sharma (Age 23)",
+                        "name": "Moin Kaskar",
+                        "relation": "Nephew of Dawood Sharma (Age 23)",
                         "criminal_record_count": 0,
                         "cover_role": "Director in 4 newly incorporated Logistics & Cold Storage LLCs",
                         "succession_probability_pct": 89.4,
-                        "tactical_threat": "CLEAN-RECORD PROXY HEIR — Currently fronting 18 commercial freight trucks and prime Delhi-Gurgaon warehouse assets."
+                        "tactical_threat": "CLEAN-RECORD PROXY HEIR — Currently fronting 18 commercial freight trucks and prime Karachi/Dubai commercial real estate assets."
                     },
                     {
-                        "name": "Ananya Agarwal",
-                        "relation": "Daughter of Suresh Agarwal (Age 25)",
+                        "name": "Tiger Memon Jr.",
+                        "relation": "Daughter of Tiger Agarwal (Age 25)",
                         "criminal_record_count": 0,
                         "cover_role": "Managing Partner in Dubai & Singapore Import-Export Consultancy",
                         "succession_probability_pct": 84.1,
@@ -71,7 +71,7 @@ DYNASTY_PEDIGREE_DATABASE = {
         },
         "succession_threat_assessment": (
             "PRE-CRIME SUCCESSION WARNING: The syndicate is actively executing a generational legitimacy pivot. "
-            "Gen-2 operators (Vikram & Suresh) are transferring capital to Gen-3 heirs (Rohan & Ananya) who hold zero criminal records. "
+            "Gen-2 operators (Dawood & Tiger) are transferring capital to Gen-3 heirs (Rohan & Ananya) who hold zero criminal records. "
             "Asset attachment under PMLA / SAFEMA must target Gen-3 shell corporate holdings immediately."
         )
     }

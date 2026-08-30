@@ -11,7 +11,7 @@ SIMULATED_INTERNAL_AUDIT_LOGS = [
         "station": "Special Cell, Lodhi Colony",
         "file_accessed": "FIR_001_VIKRAM_SHARMA_NARCOTICS",
         "access_timestamp": "2024-01-14T21:40:00",
-        "cartel_defensive_reaction": "Vikram Sharma's primary burner phone went permanently dark at 22:15:00 (35 min later).",
+        "cartel_defensive_reaction": "Dawood Ibrahim's primary burner phone went permanently dark at 22:15:00 (35 min later).",
         "leak_correlation_score": 94.2
     },
     {
