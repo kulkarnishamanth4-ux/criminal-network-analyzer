@@ -5,6 +5,7 @@ from backend.database.schema import init_db, get_db, SessionLocal
 from backend.database.models import Base, Entity
 from backend.api import routes_upload, routes_network, routes_analytics, routes_search, routes_report, routes_experimental, routes_chat
 from scripts.seed_d_company import seed_dawood_case
+from scripts.seed_other_cases import seed_additional_cases
 from backend.graph.algorithms import update_entity_metrics
 from backend.graph.builder import build_graph_from_db
 
@@ -30,10 +31,10 @@ app.include_router(routes_chat.router, prefix="/api", tags=["Chat"])
 def startup_event():
     init_db()
     db = SessionLocal()
-    # If the database is empty, seed it with the rich narrative data
-    if db.query(Entity).first() is None:
-        print("Database is empty. Seeding highly complex Operation Syndicate data...")
-        seed_dawood_case()
+    # Seed Data (Idempotent)
+    print("Checking and seeding databases...")
+    seed_dawood_case()
+    seed_additional_cases(db)
         
     print("Computing Graph Metrics (PageRank, Betweenness, Communities)...")
     G = build_graph_from_db(db)

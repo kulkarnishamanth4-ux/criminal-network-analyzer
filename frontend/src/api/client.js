@@ -11,12 +11,12 @@ export const searchEntities = (query, type) => {
   return client.get('/api/search', { params: { q: query, type } }).then(res => res.data);
 };
 
-export const getNetwork = (entityId, depth = 2) => {
-  return client.get(`/api/network/${entityId}`, { params: { depth } }).then(res => res.data);
+export const getNetwork = (entityId, depth = 2, caseId = 'dawood') => {
+  return client.get(`/api/network/${entityId}`, { params: { depth, case_id: caseId } }).then(res => res.data);
 };
 
-export const getFullGraph = () => {
-  return client.get('/api/graph/full').then(res => res.data);
+export const getFullGraph = (limit = 150, caseId = 'dawood') => {
+  return client.get(`/api/graph/full?limit=${limit}&case_id=${caseId}`).then(res => res.data);
 };
 
 export const getTopInfluencers = (limit = 10) => {

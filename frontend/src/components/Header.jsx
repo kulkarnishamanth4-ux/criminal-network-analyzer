@@ -2,8 +2,19 @@ import React from 'react';
 import { FiUploadCloud, FiShield, FiFileText, FiCpu } from 'react-icons/fi';
 import SpecularButton from './SpecularButton';
 
-export default function Header({ onUploadClick, onExperimentalClick }) {
+export default function Header({ onUploadClick, onExperimentalClick, activeCase, onCaseChange }) {
   const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+
+  const cases = [
+    { id: 'dawood', label: 'Operation Syndicate (Dawood Case)' },
+    { id: 'drug_punjab', label: 'Drug Trafficking (Amritsar Border)' },
+    { id: 'ht_assam', label: 'Human Trafficking (Guwahati Hub)' },
+    { id: 'cyber_bengaluru', label: 'Cybercrime (Whitefield Tech)' },
+    { id: 'money_gujarat', label: 'Money Laundering (Surat Hawala)' },
+    { id: 'arms_chhattisgarh', label: 'Arms Trafficking (Bastar Forest)' },
+    { id: 'wildlife_kerala', label: 'Wildlife Poaching (Wayanad Reserve)' },
+    { id: 'extortion_up', label: 'Extortion (Gorakhpur Racketeering)' }
+  ];
 
   return (
     <header className="h-16 bg-[var(--bg-card)] border-b border-[var(--border)] flex items-center justify-between px-6 z-20 shadow-md">
@@ -17,7 +28,17 @@ export default function Header({ onUploadClick, onExperimentalClick }) {
         </span>
       </div>
 
-      <div className="flex-1"></div>
+      <div className="flex-1 flex justify-center">
+        <select 
+          value={activeCase} 
+          onChange={(e) => onCaseChange(e.target.value)}
+          className="bg-[#111] border border-[#333] text-[var(--text-accent)] text-sm rounded-lg px-3 py-1.5 focus:border-[var(--neon-green)] outline-none"
+        >
+          {cases.map(c => (
+            <option key={c.id} value={c.id}>{c.label}</option>
+          ))}
+        </select>
+      </div>
 
       <div className="flex items-center gap-2">
         <button 

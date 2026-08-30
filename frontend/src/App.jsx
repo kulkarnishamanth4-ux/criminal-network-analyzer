@@ -25,16 +25,18 @@ function App() {
   const [highlightPath, setHighlightPath] = useState(null);
   const [toast, setToast] = useState(null);
 
+  const [activeCase, setActiveCase] = useState('dawood');
+
   const showToast = (message, type = 'success') => {
     setToast({ message, type });
     setTimeout(() => setToast(null), 4000);
   };
 
-  const loadData = async () => {
+  const loadData = async (caseId = activeCase) => {
     setIsLoading(true);
     try {
       const [graphRes, statsRes, linksRes] = await Promise.all([
-        getFullGraph().catch(() => ({ nodes: [], edges: [] })),
+        getFullGraph(150, caseId).catch(() => ({ nodes: [], edges: [] })),
         getDashboardStats().catch(() => null),
         getPredictedLinks().catch(() => ({ predictions: [] }))
       ]);
@@ -63,9 +65,9 @@ function App() {
 
   useEffect(() => {
     if (showApp) {
-      loadData();
+      loadData(activeCase);
     }
-  }, [showApp]);
+  }, [showApp, activeCase]);
 
   const handleNodeSelect = (node) => {
     setSelectedEntity(node);
@@ -91,7 +93,7 @@ function App() {
     if (!entityId) return;
     try {
       const { getNetwork } = await import('./api/client');
-      const netRes = await getNetwork(entityId, 1); // Depth 1 expansion
+      const netRes = await getNetwork(entityId, 1, activeCase); // Depth 1 expansion
       if (netRes && netRes.nodes && netRes.nodes.length > 0) {
         
         // Virtualization: Merge the newly fetched subnetwork into the main graph state
@@ -137,6 +139,8 @@ function App() {
       <Header 
         onUploadClick={() => setShowUploadModal(true)} 
         onExperimentalClick={() => setShowExperimentalModal(true)}
+        activeCase={activeCase}
+        onCaseChange={setActiveCase}
       />
       
       <div className="flex flex-1 overflow-hidden relative">

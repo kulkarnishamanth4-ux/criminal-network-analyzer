@@ -7,13 +7,13 @@ import networkx as nx
 router = APIRouter()
 
 @router.get("/network/{entity_id}")
-def get_entity_network(entity_id: int, depth: int = 2, db: Session = Depends(get_db)):
-    G = build_graph_from_db(db)
+def get_entity_network(entity_id: int, depth: int = 2, case_id: str = "dawood", db: Session = Depends(get_db)):
+    G = build_graph_from_db(db, case_id=case_id)
     return get_ego_network(G, entity_id, depth)
 
 @router.get("/graph/full")
-def get_full_graph(limit: int = 150, db: Session = Depends(get_db)):
-    G = build_graph_from_db(db)
+def get_full_graph(limit: int = 150, case_id: str = "dawood", db: Session = Depends(get_db)):
+    G = build_graph_from_db(db, case_id=case_id)
     if limit and len(G.nodes) > limit:
         # Virtualization: Instead of crashing the frontend with 500k nodes,
         # we extract a subgraph of the top influential entities (Command Center view).
@@ -24,9 +24,9 @@ def get_full_graph(limit: int = 150, db: Session = Depends(get_db)):
     return graph_to_json(G)
 
 @router.get("/graph/shortest-path")
-def shortest_path(source_id: int, target_id: int, db: Session = Depends(get_db)):
+def shortest_path(source_id: int, target_id: int, case_id: str = "dawood", db: Session = Depends(get_db)):
     """Find shortest path between two entities."""
-    G = build_graph_from_db(db)
+    G = build_graph_from_db(db, case_id=case_id)
     undirected = G.to_undirected()
     
     if source_id not in undirected or target_id not in undirected:
