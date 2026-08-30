@@ -42,6 +42,11 @@ def generate_case_data(db: Session, case_id: str, case_name: str, location_base:
         create_relationship(db, fs.id, b_phone.id, "CALLED", 0.4, {"case_id": case_id})
 
 def seed_additional_cases(db: Session):
+    from backend.database.models import Entity
+    if db.query(Entity).filter(Entity.name == "Balwinder 'Billa' Singh").first():
+        print("Additional cases already seeded. Skipping.")
+        return
+
     print("Seeding diverse organized crime cases...")
     
     cases = [

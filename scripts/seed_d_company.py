@@ -17,6 +17,14 @@ def reset_database():
 
 def seed_dawood_case():
     db = SessionLocal()
+    
+    # Check if already seeded to prevent unique constraint violations on FIRs
+    from backend.database.models import FIR
+    if db.query(FIR).filter_by(fir_number="FIR_MUM_EXT_2026_9981").first():
+        print("Dawood case already seeded. Skipping.")
+        db.close()
+        return
+
     now = datetime.utcnow()
     
     # ---------------------------------------------------------
