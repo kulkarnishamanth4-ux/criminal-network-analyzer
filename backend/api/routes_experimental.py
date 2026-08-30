@@ -23,36 +23,44 @@ from typing import List, Optional
 router = APIRouter()
 
 class StylometryRequest(BaseModel):
+    case_id: Optional[str] = "dawood"
     text: str
 
 class InterrogationRequest(BaseModel):
+    case_id: Optional[str] = "dawood"
     entity_id: int
     question: str
     history: Optional[List[dict]] = []
 
 class AcousticRequest(BaseModel):
+    case_id: Optional[str] = "dawood"
     audio_profile_id: Optional[str] = "intercept_call_001"
 
 class HawalaFluidRequest(BaseModel):
+    case_id: Optional[str] = "dawood"
     frozen_account_ids: Optional[List[int]] = []
 
 class CryptolaliaRequest(BaseModel):
+    case_id: Optional[str] = "dawood"
     text: str
 
 class HoneypotRequest(BaseModel):
+    case_id: Optional[str] = "dawood"
     threat_message: str
     turn_index: Optional[int] = 1
 
 class GangwarRequest(BaseModel):
+    case_id: Optional[str] = "dawood"
     trigger_event: Optional[str] = "FIR_001_VIKRAM_SHARMA_NARCOTICS_CRACKDOWN"
 
 class MoriartyRequest(BaseModel):
+    case_id: Optional[str] = "dawood"
     attack_vector: Optional[str] = "HAWALA_MICRO_SMURFING_EVASION"
 
 @router.get("/experimental/decapitation")
-def get_decapitation(max_targets: int = 3, db: Session = Depends(get_db)):
+def get_decapitation(max_targets: int = 3, case_id: str = "dawood", db: Session = Depends(get_db)):
     """Computes mathematical minimum-cut strike sequence to cause maximum syndicate fragmentation."""
-    return compute_decapitation_strategy(db, max_targets)
+    return compute_decapitation_strategy(db, max_targets, case_id)
 
 @router.get("/experimental/ghost-rendezvous")
 def get_ghost_rendezvous(max_time_diff_hours: int = 48, db: Session = Depends(get_db)):
@@ -70,9 +78,9 @@ def interrogate(req: InterrogationRequest, db: Session = Depends(get_db)):
     return interrogate_suspect(db, req.entity_id, req.question, req.history)
 
 @router.get("/experimental/suspects")
-def list_suspects(db: Session = Depends(get_db)):
+def list_suspects(case_id: str = "dawood", db: Session = Depends(get_db)):
     """Returns list of suspect entities available for interrogation and stylometric profiling."""
-    suspects = db.query(Entity).filter(Entity.entity_type == "PERSON").all()
+    suspects = [s for s in db.query(Entity).filter(Entity.entity_type == "PERSON").all() if (s.properties or {}).get("case_id", "dawood") == case_id]
     return {
         "suspects": [
             {"id": s.id, "name": s.name, "risk_score": s.risk_score, "pagerank": s.pagerank}
@@ -136,6 +144,7 @@ def run_moriarty_redteam(req: MoriartyRequest):
     return execute_moriarty_redteam_attack(req.attack_vector)
 
 class SocmintRequest(BaseModel):
+    case_id: Optional[str] = "dawood"
     posts: List[str]
 
 @router.post("/experimental/socmint/analyze")

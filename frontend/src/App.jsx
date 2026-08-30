@@ -216,7 +216,7 @@ function App() {
       {showExperimentalModal && (
         <ExperimentalLabsModal 
           onClose={() => setShowExperimentalModal(false)}
-          onHighlightNodes={handleHighlightNodes}
+          onHighlightNodes={handleHighlightNodes} activeCase={activeCase}
         />
       )}
 

@@ -3,14 +3,14 @@ from sqlalchemy.orm import Session
 from backend.database.models import Entity, Relationship
 from backend.graph.builder import build_graph_from_db
 
-def compute_decapitation_strategy(db: Session, max_targets: int = 3) -> dict:
+def compute_decapitation_strategy(db: Session, max_targets: int = 3, case_id: str = "dawood") -> dict:
     """
     Computes the mathematical Critical Cut-Set (Algorithmic Decapitation).
     Uses Spectral Graph Theory, Articulation Points, and percolation simulations
     to determine which minimal sequence of arrests causes the largest collapse
     of the syndicate's Largest Connected Component (LCC).
     """
-    G = build_graph_from_db(db)
+    G = build_graph_from_db(db, case_id=case_id)
     undirected = G.to_undirected()
     
     if len(undirected.nodes) == 0:

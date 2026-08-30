@@ -15,7 +15,7 @@ import {
 } from '../api/client';
 import Dock from './Dock';
 
-export default function ExperimentalLabsModal({ onClose, onHighlightNodes }) {
+export default function ExperimentalLabsModal({ onClose, onHighlightNodes, activeCase }) {
   const [activeCategory, setActiveCategory] = useState('tactical');
   const [activeTab, setActiveTab] = useState('decapitation');
   
@@ -78,7 +78,7 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes }) {
 
   // Load Suspects
   useEffect(() => {
-    getSuspectsList().then(res => {
+    getSuspectsList(activeCase).then(res => {
       const sList = res.suspects || [];
       setSuspects(sList);
       if (sList.length > 0) {
@@ -96,10 +96,10 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes }) {
   useEffect(() => {
     if (activeTab === 'decapitation' && !decapData) {
       setDecapLoading(true);
-      getDecapitation().then(res => { setDecapData(res); setDecapLoading(false); }).catch(() => setDecapLoading(false));
+      getDecapitation(3, activeCase).then(res => { setDecapData(res); setDecapLoading(false); }).catch(() => setDecapLoading(false));
     } else if (activeTab === 'ghost' && !ghostData) {
       setGhostLoading(true);
-      getGhostRendezvous().then(res => { setGhostData(res); setGhostLoading(false); }).catch(() => setGhostLoading(false));
+      getGhostRendezvous(48, activeCase).then(res => { setGhostData(res); setGhostLoading(false); }).catch(() => setGhostLoading(false));
     } else if (activeTab === 'acoustic' && !acousticResult) {
       handleRunAcoustics('intercept_call_001');
     } else if (activeTab === 'hawala_fluid' && !hawalaResult) {
@@ -108,20 +108,20 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes }) {
       handleRunPanic(selectedPanicSuspectId);
     } else if (activeTab === 'quantum_mole' && !moleResult) {
       setMoleLoading(true);
-      getQuantumMole().then(res => { setMoleResult(res); setMoleLoading(false); }).catch(() => setMoleLoading(false));
+      getQuantumMole(activeCase).then(res => { setMoleResult(res); setMoleLoading(false); }).catch(() => setMoleLoading(false));
     } else if (activeTab === 'cryptolalia' && !cryptolaliaResult) {
       handleRunCryptolalia(cryptolaliaInput);
     } else if (activeTab === 'zk_federation' && !zkResult) {
       setZkLoading(true);
-      getZkFederation().then(res => { setZkResult(res); setZkLoading(false); }).catch(() => setZkLoading(false));
+      getZkFederation(activeCase).then(res => { setZkResult(res); setZkLoading(false); }).catch(() => setZkLoading(false));
     } else if (activeTab === 'honeypot' && !honeypotResult) {
       handleRunHoneypot(honeypotInput);
     } else if (activeTab === 'dynasty' && !dynastyResult) {
       setDynastyLoading(true);
-      getDynastyPedigree().then(res => { setDynastyResult(res); setDynastyLoading(false); }).catch(() => setDynastyLoading(false));
+      getDynastyPedigree(activeCase).then(res => { setDynastyResult(res); setDynastyLoading(false); }).catch(() => setDynastyLoading(false));
     } else if (activeTab === 'plate_cloning' && !plateResult) {
       setPlateLoading(true);
-      getPlateCloningResolver().then(res => { setPlateResult(res); setPlateLoading(false); }).catch(() => setPlateLoading(false));
+      getPlateCloningResolver(activeCase).then(res => { setPlateResult(res); setPlateLoading(false); }).catch(() => setPlateLoading(false));
     } else if (activeTab === 'gangwar' && !gangwarResult) {
       handleRunGangwar();
     } else if (activeTab === 'moriarty' && !moriartyResult) {
@@ -171,7 +171,7 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes }) {
     if (sampleText) setStylometryInput(sampleText);
     setStylometryLoading(true);
     try {
-      const res = await matchStylometry(txt);
+      const res = await matchStylometry(txt, activeCase);
       setStylometryResult(res);
     } catch (err) { console.error(err); }
     setStylometryLoading(false);
@@ -181,7 +181,7 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes }) {
     setSelectedAudioCall(audioId);
     setAcousticLoading(true);
     try {
-      const res = await analyzeAcoustics(audioId);
+      const res = await analyzeAcoustics(audioId, activeCase);
       setAcousticResult(res);
     } catch (err) { console.error(err); }
     setAcousticLoading(false);
@@ -190,7 +190,7 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes }) {
   const handleRunHawalaFluid = async (frozenIds = []) => {
     setHawalaLoading(true);
     try {
-      const res = await simulateHawalaFluid(frozenIds);
+      const res = await simulateHawalaFluid(frozenIds, activeCase);
       setHawalaResult(res);
     } catch (err) { console.error(err); }
     setHawalaLoading(false);
@@ -200,7 +200,7 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes }) {
     setSelectedPanicSuspectId(sId);
     setPanicLoading(true);
     try {
-      const res = await getPanicEntropy(sId);
+      const res = await getPanicEntropy(sId, activeCase);
       setPanicResult(res);
     } catch (err) { console.error(err); }
     setPanicLoading(false);
@@ -212,7 +212,7 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes }) {
     if (text) setCryptolaliaInput(text);
     setCryptolaliaLoading(true);
     try {
-      const res = await decodeCryptolalia(txt);
+      const res = await decodeCryptolalia(txt, activeCase);
       setCryptolaliaResult(res);
     } catch (err) { console.error(err); }
     setCryptolaliaLoading(false);
@@ -224,7 +224,7 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes }) {
     if (msg) setHoneypotInput(msg);
     setHoneypotLoading(true);
     try {
-      const res = await simulateHoneypotSting(threat, 2);
+      const res = await simulateHoneypotSting(threat, 2, activeCase);
       setHoneypotResult(res);
     } catch (err) { console.error(err); }
     setHoneypotLoading(false);
@@ -244,7 +244,7 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes }) {
     setSelectedMoriartyVector(v);
     setMoriartyLoading(true);
     try {
-      const res = await runMoriartyRedteam(v);
+      const res = await runMoriartyRedteam(v, activeCase);
       setMoriartyResult(res);
     } catch (err) { console.error(err); }
     setMoriartyLoading(false);
@@ -257,7 +257,7 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes }) {
   const handleRunSocmint = async () => {
     setSocmintLoading(true);
     try {
-      const res = await analyzeSocmint([socmintInput]);
+      const res = await analyzeSocmint([socmintInput], activeCase);
       setSocmintData(res);
     } catch (err) { console.error(err); }
     setSocmintLoading(false);

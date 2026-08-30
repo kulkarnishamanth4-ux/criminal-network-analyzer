@@ -59,76 +59,76 @@ export const getShortestPath = (sourceId, targetId) => {
   return client.get('/api/graph/shortest-path', { params: { source_id: sourceId, target_id: targetId } }).then(res => res.data);
 };
 
-export const getDecapitation = (maxTargets = 3) => {
-  return client.get('/api/experimental/decapitation', { params: { max_targets: maxTargets } }).then(res => res.data);
+export const getDecapitation = (maxTargets = 3, caseId = "dawood") => {
+  return client.get('/api/experimental/decapitation', { params: { max_targets: maxTargets, case_id: caseId } }).then(res => res.data);
 };
 
-export const getGhostRendezvous = (maxHours = 48) => {
-  return client.get('/api/experimental/ghost-rendezvous', { params: { max_time_diff_hours: maxHours } }).then(res => res.data);
+export const getGhostRendezvous = (maxHours = 48, caseId = "dawood") => {
+  return client.get('/api/experimental/ghost-rendezvous', { params: { max_time_diff_hours: maxHours, case_id: caseId } }).then(res => res.data);
 };
 
-export const matchStylometry = (text) => {
-  return client.post('/api/experimental/stylometry/match', { text }).then(res => res.data);
+export const matchStylometry = (text, caseId = "dawood") => {
+  return client.post('/api/experimental/stylometry/match', { text, case_id: caseId }).then(res => res.data);
 };
 
 export const interrogateSuspect = (entityId, question, history = []) => {
   return client.post('/api/experimental/interrogate', { entity_id: entityId, question, history }).then(res => res.data);
 };
 
-export const getSuspectsList = () => {
-  return client.get('/api/experimental/suspects').then(res => res.data);
+export const getSuspectsList = (caseId = "dawood") => {
+  return client.get('/api/experimental/suspects', { params: { case_id: caseId } }).then(res => res.data);
 };
 
-export const analyzeAcoustics = (audioProfileId = "intercept_call_001") => {
-  return client.post('/api/experimental/ghost-acoustic/analyze', { audio_profile_id: audioProfileId }).then(res => res.data);
+export const analyzeAcoustics = (audioProfileId = "intercept_call_001", caseId = "dawood") => {
+  return client.post('/api/experimental/ghost-acoustic/analyze', { audio_profile_id: audioProfileId, case_id: caseId }).then(res => res.data);
 };
 
-export const simulateHawalaFluid = (frozenAccountIds = []) => {
-  return client.post('/api/experimental/hawala-fluid/simulate', { frozen_account_ids: frozenAccountIds }).then(res => res.data);
+export const simulateHawalaFluid = (frozenAccountIds = [], caseId = "dawood") => {
+  return client.post('/api/experimental/hawala-fluid/simulate', { frozen_account_ids: frozenAccountIds, case_id: caseId }).then(res => res.data);
 };
 
-export const getPanicEntropy = (entityId) => {
-  return client.get(`/api/experimental/panic-entropy/${entityId}`).then(res => res.data);
+export const getPanicEntropy = (entityId, caseId = "dawood") => {
+  return client.get(/api/experimental/panic-entropy/, { params: { case_id: caseId } }).then(res => res.data);
 };
 
-export const getQuantumMole = () => {
-  return client.get('/api/experimental/quantum-mole').then(res => res.data);
+export const getQuantumMole = (caseId = "dawood") => {
+  return client.get('/api/experimental/quantum-mole', { params: { case_id: caseId } }).then(res => res.data);
 };
 
-export const decodeCryptolalia = (text) => {
-  return client.post('/api/experimental/cryptolalia/decode', { text }).then(res => res.data);
+export const decodeCryptolalia = (text, caseId = "dawood") => {
+  return client.post('/api/experimental/cryptolalia/decode', { text, case_id: caseId }).then(res => res.data);
 };
 
-export const getZkFederation = () => {
-  return client.get('/api/experimental/zk-federation').then(res => res.data);
+export const getZkFederation = (caseId = "dawood") => {
+  return client.get('/api/experimental/zk-federation', { params: { case_id: caseId } }).then(res => res.data);
 };
 
-export const simulateHoneypotSting = (threatMessage, turnIndex = 1) => {
-  return client.post('/api/experimental/honeypot-sting/simulate', { threat_message: threatMessage, turn_index: turnIndex }).then(res => res.data);
+export const simulateHoneypotSting = (threatMessage, turnIndex = 1, caseId = "dawood") => {
+  return client.post('/api/experimental/honeypot-sting/simulate', { threat_message: threatMessage, turn_index: turnIndex, case_id: caseId }).then(res => res.data);
 };
 
-export const getDynastyPedigree = () => {
-  return client.get('/api/experimental/dynasty-pedigree').then(res => res.data);
+export const getDynastyPedigree = (caseId = "dawood") => {
+  return client.get('/api/experimental/dynasty-pedigree', { params: { case_id: caseId } }).then(res => res.data);
 };
 
-export const getPlateCloningResolver = () => {
-  return client.get('/api/experimental/plate-cloning-resolver').then(res => res.data);
+export const getPlateCloningResolver = (caseId = "dawood") => {
+  return client.get('/api/experimental/plate-cloning-resolver', { params: { case_id: caseId } }).then(res => res.data);
 };
 
-export const forecastGangwarCascade = (triggerEvent = "FIR_001_VIKRAM_SHARMA_NARCOTICS_CRACKDOWN") => {
-  return client.post('/api/experimental/gangwar-cascade/forecast', { trigger_event: triggerEvent }).then(res => res.data);
+export const forecastGangwarCascade = (triggerEvent = "FIR_001_VIKRAM_SHARMA_NARCOTICS_CRACKDOWN", caseId = "dawood") => {
+  return client.post('/api/experimental/gangwar-cascade/forecast', { trigger_event: triggerEvent, case_id: caseId }).then(res => res.data);
 };
 
-export const runMoriartyRedteam = (attackVector = "HAWALA_MICRO_SMURFING_EVASION") => {
-  return client.post('/api/experimental/moriarty-redteam/attack-and-patch', { attack_vector: attackVector }).then(res => res.data);
+export const runMoriartyRedteam = (attackVector = "HAWALA_MICRO_SMURFING_EVASION", caseId = "dawood") => {
+  return client.post('/api/experimental/moriarty-redteam/attack-and-patch', { attack_vector: attackVector, case_id: caseId }).then(res => res.data);
 };
 
 export const sendChatMessage = (message) => {
   return client.post('/api/chat', { message }).then(res => res.data);
 };
 
-export const analyzeSocmint = (posts) => {
-  return client.post('/api/experimental/socmint/analyze', { posts }).then(res => res.data);
+export const analyzeSocmint = (posts, caseId = "dawood") => {
+  return client.post('/api/experimental/socmint/analyze', { posts, case_id: caseId }).then(res => res.data);
 };
 
 
