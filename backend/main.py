@@ -4,7 +4,7 @@ from backend.config import CORS_ORIGINS
 from backend.database.schema import init_db, get_db, SessionLocal
 from backend.database.models import Base, Entity
 from backend.api import routes_upload, routes_network, routes_analytics, routes_search, routes_report, routes_experimental
-from scripts.seed_rich_data import seed_data
+from scripts.seed_d_company import seed_dawood_case
 from backend.graph.algorithms import update_entity_metrics
 from backend.graph.builder import build_graph_from_db
 
@@ -31,8 +31,8 @@ def startup_event():
     db = SessionLocal()
     # If the database is empty, seed it with the rich narrative data
     if db.query(Entity).first() is None:
-        print("Database is empty. Seeding rich synthetic narrative data...")
-        seed_data()
+        print("Database is empty. Seeding highly complex Operation Syndicate data...")
+        seed_dawood_case()
         
     print("Computing Graph Metrics (PageRank, Betweenness, Communities)...")
     G = build_graph_from_db(db)
