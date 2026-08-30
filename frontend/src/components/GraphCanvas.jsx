@@ -181,13 +181,13 @@ export default function GraphCanvas({ elements, onNodeSelect, onClearSelection, 
       const pr = n.metrics?.pagerank || n.pagerank || 0;
       return {
         data: {
+          ...n,
           id: String(n.id),
           label: rawLabel,
           shortLabel: truncateLabel(rawLabel, type),
           type: type,
           pagerank: pr,
-          highRisk: pr > 0.08,
-          ...n
+          highRisk: pr > 0.08
         }
       };
     });
