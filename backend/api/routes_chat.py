@@ -25,14 +25,11 @@ def chat_with_agent(req: ChatRequest):
         Limit responses to 2-3 sentences. Do not use emojis. Act like a highly advanced OSINT/SIGINT platform.
         """
         
-        response = client.models.generate_content(
-            model="gemini-2.5-flash",
-            contents=req.message,
-            config=types.GenerateContentConfig(
-                system_instruction=system_instruction,
-                temperature=0.2,
-            ),
+        interaction = client.interactions.create(
+            model="gemini-3.7-flash",
+            input=req.message,
+            system_instruction=system_instruction
         )
-        return {"response": response.text}
+        return {"response": interaction.output_text}
     except Exception as e:
         return {"response": f"[AI ENGINE OFFLINE] {str(e)}"}
