@@ -196,7 +196,7 @@ export default function EntityDossier({ entityData, onEntitySelect, onExpandNetw
                     {fir.crime_type && <span className="text-[9px] px-1.5 py-0.5 rounded bg-[var(--bg-card-hover)] text-[var(--neon-gold)] shrink-0 whitespace-nowrap">{fir.crime_type}</span>}
                   </div>
                   {fir.police_station && <div className="text-[10px] text-[var(--text-secondary)]"> {fir.police_station}{fir.district ? `, ${fir.district}` : ''}</div>}
-                  {fir.raw_text && <div className="mt-1 line-clamp-2 text-[10px] text-[var(--text-secondary)] italic">"{fir.raw_text.slice(0, 120)}…"</div>}
+                  {fir.raw_text && <div className="mt-1 text-[10px] text-[var(--text-secondary)] italic">"{fir.raw_text}"</div>}
                 </li>
               ))}
             </ul>
