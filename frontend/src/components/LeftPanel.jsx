@@ -164,15 +164,15 @@ export default function LeftPanel({ stats, onEntitySelect }) {
           ) : (
             <div className="space-y-2">
               {communities.slice(0, 5).map(com => (
-                <div key={com.id} className="bg-[var(--bg-primary)] p-2 rounded border border-[var(--border)]">
+                <div key={com.community_id || com.id} className="bg-[var(--bg-primary)] p-2 rounded border border-[var(--border)]">
                   <div className="flex justify-between items-center mb-1">
-                    <span className="text-sm font-medium">Network #{String(com.id).slice(0,4)}</span>
+                    <span className="text-sm font-medium">{com.alias || `Cluster #${com.community_id || com.id}`}</span>
                     <span className="text-[10px] bg-[var(--bg-card-hover)] px-1.5 py-0.5 rounded text-[var(--text-accent)]">
                       {com.member_count} members
                     </span>
                   </div>
                   <div className="text-[10px] text-[var(--neon-gold)]">
-                    {com.dominant_crime_type || 'Unknown Activity'}
+                    {com.dominant_crime_type || 'Syndicate Operations'}
                   </div>
                 </div>
               ))}

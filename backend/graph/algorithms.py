@@ -66,4 +66,24 @@ def get_communities_summary(db: Session) -> list[dict]:
         if len(communities[cid]["members"]) < 5:
             communities[cid]["members"].append({"id": e.id, "name": e.name, "type": e.entity_type})
             
+    # Assign tactical aliases based on members
+    for cid, data in communities.items():
+        member_names = [m["name"].lower() for m in data["members"]]
+        
+        if any("dawood" in n or "kaskar" in n for n in member_names):
+            data["alias"] = "D-Company Global Command"
+            data["dominant_crime_type"] = "Cross-border Syndicate Operations"
+        elif any("salem" in n or "shooter" in n or "hitman" in n for n in member_names):
+            data["alias"] = "Abu Salem Extortion Cadre"
+            data["dominant_crime_type"] = "Extortion & Contract Killings"
+        elif any("memon" in n or "smurfer" in n or "hawala" in n for n in member_names):
+            data["alias"] = "Tiger Memon Financial Ring"
+            data["dominant_crime_type"] = "Hawala & Money Laundering"
+        elif any("mirchi" in n for n in member_names):
+            data["alias"] = "Mirchi Narcotics Cartel"
+            data["dominant_crime_type"] = "Global Narcotics Smuggling"
+        else:
+            data["alias"] = f"Peripheral Cell Alpha-{cid}"
+            data["dominant_crime_type"] = "Logistics & Local Support"
+            
     return list(communities.values())
