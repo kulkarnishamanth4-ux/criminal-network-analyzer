@@ -26,10 +26,10 @@ async def chat_with_agent(req: ChatRequest):
         """
         
         interaction = await client.aio.interactions.create(
-            model="gemini-3.6-flash",
+            model="gemini-3.5-flash-lite",
             input=req.message,
             system_instruction=system_instruction,
-            timeout=15.0
+            timeout=60.0
         )
         return {"response": interaction.output_text}
     except Exception as e:
