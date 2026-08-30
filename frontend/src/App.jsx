@@ -117,7 +117,7 @@ function App() {
   };
 
   const handleCommunitySelect = (communityId) => {
-    const members = graphData.nodes.filter(n => n.metrics && n.metrics.community_id === communityId);
+    const members = graphData.nodes.filter(n => n.metrics && String(n.metrics.community_id) === String(communityId));
     setHighlightPath(members.map(n => String(n.id)));
     showToast(`Spotlighted ${members.length} syndicate entities on canvas`, 'info');
   };
