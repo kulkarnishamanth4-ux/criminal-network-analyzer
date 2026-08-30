@@ -177,7 +177,7 @@ export default function EntityDossier({ entityData, onEntitySelect, onExpandNetw
                       <span className="font-bold text-[10px] uppercase tracking-wider" style={{ color: sevColor }}>{a.severity}</span>
                     </div>
                     <div className="text-[var(--text-primary)] font-medium">{a.title}</div>
-                    {a.description && <div className="text-[var(--text-secondary)] text-[10px] mt-1 line-clamp-2">{a.description}</div>}
+                    {a.description && <div className="text-[var(--text-secondary)] text-[10px] mt-1">{a.description}</div>}
                   </li>
                 );
               })}
