@@ -37,5 +37,7 @@ def startup_event():
     print("Computing Graph Metrics (PageRank, Betweenness, Communities)...")
     G = build_graph_from_db(db)
     update_entity_metrics(db, G)
+    print("Rebuilding active graph cache to include fresh metrics...")
+    build_graph_from_db(db, force_rebuild=True)
     print("Metrics computation complete.")
     db.close()
