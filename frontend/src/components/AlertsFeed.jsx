@@ -2,16 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { FiBell, FiAlertCircle } from 'react-icons/fi';
 import { getAnomalies } from '../api/client';
 
-export default function AlertsFeed({ onEntitySelect }) {
+export default function AlertsFeed({ onEntitySelect, activeCase }) {
   const [anomalies, setAnomalies] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    getAnomalies().then(res => {
+    getAnomalies(activeCase).then(res => {
       setAnomalies(res.anomalies || []);
       setLoading(false);
     }).catch(() => setLoading(false));
-  }, []);
+  }, [activeCase]);
 
   const getSeverityColor = (severity) => {
     switch (severity?.toUpperCase()) {

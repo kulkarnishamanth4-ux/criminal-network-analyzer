@@ -36,10 +36,11 @@ def startup_event():
     seed_dawood_case()
     seed_additional_cases(db)
         
-    print("Computing Graph Metrics (PageRank, Betweenness, Communities)...")
-    G = build_graph_from_db(db)
-    update_entity_metrics(db, G)
-    print("Rebuilding active graph cache to include fresh metrics...")
-    build_graph_from_db(db, force_rebuild=True)
+    print("Computing Graph Metrics (PageRank, Betweenness, Communities) for all cases...")
+    cases = ["dawood", "drug_punjab", "ht_assam", "cyber_bengaluru", "money_gujarat", "arms_chhattisgarh", "wildlife_kerala", "extortion_up"]
+    for cid in cases:
+        G = build_graph_from_db(db, force_rebuild=True, case_id=cid)
+        update_entity_metrics(db, G)
+        build_graph_from_db(db, force_rebuild=True, case_id=cid)
     print("Metrics computation complete.")
     db.close()

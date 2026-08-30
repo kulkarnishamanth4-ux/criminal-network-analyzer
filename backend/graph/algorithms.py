@@ -48,15 +48,18 @@ def update_entity_metrics(db: Session, G: nx.Graph):
             
     db.commit()
 
-def get_top_influencers(db: Session, limit: int = 10) -> list[dict]:
-    entities = db.query(Entity).filter(Entity.entity_type == "PERSON").order_by(Entity.pagerank.desc()).limit(limit).all()
-    if not entities or all(e.pagerank == 0 for e in entities):
-        # Fallback: return all entity types sorted by pagerank
-        entities = db.query(Entity).order_by(Entity.pagerank.desc()).limit(limit).all()
-    return [{"id": e.id, "name": e.name, "type": e.entity_type, "pagerank": round(e.pagerank or 0, 6), "betweenness": round(e.betweenness or 0, 6), "community_id": e.community_id} for e in entities]
+def get_top_influencers(db: Session, limit: int = 10, case_id: str = "dawood") -> list[dict]:
+    entities = db.query(Entity).all()
+    case_entities = [e for e in entities if (e.properties or {}).get("case_id", "dawood") == case_id and e.entity_type == "PERSON"]
+    case_entities.sort(key=lambda x: x.pagerank or 0.0, reverse=True)
+    if not case_entities or all(e.pagerank == 0 for e in case_entities):
+        case_entities = [e for e in entities if (e.properties or {}).get("case_id", "dawood") == case_id]
+        case_entities.sort(key=lambda x: x.pagerank or 0.0, reverse=True)
+    return [{"id": e.id, "name": e.name, "type": e.entity_type, "pagerank": round(e.pagerank or 0, 6), "betweenness": round(e.betweenness or 0, 6), "community_id": e.community_id} for e in case_entities[:limit]]
 
-def get_communities_summary(db: Session) -> list[dict]:
+def get_communities_summary(db: Session, case_id: str = "dawood") -> list[dict]:
     entities = db.query(Entity).filter(Entity.community_id.isnot(None)).all()
+    entities = [e for e in entities if (e.properties or {}).get("case_id", "dawood") == case_id]
     communities = {}
     for e in entities:
         cid = e.community_id

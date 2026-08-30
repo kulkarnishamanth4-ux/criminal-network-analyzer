@@ -10,16 +10,16 @@ from backend.graph.link_prediction import predict_links
 router = APIRouter()
 
 @router.get("/analytics/top-influencers")
-def top_influencers(limit: int = 10, db: Session = Depends(get_db)):
-    return get_top_influencers(db, limit)
+def top_influencers(limit: int = 10, case_id: str = "dawood", db: Session = Depends(get_db)):
+    return get_top_influencers(db, limit, case_id)
 
 @router.get("/analytics/communities")
-def communities_summary(db: Session = Depends(get_db)):
-    return get_communities_summary(db)
+def communities_summary(case_id: str = "dawood", db: Session = Depends(get_db)):
+    return get_communities_summary(db, case_id)
 
 @router.get("/analytics/anomalies")
-def all_anomalies(db: Session = Depends(get_db)):
-    anomalies = get_all_anomalies(db)
+def all_anomalies(case_id: str = "dawood", db: Session = Depends(get_db)):
+    anomalies = get_all_anomalies(db, case_id)
     return {"anomalies": [
         {"id": a.id, "anomaly_type": a.anomaly_type, "severity": a.severity,
          "title": a.title, "description": a.description,
@@ -28,15 +28,15 @@ def all_anomalies(db: Session = Depends(get_db)):
     ]}
 
 @router.get("/analytics/crime-predictions")
-def crime_predictions(community_id: int = None, db: Session = Depends(get_db)):
-    G = build_graph_from_db(db)
+def crime_predictions(community_id: int = None, case_id: str = "dawood", db: Session = Depends(get_db)):
+    G = build_graph_from_db(db, case_id=case_id)
     return predict_crime_types(db, G, community_id)
 
 @router.get("/analytics/predicted-links")
-def predicted_links(min_confidence: float = 0.3, db: Session = Depends(get_db)):
-    G = build_graph_from_db(db)
+def predicted_links(min_confidence: float = 0.3, case_id: str = "dawood", db: Session = Depends(get_db)):
+    G = build_graph_from_db(db, case_id=case_id)
     return predict_links(G, min_confidence)
 
 @router.get("/analytics/dashboard-stats")
-def dashboard_stats(db: Session = Depends(get_db)):
-    return get_dashboard_stats(db)
+def dashboard_stats(case_id: str = "dawood", db: Session = Depends(get_db)):
+    return get_dashboard_stats(db, case_id)

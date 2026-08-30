@@ -37,7 +37,7 @@ function App() {
     try {
       const [graphRes, statsRes, linksRes] = await Promise.all([
         getFullGraph(150, caseId).catch(() => ({ nodes: [], edges: [] })),
-        getDashboardStats().catch(() => null),
+        getDashboardStats(caseId).catch(() => null),
         getPredictedLinks(caseId).catch(() => ({ predictions: [] }))
       ]);
       
@@ -153,7 +153,7 @@ function App() {
         <LeftPanel 
           stats={stats} 
           onEntitySelect={handleNodeSelect} 
-          onCommunitySelect={handleCommunitySelect} 
+          onCommunitySelect={handleCommunitySelect} activeCase={activeCase} 
         />
         
         <main className="flex-1 relative flex flex-col bg-[#05050f]">
@@ -202,6 +202,7 @@ function App() {
           selectedEntity={selectedEntity} 
           onEntitySelect={handleNodeSelect}
           onExpandNetwork={handleExpandNetwork}
+          activeCase={activeCase}
         />
       </div>
 

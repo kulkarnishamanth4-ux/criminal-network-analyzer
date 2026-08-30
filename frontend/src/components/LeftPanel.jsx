@@ -18,7 +18,7 @@ function StatCard({ title, value, icon, highlight }) {
   );
 }
 
-export default function LeftPanel({ stats, onEntitySelect, onCommunitySelect }) {
+export default function LeftPanel({ stats, onEntitySelect, onCommunitySelect, activeCase }) {
   const [influencers, setInfluencers] = useState([]);
   const [communities, setCommunities] = useState([]);
   const [predictions, setPredictions] = useState([]);
@@ -30,16 +30,16 @@ export default function LeftPanel({ stats, onEntitySelect, onCommunitySelect }) 
 
   useEffect(() => {
     Promise.all([
-      getTopInfluencers().catch(() => ({ influencers: [] })),
-      getCommunities().catch(() => ({ communities: [] })),
-      getCrimePredictions().catch(() => ({ predictions: [] }))
-    ]).then(([infRes, comRes, predRes]) => {
-      setInfluencers(Array.isArray(infRes) ? infRes : (infRes.influencers || []));
-      setCommunities(Array.isArray(comRes) ? comRes : (comRes.communities || []));
-      setPredictions(Array.isArray(predRes) ? predRes : (predRes.predictions || []));
+      getTopInfluencers(10, activeCase).catch(() => ({})),
+      getCommunities(activeCase).catch(() => ({})),
+      getCrimePredictions(activeCase).catch(() => ({}))
+    ]).then(([inf, comm, pred]) => {
+      setInfluencers(Array.isArray(inf) ? inf : []);
+      setCommunities(comm?.communities || []);
+      setPredictions(pred?.predictions || []);
       setLoading(false);
     });
-  }, []);
+  }, [activeCase]);
 
   useEffect(() => {
     if (searchQuery.trim().length < 2) {

@@ -3,7 +3,7 @@ import AlertsFeed from './AlertsFeed';
 import EntityDossier from './EntityDossier';
 import { FiX } from 'react-icons/fi';
 
-export default function RightPanel({ selectedEntity, onEntitySelect, onExpandNetwork }) {
+export default function RightPanel({ selectedEntity, onEntitySelect, onExpandNetwork , activeCase}) {
   return (
     <aside className="w-[320px] bg-[var(--bg-card)] border-l border-[var(--border)] h-full overflow-y-auto flex flex-col z-10 shadow-lg shrink-0 transition-all duration-300">
       {selectedEntity ? (
@@ -21,7 +21,7 @@ export default function RightPanel({ selectedEntity, onEntitySelect, onExpandNet
           />
         </div>
       ) : (
-        <AlertsFeed onEntitySelect={onEntitySelect} />
+        <AlertsFeed onEntitySelect={onEntitySelect} activeCase={activeCase} />
       )}
     </aside>
   );

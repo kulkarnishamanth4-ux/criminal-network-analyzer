@@ -19,28 +19,28 @@ export const getFullGraph = (limit = 150, caseId = 'dawood') => {
   return client.get(`/api/graph/full?limit=${limit}&case_id=${caseId}`).then(res => res.data);
 };
 
-export const getTopInfluencers = (limit = 10) => {
-  return client.get('/api/analytics/top-influencers', { params: { limit } }).then(res => res.data);
+export const getTopInfluencers = (limit = 10, caseId = 'dawood') => {
+  return client.get('/api/analytics/top-influencers', { params: { limit, case_id: caseId } }).then(res => res.data);
 };
 
-export const getCommunities = () => {
-  return client.get('/api/analytics/communities').then(res => res.data);
+export const getCommunities = (caseId = 'dawood') => {
+  return client.get('/api/analytics/communities', { params: { case_id: caseId } }).then(res => res.data);
 };
 
-export const getAnomalies = () => {
-  return client.get('/api/analytics/anomalies').then(res => res.data);
+export const getAnomalies = (caseId = 'dawood') => {
+  return client.get('/api/analytics/anomalies', { params: { case_id: caseId } }).then(res => res.data);
 };
 
-export const getCrimePredictions = () => {
-  return client.get('/api/analytics/crime-predictions').then(res => res.data);
+export const getCrimePredictions = (caseId = 'dawood') => {
+  return client.get('/api/analytics/crime-predictions', { params: { case_id: caseId } }).then(res => res.data);
 };
 
-export const getPredictedLinks = (minConfidence = 0.3) => {
-  return client.get('/api/analytics/predicted-links', { params: { min_confidence: minConfidence } }).then(res => res.data);
+export const getPredictedLinks = (minConfidence = 0.3, caseId = 'dawood') => {
+  return client.get('/api/analytics/predicted-links', { params: { min_confidence: minConfidence, case_id: caseId } }).then(res => res.data);
 };
 
-export const getDashboardStats = () => {
-  return client.get('/api/analytics/dashboard-stats').then(res => res.data);
+export const getDashboardStats = (caseId = 'dawood') => {
+  return client.get('/api/analytics/dashboard-stats', { params: { case_id: caseId } }).then(res => res.data);
 };
 
 export const getEntityDossier = (entityId) => {
