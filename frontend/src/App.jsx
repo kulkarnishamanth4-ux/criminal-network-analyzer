@@ -9,6 +9,7 @@ import PathFinder from './components/PathFinder';
 import ExperimentalLabsModal from './components/ExperimentalLabsModal';
 import LandingPage from './components/LandingPage';
 import GeospatialMap from './components/GeospatialMap';
+import ChatBot from './components/ChatBot';
 import { FiShare2, FiMap } from 'react-icons/fi';
 import { getFullGraph, getDashboardStats, getPredictedLinks } from './api/client';
 
@@ -206,6 +207,9 @@ function App() {
           onHighlightNodes={handleHighlightNodes}
         />
       )}
+
+      {/* Floating AI Assistant */}
+      <ChatBot />
 
       {/* Toast Notification */}
       {toast && (
