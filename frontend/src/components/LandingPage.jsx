@@ -11,7 +11,7 @@ export default function LandingPage({ onEnter }) {
     { name: "Optical Plate-Cloning Paradox", desc: "Detects impossible kinematic highway velocities to flag cloned decoy vehicles." },
     { name: "Hawala Fluid Dynamics", desc: "Models financial conduits as fluid pipes to simulate account freeze cascades." },
     { name: "Digital Twin Interrogation", desc: "AI persona mimicking suspect linguistics for mock interrogations." },
-    { name: "Acoustic Geo-Triangulation", desc: "Decomposes 50Hz mains power micro-drift to geolocate audio intercepts." },
+    { name: "Cryptolalia Dark-Slang Decoder", desc: "Auto-translates masked underworld code words into plain English intelligence." },
     { name: "Panic-Entropy Profiler", desc: "Chronobiological Shannon Entropy tracking to pinpoint confession windows." },
     { name: "Voice-Cloned Sting Honeypot", desc: "Autonomous AI victim persona stalling scammers to extract intelligence." },
     { name: "Gang War Hawkes Cascade", desc: "Forecasts non-linear retaliatory shooting cascades using earthquake math." },
