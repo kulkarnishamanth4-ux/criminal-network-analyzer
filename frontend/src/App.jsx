@@ -116,6 +116,12 @@ function App() {
     }
   };
 
+  const handleCommunitySelect = (communityId) => {
+    const members = graphData.nodes.filter(n => n.metrics && n.metrics.community_id === communityId);
+    setHighlightPath(members.map(n => String(n.id)));
+    showToast(`Spotlighted ${members.length} syndicate entities on canvas`, 'info');
+  };
+
   const handleHighlightNodes = (nodeIds) => {
     setHighlightPath(nodeIds.map(String));
     showToast(`Spotlighted ${nodeIds.length} tactical strike targets on canvas`, 'info');
@@ -133,7 +139,11 @@ function App() {
       />
       
       <div className="flex flex-1 overflow-hidden relative">
-        <LeftPanel stats={stats} onEntitySelect={handleNodeSelect} />
+        <LeftPanel 
+          stats={stats} 
+          onEntitySelect={handleNodeSelect} 
+          onCommunitySelect={handleCommunitySelect} 
+        />
         
         <main className="flex-1 relative flex flex-col bg-[#05050f]">
           {/* View Toggle */}

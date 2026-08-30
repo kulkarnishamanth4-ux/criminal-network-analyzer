@@ -18,7 +18,7 @@ function StatCard({ title, value, icon, highlight }) {
   );
 }
 
-export default function LeftPanel({ stats, onEntitySelect }) {
+export default function LeftPanel({ stats, onEntitySelect, onCommunitySelect }) {
   const [influencers, setInfluencers] = useState([]);
   const [communities, setCommunities] = useState([]);
   const [predictions, setPredictions] = useState([]);
@@ -164,14 +164,19 @@ export default function LeftPanel({ stats, onEntitySelect }) {
           ) : (
             <div className="space-y-2">
               {communities.slice(0, 5).map(com => (
-                <div key={com.community_id || com.id} className="bg-[var(--bg-primary)] p-2 rounded border border-[var(--border)]">
-                  <div className="flex justify-between items-center mb-1">
-                    <span className="text-sm font-medium">{com.alias || `Cluster #${com.community_id || com.id}`}</span>
-                    <span className="text-[10px] bg-[var(--bg-card-hover)] px-1.5 py-0.5 rounded text-[var(--text-accent)]">
-                      {com.member_count} members
-                    </span>
+                <div 
+                  key={com.community_id || com.id} 
+                  onClick={() => onCommunitySelect && onCommunitySelect(com.community_id)}
+                  className="bg-[var(--bg-primary)] p-2 rounded border border-[var(--border)] cursor-pointer hover:bg-[#111] hover:border-[var(--text-accent)] transition-colors"
+                >
+                  <div className="flex justify-between items-start mb-1">
+                    <span className="text-sm font-medium flex-1 mr-2 leading-tight">{com.alias || `Cluster #${com.community_id || com.id}`}</span>
+                    <div className="flex flex-col items-center bg-[var(--bg-card-hover)] px-2 py-1 rounded text-[var(--text-accent)] shrink-0">
+                      <span className="text-xs font-bold leading-none">{com.member_count}</span>
+                      <span className="text-[9px] leading-none mt-0.5">members</span>
+                    </div>
                   </div>
-                  <div className="text-[10px] text-[var(--neon-gold)]">
+                  <div className="text-[10px] text-[var(--neon-gold)] mt-1">
                     {com.dominant_crime_type || 'Syndicate Operations'}
                   </div>
                 </div>
