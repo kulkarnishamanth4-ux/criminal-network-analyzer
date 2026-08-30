@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from backend.config import CORS_ORIGINS
 from backend.database.schema import init_db, get_db, SessionLocal
 from backend.database.models import Base, Entity
-from backend.api import routes_upload, routes_network, routes_analytics, routes_search, routes_report, routes_experimental
+from backend.api import routes_upload, routes_network, routes_analytics, routes_search, routes_report, routes_experimental, routes_chat
 from scripts.seed_d_company import seed_dawood_case
 from backend.graph.algorithms import update_entity_metrics
 from backend.graph.builder import build_graph_from_db
@@ -24,6 +24,7 @@ app.include_router(routes_analytics.router, prefix="/api", tags=["Analytics"])
 app.include_router(routes_search.router, prefix="/api", tags=["Search"])
 app.include_router(routes_report.router, prefix="/api", tags=["Report"])
 app.include_router(routes_experimental.router, prefix="/api", tags=["Experimental"])
+app.include_router(routes_chat.router, prefix="/api", tags=["Chat"])
 
 @app.on_event("startup")
 def startup_event():

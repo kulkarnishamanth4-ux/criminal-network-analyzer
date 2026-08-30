@@ -123,4 +123,8 @@ export const runMoriartyRedteam = (attackVector = "HAWALA_MICRO_SMURFING_EVASION
   return client.post('/api/experimental/moriarty-redteam/attack-and-patch', { attack_vector: attackVector }).then(res => res.data);
 };
 
+export const sendChatMessage = (message) => {
+  return client.post('/api/chat', { message }).then(res => res.data);
+};
+
 

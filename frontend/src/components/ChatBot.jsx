@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { FiMessageSquare, FiX, FiSend, FiCpu, FiTerminal } from 'react-icons/fi';
+import { sendChatMessage } from '../api/client';
 
 export default function ChatBot() {
   const [isOpen, setIsOpen] = useState(false);
@@ -16,46 +17,23 @@ export default function ChatBot() {
     }
   }, [messages, isTyping]);
 
-  const generateResponse = (text) => {
-    const query = text.toLowerCase();
-    if (query.includes('dawood') || query.includes('ibrahim')) {
-      return "Dawood Ibrahim is currently mapped as the primary kingpin of the D-Company Global Command. His network bridges 4 distinct Hawala nodes. I can isolate his ego-network if you prefer.";
-    }
-    if (query.includes('hawala') || query.includes('money') || query.includes('tiger')) {
-      return "Tiger Memon's financial ring is currently layering funds through overseas shell accounts. The Navier-Stokes simulation indicates a 60% liquidity starvation if we freeze target HDFC-MUM-111.";
-    }
-    if (query.includes('salem') || query.includes('extortion')) {
-      return "Abu Salem's extortion cadre is showing high panic-entropy. Intercepted Hinglish stylometry matches his syntactic DNA with 98.5% confidence.";
-    }
-    if (query.includes('predict') || query.includes('future') || query.includes('gang')) {
-      return "The Hawkes Cascade model predicts a 91.2% chance of retaliatory strikes in the Jaipur Transport Hub within the next 72 hours. Recommending QRT deployment.";
-    }
-    if (query.includes('mole') || query.includes('leak')) {
-      return "Quantum Mole-Hunter has flagged Insp. R.K. Mishra (94.2% correlation) for accessing FIR_001 just 35 minutes before Dawood's primary burner went dark.";
-    }
-    
-    // Generic fallback
-    const fallbacks = [
-      "I'm cross-referencing that against the central graph database...",
-      "Running semantic analysis on the latest FIR transcripts to verify that.",
-      "That query requires Level 4 clearance, but based on predictive models, the syndicate's operational capacity is degrading.",
-      "I've logged that entity for chronobiological tracking. We should see pattern anomalies within 24 hours."
-    ];
-    return fallbacks[Math.floor(Math.random() * fallbacks.length)];
-  };
-
-  const handleSend = (e) => {
+  const handleSend = async (e) => {
     e.preventDefault();
     if (!input.trim()) return;
     
-    setMessages(prev => [...prev, { role: 'user', text: input }]);
+    const userMessage = input.trim();
+    setMessages(prev => [...prev, { role: 'user', text: userMessage }]);
     setInput('');
     setIsTyping(true);
     
-    setTimeout(() => {
+    try {
+      const data = await sendChatMessage(userMessage);
+      setMessages(prev => [...prev, { role: 'assistant', text: data.response || "No response received." }]);
+    } catch (err) {
+      setMessages(prev => [...prev, { role: 'assistant', text: "[SYSTEM ERROR] Could not reach AI Backend. Ensure the server is running." }]);
+    } finally {
       setIsTyping(false);
-      setMessages(prev => [...prev, { role: 'assistant', text: generateResponse(input) }]);
-    }, 1200 + Math.random() * 1000);
+    }
   };
 
   return (
