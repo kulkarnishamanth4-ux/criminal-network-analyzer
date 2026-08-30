@@ -76,7 +76,17 @@ export default function EntityDossier({ entityData, onEntitySelect, onExpandNetw
   const pr = entity?.pagerank || entity?.metrics?.pagerank || 0;
   const bt = entity?.betweenness || entity?.metrics?.betweenness || 0;
   const communityId = entity?.community_id ?? entity?.metrics?.community_id ?? null;
-  const risk = getRiskLabel(pr);
+  
+  // Composite Threat Score heuristic
+  const threatScore = 
+    (pr * 10) + 
+    (bt * 5) + 
+    ((dossier.anomalies?.length || 0) * 0.4) + 
+    ((dossier.firs?.length || 0) * 0.3) + 
+    (entity?.risk_score || 0);
+
+  const risk = getRiskLabel(threatScore);
+  const gaugePercent = Math.min(100, threatScore * 100);
 
   return (
     <div className="flex flex-col h-full bg-[var(--bg-primary)]">
@@ -105,7 +115,7 @@ export default function EntityDossier({ entityData, onEntitySelect, onExpandNetw
           <div className="w-full bg-[var(--bg-primary)] h-2 rounded-full overflow-hidden flex">
             <div 
               className="h-full rounded-full transition-all duration-500" 
-              style={{ width: `${Math.min(100, pr * 500)}%`, backgroundColor: risk.color }}
+              style={{ width: `${gaugePercent}%`, backgroundColor: risk.color }}
             />
           </div>
         </div>
