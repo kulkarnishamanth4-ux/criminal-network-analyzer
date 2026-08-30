@@ -10,7 +10,7 @@ class ChatRequest(BaseModel):
     message: str
 
 @router.post("/chat")
-def chat_with_agent(req: ChatRequest):
+async def chat_with_agent(req: ChatRequest):
     api_key = os.environ.get("GEMINI_API_KEY")
     if not api_key:
         return {"response": "[SYSTEM ERROR] GEMINI_API_KEY environment variable is not set. Please add your API key to your Render dashboard environment variables to enable the live LLM AI."}
@@ -25,10 +25,11 @@ def chat_with_agent(req: ChatRequest):
         Limit responses to 2-3 sentences. Do not use emojis. Act like a highly advanced OSINT/SIGINT platform.
         """
         
-        interaction = client.interactions.create(
-            model="gemini-3.7-flash",
+        interaction = await client.aio.interactions.create(
+            model="gemini-3.6-flash",
             input=req.message,
-            system_instruction=system_instruction
+            system_instruction=system_instruction,
+            timeout=15.0
         )
         return {"response": interaction.output_text}
     except Exception as e:
