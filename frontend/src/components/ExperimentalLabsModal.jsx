@@ -263,7 +263,6 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes }) {
       name: ' Cognitive, Audio & Forensics',
       tabs: [
         { id: 'interrogate', label: ' Digital Twin Interrogation' },
-        { id: 'acoustic', label: ' Ghost-Acoustic Triangulation' },
         { id: 'panic', label: ' Panic-Entropy Profiler' },
         { id: 'honeypot', label: ' Voice-Cloned Sting Honeypot' }
       ]
@@ -472,41 +471,60 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes }) {
           )}
 
           {/* 4. HAWALA FLUID DYNAMICS */}
-          {activeTab === 'hawala_fluid' && (
-            <div className="space-y-6">
-              <div className="bg-[var(--bg-primary)] p-4 rounded-lg border border-[var(--border)] flex justify-between">
-                <div>
-                  <h3 className="text-sm font-bold text-[var(--neon-gold)] uppercase flex items-center gap-2"><FiDroplet /> Navier-Stokes Financial Fluid Dynamics</h3>
-                  <p className="text-xs text-[var(--text-secondary)] mt-1">Models financial conduits as fluid pipes to simulate account freeze cascades and calculate the internal betrayal risk index.</p>
-                </div>
-                <button onClick={() => handleRunHawalaFluid()} className="px-4 py-2 bg-[var(--neon-gold)] text-[#0a0a1a] font-bold text-xs rounded">
-                  Run Account Freeze Simulation
-                </button>
-              </div>
-              {hawalaResult && (
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                  <div className="bg-[var(--bg-card)] p-3 rounded border text-center">
-                    <div className="text-[10px] text-[var(--text-secondary)]">Liquidity Starvation</div>
-                    <div className="text-xl font-bold text-[var(--neon-red)]">{hawalaResult.fluid_pressure_metrics.downstream_liquidity_starvation_pct}%</div>
+              {activeTab === 'hawala_fluid' && (
+                <div className="space-y-6">
+                  <div className="bg-[var(--bg-primary)] p-4 rounded-lg border border-[var(--border)] flex justify-between items-center">
+                    <div>
+                      <h3 className="text-sm font-bold text-[var(--neon-gold)] uppercase flex items-center gap-2"><FiDroplet /> Navier-Stokes Financial Fluid Dynamics</h3>
+                      <p className="text-xs text-[var(--text-secondary)] mt-1">Models financial conduits as fluid pipes to simulate account freeze cascades and calculate the internal betrayal risk index.</p>
+                    </div>
+                    <button onClick={() => { setHawalaResult(null); handleRunHawalaFluid(); }} className="px-4 py-2 bg-[var(--neon-gold)] text-[#0a0a1a] font-bold text-xs rounded hover:opacity-90">
+                      {hawalaLoading ? 'Simulating...' : 'Run Account Freeze Simulation'}
+                    </button>
                   </div>
-                  <div className="bg-[var(--bg-card)] p-3 rounded border text-center">
-                    <div className="text-[10px] text-[var(--text-secondary)]">Upstream Backlog</div>
-                    <div className="text-xl font-bold text-[var(--neon-gold)]">₹{(hawalaResult.fluid_pressure_metrics.upstream_backlog_conduit_inr/100000).toFixed(1)}L</div>
-                  </div>
-                  <div className="bg-[var(--bg-card)] p-3 rounded border text-center">
-                    <div className="text-[10px] text-[var(--text-secondary)]">Mules Starved</div>
-                    <div className="text-xl font-bold text-[var(--text-accent)]">{hawalaResult.fluid_pressure_metrics.isolated_downstream_mules}</div>
-                  </div>
-                  <div className="bg-[var(--bg-card)] p-3 rounded border text-center">
-                    <div className="text-[10px] text-[var(--text-secondary)]">Betrayal Risk Index</div>
-                    <div className="text-xl font-bold text-gray-400">{hawalaResult.fluid_pressure_metrics.syndicate_internal_betrayal_risk_index}%</div>
-                  </div>
+                  {hawalaResult && (
+                    <>
+                      <div className="bg-yellow-500/10 border border-yellow-500/30 p-4 rounded-lg text-sm text-[var(--neon-gold)] font-mono">
+                        {hawalaResult.tactical_fluid_assessment}
+                      </div>
+                      
+                      {hawalaResult.frozen_target_accounts?.length > 0 && (
+                        <div className="bg-[var(--bg-primary)] border border-[var(--border)] rounded-lg p-3">
+                          <div className="text-[10px] text-[var(--text-secondary)] uppercase tracking-wider mb-2">Simulated Targets For Freezing</div>
+                          <div className="flex gap-2 flex-wrap">
+                            {hawalaResult.frozen_target_accounts.map(acc => (
+                              <div key={acc.id} className="px-3 py-1 bg-red-500/20 border border-red-500/50 text-red-400 rounded text-xs">
+                                ❄️ {acc.account_number}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                        <div className="bg-[var(--bg-card)] p-3 rounded border border-[var(--border)] text-center">
+                          <div className="text-[10px] text-[var(--text-secondary)] uppercase">Liquidity Starvation</div>
+                          <div className="text-xl font-bold text-[var(--neon-red)] mt-1">{hawalaResult.fluid_pressure_metrics.downstream_liquidity_starvation_pct}%</div>
+                        </div>
+                        <div className="bg-[var(--bg-card)] p-3 rounded border border-[var(--border)] text-center">
+                          <div className="text-[10px] text-[var(--text-secondary)] uppercase">Upstream Backlog</div>
+                          <div className="text-xl font-bold text-[var(--neon-gold)] mt-1">₹{(hawalaResult.fluid_pressure_metrics.upstream_backlog_conduit_inr/100000).toFixed(1)}L</div>
+                        </div>
+                        <div className="bg-[var(--bg-card)] p-3 rounded border border-[var(--border)] text-center">
+                          <div className="text-[10px] text-[var(--text-secondary)] uppercase">Mules Starved</div>
+                          <div className="text-xl font-bold text-[var(--text-accent)] mt-1">{hawalaResult.fluid_pressure_metrics.isolated_downstream_mules}</div>
+                        </div>
+                        <div className="bg-[var(--bg-card)] p-3 rounded border border-[var(--border)] text-center">
+                          <div className="text-[10px] text-[var(--text-secondary)] uppercase">Betrayal Risk Index</div>
+                          <div className="text-xl font-bold text-gray-400 mt-1">{hawalaResult.fluid_pressure_metrics.syndicate_internal_betrayal_risk_index}%</div>
+                        </div>
+                      </div>
+                    </>
+                  )}
                 </div>
               )}
-            </div>
-          )}
 
-          {/* 5. DIGITAL TWIN INTERROGATION */}
+              {/* 5. DIGITAL TWIN INTERROGATION */}
           {activeTab === 'interrogate' && (
             <div className="h-full flex flex-col space-y-3">
               <div className="flex justify-between items-center bg-[var(--bg-primary)] p-2.5 rounded border border-[var(--border)]">
@@ -535,42 +553,6 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes }) {
                 <input type="text" placeholder="Ask question..." value={interrogationInput} onChange={e => setInterrogationInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && handleSendQuestion()} className="flex-1 bg-[var(--bg-primary)] border rounded px-3 py-1.5 text-xs text-white" />
                 <button onClick={() => handleSendQuestion()} className="px-4 py-1.5 bg-[var(--text-accent)] text-[#0a0a1a] font-bold text-xs rounded">Interrogate</button>
               </div>
-            </div>
-          )}
-
-          {/* 6. GHOST ACOUSTIC */}
-          {activeTab === 'acoustic' && (
-            <div className="space-y-6">
-              <div className="bg-[var(--bg-primary)] p-4 rounded-lg border flex justify-between">
-                <div>
-                  <h3 className="text-sm font-bold text-[var(--text-accent)] uppercase flex items-center gap-2"><FiMic /> Micro-Ambient Acoustic Geo-Triangulation</h3>
-                  <p className="text-xs text-[var(--text-secondary)] mt-1">Decomposes 50Hz mains power grid micro-drift, railway horn resonance, and room acoustics.</p>
-                </div>
-                <div className="flex gap-2">
-                  {['intercept_call_001', 'intercept_call_002', 'intercept_call_003'].map((callId, idx) => (
-                    <button key={idx} onClick={() => handleRunAcoustics(callId)} className={`text-xs px-3 py-1 rounded border ${selectedAudioCall === callId ? 'bg-[var(--text-accent)] text-[#0a0a1a] font-bold' : 'text-[var(--text-secondary)]'}`}>
-                      Intercept #{idx+1}
-                    </button>
-                  ))}
-                </div>
-              </div>
-              {acousticResult && (
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                  <div className="bg-[var(--bg-card)] p-4 rounded border">
-                    <div className="text-[10px] text-[var(--text-secondary)] uppercase">Triangulated Region</div>
-                    <div className="text-base font-bold text-[var(--text-accent)] mt-1">{acousticResult.triangulated_region}</div>
-                    <div className="text-xs text-[var(--neon-gold)] mt-1"> {acousticResult.estimated_coordinates.city}</div>
-                  </div>
-                  <div className="bg-[var(--bg-card)] p-4 rounded border">
-                    <div className="text-[10px] text-[var(--text-secondary)] uppercase">Uncertainty Radius</div>
-                    <div className="text-2xl font-bold font-mono text-[var(--neon-green)] mt-1">{acousticResult.geo_uncertainty_radius_meters}m</div>
-                  </div>
-                  <div className="bg-[var(--bg-card)] p-4 rounded border">
-                    <div className="text-[10px] text-[var(--text-secondary)] uppercase">Acoustic Confidence</div>
-                    <div className="text-2xl font-bold font-mono text-gray-400 mt-1">{acousticResult.overall_acoustic_confidence_pct}%</div>
-                  </div>
-                </div>
-              )}
             </div>
           )}
 

@@ -1,39 +1,39 @@
 from typing import Dict, Any, List
 from datetime import datetime
 
-# Simulated highway ANPR FASTag sightings with cloned plates
+# Simulated highway ANPR FASTag sightings with cloned plates linked to D-Company
 SIMULATED_CLONED_PLATE_LOGS = [
     {
-        "plate_number": "UP-14-AB-1234",
+        "plate_number": "MH-01-AB-1234",
         "sighting_1": {
-            "toll_plaza": "DND Flyway Toll Plaza (Delhi-Noida)",
-            "timestamp": "2024-01-15T14:10:00",
-            "optical_vehicle_make": "White Toyota Fortuner (SUV)",
-            "camera_id": "DND-ANPR-CAM-04"
+            "toll_plaza": "Bandra-Worli Sea Link (Mumbai Entry)",
+            "timestamp": "2026-08-15T14:10:00",
+            "optical_vehicle_make": "Silver Honda City (SUV)",
+            "camera_id": "BWSL-ANPR-CAM-04"
         },
         "sighting_2": {
-            "toll_plaza": "Mathura Toll Plaza (Yamuna Expressway)",
-            "timestamp": "2024-01-15T14:28:00",
+            "toll_plaza": "Khed Shivapur Toll Plaza (Pune Bypass)",
+            "timestamp": "2026-08-15T14:28:00",
             "optical_vehicle_make": "Dark Mahindra Scorpio (SUV)",
-            "camera_id": "YAMUNA-EXP-CAM-12"
+            "camera_id": "PUNE-EXP-CAM-12"
         },
         "highway_distance_km": 142.0,
         "elapsed_time_minutes": 18.0,
         "required_kinematic_velocity_kmh": 473.3
     },
     {
-        "plate_number": "MH-12-AB-1234",
+        "plate_number": "MH-02-CD-5678",
         "sighting_1": {
-            "toll_plaza": "Vashi Toll Plaza (Mumbai Entry)",
-            "timestamp": "2024-01-15T09:15:00",
-            "optical_vehicle_make": "Commercial Tata Eicher Freight Truck",
-            "camera_id": "VASHI-ANPR-02"
+            "toll_plaza": "DND Flyway Toll Plaza (Delhi-Noida)",
+            "timestamp": "2026-08-15T09:15:00",
+            "optical_vehicle_make": "Bajaj Pulsar (Motorcycle)",
+            "camera_id": "DND-ANPR-02"
         },
         "sighting_2": {
-            "toll_plaza": "Khed Shivapur Toll Plaza (Pune Bypass)",
-            "timestamp": "2024-01-15T09:30:00",
-            "optical_vehicle_make": "Hyundai Creta Passenger Car",
-            "camera_id": "PUNE-EXP-08"
+            "toll_plaza": "Mathura Toll Plaza (Yamuna Expressway)",
+            "timestamp": "2026-08-15T09:30:00",
+            "optical_vehicle_make": "Black Royal Enfield",
+            "camera_id": "YAMUNA-EXP-08"
         },
         "highway_distance_km": 118.0,
         "elapsed_time_minutes": 15.0,
