@@ -7,7 +7,7 @@ python-louvain==0.16
 spacy==3.8.7
 pandas==2.2.3
 numpy==2.2.6
-pydantic==2.11.3
+pydantic>=2.12.5
 scipy
 aiofiles==24.1.0
 google-genai==2.20.0
