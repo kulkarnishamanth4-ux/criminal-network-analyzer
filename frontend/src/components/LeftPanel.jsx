@@ -34,9 +34,9 @@ export default function LeftPanel({ stats, onEntitySelect, onCommunitySelect, ac
       getCommunities(activeCase).catch(() => ({})),
       getCrimePredictions(activeCase).catch(() => ({}))
     ]).then(([inf, comm, pred]) => {
-      setInfluencers(Array.isArray(inf) ? inf : []);
-      setCommunities(comm?.communities || []);
-      setPredictions(pred?.predictions || []);
+      setInfluencers(Array.isArray(inf) ? inf : (inf?.influencers || []));
+      setCommunities(Array.isArray(comm) ? comm : (comm?.communities || []));
+      setPredictions(Array.isArray(pred) ? pred : (pred?.predictions || []));
       setLoading(false);
     });
   }, [activeCase]);

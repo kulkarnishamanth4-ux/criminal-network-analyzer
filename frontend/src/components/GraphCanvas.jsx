@@ -194,13 +194,13 @@ export default function GraphCanvas({ elements, onNodeSelect, onClearSelection, 
     
     const edges = (elements.edges || []).map(e => ({
       data: {
-        id: String(e.id),
+        ...e,
+        id: String(e.id || `e${e.source}-${e.target}`),
         source: String(e.source),
         target: String(e.target),
         type: e.type,
         label: e.label || e.type,
-        weight: e.weight || 1,
-        ...e
+        weight: e.weight || 1
       }
     }));
     
