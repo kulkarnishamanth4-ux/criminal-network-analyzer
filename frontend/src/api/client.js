@@ -88,7 +88,7 @@ export const simulateHawalaFluid = (frozenAccountIds = [], caseId = "dawood") =>
 };
 
 export const getPanicEntropy = (entityId, caseId = "dawood") => {
-  return client.get(/api/experimental/panic-entropy/, { params: { case_id: caseId } }).then(res => res.data);
+  return client.get(`/api/experimental/panic-entropy/${entityId}`, { params: { case_id: caseId } }).then(res => res.data);
 };
 
 export const getQuantumMole = (caseId = "dawood") => {
