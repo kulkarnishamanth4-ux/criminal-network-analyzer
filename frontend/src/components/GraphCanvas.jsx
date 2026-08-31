@@ -1,6 +1,7 @@
 import React, { useRef, useEffect, useCallback } from 'react';
 import CytoscapeComponent from 'react-cytoscapejs';
 import cytoscape from 'cytoscape';
+import { FiCrosshair, FiZoomIn, FiZoomOut } from 'react-icons/fi';
 
 // Helper to truncate long labels
 function truncateLabel(label, type) {
@@ -295,14 +296,30 @@ export default function GraphCanvas({ elements, onNodeSelect, onClearSelection, 
           </div>
         </div>
       ) : (
+        <>
+        <div className="absolute bottom-6 right-6 z-10 flex flex-col gap-2">
+          <button onClick={() => cyRef.current && cyRef.current.zoom(cyRef.current.zoom() * 1.2)} className="w-10 h-10 bg-[var(--bg-card)] border border-[var(--border)] rounded flex items-center justify-center text-white hover:bg-[var(--bg-highlight)] transition-colors shadow-lg" title="Zoom In">
+            <FiZoomIn size={18} />
+          </button>
+          <button onClick={() => cyRef.current && cyRef.current.zoom(cyRef.current.zoom() * 0.8)} className="w-10 h-10 bg-[var(--bg-card)] border border-[var(--border)] rounded flex items-center justify-center text-white hover:bg-[var(--bg-highlight)] transition-colors shadow-lg" title="Zoom Out">
+            <FiZoomOut size={18} />
+          </button>
+          <button onClick={() => cyRef.current && cyRef.current.fit()} className="w-10 h-10 bg-[var(--bg-card)] border border-[var(--border)] rounded flex items-center justify-center text-white hover:bg-[var(--bg-highlight)] transition-colors shadow-lg" title="Fit to Screen">
+            <FiCrosshair size={18} />
+          </button>
+        </div>
+        
         <CytoscapeComponent 
           elements={cyElements}
           style={{ width: '100%', height: '100%' }}
           stylesheet={stylesheet}
           layout={layout}
           cy={(cy) => { cyRef.current = cy; }}
-          wheelSensitivity={0.1}
+          wheelSensitivity={0.3}
+          minZoom={0.2}
+          maxZoom={3}
         />
+        </>
       )}
     </div>
   );
