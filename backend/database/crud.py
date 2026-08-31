@@ -50,8 +50,8 @@ def create_fir(db: Session, raw_text: str, fir_number: str = None, date=None, po
     db.refresh(fir)
     return fir
 
-def create_anomaly(db: Session, anomaly_type: str, severity: str, title: str, description: str = None, evidence: list = None, entity_ids: list = None) -> Anomaly:
-    anomaly = Anomaly(anomaly_type=anomaly_type, severity=severity, title=title, description=description, evidence=evidence or [], entity_ids=entity_ids or [])
+def create_anomaly(db: Session, anomaly_type: str, severity: str, title: str, description: str = None, evidence: list = None, entity_ids: list = None, case_id: str = "dawood") -> Anomaly:
+    anomaly = Anomaly(anomaly_type=anomaly_type, severity=severity, title=title, description=description, evidence=evidence or [], entity_ids=entity_ids or [], case_id=case_id)
     db.add(anomaly)
     db.commit()
     db.refresh(anomaly)
