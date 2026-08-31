@@ -13,17 +13,17 @@ router = APIRouter()
 
 
 @router.get("/report/generate", response_class=HTMLResponse)
-def generate_report(db: Session = Depends(get_db)):
+def generate_report(case_id: str = "dawood", db: Session = Depends(get_db)):
     """Generate a printable intelligence report as HTML."""
-    stats = get_dashboard_stats(db)
-    influencers_data = get_top_influencers(db, 10)
-    influencers = influencers_data.get("influencers", []) if isinstance(influencers_data, dict) else []
-    communities_data = get_communities_summary(db)
-    communities = communities_data.get("communities", []) if isinstance(communities_data, dict) else []
-    anomalies = get_all_anomalies(db)
-    firs = db.query(FIR).order_by(FIR.created_at.desc()).all()
+    stats = get_dashboard_stats(db, case_id)
+    influencers_data = get_top_influencers(db, 10, case_id)
+    influencers = influencers_data.get("influencers", []) if isinstance(influencers_data, dict) else (influencers_data if isinstance(influencers_data, list) else [])
+    communities_data = get_communities_summary(db, case_id)
+    communities = communities_data.get("communities", []) if isinstance(communities_data, dict) else (communities_data if isinstance(communities_data, list) else [])
+    anomalies = get_all_anomalies(db, case_id)
+    firs = db.query(FIR).filter((FIR.case_id == case_id) | ((FIR.case_id == None) & (case_id == "dawood"))).order_by(FIR.created_at.desc()).all()
 
-    G = build_graph_from_db(db)
+    G = build_graph_from_db(db, force_rebuild=False, case_id=case_id)
     predictions = predict_crime_types(db, G)
     if isinstance(predictions, dict):
         predictions = predictions.get("predictions", [])

@@ -49,7 +49,7 @@ export default function Header({ onUploadClick, onExperimentalClick, activeCase,
           <span className="hidden md:inline"> Experimental Labs</span>
         </button>
         <button 
-          onClick={() => window.open(`${API_URL}/api/report/generate`, '_blank')}
+          onClick={() => window.open(`${API_URL}/api/report/generate?case_id=${activeCase}`, '_blank')}
           className="flex items-center gap-2 bg-[var(--bg-primary)] border border-[var(--border)] text-[var(--text-secondary)] px-3 py-1.5 rounded-md hover:border-[var(--neon-gold)] hover:text-[var(--neon-gold)] transition-all text-sm font-semibold"
         >
           <FiFileText />
