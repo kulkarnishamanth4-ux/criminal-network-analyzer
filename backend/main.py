@@ -27,20 +27,31 @@ app.include_router(routes_report.router, prefix="/api", tags=["Report"])
 app.include_router(routes_experimental.router, prefix="/api", tags=["Experimental"])
 app.include_router(routes_chat.router, prefix="/api", tags=["Chat"])
 
+import threading
+
+def run_startup_tasks():
+    print("Starting background initialization tasks...")
+    db = SessionLocal()
+    try:
+        # Seed Data (Idempotent)
+        print("Checking and seeding databases...")
+        seed_dawood_case()
+        seed_additional_cases(db)
+            
+        print("Computing Graph Metrics (PageRank, Betweenness, Communities) for all cases...")
+        cases = ["dawood", "drug_punjab", "ht_assam", "cyber_bengaluru", "money_gujarat", "arms_chhattisgarh", "wildlife_kerala", "extortion_up"]
+        for cid in cases:
+            G = build_graph_from_db(db, force_rebuild=True, case_id=cid)
+            update_entity_metrics(db, G)
+            build_graph_from_db(db, force_rebuild=True, case_id=cid)
+        print("Metrics computation complete.")
+    except Exception as e:
+        print(f"Background task failed: {e}")
+    finally:
+        db.close()
+
 @app.on_event("startup")
 def startup_event():
     init_db()
-    db = SessionLocal()
-    # Seed Data (Idempotent)
-    print("Checking and seeding databases...")
-    seed_dawood_case()
-    seed_additional_cases(db)
-        
-    print("Computing Graph Metrics (PageRank, Betweenness, Communities) for all cases...")
-    cases = ["dawood", "drug_punjab", "ht_assam", "cyber_bengaluru", "money_gujarat", "arms_chhattisgarh", "wildlife_kerala", "extortion_up"]
-    for cid in cases:
-        G = build_graph_from_db(db, force_rebuild=True, case_id=cid)
-        update_entity_metrics(db, G)
-        build_graph_from_db(db, force_rebuild=True, case_id=cid)
-    print("Metrics computation complete.")
-    db.close()
+    # Run heavy tasks in background so the port binds immediately
+    threading.Thread(target=run_startup_tasks, daemon=True).start()
