@@ -57,9 +57,15 @@ export default function GeospatialMap({ elements, onNodeSelect, selectedEntity }
       if (data.type === 'LOCATION') {
         const name = (data.label || "").toLowerCase();
         let coords = null;
-        for (const [key, val] of Object.entries(GEO_DICT)) {
-          if (name.includes(key)) coords = val;
+        
+        if (data.properties && data.properties.latitude !== undefined && data.properties.longitude !== undefined) {
+          coords = [parseFloat(data.properties.latitude), parseFloat(data.properties.longitude)];
+        } else {
+          for (const [key, val] of Object.entries(GEO_DICT)) {
+            if (name.includes(key)) coords = val;
+          }
         }
+        
         if (coords) {
           locations[data.id] = { ...data, coords };
           geoNodes.push({ ...data, coords });
