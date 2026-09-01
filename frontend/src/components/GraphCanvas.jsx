@@ -163,7 +163,7 @@ const layout = {
   refresh: 20,
   fit: true,
   padding: 60,
-  randomize: false, // Virtualization: Prevent scrambling when new nodes are loaded dynamically
+  randomize: true,
   componentSpacing: 180,
   nodeRepulsion: 3000000,
   edgeElasticity: 45,
