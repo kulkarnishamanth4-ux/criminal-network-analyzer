@@ -221,7 +221,7 @@ function App() {
       )}
 
       {/* Floating AI Assistant */}
-      <ChatBot />
+      <ChatBot activeCase={activeCase} />
 
       {/* Toast Notification */}
       {toast && (

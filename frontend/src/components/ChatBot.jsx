@@ -1,38 +1,42 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { FiMessageSquare, FiX, FiSend, FiCpu, FiTerminal } from 'react-icons/fi';
-import { sendChatMessage } from '../api/client';
+import { FiMessageSquare, FiX, FiSend, FiLoader, FiTerminal } from 'react-icons/fi';
+import { chatWithAgent } from '../api/client';
 
-export default function ChatBot() {
+export default function ChatBot({ activeCase }) {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([
-    { role: 'assistant', text: 'CrimeNet AI Operative online. Secure connection established. How can I assist your investigation?' }
+    { role: 'ai', content: 'CrimeNet AI Copilot online. How can I assist with this network?' }
   ]);
   const [input, setInput] = useState('');
-  const [isTyping, setIsTyping] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef(null);
 
+  // Auto-scroll to bottom
   useEffect(() => {
-    if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
-    }
-  }, [messages, isTyping]);
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
+
+  // Reset chat when case changes
+  useEffect(() => {
+    setMessages([{ role: 'ai', content: `Switched to case: ${activeCase}. Analyzing topology...` }]);
+  }, [activeCase]);
 
   const handleSend = async (e) => {
     e.preventDefault();
-    if (!input.trim()) return;
-    
-    const userMessage = input.trim();
-    setMessages(prev => [...prev, { role: 'user', text: userMessage }]);
+    if (!input.trim() || isLoading) return;
+
+    const userMsg = input.trim();
     setInput('');
-    setIsTyping(true);
-    
+    setMessages(prev => [...prev, { role: 'user', content: userMsg }]);
+    setIsLoading(true);
+
     try {
-      const data = await sendChatMessage(userMessage);
-      setMessages(prev => [...prev, { role: 'assistant', text: data.response || "No response received." }]);
+      const response = await chatWithAgent(userMsg, activeCase);
+      setMessages(prev => [...prev, { role: 'ai', content: response.response }]);
     } catch (err) {
-      setMessages(prev => [...prev, { role: 'assistant', text: "[SYSTEM ERROR] Could not reach AI Backend. Ensure the server is running." }]);
+      setMessages(prev => [...prev, { role: 'ai', content: '[NETWORK ERROR] Failed to reach CrimeNet AI.' }]);
     } finally {
-      setIsTyping(false);
+      setIsLoading(false);
     }
   };
 
@@ -42,95 +46,62 @@ export default function ChatBot() {
       {!isOpen && (
         <button 
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-6 right-6 z-[100] bg-[var(--text-accent)] text-[#0a0a1a] p-4 rounded-full shadow-[0_0_20px_rgba(0,255,65,0.3)] hover:scale-110 transition-transform flex items-center justify-center group"
+          className="absolute bottom-24 right-6 w-12 h-12 bg-[#0a0a1a] border border-[#1e3a5f] rounded-full flex items-center justify-center text-[#f9ca24] hover:bg-[#1e3a5f] transition-all shadow-[0_0_15px_rgba(249,202,36,0.3)] z-50 group"
+          title="AI Intelligence Copilot"
         >
-          <FiMessageSquare size={24} />
-          <span className="absolute right-full mr-4 bg-[#111] text-[var(--text-primary)] text-xs px-3 py-1.5 rounded border border-[var(--border)] whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
-            CrimeNet AI Assistant
-          </span>
+          <FiTerminal size={20} className="group-hover:scale-110 transition-transform" />
         </button>
       )}
 
       {/* Chat Window */}
       {isOpen && (
-        <div className="fixed bottom-6 right-6 z-[100] w-80 sm:w-96 h-[500px] max-h-[80vh] bg-[var(--bg-primary)] border border-[var(--border)] rounded-lg shadow-2xl flex flex-col overflow-hidden animate-in slide-in-from-bottom-8 fade-in duration-300">
-          
+        <div className="absolute bottom-24 right-6 w-80 h-96 bg-[#05050f] border border-[#1e3a5f] rounded-xl shadow-2xl z-50 flex flex-col overflow-hidden backdrop-blur-md bg-opacity-95">
           {/* Header */}
-          <div className="bg-[#111] border-b border-[var(--border)] p-3 flex justify-between items-center">
+          <div className="flex justify-between items-center p-3 border-b border-[#1e3a5f] bg-[#0a0a1a]">
             <div className="flex items-center gap-2">
-              <div className="bg-[var(--text-accent)]/20 p-1.5 rounded">
-                <FiCpu className="text-[var(--text-accent)]" size={16} />
-              </div>
-              <div>
-                <h3 className="text-sm font-bold text-[var(--text-primary)] leading-tight">CrimeNet AI</h3>
-                <div className="text-[10px] text-[var(--neon-gold)] flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[var(--neon-green)] animate-pulse"></span>
-                  Operative Online
-                </div>
-              </div>
+              <FiTerminal className="text-[#f9ca24]" />
+              <span className="font-bold text-sm text-[#c8d6e5]">CrimeNet AI Copilot</span>
             </div>
-            <button 
-              onClick={() => setIsOpen(false)}
-              className="text-[var(--text-secondary)] hover:text-white transition-colors p-1"
-            >
-              <FiX size={20} />
+            <button onClick={() => setIsOpen(false)} className="text-[#4ecdc4] hover:text-white transition-colors">
+              <FiX size={18} />
             </button>
           </div>
 
-          {/* Messages Area */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-[#0a0a0f]">
+          {/* Messages */}
+          <div className="flex-1 overflow-y-auto p-3 flex flex-col gap-3 font-mono text-sm">
             {messages.map((msg, idx) => (
-              <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                <div className={`max-w-[85%] rounded-lg p-3 text-xs leading-relaxed shadow-md ${
-                  msg.role === 'user' 
-                    ? 'bg-[var(--text-accent)] text-[#0a0a1a] rounded-tr-none font-medium' 
-                    : 'bg-[#1a1a24] text-[var(--text-primary)] border border-[#2a2a35] rounded-tl-none'
-                }`}>
-                  {msg.role === 'assistant' && (
-                    <div className="flex items-center gap-1 mb-1 opacity-50">
-                      <FiTerminal size={10} />
-                      <span className="text-[8px] uppercase tracking-wider">System</span>
-                    </div>
-                  )}
-                  {msg.text}
+              <div key={idx} className={`max-w-[85%] ${msg.role === 'user' ? 'self-end' : 'self-start'}`}>
+                <div className={`p-2 rounded-lg ${msg.role === 'user' ? 'bg-[#1e3a5f] text-white border border-[#1e3a5f]' : 'bg-transparent text-[#c8d6e5] border-l-2 border-[#f9ca24] pl-3'}`}>
+                  {msg.content}
                 </div>
               </div>
             ))}
-            
-            {isTyping && (
-              <div className="flex justify-start">
-                <div className="bg-[#1a1a24] border border-[#2a2a35] rounded-lg rounded-tl-none p-3 max-w-[85%]">
-                  <div className="flex gap-1">
-                    <span className="w-1.5 h-1.5 bg-[var(--text-secondary)] rounded-full animate-bounce"></span>
-                    <span className="w-1.5 h-1.5 bg-[var(--text-secondary)] rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></span>
-                    <span className="w-1.5 h-1.5 bg-[var(--text-secondary)] rounded-full animate-bounce" style={{ animationDelay: '0.4s' }}></span>
-                  </div>
-                </div>
+            {isLoading && (
+              <div className="self-start text-[#f9ca24] flex items-center gap-2 text-xs">
+                <FiLoader className="animate-spin" /> Querying Database...
               </div>
             )}
             <div ref={messagesEndRef} />
           </div>
 
-          {/* Input Area */}
-          <form onSubmit={handleSend} className="p-3 bg-[#111] border-t border-[var(--border)]">
-            <div className="relative flex items-center">
-              <input
-                type="text"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                placeholder="Query intelligence network..."
-                className="w-full bg-[#0a0a0f] border border-[#333] text-[var(--text-primary)] text-xs rounded-full py-2.5 pl-4 pr-10 focus:outline-none focus:border-[var(--text-accent)] transition-colors"
-              />
-              <button 
-                type="submit"
-                disabled={!input.trim()}
-                className="absolute right-2 p-1.5 text-[var(--text-accent)] hover:bg-[var(--text-accent)]/20 rounded-full transition-colors disabled:opacity-50 disabled:hover:bg-transparent"
-              >
-                <FiSend size={14} />
-              </button>
-            </div>
+          {/* Input */}
+          <form onSubmit={handleSend} className="p-2 border-t border-[#1e3a5f] bg-[#0a0a1a] flex gap-2">
+            <input 
+              type="text" 
+              value={input}
+              onChange={e => setInput(e.target.value)}
+              placeholder="Ask about the network..."
+              className="flex-1 bg-transparent border-none text-[#c8d6e5] text-sm focus:outline-none focus:ring-0 px-2"
+              autoFocus
+            />
+            <button 
+              type="submit" 
+              disabled={isLoading || !input.trim()}
+              className="p-2 text-[#f9ca24] hover:bg-[#1e3a5f] rounded disabled:opacity-50 transition-colors"
+            >
+              <FiSend size={16} />
+            </button>
           </form>
-
         </div>
       )}
     </>

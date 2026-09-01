@@ -132,3 +132,14 @@ export const analyzeSocmint = (posts, caseId = "dawood") => {
 };
 
 
+
+// AI Chatbot
+export const chatWithAgent = async (message, caseId = 'dawood') => {
+  const response = await fetch(`${API_URL}/api/chat`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ message, case_id: caseId })
+  });
+  if (!response.ok) throw new Error('Chat API failed');
+  return response.json();
+};
