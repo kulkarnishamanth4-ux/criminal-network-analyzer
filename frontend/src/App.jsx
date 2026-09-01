@@ -10,6 +10,7 @@ import ExperimentalLabsModal from './components/ExperimentalLabsModal';
 import LandingPage from './components/LandingPage';
 import GeospatialMap from './components/GeospatialMap';
 import ChatBot from './components/ChatBot';
+import LoginScreen from './components/LoginScreen';
 import { FiShare2, FiMap } from 'react-icons/fi';
 import { getFullGraph, getDashboardStats, getPredictedLinks } from './api/client';
 
@@ -26,6 +27,7 @@ function App() {
   const [toast, setToast] = useState(null);
 
   const [activeCase, setActiveCase] = useState('dawood');
+  const [currentUser, setCurrentUser] = useState(null);
 
   const showToast = (message, type = 'success') => {
     setToast({ message, type });
@@ -182,6 +184,7 @@ function App() {
               <GraphCanvas 
                 key={activeCase}
                 elements={graphData} 
+                activeCase={activeCase}
                 onNodeSelect={handleNodeSelect} 
                 onClearSelection={handleClearSelection}
                 highlightPath={highlightPath}

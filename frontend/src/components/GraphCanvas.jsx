@@ -3,6 +3,8 @@ import CytoscapeComponent from 'react-cytoscapejs';
 import cytoscape from 'cytoscape';
 import { FiCrosshair, FiZoomIn, FiZoomOut } from 'react-icons/fi';
 import TimelineScrubber from './TimelineScrubber';
+import { getPredictedLinks } from '../api/client';
+import { FiEye, FiEyeOff, FiLoader } from 'react-icons/fi';
 
 // Helper to truncate long labels
 function truncateLabel(label, type) {
@@ -173,7 +175,7 @@ const layout = {
   animationEasing: 'ease-out-cubic',
 };
 
-export default function GraphCanvas({ elements, onNodeSelect, onClearSelection, highlightPath }) {
+export default function GraphCanvas({ elements, activeCase, onNodeSelect, onClearSelection, highlightPath }) {
   const cyRef = useRef(null);
   const [timelineFilter, setTimelineFilter] = useState(null);
 

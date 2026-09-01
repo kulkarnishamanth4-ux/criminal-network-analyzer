@@ -1,8 +1,8 @@
 import React from 'react';
-import { FiUploadCloud, FiShield, FiFileText, FiCpu } from 'react-icons/fi';
+import { FiUploadCloud, FiShield, FiFileText, FiCpu, FiUser, FiLogOut } from 'react-icons/fi';
 import SpecularButton from './SpecularButton';
 
-export default function Header({ onUploadClick, onExperimentalClick, activeCase, onCaseChange }) {
+export default function Header({ onUploadClick, onExperimentalClick, activeCase, onCaseChange, currentUser, onLogout }) {
   const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
   const cases = [
