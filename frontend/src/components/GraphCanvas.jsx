@@ -1,7 +1,8 @@
-import React, { useRef, useEffect, useCallback } from 'react';
+import React, { useRef, useEffect, useCallback, useState } from 'react';
 import CytoscapeComponent from 'react-cytoscapejs';
 import cytoscape from 'cytoscape';
 import { FiCrosshair, FiZoomIn, FiZoomOut } from 'react-icons/fi';
+import TimelineScrubber from './TimelineScrubber';
 
 // Helper to truncate long labels
 function truncateLabel(label, type) {
@@ -148,6 +149,9 @@ const stylesheet = [
   { selector: 'edge.dimmed', style: {
     'opacity': 0.06,
   }},
+  { selector: '.temporal-hidden', style: {
+    'display': 'none'
+  }},
 ];
 
 const layout = {
@@ -171,6 +175,35 @@ const layout = {
 
 export default function GraphCanvas({ elements, onNodeSelect, onClearSelection, highlightPath }) {
   const cyRef = useRef(null);
+  const [timelineFilter, setTimelineFilter] = useState(null);
+
+  useEffect(() => {
+    if (!cyRef.current || timelineFilter === null) return;
+    const cy = cyRef.current;
+    
+    cy.batch(() => {
+      cy.edges().forEach(edge => {
+        const ts = edge.data('timestamp');
+        if (ts && new Date(ts).getTime() > timelineFilter) {
+          edge.addClass('temporal-hidden');
+        } else {
+          edge.removeClass('temporal-hidden');
+        }
+      });
+      
+      cy.nodes().forEach(node => {
+        const connectedEdges = node.connectedEdges();
+        if (connectedEdges.length === 0) return;
+        
+        const hasVisibleEdge = connectedEdges.some(e => !e.hasClass('temporal-hidden'));
+        if (hasVisibleEdge) {
+          node.removeClass('temporal-hidden');
+        } else {
+          node.addClass('temporal-hidden');
+        }
+      });
+    });
+  }, [timelineFilter, elements]);
 
   // Normalize elements for Cytoscape
   const cyElements = React.useMemo(() => {
@@ -297,7 +330,8 @@ export default function GraphCanvas({ elements, onNodeSelect, onClearSelection, 
         </div>
       ) : (
         <>
-        <div className="absolute bottom-6 right-6 z-10 flex flex-col gap-2">
+          <TimelineScrubber elements={elements} onFilter={setTimelineFilter} />
+          <div className="absolute bottom-6 right-6 z-10 flex flex-col gap-2">
           <button onClick={() => cyRef.current && cyRef.current.zoom(cyRef.current.zoom() * 1.2)} className="w-10 h-10 bg-[var(--bg-card)] border border-[var(--border)] rounded flex items-center justify-center text-white hover:bg-[var(--bg-highlight)] transition-colors shadow-lg" title="Zoom In">
             <FiZoomIn size={18} />
           </button>

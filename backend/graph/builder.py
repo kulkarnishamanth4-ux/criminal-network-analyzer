@@ -46,6 +46,17 @@ def graph_to_json(G: nx.Graph) -> dict:
         
     edges = []
     for source, target, data in G.edges(data=True):
-        edges.append({"id": data.get("id"), "source": source, "target": target, "type": data.get("rel_type"), "label": data.get("rel_type"), "weight": data.get("weight", 1.0), "properties": data.get("properties", {})})
+        ts = data.get("timestamp")
+        ts_str = ts.isoformat() if ts else None
+        edges.append({
+            "id": data.get("id"), 
+            "source": source, 
+            "target": target, 
+            "type": data.get("rel_type"), 
+            "label": data.get("rel_type"), 
+            "weight": data.get("weight", 1.0), 
+            "properties": data.get("properties", {}),
+            "timestamp": ts_str
+        })
         
     return {"nodes": nodes, "edges": edges}
