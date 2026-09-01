@@ -1,0 +1,2 @@
+with open('frontend/src/api/client.js', 'a', encoding='utf-8') as f:
+    f.write("\n// AI Chatbot\nexport const chatWithAgent = async (message, caseId = 'dawood') => {\n  const response = await fetch(${API_URL}/api/chat, {\n    method: 'POST',\n    headers: { 'Content-Type': 'application/json' },\n    body: JSON.stringify({ message, case_id: caseId })\n  });\n  if (!response.ok) throw new Error('Chat API failed');\n  return response.json();\n};\n")

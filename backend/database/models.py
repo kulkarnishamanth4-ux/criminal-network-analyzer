@@ -15,7 +15,7 @@ class Entity(Base):
     betweenness = Column(Float, default=0.0)
     community_id = Column(Integer, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
-    case_id = Column(String(50), nullable=True, default="dawood")
+    case_id = Column(String(50), nullable=True, default="dawood", index=True)
 
 class Relationship(Base):
     __tablename__ = "relationships"
@@ -27,7 +27,7 @@ class Relationship(Base):
     properties = Column(JSON, default=dict)
     timestamp = Column(DateTime, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
-    case_id = Column(String(50), nullable=True, default="dawood")
+    case_id = Column(String(50), nullable=True, default="dawood", index=True)
 
 class FIR(Base):
     __tablename__ = "firs"
@@ -41,7 +41,7 @@ class FIR(Base):
     crime_confidence = Column(Float, nullable=True)
     extracted_entities = Column(JSON, default=list)
     created_at = Column(DateTime, default=datetime.utcnow)
-    case_id = Column(String(50), nullable=True, default="dawood")
+    case_id = Column(String(50), nullable=True, default="dawood", index=True)
 
 class Anomaly(Base):
     __tablename__ = "anomalies"
@@ -53,4 +53,4 @@ class Anomaly(Base):
     evidence = Column(JSON, default=list)
     entity_ids = Column(JSON, default=list)
     created_at = Column(DateTime, default=datetime.utcnow)
-    case_id = Column(String(50), nullable=True, default="dawood")
+    case_id = Column(String(50), nullable=True, default="dawood", index=True)
