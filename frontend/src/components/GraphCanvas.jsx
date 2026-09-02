@@ -68,6 +68,11 @@ const stylesheet = [
     'border-color': '#a29bfe40',
     'shape': 'round-rectangle',
   }},
+  { selector: 'node[type="SOCIAL_HANDLE"]', style: {
+    'background-color': '#fd79a8',
+    'border-color': '#fd79a840',
+    'shape': 'star',
+  }},
 
   // ── HIGH-RISK GLOW ──
   { selector: 'node[?highRisk]', style: {
@@ -105,6 +110,14 @@ const stylesheet = [
     'line-dash-pattern': [6, 3],
     'opacity': 0.7,
   }},
+  { selector: 'edge.ghost-link', style: {
+    'line-color': '#ff006680',
+    'target-arrow-color': '#ff006680',
+    'line-style': 'dashed',
+    'line-dash-pattern': [8, 4],
+    'opacity': 0.5,
+    'width': 1.5,
+  }},
 
   // ── SELECTION & HOVER ──
   { selector: 'node:active', style: {
@@ -127,7 +140,7 @@ const stylesheet = [
     'text-outline-color': '#05050f',
   }},
 
-  // ── NEIGHBORHOOD HIGHLIGHT (applied via classes) ──
+  // ── NEIGHBORHOOD HIGHLIGHT ──
   { selector: 'node.highlighted', style: {
     'opacity': 1,
     'border-width': 4,
@@ -152,23 +165,23 @@ const stylesheet = [
     'opacity': 0.06,
   }},
   { selector: '.temporal-hidden', style: {
-    'display': 'none'
+    'display': 'none',
   }},
 ];
 
 const layout = {
   name: 'cose',
-  idealEdgeLength: 160,
+  idealEdgeLength: 100,
   nodeOverlap: 20,
   refresh: 20,
   fit: true,
-  padding: 60,
+  padding: 50,
   randomize: true,
-  componentSpacing: 180,
-  nodeRepulsion: 3000000,
-  edgeElasticity: 45,
+  componentSpacing: 80,
+  nodeRepulsion: 400000,
+  edgeElasticity: 100,
   nestingFactor: 5,
-  gravity: 35,
+  gravity: 80,
   numIter: 1500,
   animate: true,
   animationDuration: 800,
@@ -237,7 +250,8 @@ export default function GraphCanvas({ elements, activeCase, onNodeSelect, onClea
         type: e.type,
         label: e.label || e.type,
         weight: e.weight || 1
-      }
+      },
+      classes: e.is_ghost ? 'ghost-link' : ''
     }));
     
     return [...nodes, ...edges];
@@ -271,15 +285,11 @@ export default function GraphCanvas({ elements, activeCase, onNodeSelect, onClea
       }
     };
 
-    // Hover tooltip via popper or title
     const handleMouseOver = (evt) => {
       const node = evt.target;
       const d = node.data();
       const fullLabel = d.label || d.id;
-      const type = d.type || 'UNKNOWN';
-      const pr = d.pagerank ? (d.pagerank * 100).toFixed(1) : '0.0';
       node.scratch('_tippy', fullLabel);
-      // Use the browser title attribute for a native tooltip
       node.style('content', fullLabel);
     };
 

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
-import { FiUsers, FiLink, FiActivity, FiAlertTriangle, FiTrendingUp, FiSearch, FiX } from 'react-icons/fi';
+import { FiChevronLeft, FiChevronRight, FiUsers, FiLink, FiActivity, FiAlertTriangle, FiTrendingUp, FiSearch, FiX } from 'react-icons/fi';
 import { getTopInfluencers, getCommunities, getCrimePredictions, searchEntities } from '../api/client';
 
 function StatCard({ title, value, icon, highlight }) {
@@ -24,6 +23,7 @@ export default function LeftPanel({ stats, onEntitySelect, onCommunitySelect, ac
   const [communities, setCommunities] = useState([]);
   const [predictions, setPredictions] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isCollapsed, setIsCollapsed] = useState(false);
   
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
@@ -57,9 +57,22 @@ export default function LeftPanel({ stats, onEntitySelect, onCommunitySelect, ac
     return () => clearTimeout(delay);
   }, [searchQuery]);
 
+  if (isCollapsed) {
+    return (
+      <aside className="w-[40px] bg-[var(--bg-card)] border-r border-[var(--border)] h-full flex flex-col z-10 shadow-lg shrink-0 items-center pt-4">
+        <button onClick={() => setIsCollapsed(false)} className="text-[var(--text-secondary)] hover:text-white p-2 rounded hover:bg-[var(--bg-primary)]" title="Expand Panel">
+          <FiChevronRight size={18} />
+        </button>
+      </aside>
+    );
+  }
+
   return (
-    <aside className="w-[280px] bg-[var(--bg-card)] border-r border-[var(--border)] h-full overflow-y-auto flex flex-col z-10 shadow-lg shrink-0">
-      <div className="p-4 space-y-6">
+    <aside className="w-[280px] bg-[var(--bg-card)] border-r border-[var(--border)] h-full overflow-y-auto flex flex-col z-10 shadow-lg shrink-0 relative">
+      <button onClick={() => setIsCollapsed(true)} className="absolute top-3 right-3 z-50 text-[var(--text-secondary)] hover:text-white p-1 rounded hover:bg-[var(--bg-primary)]" title="Collapse Panel">
+        <FiChevronLeft size={16} />
+      </button>
+      <div className="p-4 space-y-6 pt-10">
         
         {/* Global Search */}
         <div className="relative">
@@ -129,33 +142,33 @@ export default function LeftPanel({ stats, onEntitySelect, onCommunitySelect, ac
           <h2 className="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider mb-3 flex items-center gap-2">
             <FiTrendingUp /> Key Targets
           </h2>
-            {loading ? (
-              <div className="animate-pulse h-20 bg-[var(--bg-primary)] rounded"></div>
-            ) : (
-              <div className="space-y-2">
-                {influencers.slice(0, 5).map((inf, i) => {
-                  const maxPr = Math.max(...influencers.map(i => i.pagerank || 0), 0.0001);
-                  const pct = Math.min(100, ((inf.pagerank || 0) / maxPr) * 100);
-                  return (
-                  <div 
-                    key={inf.id} 
-                    className="bg-[var(--bg-primary)] p-2 rounded border border-[var(--border)] cursor-pointer hover:border-[var(--text-accent)] transition-colors flex items-center justify-between"
-                    onClick={() => onEntitySelect(inf)}
-                  >
-                    <div className="flex items-center gap-2 overflow-hidden">
-                      <div className="text-[10px] font-bold text-[var(--text-secondary)] w-4">{i + 1}</div>
-                      <div className="truncate text-sm">{inf.name}</div>
-                    </div>
-                    <div className="w-12 h-1 bg-[var(--bg-card-hover)] rounded-full overflow-hidden">
-                      <div 
-                        className="h-full bg-[var(--neon-red)]" 
-                        style={{ width: `${pct}%` }}
-                      />
-                    </div>
+          {loading ? (
+            <div className="animate-pulse h-20 bg-[var(--bg-primary)] rounded"></div>
+          ) : (
+            <div className="space-y-2">
+              {influencers.slice(0, 5).map((inf, i) => {
+                const maxPr = Math.max(...influencers.map(x => x.pagerank || 0), 0.0001);
+                const pct = Math.min(100, ((inf.pagerank || 0) / maxPr) * 100);
+                return (
+                <div 
+                  key={inf.id} 
+                  className="bg-[var(--bg-primary)] p-2 rounded border border-[var(--border)] cursor-pointer hover:border-[var(--text-accent)] transition-colors flex items-center justify-between"
+                  onClick={() => onEntitySelect(inf)}
+                >
+                  <div className="flex items-center gap-2 overflow-hidden">
+                    <div className="text-[10px] font-bold text-[var(--text-secondary)] w-4">{i + 1}</div>
+                    <div className="truncate text-sm">{inf.name}</div>
                   </div>
-                )})}
-              </div>
-            )}
+                  <div className="w-12 h-1 bg-[var(--bg-card-hover)] rounded-full overflow-hidden">
+                    <div 
+                      className="h-full bg-[var(--neon-red)]" 
+                      style={{ width: `${pct}%` }}
+                    />
+                  </div>
+                </div>
+              )})}
+            </div>
+          )}
         </div>
 
         {/* Communities */}
