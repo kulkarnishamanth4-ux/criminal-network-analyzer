@@ -51,8 +51,9 @@ def graph_to_json(G: nx.Graph) -> dict:
     for source, target, data in G.edges(data=True):
         ts = data.get("timestamp")
         ts_str = ts.isoformat() if ts else None
+        edge_id = f"edge_{data.get('id')}" if data.get('id') is not None else f"edge_{source}_{target}"
         edges.append({
-            "id": data.get("id"), 
+            "id": edge_id, 
             "source": source, 
             "target": target, 
             "type": data.get("rel_type"), 

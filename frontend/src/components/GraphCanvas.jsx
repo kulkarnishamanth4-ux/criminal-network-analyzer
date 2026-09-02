@@ -337,10 +337,10 @@ export default function GraphCanvas({ elements, activeCase, onNodeSelect, onClea
       };
     });
     
-    const edges = (elements.edges || []).map(e => ({
+    const edges = (elements.edges || []).map((e, idx) => ({
       data: {
         ...e,
-        id: String(e.id || `e${e.source}-${e.target}`),
+        id: `edge_${e.id ?? `${e.source}_${e.target}_${idx}`}`,
         source: String(e.source),
         target: String(e.target),
         type: e.type,
