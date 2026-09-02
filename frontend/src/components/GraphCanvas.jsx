@@ -3,8 +3,6 @@ import CytoscapeComponent from 'react-cytoscapejs';
 import cytoscape from 'cytoscape';
 import { FiCrosshair, FiZoomIn, FiZoomOut } from 'react-icons/fi';
 import TimelineScrubber from './TimelineScrubber';
-import { getPredictedLinks } from '../api/client';
-import { FiEye, FiEyeOff, FiLoader } from 'react-icons/fi';
 
 // Helper to truncate long labels
 function truncateLabel(label, type) {
@@ -27,11 +25,11 @@ const stylesheet = [
     'font-weight': 'bold',
     'text-outline-color': '#05050f',
     'text-outline-width': 2.5,
-    'min-zoomed-font-size': 5,
-    'width': 'mapData(pagerank, 0, 0.15, 22, 70)',
-    'height': 'mapData(pagerank, 0, 0.15, 22, 70)',
+    'min-zoomed-font-size': 6,
+    'width': 'mapData(pagerank, 0, 0.15, 24, 72)',
+    'height': 'mapData(pagerank, 0, 0.15, 24, 72)',
     'border-width': 2,
-    'border-color': '#ffffff20',
+    'border-color': '#ffffff30',
     'overlay-padding': '4px',
     'transition-property': 'opacity, border-color, border-width, width, height',
     'transition-duration': '0.2s',
@@ -39,90 +37,188 @@ const stylesheet = [
 
   // ── NODE TYPES ──
   { selector: 'node[type="PERSON"]', style: {
-    'background-color': '#ff6b6b',
-    'border-color': '#ff6b6b40',
+    'background-color': '#ff4757',
+    'border-color': '#ff6b81',
     'shape': 'ellipse',
   }},
   { selector: 'node[type="PHONE"]', style: {
-    'background-color': '#4ecdc4',
-    'border-color': '#4ecdc440',
+    'background-color': '#00d2d3',
+    'border-color': '#48dbfb',
     'shape': 'diamond',
   }},
   { selector: 'node[type="LOCATION"]', style: {
-    'background-color': '#45b7d1',
-    'border-color': '#45b7d140',
+    'background-color': '#54a0ff',
+    'border-color': '#2e86de',
     'shape': 'round-rectangle',
   }},
   { selector: 'node[type="VEHICLE"]', style: {
-    'background-color': '#96c93d',
-    'border-color': '#96c93d40',
+    'background-color': '#1dd1a1',
+    'border-color': '#10ac84',
     'shape': 'pentagon',
   }},
   { selector: 'node[type="BANK_ACCOUNT"]', style: {
-    'background-color': '#f9ca24',
-    'border-color': '#f9ca2440',
+    'background-color': '#feca57',
+    'border-color': '#ff9f43',
     'shape': 'hexagon',
   }},
   { selector: 'node[type="ORGANIZATION"]', style: {
     'background-color': '#a29bfe',
-    'border-color': '#a29bfe40',
+    'border-color': '#6c5ce7',
     'shape': 'round-rectangle',
   }},
   { selector: 'node[type="SOCIAL_HANDLE"]', style: {
     'background-color': '#fd79a8',
-    'border-color': '#fd79a840',
+    'border-color': '#e84393',
     'shape': 'star',
   }},
 
   // ── HIGH-RISK GLOW ──
   { selector: 'node[?highRisk]', style: {
     'border-width': 4,
-    'border-color': '#ff004080',
-    'shadow-blur': 15,
+    'border-color': '#ff0040',
+    'shadow-blur': 16,
     'shadow-color': '#ff0040',
-    'shadow-opacity': 0.6,
+    'shadow-opacity': 0.8,
     'shadow-offset-x': 0,
     'shadow-offset-y': 0,
   }},
 
-  // ── EDGES ──
+  // ── BASE EDGES ──
   { selector: 'edge', style: {
-    'width': 'mapData(weight, 1, 20, 0.8, 3.5)',
-    'line-color': '#1e3a5f',
-    'target-arrow-color': '#1e3a5f',
+    'width': 2,
+    'line-color': '#57606f',
+    'target-arrow-color': '#57606f',
     'target-arrow-shape': 'triangle',
-    'arrow-scale': 0.8,
+    'arrow-scale': 0.9,
     'curve-style': 'bezier',
-    'opacity': 0.45,
+    'opacity': 0.75,
+    'label': 'data(label)',
+    'font-size': '8px',
+    'color': '#8395a7',
+    'text-rotation': 'autorotate',
+    'text-outline-width': 1.5,
+    'text-outline-color': '#05050f',
     'transition-property': 'opacity, line-color, width',
     'transition-duration': '0.2s',
   }},
-  { selector: 'edge[type="CALLED"]', style: { 'line-color': '#4ecdc4', 'target-arrow-color': '#4ecdc4' }},
-  { selector: 'edge[type="TRANSFERRED_MONEY_TO"]', style: { 'line-color': '#f9ca24', 'target-arrow-color': '#f9ca24' }},
-  { selector: 'edge[type="SPOTTED_AT"]', style: { 'line-color': '#45b7d1', 'target-arrow-color': '#45b7d1' }},
-  { selector: 'edge[type="MENTIONED_IN_FIR"]', style: { 'line-color': '#ff6b6b', 'target-arrow-color': '#ff6b6b', 'line-style': 'dotted' }},
-  { selector: 'edge[type="OWNS_ACCOUNT"]', style: { 'line-color': '#f9ca2480', 'target-arrow-color': '#f9ca2480', 'line-style': 'solid', 'width': 1 }},
-  { selector: 'edge[type="OWNS_VEHICLE"]', style: { 'line-color': '#96c93d80', 'target-arrow-color': '#96c93d80', 'line-style': 'solid', 'width': 1 }},
+
+  // ── SPECIFIC RELATIONSHIPS (Vivid high-contrast colors) ──
+  { selector: 'edge[type="COMMANDS"]', style: { 
+    'line-color': '#ff4757', 
+    'target-arrow-color': '#ff4757',
+    'width': 2.5,
+    'opacity': 0.9
+  }},
+  { selector: 'edge[type="DIRECTS_OPERATIONS_FOR"]', style: { 
+    'line-color': '#ff6b81', 
+    'target-arrow-color': '#ff6b81',
+    'width': 2.5,
+    'opacity': 0.9
+  }},
+  { selector: 'edge[type="HIRED"]', style: { 
+    'line-color': '#ffa502', 
+    'target-arrow-color': '#ffa502',
+    'width': 2.2,
+    'opacity': 0.85
+  }},
+  { selector: 'edge[type="CONTROLS"]', style: { 
+    'line-color': '#a29bfe', 
+    'target-arrow-color': '#a29bfe',
+    'width': 2.2,
+    'opacity': 0.85
+  }},
+  { selector: 'edge[type="CALLED"]', style: { 
+    'line-color': '#00d2d3', 
+    'target-arrow-color': '#00d2d3',
+    'width': 2.2,
+    'opacity': 0.85
+  }},
+  { selector: 'edge[type="THREATENED"]', style: { 
+    'line-color': '#ff3838', 
+    'target-arrow-color': '#ff3838',
+    'line-style': 'dashed',
+    'line-dash-pattern': [6, 3],
+    'width': 2.5,
+    'opacity': 0.95
+  }},
+  { selector: 'edge[type="TRANSFERRED_MONEY_TO"]', style: { 
+    'line-color': '#ffd32a', 
+    'target-arrow-color': '#ffd32a',
+    'width': 2.5,
+    'opacity': 0.9
+  }},
+  { selector: 'edge[type="SPOTTED_AT"]', style: { 
+    'line-color': '#54a0ff', 
+    'target-arrow-color': '#54a0ff',
+    'width': 2.2,
+    'opacity': 0.85
+  }},
+  { selector: 'edge[type="OWNS_PHONE"]', style: { 
+    'line-color': '#2ed573', 
+    'target-arrow-color': '#2ed573',
+    'width': 1.8,
+    'opacity': 0.8
+  }},
+  { selector: 'edge[type="OWNS_ACCOUNT"]', style: { 
+    'line-color': '#eccc68', 
+    'target-arrow-color': '#eccc68',
+    'width': 1.8,
+    'opacity': 0.8
+  }},
+  { selector: 'edge[type="OWNS_VEHICLE"]', style: { 
+    'line-color': '#7bed9f', 
+    'target-arrow-color': '#7bed9f',
+    'width': 1.8,
+    'opacity': 0.8
+  }},
+  { selector: 'edge[type="OWNS_HANDLE"]', style: { 
+    'line-color': '#fd79a8', 
+    'target-arrow-color': '#fd79a8',
+    'width': 1.8,
+    'opacity': 0.8
+  }},
+  { selector: 'edge[type="TAGGED_IN_POST"]', style: { 
+    'line-color': '#e056fd', 
+    'target-arrow-color': '#e056fd',
+    'line-style': 'dashed',
+    'line-dash-pattern': [5, 3],
+    'width': 1.8,
+    'opacity': 0.85
+  }},
+  { selector: 'edge[type="POSTED_FROM"]', style: { 
+    'line-color': '#67e6dc', 
+    'target-arrow-color': '#67e6dc',
+    'width': 1.8,
+    'opacity': 0.85
+  }},
+  { selector: 'edge[type="MENTIONED_IN_FIR"]', style: { 
+    'line-color': '#ff5252', 
+    'target-arrow-color': '#ff5252', 
+    'line-style': 'dotted',
+    'width': 2,
+    'opacity': 0.85
+  }},
   { selector: 'edge[type="PREDICTED"]', style: {
     'line-color': '#ffff00',
     'target-arrow-color': '#ffff00',
     'line-style': 'dashed',
     'line-dash-pattern': [6, 3],
-    'opacity': 0.7,
+    'width': 2,
+    'opacity': 0.85,
   }},
   { selector: 'edge.ghost-link', style: {
-    'line-color': '#ff006680',
-    'target-arrow-color': '#ff006680',
+    'line-color': '#ff0066',
+    'target-arrow-color': '#ff0066',
     'line-style': 'dashed',
     'line-dash-pattern': [8, 4],
-    'opacity': 0.5,
-    'width': 1.5,
+    'opacity': 0.75,
+    'width': 2,
   }},
 
   // ── SELECTION & HOVER ──
   { selector: 'node:active', style: {
     'overlay-color': '#64ffda',
-    'overlay-opacity': 0.15,
+    'overlay-opacity': 0.2,
   }},
   { selector: ':selected', style: {
     'border-width': 4,
@@ -130,12 +226,10 @@ const stylesheet = [
     'opacity': 1,
   }},
   { selector: 'edge:selected', style: {
-    'width': 3,
+    'width': 3.5,
     'opacity': 1,
-    'label': 'data(label)',
     'font-size': '10px',
     'color': '#64ffda',
-    'text-rotation': 'autorotate',
     'text-outline-width': 2,
     'text-outline-color': '#05050f',
   }},
@@ -149,20 +243,18 @@ const stylesheet = [
   }},
   { selector: 'edge.highlighted', style: {
     'opacity': 1,
-    'width': 3,
+    'width': 3.5,
     'z-index': 999,
-    'label': 'data(label)',
-    'font-size': '9px',
-    'color': '#8892b0',
-    'text-rotation': 'autorotate',
-    'text-outline-width': 1.5,
+    'font-size': '10px',
+    'color': '#ffffff',
+    'text-outline-width': 2,
     'text-outline-color': '#05050f',
   }},
   { selector: 'node.dimmed', style: {
-    'opacity': 0.12,
+    'opacity': 0.15,
   }},
   { selector: 'edge.dimmed', style: {
-    'opacity': 0.06,
+    'opacity': 0.08,
   }},
   { selector: '.temporal-hidden', style: {
     'display': 'none',
@@ -171,21 +263,23 @@ const stylesheet = [
 
 const layout = {
   name: 'cose',
-  idealEdgeLength: 100,
-  nodeOverlap: 20,
-  refresh: 20,
-  fit: true,
-  padding: 50,
-  randomize: true,
-  componentSpacing: 80,
-  nodeRepulsion: 400000,
-  edgeElasticity: 100,
-  nestingFactor: 5,
-  gravity: 80,
-  numIter: 1500,
   animate: true,
   animationDuration: 800,
-  animationEasing: 'ease-out-cubic',
+  animationEasing: 'ease-out',
+  fit: true,
+  padding: 40,
+  randomize: true,
+  componentSpacing: 60,
+  nodeRepulsion: 8000,
+  nodeOverlap: 30,
+  idealEdgeLength: 80,
+  edgeElasticity: 32,
+  nestingFactor: 1.2,
+  gravity: 1.0,
+  numIter: 1000,
+  initialTemp: 200,
+  coolingFactor: 0.95,
+  minTemp: 1.0,
 };
 
 export default function GraphCanvas({ elements, activeCase, onNodeSelect, onClearSelection, highlightPath }) {
@@ -199,6 +293,7 @@ export default function GraphCanvas({ elements, activeCase, onNodeSelect, onClea
     cy.batch(() => {
       cy.edges().forEach(edge => {
         const ts = edge.data('timestamp');
+        // If edge has a timestamp, hide if it occurred AFTER the filter date
         if (ts && new Date(ts).getTime() > timelineFilter) {
           edge.addClass('temporal-hidden');
         } else {
@@ -210,6 +305,7 @@ export default function GraphCanvas({ elements, activeCase, onNodeSelect, onClea
         const connectedEdges = node.connectedEdges();
         if (connectedEdges.length === 0) return;
         
+        // A node is visible if ANY of its connected edges are visible
         const hasVisibleEdge = connectedEdges.some(e => !e.hasClass('temporal-hidden'));
         if (hasVisibleEdge) {
           node.removeClass('temporal-hidden');
@@ -344,27 +440,27 @@ export default function GraphCanvas({ elements, activeCase, onNodeSelect, onClea
         <>
           <TimelineScrubber elements={elements} onFilter={setTimelineFilter} />
           <div className="absolute bottom-6 right-6 z-10 flex flex-col gap-2">
-          <button onClick={() => cyRef.current && cyRef.current.zoom(cyRef.current.zoom() * 1.2)} className="w-10 h-10 bg-[var(--bg-card)] border border-[var(--border)] rounded flex items-center justify-center text-white hover:bg-[var(--bg-highlight)] transition-colors shadow-lg" title="Zoom In">
-            <FiZoomIn size={18} />
-          </button>
-          <button onClick={() => cyRef.current && cyRef.current.zoom(cyRef.current.zoom() * 0.8)} className="w-10 h-10 bg-[var(--bg-card)] border border-[var(--border)] rounded flex items-center justify-center text-white hover:bg-[var(--bg-highlight)] transition-colors shadow-lg" title="Zoom Out">
-            <FiZoomOut size={18} />
-          </button>
-          <button onClick={() => cyRef.current && cyRef.current.fit()} className="w-10 h-10 bg-[var(--bg-card)] border border-[var(--border)] rounded flex items-center justify-center text-white hover:bg-[var(--bg-highlight)] transition-colors shadow-lg" title="Fit to Screen">
-            <FiCrosshair size={18} />
-          </button>
-        </div>
-        
-        <CytoscapeComponent 
-          elements={cyElements}
-          style={{ width: '100%', height: '100%' }}
-          stylesheet={stylesheet}
-          layout={layout}
-          cy={(cy) => { cyRef.current = cy; }}
-          wheelSensitivity={0.3}
-          minZoom={0.2}
-          maxZoom={3}
-        />
+            <button onClick={() => cyRef.current && cyRef.current.zoom(cyRef.current.zoom() * 1.2)} className="w-10 h-10 bg-[var(--bg-card)] border border-[var(--border)] rounded flex items-center justify-center text-white hover:bg-[var(--bg-highlight)] transition-colors shadow-lg" title="Zoom In">
+              <FiZoomIn size={18} />
+            </button>
+            <button onClick={() => cyRef.current && cyRef.current.zoom(cyRef.current.zoom() * 0.8)} className="w-10 h-10 bg-[var(--bg-card)] border border-[var(--border)] rounded flex items-center justify-center text-white hover:bg-[var(--bg-highlight)] transition-colors shadow-lg" title="Zoom Out">
+              <FiZoomOut size={18} />
+            </button>
+            <button onClick={() => cyRef.current && cyRef.current.fit()} className="w-10 h-10 bg-[var(--bg-card)] border border-[var(--border)] rounded flex items-center justify-center text-white hover:bg-[var(--bg-highlight)] transition-colors shadow-lg" title="Fit to Screen">
+              <FiCrosshair size={18} />
+            </button>
+          </div>
+          
+          <CytoscapeComponent 
+            elements={cyElements}
+            style={{ width: '100%', height: '100%' }}
+            stylesheet={stylesheet}
+            layout={layout}
+            cy={(cy) => { cyRef.current = cy; }}
+            wheelSensitivity={0.3}
+            minZoom={0.2}
+            maxZoom={3}
+          />
         </>
       )}
     </div>
