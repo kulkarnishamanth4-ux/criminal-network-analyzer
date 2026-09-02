@@ -35,8 +35,8 @@ def run_startup_tasks():
     try:
         # Seed Data (Idempotent)
         print("Checking and seeding databases...")
-        seed_dawood_case()
-        seed_additional_cases(db)
+        # seed_dawood_case() removed to prevent infinite duplication on reboot
+        # seed_additional_cases(db) removed to prevent infinite duplication on reboot
             
         print("Computing Graph Metrics (PageRank, Betweenness, Communities) for all cases...")
         cases = ["dawood", "drug_punjab", "ht_assam", "cyber_bengaluru", "money_gujarat", "arms_chhattisgarh", "wildlife_kerala", "extortion_up"]
