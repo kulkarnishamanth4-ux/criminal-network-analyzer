@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 import { FiUsers, FiLink, FiActivity, FiAlertTriangle, FiTrendingUp, FiSearch, FiX } from 'react-icons/fi';
 import { getTopInfluencers, getCommunities, getCrimePredictions, searchEntities } from '../api/client';
 

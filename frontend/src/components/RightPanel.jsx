@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import AlertsFeed from './AlertsFeed';
 import EntityDossier from './EntityDossier';
-import { FiX } from 'react-icons/fi';
+import { FiX, FiChevronRight, FiChevronLeft } from 'react-icons/fi';
 
 export default function RightPanel({ selectedEntity, onEntitySelect, onExpandNetwork , activeCase}) {
   return (
