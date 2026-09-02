@@ -58,29 +58,24 @@ def create_anomaly(db: Session, anomaly_type: str, severity: str, title: str, de
     return anomaly
 
 def get_all_anomalies(db: Session, case_id: str = "dawood") -> list[Anomaly]:
-    anomalies = db.query(Anomaly).order_by(Anomaly.created_at.desc()).all()
-    # Assume anomalies generated via seed_d_company belong to dawood, and we didn't generate anomalies for other cases.
-    if case_id != "dawood":
-        return []
-    return anomalies
+    return db.query(Anomaly).filter(
+        (Anomaly.case_id == case_id) | ((Anomaly.case_id == None) & (case_id == "dawood"))
+    ).order_by(Anomaly.created_at.desc()).all()
 
 def get_dashboard_stats(db: Session, case_id: str = "dawood") -> dict:
     from sqlalchemy import func
-    entities = db.query(Entity).all()
-    case_entities = [e for e in entities if (e.properties or {}).get("case_id", "dawood") == case_id]
-    case_entity_ids = set([e.id for e in case_entities])
     
-    total_entities = len(case_entities)
+    ent_filter = (Entity.case_id == case_id) | ((Entity.case_id == None) & (case_id == "dawood"))
+    rel_filter = (Relationship.case_id == case_id) | ((Relationship.case_id == None) & (case_id == "dawood"))
     
-    entities_by_type = {}
-    for e in case_entities:
-        entities_by_type[e.entity_type] = entities_by_type.get(e.entity_type, 0) + 1
-        
-    relationships = db.query(Relationship).all()
-    case_relationships = [r for r in relationships if r.source_id in case_entity_ids and r.target_id in case_entity_ids]
-    total_relationships = len(case_relationships)
+    total_entities = db.query(Entity).filter(ent_filter).count()
     
-    communities_count = len(set([e.community_id for e in case_entities if e.community_id is not None]))
+    type_counts = db.query(Entity.entity_type, func.count(Entity.id)).filter(ent_filter).group_by(Entity.entity_type).all()
+    entities_by_type = {t: c for t, c in type_counts}
+    
+    total_relationships = db.query(Relationship).filter(rel_filter).count()
+    
+    communities_count = db.query(func.count(func.distinct(Entity.community_id))).filter(ent_filter).scalar() or 0
     
     anomalies = get_all_anomalies(db, case_id)
     anomalies_count = len(anomalies)
