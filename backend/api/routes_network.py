@@ -12,7 +12,7 @@ def get_entity_network(entity_id: int, depth: int = 2, case_id: str = "dawood", 
     return get_ego_network(G, entity_id, depth)
 
 @router.get("/graph/full")
-def get_full_graph(limit: int = 500, case_id: str = "dawood", db: Session = Depends(get_db)):
+def get_full_graph(limit: int = 3000, case_id: str = "dawood", db: Session = Depends(get_db)):
     G = build_graph_from_db(db, case_id=case_id)
     if limit and len(G.nodes) > limit:
         # Virtualization: Instead of crashing the frontend with 500k nodes,

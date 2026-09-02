@@ -38,7 +38,7 @@ function App() {
     setIsLoading(true);
     try {
       const [graphRes, statsRes, linksRes] = await Promise.all([
-        getFullGraph(150, caseId).catch(() => ({ nodes: [], edges: [] })),
+        getFullGraph(3000, caseId).catch(() => ({ nodes: [], edges: [] })),
         getDashboardStats(caseId).catch(() => null),
         getPredictedLinks(caseId).catch(() => ({ predictions: [] }))
       ]);

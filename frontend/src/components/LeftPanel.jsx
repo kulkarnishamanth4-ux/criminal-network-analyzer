@@ -128,30 +128,33 @@ export default function LeftPanel({ stats, onEntitySelect, onCommunitySelect, ac
           <h2 className="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider mb-3 flex items-center gap-2">
             <FiTrendingUp /> Key Targets
           </h2>
-          {loading ? (
-            <div className="animate-pulse h-20 bg-[var(--bg-primary)] rounded"></div>
-          ) : (
-            <div className="space-y-2">
-              {influencers.slice(0, 5).map((inf, i) => (
-                <div 
-                  key={inf.id} 
-                  className="bg-[var(--bg-primary)] p-2 rounded border border-[var(--border)] cursor-pointer hover:border-[var(--text-accent)] transition-colors flex items-center justify-between"
-                  onClick={() => onEntitySelect(inf)}
-                >
-                  <div className="flex items-center gap-2 overflow-hidden">
-                    <div className="text-[10px] font-bold text-[var(--text-secondary)] w-4">{i + 1}</div>
-                    <div className="truncate text-sm">{inf.name}</div>
+            {loading ? (
+              <div className="animate-pulse h-20 bg-[var(--bg-primary)] rounded"></div>
+            ) : (
+              <div className="space-y-2">
+                {influencers.slice(0, 5).map((inf, i) => {
+                  const maxPr = Math.max(...influencers.map(i => i.pagerank || 0), 0.0001);
+                  const pct = Math.min(100, ((inf.pagerank || 0) / maxPr) * 100);
+                  return (
+                  <div 
+                    key={inf.id} 
+                    className="bg-[var(--bg-primary)] p-2 rounded border border-[var(--border)] cursor-pointer hover:border-[var(--text-accent)] transition-colors flex items-center justify-between"
+                    onClick={() => onEntitySelect(inf)}
+                  >
+                    <div className="flex items-center gap-2 overflow-hidden">
+                      <div className="text-[10px] font-bold text-[var(--text-secondary)] w-4">{i + 1}</div>
+                      <div className="truncate text-sm">{inf.name}</div>
+                    </div>
+                    <div className="w-12 h-1 bg-[var(--bg-card-hover)] rounded-full overflow-hidden">
+                      <div 
+                        className="h-full bg-[var(--neon-red)]" 
+                        style={{ width: `${pct}%` }}
+                      />
+                    </div>
                   </div>
-                  <div className="w-12 h-1 bg-[var(--bg-card-hover)] rounded-full overflow-hidden">
-                    <div 
-                      className="h-full bg-[var(--neon-red)]" 
-                      style={{ width: `${Math.min(100, (inf.pagerank || 0) * 100)}%` }}
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
+                )})}
+              </div>
+            )}
         </div>
 
         {/* Communities */}
