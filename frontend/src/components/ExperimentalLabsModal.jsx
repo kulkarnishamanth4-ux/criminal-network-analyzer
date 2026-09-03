@@ -817,27 +817,92 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes, activ
             <div className="space-y-6">
               <div className="bg-[var(--bg-primary)] p-4 rounded-lg border border-[var(--border)] flex justify-between items-start">
                 <div>
-                  <h3 className="text-sm font-bold text-blue-400 uppercase flex items-center gap-2"><FiEye /> SOCMINT Threat Scanner</h3>
+                  <h3 className="text-sm font-bold text-blue-400 uppercase flex items-center gap-2"><FiEye /> SOCMINT Threat Scanner & OSINT Pipeline</h3>
                   <p className="text-xs text-[var(--text-secondary)] mt-1 max-w-2xl">
-                    Parses intercepted social media posts (X, Instagram, Dark Web) to extract threat levels, geographic coordinates from EXIF metadata, and predicts gang escalation.
+                    Parses intercepted social media posts (X, Instagram, Telegram, Dark Web) to extract threat levels, geographic coordinates from EXIF metadata, and predicts syndicate escalation.
                   </p>
+                </div>
+                <span className="text-[10px] font-mono bg-blue-500/20 text-blue-400 border border-blue-500/30 px-2 py-0.5 rounded uppercase">
+                  Active Case: {activeCase}
+                </span>
+              </div>
+
+              {/* Case-Specific Presets */}
+              <div>
+                <div className="text-[10px] uppercase font-bold text-[var(--text-secondary)] mb-1.5 tracking-wider">
+                  Intercepted Broadcast Presets ({activeCase}):
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {(() => {
+                    const presetsMap = {
+                      dawood: [
+                        { label: "Dongri Drop Post (IG)", text: "@d_boss_official: System is ready. 50 peti package will drop in Dongri tonight #BhaiCompany" },
+                        { label: "Salem Extortion Threat (X)", text: "@captain_salem: Final warning to Bollywood producer... 50 khoka tayyar rakho warna shooter ghar pe aayega" }
+                      ],
+                      drug_punjab: [
+                        { label: "Drone Drop Broadcast (IG)", text: "@billa_majha_punjab: Big parcel arriving across the wire at 02:00 AM near border dhaba #MajhaBoys #BillaGroup" },
+                        { label: "Highway Transit Story (Snap)", text: "@garry_sandhu_amritsar: 4x4 loaded for GT Road run. Consignment cleared #NightRiders" }
+                      ],
+                      ht_assam: [
+                        { label: "Train Batch Logistics (FB)", text: "@anwar_ali_guwahati: 12 candidates ready for Kamakhya express departure at 23:00. Factory jobs confirmed #AssamTravels" },
+                        { label: "Riverine Crossing Ping (IMO)", text: "@rofiqul_express_transit: River crossing clear at Dhubri. Connect on IMO for transit paperwork" }
+                      ],
+                      cyber_bengaluru: [
+                        { label: "Zero-Day Ransom Post (DarkWeb)", text: "@0xRamesh_DarkSec: Exfiltrated complete VIP financial database. 15 BTC countdown started to 1P5ZEDWT... #ZeroDay" },
+                        { label: "Proxy Credential Leak (TG)", text: "@sunil_root_hacker: Reverse-proxy bypass script active across 45 bank portals. Mule accounts ready #DarkNet" }
+                      ],
+                      money_gujarat: [
+                        { label: "Angadia Token Dispatch (WA)", text: "@mansukh_angadia_surat: Match note serial 786-990-21. 25 Crore cash clearance against Surat Bourse token" },
+                        { label: "Dubai Smurfing Route (IG)", text: "@ketan_patel_bourse: Import bill under-invoicing cleared. Foreign exchange layered via UAE shell fronts" }
+                      ],
+                      arms_chhattisgarh: [
+                        { label: "Ore Truck Ammo Cache (Matrix)", text: "@rao_commander_bastar: 20 crates marked machine parts moving via Bailadila mineral transport trucks. Lal Salaam" },
+                        { label: "Jungle Weapon Supply (TG)", text: "@katta_singh_desi: Automatic rifle consignment cached at deep forest trail. Contact on Matrix node" }
+                      ],
+                      wildlife_kerala: [
+                        { label: "Ivory Tusk Shipment (FB)", text: "@jose_tusk_wayanad: Two pairs of 35kg raw white logs sealed in spice container. Kochi maritime vessel ETD 03:00" },
+                        { label: "Poacher Staging Ping (TG)", text: "@rajan_nair_trapper: Rainforest perimeter traps laid. Export buyer confirmed for exotic species #MalabarExotic" }
+                      ],
+                      extortion_up: [
+                        { label: "PWD Tender Warning (FB)", text: "@munna_bajrangi_shooter: PWD road tender submission tomorrow. Jo bhi form bharega use goli milegi. Dada ka aadesh hai" },
+                        { label: "Bahubali Convoy Reel (IG)", text: "@vikas_dada_gorakhpur: 10 Fortuner convoy passing through Gorakhpur toll plaza. Purvanchal belongs to Dada #Bahubali" }
+                      ]
+                    };
+                    const presets = presetsMap[activeCase] || presetsMap.dawood;
+                    return presets.map((p, idx) => (
+                      <button
+                        key={idx}
+                        onClick={() => {
+                          setSocmintInput(p.text);
+                          setSocmintLoading(true);
+                          analyzeSocmint([p.text], activeCase)
+                            .then(res => setSocmintData(res))
+                            .catch(err => console.error(err))
+                            .finally(() => setSocmintLoading(false));
+                        }}
+                        className="text-xs bg-[var(--bg-card)] border border-[var(--border)] hover:border-blue-500 hover:text-blue-300 text-[var(--text-secondary)] px-3 py-1.5 rounded-md transition-colors"
+                      >
+                        ⚡ {p.label}
+                      </button>
+                    ));
+                  })()}
                 </div>
               </div>
 
               <div className="space-y-2">
                 <div className="flex gap-2">
                   <input
-                    className="flex-1 bg-[#111] border border-[#333] text-xs p-3 rounded-lg text-[var(--text-primary)] focus:border-blue-500 outline-none"
+                    className="flex-1 bg-[#111] border border-[#333] text-xs p-3 rounded-lg text-[var(--text-primary)] focus:border-blue-500 outline-none font-mono"
                     value={socmintInput}
                     onChange={e => setSocmintInput(e.target.value)}
-                    placeholder="Paste intercepted social media string..."
+                    placeholder="Paste intercepted social media string or broadcast..."
                   />
                   <button 
                     onClick={handleRunSocmint}
                     disabled={socmintLoading}
-                    className="bg-blue-600 hover:bg-blue-500 text-white px-4 rounded-lg flex items-center justify-center disabled:opacity-50"
+                    className="bg-blue-600 hover:bg-blue-500 text-white px-5 rounded-lg flex items-center justify-center gap-1.5 text-xs font-bold disabled:opacity-50 transition-colors"
                   >
-                    {socmintLoading ? 'Scanning...' : <FiSend size={16} />}
+                    {socmintLoading ? 'Scanning...' : <><FiSend size={14} /> Scan</>}
                   </button>
                 </div>
               </div>
@@ -856,6 +921,24 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes, activ
                       <div className="text-xl font-bold text-orange-500 mt-1">{socmintData.gang_escalation_probability}</div>
                     </div>
                   </div>
+
+                  {/* Detected Handles */}
+                  {socmintData.detected_handles && socmintData.detected_handles.length > 0 && (
+                    <div className="bg-[#0a0a0f] border border-[#333] p-4 rounded space-y-2">
+                      <h4 className="text-xs font-bold text-[var(--text-accent)] uppercase border-b border-[#333] pb-2 flex items-center justify-between">
+                        <span>Monitored Handles & Nodes</span>
+                        <span className="text-[10px] text-gray-500 font-mono">SOCMINT MESH</span>
+                      </h4>
+                      <div className="flex flex-wrap gap-2 pt-1">
+                        {socmintData.detected_handles.map((h, i) => (
+                          <span key={i} className="inline-flex items-center gap-1.5 bg-[#1a1a2e] text-pink-400 border border-pink-500/40 text-xs px-2.5 py-1 rounded-md font-mono font-medium">
+                            <span className="w-1.5 h-1.5 rounded-full bg-pink-400"></span>
+                            {h}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
 
                   <div className="bg-[#0a0a0f] border border-[#333] p-4 rounded space-y-3">
                     <h4 className="text-xs font-bold text-[var(--text-accent)] uppercase mb-2 border-b border-[#333] pb-2">Geospatial Anchors Extracted</h4>
