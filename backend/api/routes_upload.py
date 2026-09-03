@@ -1,4 +1,4 @@
-from fastapi import APIRouter, UploadFile, File, Depends
+from fastapi import APIRouter, UploadFile, File, Depends, Request
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 from backend.database.schema import get_db
@@ -6,15 +6,25 @@ from backend.database import crud
 from backend.nlp.pipeline import extract_entities_from_text, classify_crime
 from backend.nlp.parsers import parse_cdr_csv, parse_financial_csv, parse_vehicle_csv
 from backend.main_helpers import compute_all_analytics
-
+from backend.limiter import limiter
 import traceback
 
 router = APIRouter()
 
+MAX_UPLOAD_SIZE = 10 * 1024 * 1024  # 10 MB limit
+
+async def read_and_validate_upload(file: UploadFile, max_size: int = MAX_UPLOAD_SIZE) -> bytes:
+    """Reads file content up to max_size + 1 and enforces file size ceiling."""
+    content = await file.read(max_size + 1)
+    if len(content) > max_size:
+        raise ValueError(f"File size exceeds maximum allowed limit of {max_size // (1024 * 1024)}MB")
+    return content
+
 @router.post("/upload/fir")
-async def upload_fir(file: UploadFile = File(...), db: Session = Depends(get_db)):
+@limiter.limit("30/minute")
+async def upload_fir(request: Request, file: UploadFile = File(...), db: Session = Depends(get_db)):
     try:
-        content = await file.read()
+        content = await read_and_validate_upload(file)
         try:
             text = content.decode("utf-8")
         except UnicodeDecodeError:
@@ -76,14 +86,17 @@ async def upload_fir(file: UploadFile = File(...), db: Session = Depends(get_db)
             "crime_type": fir.crime_type,
             "crime_confidence": fir.crime_confidence
         }
+    except ValueError as val_err:
+        return JSONResponse(status_code=413, content={"status": "error", "message": str(val_err)})
     except Exception as e:
         traceback.print_exc()
         return JSONResponse(status_code=500, content={"status": "error", "message": f"Failed to process FIR: {str(e)}"})
 
 @router.post("/upload/cdr")
-async def upload_cdr(file: UploadFile = File(...), db: Session = Depends(get_db)):
+@limiter.limit("30/minute")
+async def upload_cdr(request: Request, file: UploadFile = File(...), db: Session = Depends(get_db)):
     try:
-        content = await file.read()
+        content = await read_and_validate_upload(file)
         records = parse_cdr_csv(content)
         
         if not records:
@@ -96,14 +109,17 @@ async def upload_cdr(file: UploadFile = File(...), db: Session = Depends(get_db)
             
         compute_all_analytics(db)
         return {"status": "success", "records_processed": len(records)}
+    except ValueError as val_err:
+        return JSONResponse(status_code=413, content={"status": "error", "message": str(val_err)})
     except Exception as e:
         traceback.print_exc()
         return JSONResponse(status_code=500, content={"status": "error", "message": f"Failed to process CDR: {str(e)}"})
 
 @router.post("/upload/financial")
-async def upload_financial(file: UploadFile = File(...), db: Session = Depends(get_db)):
+@limiter.limit("30/minute")
+async def upload_financial(request: Request, file: UploadFile = File(...), db: Session = Depends(get_db)):
     try:
-        content = await file.read()
+        content = await read_and_validate_upload(file)
         records = parse_financial_csv(content)
         
         if not records:
@@ -121,14 +137,17 @@ async def upload_financial(file: UploadFile = File(...), db: Session = Depends(g
             
         compute_all_analytics(db)
         return {"status": "success", "records_processed": len(records)}
+    except ValueError as val_err:
+        return JSONResponse(status_code=413, content={"status": "error", "message": str(val_err)})
     except Exception as e:
         traceback.print_exc()
         return JSONResponse(status_code=500, content={"status": "error", "message": f"Failed to process financial data: {str(e)}"})
 
 @router.post("/upload/vehicle")
-async def upload_vehicle(file: UploadFile = File(...), db: Session = Depends(get_db)):
+@limiter.limit("30/minute")
+async def upload_vehicle(request: Request, file: UploadFile = File(...), db: Session = Depends(get_db)):
     try:
-        content = await file.read()
+        content = await read_and_validate_upload(file)
         records = parse_vehicle_csv(content)
         
         if not records:
@@ -141,6 +160,8 @@ async def upload_vehicle(file: UploadFile = File(...), db: Session = Depends(get
             
         compute_all_analytics(db)
         return {"status": "success", "records_processed": len(records)}
+    except ValueError as val_err:
+        return JSONResponse(status_code=413, content={"status": "error", "message": str(val_err)})
     except Exception as e:
         traceback.print_exc()
         return JSONResponse(status_code=500, content={"status": "error", "message": f"Failed to process vehicle data: {str(e)}"})

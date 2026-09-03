@@ -9,7 +9,13 @@ from scripts.seed_other_cases import seed_additional_cases
 from backend.graph.algorithms import update_entity_metrics
 from backend.graph.builder import build_graph_from_db
 
+from slowapi import _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
+from backend.limiter import limiter
+
 app = FastAPI(title="CrimeNet Intelligence Platform")
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 app.add_middleware(
     CORSMiddleware,

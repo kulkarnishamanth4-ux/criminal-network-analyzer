@@ -1,7 +1,8 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Request
 from sqlalchemy.orm import Session
 from backend.database.schema import get_db
 from backend.database import crud
+from backend.limiter import limiter
 
 router = APIRouter()
 
@@ -21,13 +22,15 @@ def entity_to_dict(e):
 
 
 @router.get("/search")
-def search(q: str, type: str = None, limit: int = 20, db: Session = Depends(get_db)):
+@limiter.limit("60/minute")
+def search(request: Request, q: str, type: str = None, limit: int = 20, db: Session = Depends(get_db)):
     results = crud.search_entities(db, q, type, limit)
     return {"results": [entity_to_dict(e) for e in results]}
 
 
 @router.get("/entity/{entity_id}/dossier")
-def entity_dossier(entity_id: int, db: Session = Depends(get_db)):
+@limiter.limit("60/minute")
+def entity_dossier(request: Request, entity_id: int, db: Session = Depends(get_db)):
     data = crud.get_entity_dossier(db, entity_id)
     if not data or not data.get("entity"):
         return {"error": "Entity not found"}
