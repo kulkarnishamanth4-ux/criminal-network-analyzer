@@ -153,9 +153,11 @@ function App() {
       
       <div className="flex flex-1 overflow-hidden relative">
         <LeftPanel 
+          key={activeCase}
           stats={stats} 
           onEntitySelect={handleNodeSelect} 
-          onCommunitySelect={handleCommunitySelect} activeCase={activeCase} 
+          onCommunitySelect={handleCommunitySelect} 
+          activeCase={activeCase} 
         />
         
         <main className="flex-1 relative flex flex-col bg-[#05050f]">
