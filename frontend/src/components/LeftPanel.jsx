@@ -211,24 +211,33 @@ export default function LeftPanel({ stats, onEntitySelect, onCommunitySelect, ac
           {loading ? (
              <div className="animate-pulse h-20 bg-[var(--bg-primary)] rounded"></div>
           ) : (
-            <div className="space-y-3">
-              {predictions.map((pred, i) => (
-                <div key={i} className="bg-[var(--bg-primary)] p-2 rounded border border-[var(--border)]">
-                  <div className="flex justify-between text-xs mb-1">
-                    <span className="text-[var(--text-primary)]">{pred.crime_type}</span>
-                    <span className="text-[var(--neon-teal)]">{(pred.confidence * 100).toFixed(0)}%</span>
+            <div className="space-y-2.5">
+              {predictions.map((pred, i) => {
+                const confPct = Math.round(pred.confidence * 100);
+                const barColor = confPct >= 90 ? 'bg-[#ff4757]' : confPct >= 75 ? 'bg-[#ffa502]' : 'bg-[var(--neon-teal)]';
+                const textColor = confPct >= 90 ? 'text-[#ff4757]' : confPct >= 75 ? 'text-[#ffa502]' : 'text-[var(--neon-teal)]';
+                const matchedCount = pred.indicators?.filter(x => x.matched !== false).length || pred.indicators?.length || 0;
+                
+                return (
+                  <div key={i} className="bg-[var(--bg-primary)] p-2.5 rounded border border-[var(--border)] hover:border-[var(--text-accent)] transition-all">
+                    <div className="flex justify-between items-center text-xs mb-1.5">
+                      <span className="text-[var(--text-primary)] font-medium truncate pr-2" title={pred.crime_type}>
+                        {pred.crime_type}
+                      </span>
+                      <span className={`font-mono font-bold text-[11px] ${textColor}`}>{confPct}%</span>
+                    </div>
+                    <div className="w-full h-1 bg-[var(--bg-card-hover)] rounded-full overflow-hidden mb-1.5">
+                      <div 
+                        className={`h-full ${barColor} transition-all duration-500`} 
+                        style={{ width: `${confPct}%` }}
+                      />
+                    </div>
+                    <div className="text-[10px] text-[var(--text-secondary)] flex justify-between items-center">
+                      <span>{matchedCount} matching indicator{matchedCount !== 1 ? 's' : ''}</span>
+                    </div>
                   </div>
-                  <div className="w-full h-1 bg-[var(--bg-card-hover)] rounded-full overflow-hidden mb-1">
-                    <div 
-                      className="h-full bg-[var(--neon-teal)]" 
-                      style={{ width: `${pred.confidence * 100}%` }}
-                    />
-                  </div>
-                  <div className="text-[9px] text-[var(--text-secondary)]">
-                    {pred.indicators?.length || 0} matching indicators
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>

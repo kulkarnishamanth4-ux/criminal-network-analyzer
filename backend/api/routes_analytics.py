@@ -30,7 +30,7 @@ def all_anomalies(case_id: str = "dawood", db: Session = Depends(get_db)):
 @router.get("/analytics/crime-predictions")
 def crime_predictions(community_id: int = None, case_id: str = "dawood", db: Session = Depends(get_db)):
     G = build_graph_from_db(db, case_id=case_id)
-    return predict_crime_types(db, G, community_id)
+    return predict_crime_types(db, G, community_id, case_id=case_id)
 
 @router.get("/analytics/predicted-links")
 def predicted_links(min_confidence: float = 0.3, case_id: str = "dawood", db: Session = Depends(get_db)):
