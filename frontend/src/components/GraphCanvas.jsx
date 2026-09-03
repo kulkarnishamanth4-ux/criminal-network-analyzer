@@ -96,7 +96,7 @@ const stylesheet = [
     'border-color': 'rgba(255,255,255,0.2)',
   }},
 
-  // ── BASE EDGES ──
+  // ── BASE EDGES (Labels hidden by default to keep canvas clean) ──
   { selector: 'edge', style: {
     'width': 2,
     'line-color': '#57606f',
@@ -105,13 +105,14 @@ const stylesheet = [
     'arrow-scale': 0.9,
     'curve-style': 'bezier',
     'opacity': 0.75,
-    'label': 'data(label)',
-    'font-size': '8px',
-    'color': '#8395a7',
+    'label': '',
+    'font-size': '9px',
+    'font-weight': 'bold',
+    'color': '#ffffff',
     'text-rotation': 'autorotate',
-    'text-outline-width': 1.5,
+    'text-outline-width': 2,
     'text-outline-color': '#05050f',
-    'transition-property': 'opacity, line-color, width',
+    'transition-property': 'opacity, line-color, width, label',
     'transition-duration': '0.2s',
   }},
 
@@ -238,13 +239,19 @@ const stylesheet = [
     'border-color': '#64ffda',
     'opacity': 1,
   }},
-  { selector: 'edge:selected', style: {
-    'width': 3.5,
+  { selector: 'edge:selected, edge.edge-selected', style: {
+    'label': 'data(label)',
+    'width': 4.0,
     'opacity': 1,
-    'font-size': '10px',
+    'font-size': '11px',
+    'font-weight': 'bold',
     'color': '#64ffda',
-    'text-outline-width': 2,
+    'line-color': '#64ffda',
+    'target-arrow-color': '#64ffda',
+    'text-outline-width': 2.5,
     'text-outline-color': '#05050f',
+    'text-rotation': 'autorotate',
+    'z-index': 9999,
   }},
 
   // ── NEIGHBORHOOD HIGHLIGHT ──
@@ -256,12 +263,8 @@ const stylesheet = [
   }},
   { selector: 'edge.highlighted', style: {
     'opacity': 1,
-    'width': 3.5,
-    'z-index': 999,
-    'font-size': '10px',
-    'color': '#ffffff',
-    'text-outline-width': 2,
-    'text-outline-color': '#05050f',
+    'width': 3.2,
+    'z-index': 998,
   }},
   { selector: 'node.dimmed', style: {
     'opacity': 0.15,
@@ -426,13 +429,21 @@ export default function GraphCanvas({ elements, activeCase, onNodeSelect, onClea
     
     const handleTapNode = (evt) => {
       const node = evt.target;
+      cy.edges().removeClass('edge-selected').unselect();
       highlightNeighborhood(cy, node);
       onNodeSelect(node.data());
+    };
+
+    const handleTapEdge = (evt) => {
+      const edge = evt.target;
+      cy.edges().removeClass('edge-selected').unselect();
+      edge.addClass('edge-selected').select();
     };
     
     const handleTapBg = (evt) => {
       if (evt.target === cy) {
         clearHighlight(cy);
+        cy.edges().removeClass('edge-selected').unselect();
         onClearSelection();
       }
     };
@@ -446,10 +457,12 @@ export default function GraphCanvas({ elements, activeCase, onNodeSelect, onClea
     };
 
     cy.on('tap', 'node', handleTapNode);
+    cy.on('tap', 'edge', handleTapEdge);
     cy.on('tap', handleTapBg);
     
     return () => {
       cy.off('tap', 'node', handleTapNode);
+      cy.off('tap', 'edge', handleTapEdge);
       cy.off('tap', handleTapBg);
     };
   }, [onNodeSelect, onClearSelection, highlightNeighborhood, clearHighlight]);
