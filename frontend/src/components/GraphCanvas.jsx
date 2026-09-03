@@ -21,14 +21,14 @@ const stylesheet = [
     'text-valign': 'bottom',
     'text-margin-y': 6,
     'color': '#c8d6e5',
-    'font-size': '11px',
+    'font-size': 'data(fontSize)',
     'font-weight': 'bold',
     'text-outline-color': '#05050f',
     'text-outline-width': 2.5,
-    'min-zoomed-font-size': 6,
-    'width': 'mapData(pagerank, 0, 0.15, 24, 72)',
-    'height': 'mapData(pagerank, 0, 0.15, 24, 72)',
-    'border-width': 2,
+    'min-zoomed-font-size': 5,
+    'width': 'data(nodeSize)',
+    'height': 'data(nodeSize)',
+    'border-width': 'data(borderWidth)',
     'border-color': '#ffffff30',
     'overlay-padding': '4px',
     'transition-property': 'opacity, border-color, border-width, width, height',
@@ -72,15 +72,28 @@ const stylesheet = [
     'shape': 'star',
   }},
 
-  // ── HIGH-RISK GLOW ──
-  { selector: 'node[?highRisk]', style: {
-    'border-width': 4,
+  // ── THREAT-BASED SIZING & GLOW ──
+  { selector: 'node[threatLevel="HIGH"]', style: {
+    'border-width': 3.5,
     'border-color': '#ff0040',
-    'shadow-blur': 16,
+    'shadow-blur': 18,
     'shadow-color': '#ff0040',
-    'shadow-opacity': 0.8,
+    'shadow-opacity': 0.85,
     'shadow-offset-x': 0,
     'shadow-offset-y': 0,
+  }},
+  { selector: 'node[threatLevel="MEDIUM"]', style: {
+    'border-width': 2.2,
+    'border-color': '#ffd32a',
+    'shadow-blur': 8,
+    'shadow-color': '#ffd32a',
+    'shadow-opacity': 0.35,
+    'shadow-offset-x': 0,
+    'shadow-offset-y': 0,
+  }},
+  { selector: 'node[threatLevel="LOW"]', style: {
+    'border-width': 1.5,
+    'border-color': 'rgba(255,255,255,0.2)',
   }},
 
   // ── BASE EDGES ──
@@ -324,6 +337,45 @@ export default function GraphCanvas({ elements, activeCase, onNodeSelect, onClea
       const type = n.type || n.entity_type || 'UNKNOWN';
       const rawLabel = n.label || n.name || String(n.id);
       const pr = n.metrics?.pagerank || n.pagerank || 0;
+      const risk = n.risk_score || n.riskScore || 0;
+      const role = String(n.properties?.role || '').toLowerCase();
+      const nameLower = rawLabel.toLowerCase();
+
+      // Threat Level Logic:
+      // HIGH: Bosses, Kingpins, Apex Targets (Size: 58px)
+      // MEDIUM: Lieutenants, Enforcers, Key Hubs (Size: 38px)
+      // LOW: Burner phones, bank accounts, vehicles, drop points (Size: 22px)
+      let threatLevel = 'LOW';
+      let nodeSize = 22;
+      let fontSize = '9px';
+      let borderWidth = 1.5;
+
+      const isHighRole = role.includes('boss') || role.includes('head') || role.includes('mastermind') || role.includes('don') || role.includes('commander') || role.includes('leader') || role.includes('cartel');
+      const isHighName = nameLower.includes('dawood') || nameLower.includes('shakeel') || nameLower.includes('salem') || nameLower.includes('tiger memon') || nameLower.includes('d-international');
+
+      if (isHighRole || isHighName || pr >= 0.07 || risk >= 0.7) {
+        threatLevel = 'HIGH';
+        nodeSize = 58;
+        fontSize = '12px';
+        borderWidth = 3.5;
+      } else {
+        const isMedRole = role.includes('lt') || role.includes('lieutenant') || role.includes('distributor') || role.includes('tech lead') || role.includes('angadia') || role.includes('shooter') || role.includes('transporter') || role.includes('proxy');
+        const isMedType = type === 'ORGANIZATION' || type === 'LOCATION';
+        const isMedName = nameLower.includes('firoz') || nameLower.includes('roshan') || nameLower.includes('safehouse');
+
+        if (isMedRole || isMedName || isMedType || pr >= 0.025 || risk >= 0.35) {
+          threatLevel = 'MEDIUM';
+          nodeSize = 38;
+          fontSize = '10.5px';
+          borderWidth = 2.2;
+        } else {
+          threatLevel = 'LOW';
+          nodeSize = 22;
+          fontSize = '9px';
+          borderWidth = 1.5;
+        }
+      }
+
       return {
         data: {
           ...n,
@@ -332,7 +384,11 @@ export default function GraphCanvas({ elements, activeCase, onNodeSelect, onClea
           shortLabel: truncateLabel(rawLabel, type),
           type: type,
           pagerank: pr,
-          highRisk: pr > 0.08
+          threatLevel: threatLevel,
+          nodeSize: nodeSize,
+          fontSize: fontSize,
+          borderWidth: borderWidth,
+          highRisk: threatLevel === 'HIGH'
         }
       };
     });

@@ -73,24 +73,79 @@ def get_communities_summary(db: Session, case_id: str = "dawood") -> list[dict]:
         if len(communities[cid]["members"]) < 5:
             communities[cid]["members"].append({"id": e.id, "name": e.name, "type": e.entity_type})
             
-    # Assign tactical aliases based on members
-    for cid, data in communities.items():
+    # Comprehensive tactical alias definitions for all cases
+    CASE_COMMUNITY_PROFILES = {
+        "dawood": [
+            ("D-Company Global Command", "Cross-Border Strategic Command & Elite Coordination"),
+            ("Abu Salem Extortion Cadre", "Extortion, Bollywood Threat Ops & Contract Hits"),
+            ("Tiger Memon Financial Ring", "Cross-Border Hawala, Smurfing & Shell Operations"),
+            ("Dongri Tactical Safehouse Network", "Counter-Surveillance & Secure Harboring")
+        ],
+        "drug_punjab": [
+            ("Majha Border Air-Drop Cartel", "Cross-Border Afghan Heroin Smuggling & Drone Drops"),
+            ("Billa Sandhu Interstate Transit Ring", "High-Speed Highway Corridor Supply & Bulk Peddling"),
+            ("Amritsar Hawala Liquidation Cell", "Drug Cash Layering & Benami Account Smurfing"),
+            ("Border Belt Mule & Drop Unit", "Concealed Agricultural Stashes & Rural Distribution")
+        ],
+        "ht_assam": [
+            ("Brahmaputra Transit Smuggling Syndicate", "Cross-Border Riverine Extraction & False Documentation"),
+            ("Chakrashila Identity Forgery Ring", "Fake Aadhaar & Paperwork Fabrication for Forced Migrants"),
+            ("Guwahati Long-Haul Train Network", "Interstate Safehouse Confinement & Railway Courier Ops"),
+            ("Silchar Brokerage & Enforcer Cell", "Exploitative Labor Placement & Local Intermediary Hub")
+        ],
+        "cyber_bengaluru": [
+            ("Apex ShadowMesh Phishing Consortium", "Spear-Phishing Executives & Reverse-Proxy Infiltration"),
+            ("Zero-Day Monero Ransomware Ring", "Critical Infrastructure Lockout & Decentralized Tumblers"),
+            ("DarkWeb Fast-Cash Extraction Squad", "ATM Cloning, Mule Account Liquidation & P2P Escrow"),
+            ("Whitefield Cyber Infrastructure Cell", "Bulletproof Server Hosting & Botnet Command Nodes")
+        ],
+        "money_gujarat": [
+            ("Surat Diamond Bourse Shadow Vault", "Under-Invoicing Conflict Gems & Token-Based Angadias"),
+            ("Navsari-Dubai Smurfing Consortium", "Trade-Based Money Laundering & Shell Import Fronts"),
+            ("Intercity Angadia Cash Mule Corridor", "Nightly Armored Vehicle Cash Transfers & Benami Vaults"),
+            ("Surat Tactical Ledger Hub", "Double-Entry Offline Bookkeeping & Token Verification")
+        ],
+        "arms_chhattisgarh": [
+            ("Dandakaranya Heavy Ordnance Arsenal", "Procuring Military-Grade IEDs & Assault Weaponry"),
+            ("Bailadila Iron-Ore Transport Smugglers", "Covert Weapon Transit via Mineral Logistics Trucks"),
+            ("Bastar Dense-Forest Courier Unit", "Unmarked Trail Weapon Caches & Camouflaged Bunkers"),
+            ("Border Pipeline Arms Brokerage", "Interstate Illicit Firearms Acquisition & Distribution")
+        ],
+        "wildlife_kerala": [
+            ("Silent Valley Ivory Poaching Consortium", "Illegal Elephant Tusk Extraction & Rainforest Traps"),
+            ("Malabar Coast Maritime Smugglers", "Overseas Sea-Route Export of Endangered Rare Fauna"),
+            ("Wayanad Forest Transit Brokers", "Covert Safehouse Storage & Counterfeit Forest Clearances"),
+            ("Nilgiri Local Tracker & Trapper Ring", "Deep Jungle Animal Tracking & Poacher Encampments")
+        ],
+        "extortion_up": [
+            ("Purvanchal Bahubali Hit Squad", "Targeted Political Intimidation, Toll Hafta & Enforcers"),
+            ("Gorakhpur Tender-Rigging Syndicate", "Coercive Armed Takeover of Public Contracts & Mining"),
+            ("Bhojpur Hawala Protection Network", "Extortion Collection & Real Estate Strong-Arming"),
+            ("Eastern UP Safehouse Logistics Ring", "Fugitive Harboring & Untraceable Vehicle Routing")
+        ]
+    }
+
+    # Assign tactical aliases based on case and cluster index
+    profiles = CASE_COMMUNITY_PROFILES.get(case_id, CASE_COMMUNITY_PROFILES["dawood"])
+    sorted_cids = sorted(communities.keys())
+
+    for idx, cid in enumerate(sorted_cids):
+        data = communities[cid]
         member_names = [m["name"].lower() for m in data["members"]]
         
-        if any("dawood" in n or "kaskar" in n for n in member_names):
-            data["alias"] = f"D-Company Global Command (Cluster {cid})"
-            data["dominant_crime_type"] = "Cross-border Syndicate Operations"
-        elif any("salem" in n or "shooter" in n or "hitman" in n for n in member_names):
-            data["alias"] = f"Abu Salem Extortion Cadre (Cluster {cid})"
-            data["dominant_crime_type"] = "Extortion & Contract Killings"
-        elif any("memon" in n or "smurfer" in n or "hawala" in n for n in member_names):
-            data["alias"] = f"Tiger Memon Financial Ring (Cluster {cid})"
-            data["dominant_crime_type"] = "Hawala & Money Laundering"
-        elif any("mirchi" in n for n in member_names):
-            data["alias"] = f"Mirchi Narcotics Cartel (Cluster {cid})"
-            data["dominant_crime_type"] = "Global Narcotics Smuggling"
+        # Priority keyword checks
+        if any("dawood" in n for n in member_names):
+            data["alias"] = "D-Company Global Command"
+            data["dominant_crime_type"] = "Cross-Border Strategic Command & Elite Coordination"
+        elif any("salem" in n for n in member_names):
+            data["alias"] = "Abu Salem Extortion Cadre"
+            data["dominant_crime_type"] = "Extortion, Bollywood Threat Ops & Contract Hits"
+        elif any("memon" in n for n in member_names):
+            data["alias"] = "Tiger Memon Financial Ring"
+            data["dominant_crime_type"] = "Cross-Border Hawala, Smurfing & Shell Operations"
         else:
-            data["alias"] = f"Peripheral Cell Alpha-{cid}"
-            data["dominant_crime_type"] = "Logistics & Local Support"
+            profile = profiles[idx % len(profiles)]
+            data["alias"] = f"{profile[0]} (Cluster {cid})"
+            data["dominant_crime_type"] = profile[1]
             
     return list(communities.values())

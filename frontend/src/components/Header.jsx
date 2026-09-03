@@ -6,14 +6,14 @@ export default function Header({ onUploadClick, onExperimentalClick, activeCase,
   const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
   const cases = [
-    { id: 'dawood', label: 'Operation Syndicate (Dawood Case)' },
-    { id: 'drug_punjab', label: 'Drug Trafficking (Amritsar Border)' },
-    { id: 'ht_assam', label: 'Human Trafficking (Guwahati Hub)' },
-    { id: 'cyber_bengaluru', label: 'Cybercrime (Whitefield Tech)' },
-    { id: 'money_gujarat', label: 'Money Laundering (Surat Hawala)' },
-    { id: 'arms_chhattisgarh', label: 'Arms Trafficking (Bastar Forest)' },
-    { id: 'wildlife_kerala', label: 'Wildlife Poaching (Wayanad Reserve)' },
-    { id: 'extortion_up', label: 'Extortion (Gorakhpur Racketeering)' }
+    { id: 'dawood', label: 'Operation Syndicate (Dawood D-Company)' },
+    { id: 'drug_punjab', label: 'Operation Falcon: Golden Crescent Narcotics (Punjab)' },
+    { id: 'ht_assam', label: 'Operation Rescue: Cross-Border Trafficking (Assam)' },
+    { id: 'cyber_bengaluru', label: 'Project DarkWeb: Apex Crypto Extortion (Bengaluru)' },
+    { id: 'money_gujarat', label: 'Operation Swarn: Diamond City Hawala (Surat)' },
+    { id: 'arms_chhattisgarh', label: 'Operation Red Corridor: Jungle Arms (Bastar)' },
+    { id: 'wildlife_kerala', label: 'Operation WildTusk: Ivory Poaching (Wayanad)' },
+    { id: 'extortion_up', label: 'Operation Bahubali: Purvanchal Mafia (Gorakhpur)' }
   ];
 
   return (
