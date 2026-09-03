@@ -1,23 +1,26 @@
 from sqlalchemy.orm import Session
 from backend.database.models import Entity, Relationship, FIR, Anomaly
 
-def get_or_create_entity(db: Session, entity_type: str, name: str, properties: dict = None) -> Entity:
-    entity = db.query(Entity).filter(Entity.entity_type == entity_type, Entity.name == name).first()
+def get_or_create_entity(db: Session, entity_type: str, name: str, properties: dict = None, case_id: str = None) -> Entity:
+    cid = case_id or (properties.get("case_id") if properties else None) or "dawood"
+    entity = db.query(Entity).filter(Entity.entity_type == entity_type, Entity.name == name, Entity.case_id == cid).first()
     if not entity:
-        entity = Entity(entity_type=entity_type, name=name, properties=properties or {})
+        entity = Entity(entity_type=entity_type, name=name, properties=properties or {}, case_id=cid)
         db.add(entity)
         db.commit()
         db.refresh(entity)
     return entity
 
-def create_relationship(db: Session, source_id: int, target_id: int, rel_type: str, weight: float = 1.0, properties: dict = None, timestamp=None) -> Relationship:
+def create_relationship(db: Session, source_id: int, target_id: int, rel_type: str, weight: float = 1.0, properties: dict = None, timestamp=None, case_id: str = None) -> Relationship:
+    cid = case_id or (properties.get("case_id") if properties else None) or "dawood"
     rel = db.query(Relationship).filter(
         Relationship.source_id == source_id,
         Relationship.target_id == target_id,
-        Relationship.rel_type == rel_type
+        Relationship.rel_type == rel_type,
+        Relationship.case_id == cid
     ).first()
     if not rel:
-        rel = Relationship(source_id=source_id, target_id=target_id, rel_type=rel_type, weight=weight, properties=properties or {}, timestamp=timestamp)
+        rel = Relationship(source_id=source_id, target_id=target_id, rel_type=rel_type, weight=weight, properties=properties or {}, timestamp=timestamp, case_id=cid)
         db.add(rel)
         db.commit()
         db.refresh(rel)
