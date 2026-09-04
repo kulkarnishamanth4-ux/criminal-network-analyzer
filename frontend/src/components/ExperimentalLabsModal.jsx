@@ -85,7 +85,7 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes, activ
 
   const [socmintData, setSocmintData] = useState(null);
   const [socmintLoading, setSocmintLoading] = useState(false);
-  const [socmintInput, setSocmintInput] = useState("@d_boss_official: System is ready. 50 peti package will drop in Dongri tonight #BhaiCompany");
+  const [socmintInput, setSocmintInput] = useState("@sheikh_dawood_dxb: System is ready. 50 peti package will drop in Dongri tonight #BhaiCompany");
   const [selectedSocmintStream, setSelectedSocmintStream] = useState('all');
   const [showWarrantModal, setShowWarrantModal] = useState(false);
 
@@ -1089,7 +1089,7 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes, activ
                   {(() => {
                     const presetsMap = {
                       dawood: [
-                        { label: "Dongri Drop Post (IG)", text: "@d_boss_official: System is ready. 50 peti package will drop in Dongri tonight #BhaiCompany" },
+                        { label: "Dongri Drop Post (IG)", text: "@sheikh_dawood_dxb: System is ready. 50 peti package will drop in Dongri tonight #BhaiCompany" },
                         { label: "Salem Extortion Threat (X)", text: "@captain_salem: Final warning to Bollywood producer... 50 khoka tayyar rakho warna shooter ghar pe aayega" }
                       ],
                       drug_punjab: [

@@ -150,7 +150,7 @@ def analyze_socmint(req: SocmintRequest):
         "dawood": {
             "threat_level": "CRITICAL",
             "gang_escalation_probability": "94.2%",
-            "detected_handles": ["@d_boss_official", "@captain_salem", "Firoz_Bhai_Don"],
+            "detected_handles": ["@sheikh_dawood_dxb", "@captain_salem", "Firoz_Bhai_Don"],
             "geo_anchoring": ["Dongri Safehouse A (15m radius)", "Karachi Port", "Taj Lands End, Bandra"],
             "sentiment_analysis": "Highly aggressive, escalating intimidation, coded financial instructions.",
             "insights": [

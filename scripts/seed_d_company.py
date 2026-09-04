@@ -66,7 +66,7 @@ def seed_dawood_case():
     shooter_bike = crud.get_or_create_entity(db, "VEHICLE", "MH-02-CD-5678", {"make": "Bajaj Pulsar", "color": "Black"})
 
     # SOCMINT Nodes (Social Media Handles)
-    dawood_ig = crud.get_or_create_entity(db, "SOCIAL_HANDLE", "@d_boss_official", {"platform": "Instagram", "followers": 12500})
+    dawood_ig = crud.get_or_create_entity(db, "SOCIAL_HANDLE", "@sheikh_dawood_dxb", {"platform": "Instagram", "followers": 12500})
     salem_x = crud.get_or_create_entity(db, "SOCIAL_HANDLE", "@captain_salem", {"platform": "X", "followers": 890})
     shooter_fb = crud.get_or_create_entity(db, "SOCIAL_HANDLE", "Firoz_Bhai_Don", {"platform": "Facebook", "friends": 450})
 
