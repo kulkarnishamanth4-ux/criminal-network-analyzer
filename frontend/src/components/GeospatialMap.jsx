@@ -1,5 +1,5 @@
-import React, { useMemo, useState, useEffect } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, Polyline, Circle, useMapEvents, useMap } from 'react-leaflet';
+import React, { useMemo, useEffect } from 'react';
+import { MapContainer, TileLayer, Marker, Popup, Polyline, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
@@ -62,13 +62,12 @@ const ICONS = {
   SOCIAL_HANDLE: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#fd79a8" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>`
 };
 
-const createDivIcon = (type, highlight, inFence = true) => {
+const createDivIcon = (type, highlight) => {
   const svg = ICONS[type] || ICONS.PERSON;
   const glow = highlight ? 'drop-shadow(0 0 10px rgba(100,255,218,1))' : 'drop-shadow(0 0 4px rgba(0,0,0,0.8))';
-  const opacity = inFence ? 1 : 0.25;
-  const border = highlight ? '2px solid #64ffda' : inFence ? '1.5px solid rgba(255,255,255,0.2)' : '1px solid #222';
+  const border = highlight ? '2px solid #64ffda' : '1.5px solid rgba(255,255,255,0.2)';
   const bg = highlight ? 'rgba(10,30,30,0.95)' : 'rgba(10,10,26,0.9)';
-  const html = `<div style="opacity: ${opacity}; width: 34px; height: 34px; filter: ${glow}; background: ${bg}; border: ${border}; border-radius: 50%; padding: 5px; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease;">${svg}</div>`;
+  const html = `<div style="width: 34px; height: 34px; filter: ${glow}; background: ${bg}; border: ${border}; border-radius: 50%; padding: 5px; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease;">${svg}</div>`;
   
   return L.divIcon({
     html,
@@ -99,17 +98,6 @@ function MapBoundsFitter({ geoNodes }) {
 
 export default function GeospatialMap({ elements, onNodeSelect, selectedEntity }) {
   const { nodes = [], edges = [] } = elements || {};
-  const [geofenceCenter, setGeofenceCenter] = useState(null);
-  const [geofenceRadius, setGeofenceRadius] = useState(15000);
-
-  function GeofenceClickCapture() {
-    useMapEvents({
-      click(e) {
-        setGeofenceCenter([e.latlng.lat, e.latlng.lng]);
-      }
-    });
-    return null;
-  }
 
   const mapData = useMemo(() => {
     const rawNodes = Array.isArray(nodes) ? nodes : [];
@@ -124,7 +112,6 @@ export default function GeospatialMap({ elements, onNodeSelect, selectedEntity }
       const data = n.data || n;
       const id = String(data.id);
       const name = (data.label || data.name || "").toLowerCase();
-      const type = data.type || data.entity_type || 'UNKNOWN';
 
       let coords = null;
       if (data.properties && data.properties.latitude !== undefined && data.properties.longitude !== undefined) {
@@ -229,51 +216,8 @@ export default function GeospatialMap({ elements, onNodeSelect, selectedEntity }
   // Calculate default center
   const defaultCenter = mapData.geoNodes.length > 0 ? mapData.geoNodes[0].coords : [19.0760, 72.8777];
 
-  // Calculate how many nodes are in fence
-  const nodesInFence = mapData.geoNodes.filter(n => {
-    if (!geofenceCenter) return true;
-    return L.latLng(geofenceCenter).distanceTo(L.latLng(n.coords)) <= geofenceRadius;
-  });
-
   return (
     <div className="w-full h-full relative z-0">
-      {/* Geofence UI Panel */}
-      <div className="absolute top-4 left-4 z-[400] bg-[var(--bg-primary)] p-4 rounded-xl border border-[var(--border)] shadow-[0_0_20px_rgba(0,0,0,0.6)] backdrop-blur-md bg-opacity-95 min-w-[260px]">
-        <h3 className="text-xs font-bold text-[var(--neon-gold)] uppercase tracking-wider mb-2 flex justify-between items-center">
-          <span>Target Geofence Radar</span>
-          {geofenceCenter && (
-            <button onClick={() => setGeofenceCenter(null)} className="text-[10px] text-[var(--text-accent)] hover:text-white bg-[#1e3a5f] px-2 py-0.5 rounded font-bold">Clear</button>
-          )}
-        </h3>
-        
-        {!geofenceCenter ? (
-          <p className="text-xs text-[var(--text-secondary)] opacity-80 leading-relaxed">
-            Click anywhere on the map to drop a dynamic surveillance geofence.
-          </p>
-        ) : (
-          <div className="flex flex-col gap-2.5">
-            <div className="flex justify-between text-xs text-[var(--text-secondary)]">
-              <span>Perimeter Radius:</span>
-              <strong className="text-white">{(geofenceRadius / 1000).toFixed(1)} km</strong>
-            </div>
-            <input 
-              type="range" 
-              min="1000" 
-              max="100000" 
-              step="1000"
-              value={geofenceRadius} 
-              onChange={(e) => setGeofenceRadius(Number(e.target.value))}
-              className="w-full h-1 bg-[var(--bg-highlight)] rounded-lg appearance-none cursor-pointer"
-              style={{ accentColor: 'var(--neon-gold)' }}
-            />
-            <div className="pt-2 border-t border-[var(--border)] flex justify-between items-center">
-               <span className="text-xs text-[var(--text-secondary)]">Tracked in Perimeter:</span>
-               <strong className="text-[var(--neon-teal)] text-sm font-bold">{nodesInFence.length} / {mapData.geoNodes.length}</strong>
-            </div>
-          </div>
-        )}
-      </div>
-
       <MapContainer 
         center={defaultCenter} 
         zoom={6} 
@@ -281,26 +225,13 @@ export default function GeospatialMap({ elements, onNodeSelect, selectedEntity }
         zoomControl={false}
       >
         <MapBoundsFitter geoNodes={mapData.geoNodes} />
-        <GeofenceClickCapture />
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
           className="map-tiles"
         />
 
-        {geofenceCenter && (
-          <Circle 
-            center={geofenceCenter} 
-            radius={geofenceRadius} 
-            pathOptions={{ color: '#ffd32a', fillColor: '#ffd32a', fillOpacity: 0.12, weight: 2, dashArray: '6 6' }} 
-          />
-        )}
-
         {mapData.geoEdges.map(edge => {
-          const inFence1 = !geofenceCenter || L.latLng(geofenceCenter).distanceTo(L.latLng(edge.sourceCoords)) <= geofenceRadius;
-          const inFence2 = !geofenceCenter || L.latLng(geofenceCenter).distanceTo(L.latLng(edge.targetCoords)) <= geofenceRadius;
-          const inFence = inFence1 && inFence2;
-          
           let color = '#00d2d3';
           if (edge.type === 'TRANSFERRED_MONEY_TO') color = '#ffd32a';
           else if (edge.type === 'SPOTTED_AT') color = '#54a0ff';
@@ -310,7 +241,7 @@ export default function GeospatialMap({ elements, onNodeSelect, selectedEntity }
             <Polyline 
               key={edge.id}
               positions={[edge.sourceCoords, edge.targetCoords]}
-              pathOptions={{ color, weight: 2.5, dashArray: '6 4', opacity: inFence ? 0.75 : 0.15 }}
+              pathOptions={{ color, weight: 2.5, dashArray: '6 4', opacity: 0.75 }}
             >
               <Popup className="custom-leaflet-popup">
                 <div className="bg-[#111] text-white p-2 rounded border border-[#333] text-xs">
@@ -324,12 +255,11 @@ export default function GeospatialMap({ elements, onNodeSelect, selectedEntity }
 
         {mapData.geoNodes.map(node => {
           const isSelected = selectedEntity && (String(selectedEntity.id) === String(node.id) || String(selectedEntity.data?.id) === String(node.id));
-          const inFence = !geofenceCenter || L.latLng(geofenceCenter).distanceTo(L.latLng(node.coords)) <= geofenceRadius;
           return (
             <Marker 
               key={node.id} 
               position={node.coords}
-              icon={createDivIcon(node.type, isSelected, inFence)}
+              icon={createDivIcon(node.type, isSelected)}
               eventHandlers={{
                 click: () => onNodeSelect && onNodeSelect(node)
               }}
