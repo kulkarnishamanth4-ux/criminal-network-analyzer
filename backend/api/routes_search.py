@@ -23,8 +23,8 @@ def entity_to_dict(e):
 
 @router.get("/search")
 @limiter.limit("60/minute")
-def search(request: Request, q: str, type: str = None, limit: int = 20, db: Session = Depends(get_db)):
-    results = crud.search_entities(db, q, type, limit)
+def search(request: Request, q: str, type: str = None, limit: int = 20, case_id: str = None, db: Session = Depends(get_db)):
+    results = crud.search_entities(db, q, type, limit, case_id)
     return {"results": [entity_to_dict(e) for e in results]}
 
 

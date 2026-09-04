@@ -300,7 +300,7 @@ export default function LeftPanel({ stats, onEntitySelect, onCommunitySelect, ac
     }
     const delay = setTimeout(() => {
       setIsSearching(true);
-      searchEntities(searchQuery).then(res => {
+      searchEntities(searchQuery, null, activeCase).then(res => {
         setSearchResults(res.results || []);
         setIsSearching(false);
       }).catch(() => setIsSearching(false));

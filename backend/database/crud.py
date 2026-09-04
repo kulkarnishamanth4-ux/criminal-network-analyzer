@@ -26,10 +26,12 @@ def create_relationship(db: Session, source_id: int, target_id: int, rel_type: s
         db.refresh(rel)
     return rel
 
-def search_entities(db: Session, query: str, entity_type: str = None, limit: int = 20) -> list[Entity]:
+def search_entities(db: Session, query: str, entity_type: str = None, limit: int = 20, case_id: str = None) -> list[Entity]:
     q = db.query(Entity).filter(Entity.name.ilike(f"%{query}%"))
     if entity_type:
         q = q.filter(Entity.entity_type == entity_type)
+    if case_id:
+        q = q.filter((Entity.case_id == case_id) | ((Entity.case_id == None) & (case_id == "dawood")))
     return q.limit(limit).all()
 
 def get_entity_by_id(db: Session, entity_id: int) -> Entity:

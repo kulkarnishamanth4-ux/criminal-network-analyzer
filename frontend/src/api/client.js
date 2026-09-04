@@ -7,8 +7,8 @@ const client = axios.create({
   baseURL: API_URL,
 });
 
-export const searchEntities = (query, type) => {
-  return client.get('/api/search', { params: { q: query, type } }).then(res => res.data);
+export const searchEntities = (query, type, caseId = 'dawood') => {
+  return client.get('/api/search', { params: { q: query, type, case_id: caseId } }).then(res => res.data);
 };
 
 export const getNetwork = (entityId, depth = 2, caseId = 'dawood') => {
@@ -55,8 +55,8 @@ export const uploadFile = (type, file) => {
   }).then(res => res.data);
 };
 
-export const getShortestPath = (sourceId, targetId) => {
-  return client.get('/api/graph/shortest-path', { params: { source_id: sourceId, target_id: targetId } }).then(res => res.data);
+export const getShortestPath = (sourceId, targetId, caseId = 'dawood') => {
+  return client.get('/api/graph/shortest-path', { params: { source_id: sourceId, target_id: targetId, case_id: caseId } }).then(res => res.data);
 };
 
 export const getDecapitation = (maxTargets = 3, caseId = "dawood") => {

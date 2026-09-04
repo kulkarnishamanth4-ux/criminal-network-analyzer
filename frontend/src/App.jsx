@@ -192,7 +192,7 @@ function App() {
                 highlightPath={highlightPath}
               />
               <NodeLegend />
-              <PathFinder onPathFound={handlePathFound} />
+              <PathFinder onPathFound={handlePathFound} activeCase={activeCase} />
             </>
           ) : (
             <GeospatialMap 

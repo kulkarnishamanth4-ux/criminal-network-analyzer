@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FiNavigation, FiX, FiArrowRight, FiSearch } from 'react-icons/fi';
 import { searchEntities, getShortestPath } from '../api/client';
 
-export default function PathFinder({ onPathFound }) {
+export default function PathFinder({ onPathFound, activeCase }) {
   const [open, setOpen] = useState(false);
   const [sourceQuery, setSourceQuery] = useState('');
   const [targetQuery, setTargetQuery] = useState('');
@@ -13,10 +13,21 @@ export default function PathFinder({ onPathFound }) {
   const [pathResult, setPathResult] = useState(null);
   const [loading, setLoading] = useState(false);
 
+  // Reset inputs when switching active case
+  useEffect(() => {
+    setSource(null);
+    setTarget(null);
+    setSourceQuery('');
+    setTargetQuery('');
+    setSourceResults([]);
+    setTargetResults([]);
+    setPathResult(null);
+  }, [activeCase]);
+
   const handleSearch = async (query, setter) => {
     if (query.trim().length < 2) { setter([]); return; }
     try {
-      const data = await searchEntities(query);
+      const data = await searchEntities(query, null, activeCase);
       setter(data.results || []);
     } catch { setter([]); }
   };
@@ -26,7 +37,7 @@ export default function PathFinder({ onPathFound }) {
     setLoading(true);
     setPathResult(null);
     try {
-      const result = await getShortestPath(source.id, target.id);
+      const result = await getShortestPath(source.id, target.id, activeCase);
       setPathResult(result);
       if (result.found && onPathFound) {
         onPathFound(result.path);
@@ -73,7 +84,7 @@ export default function PathFinder({ onPathFound }) {
             <>
               <input
                 type="text"
-                placeholder="Search for entity..."
+                placeholder="Search for entity in active case..."
                 value={sourceQuery}
                 onChange={e => { setSourceQuery(e.target.value); handleSearch(e.target.value, setSourceResults); }}
                 className="w-full bg-[var(--bg-primary)] border border-[var(--border)] rounded px-2 py-1.5 text-xs focus:outline-none focus:border-[var(--text-accent)] text-[var(--text-primary)]"
@@ -105,7 +116,7 @@ export default function PathFinder({ onPathFound }) {
             <>
               <input
                 type="text"
-                placeholder="Search for entity..."
+                placeholder="Search for entity in active case..."
                 value={targetQuery}
                 onChange={e => { setTargetQuery(e.target.value); handleSearch(e.target.value, setTargetResults); }}
                 className="w-full bg-[var(--bg-primary)] border border-[var(--border)] rounded px-2 py-1.5 text-xs focus:outline-none focus:border-[var(--text-accent)] text-[var(--text-primary)]"
@@ -157,8 +168,8 @@ export default function PathFinder({ onPathFound }) {
                 ))}
               </div>
             ) : (
-              <div className="text-xs text-green-400 bg-green-500/10 p-2 rounded border border-green-500/30 text-center">
-                {pathResult.message || 'No path found'}
+              <div className="text-xs text-red-400 bg-red-500/10 p-2 rounded border border-red-500/30 text-center">
+                {pathResult.message || 'No connection found in active case graph'}
               </div>
             )}
           </div>
