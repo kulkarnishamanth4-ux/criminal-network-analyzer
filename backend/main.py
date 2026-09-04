@@ -32,6 +32,7 @@ app.include_router(routes_search.router, prefix="/api", tags=["Search"])
 app.include_router(routes_report.router, prefix="/api", tags=["Report"])
 app.include_router(routes_experimental.router, prefix="/api", tags=["Experimental"])
 app.include_router(routes_chat.router, prefix="/api", tags=["Chat"])
+app.include_router(routes_blockchain.router, prefix="/api", tags=["Blockchain"])
 
 import threading
 

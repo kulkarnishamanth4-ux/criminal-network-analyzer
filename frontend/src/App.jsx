@@ -7,6 +7,7 @@ import UploadModal from './components/UploadModal';
 import NodeLegend from './components/NodeLegend';
 import PathFinder from './components/PathFinder';
 import ExperimentalLabsModal from './components/ExperimentalLabsModal';
+import BlockchainLedgerModal from './components/BlockchainLedgerModal';
 import LandingPage from './components/LandingPage';
 import GeospatialMap from './components/GeospatialMap';
 import ChatBot from './components/ChatBot';
@@ -22,6 +23,7 @@ function App() {
   const [stats, setStats] = useState(null);
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [showExperimentalModal, setShowExperimentalModal] = useState(false);
+  const [showBlockchainModal, setShowBlockchainModal] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [highlightPath, setHighlightPath] = useState(null);
   const [toast, setToast] = useState(null);
@@ -147,6 +149,7 @@ function App() {
       <Header 
         onUploadClick={() => setShowUploadModal(true)} 
         onExperimentalClick={() => setShowExperimentalModal(true)}
+        onBlockchainClick={() => setShowBlockchainModal(true)}
         activeCase={activeCase}
         onCaseChange={handleCaseChange}
       />
@@ -222,6 +225,13 @@ function App() {
         <ExperimentalLabsModal 
           onClose={() => setShowExperimentalModal(false)}
           onHighlightNodes={handleHighlightNodes} activeCase={activeCase}
+        />
+      )}
+
+      {showBlockchainModal && (
+        <BlockchainLedgerModal 
+          onClose={() => setShowBlockchainModal(false)}
+          activeCase={activeCase}
         />
       )}
 

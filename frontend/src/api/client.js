@@ -139,3 +139,33 @@ export const chatWithAgent = async (message, caseId = 'dawood') => {
   if (!response.ok) throw new Error('Chat API failed');
   return response.json();
 };
+
+// Blockchain & Crypto Intelligence
+export const getBlockchainBlocks = (caseId = null) => {
+  return client.get('/api/blockchain/blocks', { params: { case_id: caseId } }).then(res => res.data);
+};
+
+export const mineEvidenceBlock = (payload) => {
+  return client.post('/api/blockchain/mine', payload).then(res => res.data);
+};
+
+export const verifyBlockchain = () => {
+  return client.get('/api/blockchain/verify').then(res => res.data);
+};
+
+export const simulateTamperAttack = (blockIndex = 1) => {
+  return client.post('/api/blockchain/simulate-tamper', { block_index: blockIndex }).then(res => res.data);
+};
+
+export const repairBlockchain = () => {
+  return client.post('/api/blockchain/repair').then(res => res.data);
+};
+
+export const getSection65BCertificate = (blockIndex) => {
+  return client.get(`/api/blockchain/certificate/${blockIndex}`).then(res => res.data);
+};
+
+export const getCryptoFlow = (caseId = 'cyber_bengaluru', walletAddress = null) => {
+  return client.get('/api/blockchain/crypto-flow', { params: { case_id: caseId, wallet_address: walletAddress } }).then(res => res.data);
+};
+

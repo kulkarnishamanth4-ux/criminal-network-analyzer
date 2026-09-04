@@ -1,8 +1,8 @@
 import React from 'react';
-import { FiUploadCloud, FiShield, FiFileText, FiCpu, FiUser, FiLogOut } from 'react-icons/fi';
+import { FiUploadCloud, FiShield, FiFileText, FiCpu, FiUser, FiLogOut, FiLink } from 'react-icons/fi';
 import SpecularButton from './SpecularButton';
 
-export default function Header({ onUploadClick, onExperimentalClick, activeCase, onCaseChange, currentUser, onLogout }) {
+export default function Header({ onUploadClick, onExperimentalClick, onBlockchainClick, activeCase, onCaseChange, currentUser, onLogout }) {
   const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
   const cases = [
@@ -41,6 +41,13 @@ export default function Header({ onUploadClick, onExperimentalClick, activeCase,
       </div>
 
       <div className="flex items-center gap-2">
+        <button 
+          onClick={onBlockchainClick}
+          className="flex items-center gap-2 bg-[var(--bg-primary)] border border-emerald-500/50 text-emerald-400 hover:bg-emerald-500 hover:text-black px-3 py-1.5 rounded-md transition-all text-sm font-semibold shadow-[0_0_10px_rgba(16,185,129,0.2)] hover:shadow-[0_0_15px_rgba(16,185,129,0.5)]"
+        >
+          <FiLink className="text-emerald-400" />
+          <span className="hidden md:inline">Blockchain & Crypto</span>
+        </button>
         <button 
           onClick={onExperimentalClick}
           className="flex items-center gap-2 bg-[var(--bg-primary)] border border-green-500/50 text-green-400 hover:bg-green-500 hover:text-white px-3 py-1.5 rounded-md transition-all text-sm font-semibold shadow-[0_0_10px_rgba(255,0,64,0.2)] hover:shadow-[0_0_15px_rgba(255,0,64,0.5)]"
