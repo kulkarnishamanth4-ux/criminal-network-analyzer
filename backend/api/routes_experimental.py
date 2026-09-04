@@ -11,7 +11,6 @@ from backend.graph.hawala_fluid import simulate_hawala_fluid_dynamics
 from backend.analytics.panic_entropy import calculate_panic_profile
 from backend.graph.quantum_mole import detect_internal_leaks
 from backend.nlp.cryptolalia import decode_dark_slang
-from backend.crypto.zk_federation import execute_zk_federation_query
 from backend.nlp.honeypot_sting import simulate_honeypot_exchange
 from backend.graph.dynasty_pedigree import analyze_dynasty_pedigree
 from backend.graph.plate_cloning import resolve_plate_cloning_paradoxes
@@ -114,13 +113,8 @@ def get_quantum_mole(db: Session = Depends(get_db)):
 
 @router.post("/experimental/cryptolalia/decode")
 def decode_cryptolalia(req: CryptolaliaRequest):
-    """Autonomous Dark-Slang Evolving Decryption (Cryptolalia Radar)."""
+    """Criminal-Slang Analyzer: Evolving Decryption (Criminal-Slang Radar)."""
     return decode_dark_slang(req.text)
-
-@router.get("/experimental/zk-federation")
-def get_zk_federation():
-    """Zero-Knowledge Blind Graph Federation across state police agency nodes."""
-    return execute_zk_federation_query()
 
 @router.post("/experimental/honeypot-sting/simulate")
 def run_honeypot_sting(req: HoneypotRequest):

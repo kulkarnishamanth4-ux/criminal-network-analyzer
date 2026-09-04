@@ -99,10 +99,6 @@ export const decodeCryptolalia = (text, caseId = "dawood") => {
   return client.post('/api/experimental/cryptolalia/decode', { text, case_id: caseId }).then(res => res.data);
 };
 
-export const getZkFederation = (caseId = "dawood") => {
-  return client.get('/api/experimental/zk-federation', { params: { case_id: caseId } }).then(res => res.data);
-};
-
 export const simulateHoneypotSting = (threatMessage, turnIndex = 1, caseId = "dawood") => {
   return client.post('/api/experimental/honeypot-sting/simulate', { threat_message: threatMessage, turn_index: turnIndex, case_id: caseId }).then(res => res.data);
 };

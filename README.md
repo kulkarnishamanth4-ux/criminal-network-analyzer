@@ -18,23 +18,23 @@ Built for the **Smart India Hackathon 2026** | Problem Statement sponsored by th
 - **Anomaly Detection** - Flags suspicious patterns: burst calling, circular transactions, geographic anomalies, and ghost connectors.
 - **Person 360 Dossier** - Complete profile of any entity with all known connections, criminal history, and risk score.
 
-### Experimental Command Center (15 Matrix Modules)
-A dedicated, hardware-accelerated MacOS-style dock interface housing 15 advanced mathematical and predictive modules:
+### Experimental Command Center (Matrix Modules)
+A dedicated, hardware-accelerated MacOS-style dock interface housing advanced mathematical and predictive modules:
 1. **Spectral Graph Decapitation** - Finds the minimal strike sequence to shatter cartel networks.
-2. **Ghost Rendezvous Triangulation** - Exposes covert physical meetups between suspects maintaining radio silence.
+2. **Physical-Exclusive Meetings** - Exposes covert physical meetups between suspects maintaining radio silence.
 3. **Optical Plate-Cloning Paradox** - Detects impossible kinematic highway velocities to flag cloned decoy vehicles.
-4. **Hawala Fluid Dynamics** - Models financial conduits as fluid pipes to simulate account freeze cascades.
-5. **Digital Twin Interrogation** - AI persona mimicking suspect linguistics for mock interrogations.
+4. **Hawala Betrayal Index** - Models financial conduits as fluid pipes to simulate account freeze cascades and calculate internal betrayal risk.
+5. **Accused Interrogation Simulator** - AI persona mimicking suspect linguistics for mock interrogations.
 6. **Acoustic Geo-Triangulation** - Decomposes 50Hz mains power micro-drift to geolocate audio intercepts.
-7. **Panic-Entropy Profiler** - Chronobiological Shannon Entropy tracking to pinpoint confession windows.
+7. **Confession-Probability Index** - Chronobiological Shannon Entropy tracking to pinpoint confession windows.
 8. **Voice-Cloned Sting Honeypot** - Autonomous AI victim persona stalling scammers to extract intelligence.
-9. **Gang War Hawkes Cascade** - Forecasts non-linear retaliatory shooting cascades using earthquake math.
-10. **30-Year Dynasty Pedigree** - Hypergraph kinship mapping predicting next-gen cartel successors.
-11. **Project Moriarty Red-Team** - Adversarial underworld AI that attacks CrimeNet to discover blind spots.
+9. **Arrest Aftermath Predictor** - Forecasts non-linear retaliatory and power-vacuum cascades following suspect arrests.
+10. **Criminal Dynasty History** - Hypergraph kinship mapping predicting next-gen cartel successors.
+11. **Vulnerability Detection Counter AI** - Adversarial underworld AI that attacks CrimeNet to discover blind spots.
 12. **Syntax DNA Stylometry** - Linguistic fingerprinting to match anonymous manifestos to known suspects.
-13. **Cryptolalia Dark-Slang Decoder** - Translates underworld euphemisms in real-time.
-14. **Quantum Mole-Hunter** - Detects corrupt insider leaks via honeytoken beacon traps.
-15. **ZK-PSI Federation** - Zero-Knowledge Private Set Intersection for cross-agency intelligence sharing.
+13. **Criminal-Slang Analyzer** - Translates underworld euphemisms and masked criminal code words in real-time.
+14. **Internal-Leak Analyzer** - Detects corrupt insider leaks via honeytoken beacon traps.
+15. **SOCMINT Threat Scanner** - Extracts threat levels, handles, and EXIF coordinates from intercepted social media broadcasts.
 
 ### UI / UX Architecture
 - **Cosmic WebGL Landing Page** - A hardware-accelerated interactive particle system (`ogl` and `framer-motion`) welcoming users into the matrix.

@@ -7,20 +7,18 @@ export default function LandingPage({ onEnter }) {
 
   const featuresList = [
     { name: "Spectral Graph Decapitation", desc: "Finds the minimal strike sequence to shatter cartel networks." },
-    { name: "Ghost Rendezvous Triangulation", desc: "Exposes covert physical meetups between suspects maintaining radio silence." },
+    { name: "Physical-Exclusive Meetings", desc: "Exposes covert physical meetups between suspects maintaining radio silence." },
     { name: "Optical Plate-Cloning Paradox", desc: "Detects impossible kinematic highway velocities to flag cloned decoy vehicles." },
-    { name: "Hawala Fluid Dynamics", desc: "Models financial conduits as fluid pipes to simulate account freeze cascades." },
-    { name: "Digital Twin Interrogation", desc: "AI persona mimicking suspect linguistics for mock interrogations." },
-    { name: "Cryptolalia Dark-Slang Decoder", desc: "Auto-translates masked underworld code words into plain English intelligence." },
-    { name: "Panic-Entropy Profiler", desc: "Chronobiological Shannon Entropy tracking to pinpoint confession windows." },
+    { name: "Hawala Betrayal Index", desc: "Models financial conduits and simulate account freeze cascades and betrayal risk." },
+    { name: "Accused Interrogation Simulator", desc: "AI persona mimicking suspect linguistics for mock interrogations." },
+    { name: "Criminal-Slang Analyzer", desc: "Auto-translates masked underworld code words into plain English intelligence." },
+    { name: "Confession-Probability Index", desc: "Chronobiological Shannon Entropy tracking to pinpoint optimal confession windows." },
     { name: "Voice-Cloned Sting Honeypot", desc: "Autonomous AI victim persona stalling scammers to extract intelligence." },
-    { name: "Gang War Hawkes Cascade", desc: "Forecasts non-linear retaliatory shooting cascades using earthquake math." },
-    { name: "30-Year Dynasty Pedigree", desc: "Hypergraph kinship mapping predicting next-gen cartel successors." },
-    { name: "Project Moriarty Red-Team", desc: "Adversarial underworld AI that attacks CrimeNet to discover blind spots." },
+    { name: "Arrest Aftermath Predictor", desc: "Forecasts non-linear retaliatory and power-vacuum cascades following suspect arrests." },
+    { name: "Criminal Dynasty History", desc: "Hypergraph kinship mapping predicting next-gen cartel successors and lineages." },
+    { name: "Vulnerability Detection Counter AI", desc: "Adversarial underworld AI that attacks CrimeNet to discover blind spots." },
     { name: "Syntax DNA Stylometry", desc: "Linguistic fingerprinting to match anonymous manifestos to known suspects." },
-    { name: "Cryptolalia Dark-Slang Decoder", desc: "Translates underworld euphemisms (e.g. 'gulab jamun' = explosives) in real-time." },
-    { name: "Quantum Mole-Hunter", desc: "Detects corrupt insider leaks via honeytoken beacon traps." },
-    { name: "ZK-PSI Federation", desc: "Zero-Knowledge Private Set Intersection for cross-agency intelligence sharing." }
+    { name: "Internal-Leak Analyzer", desc: "Detects corrupt insider leaks and compromised access points via honeytoken beacon traps." }
   ];
 
   return (
