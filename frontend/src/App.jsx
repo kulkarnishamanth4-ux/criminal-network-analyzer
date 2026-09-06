@@ -13,6 +13,7 @@ import GeospatialMap from './components/GeospatialMap';
 import ChatBot from './components/ChatBot';
 import LoginScreen from './components/LoginScreen';
 import AuditLogViewer from './components/AuditLogViewer';
+import ErrorBoundary from './components/ErrorBoundary';
 import { FiShare2, FiMap } from 'react-icons/fi';
 import { getFullGraph, getDashboardStats, getPredictedLinks, getShortestPath } from './api/client';
 
@@ -265,10 +266,12 @@ function App() {
       )}
 
       {showBlockchainModal && canAccess('blockchain') && (
-        <BlockchainLedgerModal 
-          onClose={() => setShowBlockchainModal(false)}
-          activeCase={activeCase}
-        />
+        <ErrorBoundary>
+          <BlockchainLedgerModal 
+            onClose={() => setShowBlockchainModal(false)}
+            activeCase={activeCase}
+          />
+        </ErrorBoundary>
       )}
 
       <AuditLogViewer isOpen={showAuditModal} onClose={() => setShowAuditModal(false)} />

@@ -3,7 +3,7 @@ import {
   FiX, FiShield, FiLink, FiCpu, FiCheckCircle, FiAlertTriangle, 
   FiRefreshCw, FiFileText, FiPrinter, FiEye, FiLock, 
   FiUnlock, FiCopy, FiLayers, FiDatabase, FiAlertOctagon, 
-  FiSearch, FiPlusCircle, FiArrowRight, FiCheck
+  FiSearch, FiPlusCircle, FiArrowRight, FiCheck, FiActivity
 } from 'react-icons/fi';
 import { 
   getBlockchainBlocks, mineEvidenceBlock, verifyBlockchain, 
