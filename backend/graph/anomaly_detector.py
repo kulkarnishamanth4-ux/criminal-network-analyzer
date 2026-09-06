@@ -7,32 +7,63 @@ logger = logging.getLogger(__name__)
 
 
 def detect_all_anomalies(db: Session, G: nx.Graph, case_id: str = "custom_investigation") -> list[dict]:
-    """Run all anomaly detection rules. Clears old anomalies for the specific case first to avoid duplicates."""
-    # Clear previous anomalies for this case only
-    db.query(Anomaly).filter(Anomaly.case_id == case_id).delete()
-    db.commit()
+    """Run anomaly detection rules and append newly discovered anomalies without deleting existing ones."""
+    existing_titles = {
+        a.title for a in db.query(Anomaly.title).filter(Anomaly.case_id == case_id).all()
+    }
 
     results = []
-    results.extend(detect_burst_calling(db))
-    results.extend(detect_rapid_money_flow(db))
-    results.extend(detect_circular_transactions(db, G))
-    results.extend(detect_ghost_connectors(db, G))
+    try:
+        results.extend(detect_burst_calling(db))
+    except Exception as e:
+        logger.warning(f"Error in detect_burst_calling: {e}")
+    try:
+        results.extend(detect_rapid_money_flow(db))
+    except Exception as e:
+        logger.warning(f"Error in detect_rapid_money_flow: {e}")
+    try:
+        results.extend(detect_circular_transactions(db, G))
+    except Exception as e:
+        logger.warning(f"Error in detect_circular_transactions: {e}")
+    try:
+        results.extend(detect_ghost_connectors(db, G))
+    except Exception as e:
+        logger.warning(f"Error in detect_ghost_connectors: {e}")
 
-    anomalies = []
+    newly_added = []
     for r in results:
-        a = Anomaly(
-            anomaly_type=r.get("anomaly_type"),
-            severity=r.get("severity"),
-            title=r.get("title"),
-            description=r.get("description"),
-            evidence=r.get("evidence"),
-            entity_ids=r.get("entity_ids"),
-            case_id=case_id
-        )
-        db.add(a)
-        anomalies.append(r)
-    db.commit()
-    return anomalies
+        title = r.get("title")
+        if title and title not in existing_titles:
+            a = Anomaly(
+                anomaly_type=r.get("anomaly_type"),
+                severity=r.get("severity"),
+                title=title,
+                description=r.get("description"),
+                evidence=r.get("evidence"),
+                entity_ids=r.get("entity_ids"),
+                case_id=case_id
+            )
+            db.add(a)
+            existing_titles.add(title)
+            newly_added.append(r)
+            
+    if newly_added:
+        db.commit()
+
+    # Return all current anomalies for this case
+    all_case_anomalies = db.query(Anomaly).filter(Anomaly.case_id == case_id).all()
+    return [
+        {
+            "id": a.id,
+            "anomaly_type": a.anomaly_type,
+            "severity": a.severity,
+            "title": a.title,
+            "description": a.description,
+            "evidence": a.evidence,
+            "entity_ids": a.entity_ids
+        }
+        for a in all_case_anomalies
+    ]
 
 
 def detect_burst_calling(db: Session) -> list[dict]:
