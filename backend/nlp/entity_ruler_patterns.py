@@ -20,14 +20,11 @@ def get_entity_ruler_patterns() -> list[dict]:
     cities = [line.split(',')[0].strip() for line in cities_lines]
     
     # 1. PERSON patterns
-    # Instead of greedy arbitrary matching, we match precise first names,
-    # last names, or specific First Name + Last Name combinations.
-    # This prevents false positives like "Rahul went".
+    # Match full First Name + Last Name / Word combinations first, then single first names.
+    # We omit isolated surnames to prevent splitting compound names into fragments.
     for fn in first_names:
+        patterns.append({"label": "PERSON", "pattern": [{"LOWER": fn.lower()}, {"IS_ALPHA": True}]})
         patterns.append({"label": "PERSON", "pattern": [{"LOWER": fn.lower()}]})
-        
-    for ln in last_names:
-        patterns.append({"label": "PERSON", "pattern": [{"LOWER": ln.lower()}]})
 
     # 2. GPE patterns for cities
     for city in cities:

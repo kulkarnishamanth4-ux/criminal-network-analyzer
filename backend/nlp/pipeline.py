@@ -54,18 +54,30 @@ def extract_entities_from_text(text: str, known_entities: set = None) -> dict:
     
     # 1. Custom Regex for Indian Police FIR specific formats
     # Handle aliases (urf, alias, @) and relationships (s/o, w/o, d/o, r/o)
-    indian_context_regex = r'([A-Z][a-z]+(?:\s[A-Z][a-z]+)*)\s+(?:urf|alias|@|s/o|w/o|d/o)\s+([A-Z][a-z]+(?:\s[A-Z][a-z]+)*)'
+    indian_context_regex = r'([A-Z][a-z]+(?:\s[A-Z][a-z]+)*)\s+(?:urf|alias|@)\s+([A-Z][a-z]+(?:\s[A-Z][a-z]+)*)'
+    alias_to_primary = {}
+    primary_to_aliases = {}
     for match in re.finditer(indian_context_regex, text):
         person1 = match.group(1).strip()
         person2 = match.group(2).strip()
         result['persons'].append({'name': person1, 'start': match.start(1), 'end': match.end(1), 'context': 'primary'})
-        result['persons'].append({'name': person2, 'start': match.start(2), 'end': match.end(2), 'context': 'alias_or_relative'})
+        alias_to_primary[person2.lower()] = person1
+        primary_to_aliases.setdefault(person1, []).append(person2)
 
     # Resident of (r/o)
     ro_regex = r'(?:r/o|resident of)\s+([A-Z][a-z]+(?:\s[A-Z][a-z]+)*)'
     for match in re.finditer(ro_regex, text):
         loc = match.group(1).strip()
         result['locations'].append({'name': loc, 'start': match.start(1), 'end': match.end(1)})
+
+    # Detect Police Officers to exclude from criminal networks
+    police_names = set()
+    for m in re.finditer(r'(?:SI|Inspector|Sub-Inspector|Sub Inspector|ASI|DSP|ACP|DCP|Constable|Head Constable|HC|IO|Investigating Officer)\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)+)', text):
+        p_full = m.group(1).strip()
+        police_names.add(p_full.lower())
+        for part in p_full.split():
+            if len(part) > 2:
+                police_names.add(part.lower())
 
     # 2. SpaCy NER
     seen_entities = set()
@@ -96,27 +108,99 @@ def extract_entities_from_text(text: str, known_entities: set = None) -> dict:
     extract_regex(regexes['ACCOUNT'], 'accounts', result['accounts'], 'number')
     
     # 4. Clean, Fuzzy Match, and Deduplicate
-    stop_suffixes = {' and', ' or', ' the', ' of', ' in', ' at', ' to', ' from', ' with', ' by', ' for', ' on', ' is'}
+    stop_suffixes = {' and', ' or', ' the', ' of', ' in', ' at', ' to', ' from', ' with', ' by', ' for', ' on', ' is', ' s/o', ' w/o', ' d/o', ' r/o'}
     def clean_name(name: str) -> str:
-        name = name.strip('.,;:!?\n\t ')
+        name = name.strip('.,;:!?\n\t "()')
         lower = name.lower()
         for suffix in stop_suffixes:
             if lower.endswith(suffix):
                 name = name[:len(name)-len(suffix)].strip()
-        return name.strip()
+        return name.strip('.,;:!?\n\t "()')
     
-    for key in ['persons', 'locations', 'organizations']:
-        unique_items = []
-        seen = set()
-        for item in result[key]:
-            cleaned = clean_name(item['name'])
-            # Apply fuzzy matching to snap messy OCR/typos to known entities
-            snapped = fuzzy_match_entity(cleaned, known_entities)
-            if snapped and len(snapped) > 1 and snapped.lower() not in seen:
-                seen.add(snapped.lower())
-                item['name'] = snapped
-                unique_items.append(item)
-        result[key] = unique_items
+    LEGAL_POLICE_PATTERNS = [
+        r'^(?:sec|section)(?:\s+\d+.*)?$',
+        r'^(?:ipc|crpc|c\.?p\.?c|p\.?c\.?|fir|cdr|eow|cbi|nia|anpr|imei|imsi|caf|gst|gstin|act|court)$',
+        r'.*police station.*',
+        r'.*economic offences wing.*',
+        r'.*unknown associates.*',
+        r'^(?:details|offence|accused|complainant|signature|sub-inspector|inspector|constable|si|hc|io|ps|thana|chowki|late.*)$'
+    ]
+
+    def is_legal_noise(val: str) -> bool:
+        v = val.strip().lower()
+        if len(v) < 3 or '\n' in v or '\r' in v:
+            return True
+        for p in LEGAL_POLICE_PATTERNS:
+            if re.match(p, v):
+                return True
+        return False
+
+    from .entity_ruler_patterns import _load_gazetteer
+    cities_lines = _load_gazetteer('indian_cities.txt')
+    known_cities = {line.split(',')[0].strip().lower() for line in cities_lines}
+    states = {s.lower() for s in _load_gazetteer('indian_states.txt')}
+    known_geos = known_cities | states
+
+    # 1. Locations first
+    clean_locations = []
+    seen_locs = set()
+    for item in result['locations']:
+        c = clean_name(item['name'])
+        c_snapped = fuzzy_match_entity(c, known_entities)
+        if not is_legal_noise(c_snapped) and c_snapped.lower() not in alias_to_primary and c_snapped.lower() not in seen_locs:
+            clean_locations.append(c_snapped)
+            seen_locs.add(c_snapped.lower())
+
+    # 2. Organizations (move known geos to locations)
+    clean_orgs = []
+    seen_orgs = set()
+    for item in result['organizations']:
+        c = clean_name(item['name'])
+        c_snapped = fuzzy_match_entity(c, known_entities)
+        if is_legal_noise(c_snapped) or c_snapped.lower() in alias_to_primary:
+            continue
+        if c_snapped.lower() in known_geos or c_snapped.lower() in seen_locs:
+            if c_snapped.lower() not in seen_locs:
+                clean_locations.append(c_snapped)
+                seen_locs.add(c_snapped.lower())
+        elif c_snapped.lower() not in seen_orgs:
+            clean_orgs.append(c_snapped)
+            seen_orgs.add(c_snapped.lower())
+
+    # 3. Persons (move known geos to locations, exclude police and aliases)
+    clean_persons = []
+    seen_persons = set()
+    for item in result['persons']:
+        c = clean_name(item['name'])
+        c_snapped = fuzzy_match_entity(c, known_entities)
+        if is_legal_noise(c_snapped) or c_snapped.lower() in police_names or c_snapped.lower() in alias_to_primary:
+            continue
+        if c_snapped.lower() in known_geos or c_snapped.lower() in seen_locs:
+            if c_snapped.lower() not in seen_locs:
+                clean_locations.append(c_snapped)
+                seen_locs.add(c_snapped.lower())
+        elif c_snapped.lower() not in seen_orgs and c_snapped.lower() not in seen_persons:
+            clean_persons.append(c_snapped)
+            seen_persons.add(c_snapped.lower())
+
+    # Subsumption: remove single-word fragments if full multi-word name is present
+    def dedupe_subsumed(names_list):
+        sorted_names = sorted(names_list, key=len, reverse=True)
+        final = []
+        for n in sorted_names:
+            words = n.split()
+            if len(words) == 1 and any(n.lower() in other.lower().split() for other in final if len(other.split()) > 1):
+                continue
+            final.append(n)
+        return final
+
+    clean_persons = dedupe_subsumed(clean_persons)
+    clean_orgs = dedupe_subsumed(clean_orgs)
+    clean_locations = dedupe_subsumed(clean_locations)
+
+    result['persons'] = [{'name': p, 'aliases': list(dict.fromkeys(primary_to_aliases.get(p, [])))} for p in clean_persons]
+    result['organizations'] = [{'name': o} for o in clean_orgs]
+    result['locations'] = [{'name': l} for l in clean_locations]
         
     return result
 

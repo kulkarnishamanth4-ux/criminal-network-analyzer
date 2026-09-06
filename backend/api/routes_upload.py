@@ -10,6 +10,7 @@ from backend.nlp.parsers import parse_cdr_csv, parse_financial_csv, parse_vehicl
 from backend.main_helpers import compute_all_analytics
 from backend.limiter import limiter
 import traceback
+import re
 
 router = APIRouter()
 
@@ -55,47 +56,133 @@ async def upload_fir(
             case_id=case_id
         )
         
-        entities_created = 0
-        entity_ids = []
-        
+        # Create entities by type
+        person_ents = []
         for p in extracted.get("persons", []):
-            ent = crud.get_or_create_entity(db, "PERSON", p["name"], case_id=case_id)
-            entity_ids.append(ent.id)
-            entities_created += 1
-        for p in extracted.get("locations", []):
-            ent = crud.get_or_create_entity(db, "LOCATION", p["name"], case_id=case_id)
-            entity_ids.append(ent.id)
-            entities_created += 1
-        for p in extracted.get("phones", []):
-            ent = crud.get_or_create_entity(db, "PHONE", p["number"], case_id=case_id)
-            entity_ids.append(ent.id)
-            entities_created += 1
-        for p in extracted.get("vehicles", []):
-            ent = crud.get_or_create_entity(db, "VEHICLE", p["plate"], case_id=case_id)
-            entity_ids.append(ent.id)
-            entities_created += 1
-        for p in extracted.get("organizations", []):
-            ent = crud.get_or_create_entity(db, "ORGANIZATION", p["name"], case_id=case_id)
-            entity_ids.append(ent.id)
-            entities_created += 1
+            props = {"aliases": p.get("aliases", [])} if p.get("aliases") else {}
+            ent = crud.get_or_create_entity(db, "PERSON", p["name"], properties=props, case_id=case_id)
+            if p.get("aliases") and not (ent.properties and ent.properties.get("aliases")):
+                ent.properties = {**(ent.properties or {}), "aliases": p["aliases"]}
+            person_ents.append(ent)
+            
+        loc_ents = []
+        for l in extracted.get("locations", []):
+            ent = crud.get_or_create_entity(db, "LOCATION", l["name"], case_id=case_id)
+            loc_ents.append(ent)
+            
+        phone_ents = []
+        for ph in extracted.get("phones", []):
+            ent = crud.get_or_create_entity(db, "PHONE", ph["number"], case_id=case_id)
+            phone_ents.append(ent)
+            
+        veh_ents = []
+        for v in extracted.get("vehicles", []):
+            ent = crud.get_or_create_entity(db, "VEHICLE", v["plate"], case_id=case_id)
+            veh_ents.append(ent)
+            
+        org_ents = []
+        for o in extracted.get("organizations", []):
+            ent = crud.get_or_create_entity(db, "ORGANIZATION", o["name"], case_id=case_id)
+            org_ents.append(ent)
+            
+        entities_created = len(person_ents) + len(loc_ents) + len(phone_ents) + len(veh_ents) + len(org_ents)
         
-        # Create MENTIONED_IN_FIR relationships between all entities found in the same FIR
-        rel_count = 0
+        # Build Semantic Graph Relationships (Hierarchical, avoiding O(N^2) complete cliques)
         new_relationships = []
-        for i in range(len(entity_ids)):
-            for j in range(i + 1, len(entity_ids)):
+        existing_rel_pairs = set()
+
+        def add_rel(src_id, tgt_id, rel_type, weight=1.0, props=None):
+            if src_id == tgt_id:
+                return
+            pair = tuple(sorted((src_id, tgt_id))) + (rel_type,)
+            if pair not in existing_rel_pairs:
+                existing_rel_pairs.add(pair)
                 new_relationships.append(
                     crud.Relationship(
-                        source_id=entity_ids[i],
-                        target_id=entity_ids[j],
-                        rel_type="MENTIONED_IN_FIR",
-                        weight=1.0,
-                        properties={"fir_id": fir.id},
+                        source_id=src_id,
+                        target_id=tgt_id,
+                        rel_type=rel_type,
+                        weight=weight,
+                        properties=props or {"fir_id": fir.id},
                         case_id=case_id
                     )
                 )
-                rel_count += 1
-            
+
+        # 1. Person-to-Person relationships
+        if person_ents:
+            primary_person = person_ents[0]
+            # Link secondary suspects to primary suspect
+            for p_ent in person_ents[1:]:
+                add_rel(primary_person.id, p_ent.id, "CO_ACCUSED", weight=2.0)
+
+            # Check co-occurrences in text sentences/paragraphs for specific actions (e.g. money transfer)
+            for i in range(len(person_ents)):
+                for j in range(i + 1, len(person_ents)):
+                    p1, p2 = person_ents[i], person_ents[j]
+                    for s in re.split(r'[\n.]+', text):
+                        if p1.name.lower() in s.lower() and p2.name.lower() in s.lower():
+                            if any(kw in s.lower() for kw in ['transfer', 'sent', 'paid', 'hawala', 'amount', 'lakh', 'crore']):
+                                add_rel(p1.id, p2.id, "TRANSFERRED_MONEY_TO", weight=2.5)
+                            else:
+                                add_rel(p1.id, p2.id, "CO_ACCUSED", weight=1.5)
+
+        # Helper to resolve closest person entity for non-person entities
+        def resolve_target_person(item_name: str):
+            if not person_ents:
+                return None
+            item_lower = item_name.lower()
+            # Clause level
+            for c in re.split(r'[,;.\n]+', text):
+                if item_lower in c.lower():
+                    for p_ent in person_ents:
+                        if p_ent.name.lower() in c.lower():
+                            return p_ent
+            # Sentence level
+            for s in re.split(r'[\n.]+', text):
+                if item_lower in s.lower():
+                    for p_ent in person_ents:
+                        if p_ent.name.lower() in s.lower():
+                            return p_ent
+            # Paragraph level
+            for para in [p.strip() for p in text.split('\n\n') if p.strip()]:
+                if item_lower in para.lower():
+                    for p_ent in person_ents:
+                        if p_ent.name.lower() in para.lower():
+                            return p_ent
+            # Default to primary person
+            return person_ents[0]
+
+        # 2. Wire Phones to Persons (OWNS_PHONE)
+        for ph in phone_ents:
+            target = resolve_target_person(ph.name)
+            if target:
+                add_rel(target.id, ph.id, "OWNS_PHONE", weight=3.0)
+
+        # 3. Wire Vehicles to Persons (OPERATES_VEHICLE)
+        for v in veh_ents:
+            target = resolve_target_person(v.name)
+            if target:
+                add_rel(target.id, v.id, "OPERATES_VEHICLE", weight=3.0)
+
+        # 4. Wire Organizations to Persons (OPERATES)
+        for o in org_ents:
+            target = resolve_target_person(o.name)
+            if target:
+                add_rel(target.id, o.id, "OPERATES", weight=2.5)
+
+        # 5. Wire Locations to Persons (OPERATES_IN)
+        for l in loc_ents:
+            target = resolve_target_person(l.name)
+            if target:
+                add_rel(target.id, l.id, "OPERATES_IN", weight=2.0)
+
+        # Fallback: if no persons exist in FIR, connect entities sequentially
+        if not person_ents:
+            all_fallback = loc_ents + phone_ents + veh_ents + org_ents
+            for i in range(len(all_fallback) - 1):
+                add_rel(all_fallback[i].id, all_fallback[i+1].id, "MENTIONED_IN_FIR", weight=1.0)
+
+        rel_count = len(new_relationships)
         if new_relationships:
             db.add_all(new_relationships)
             db.commit()

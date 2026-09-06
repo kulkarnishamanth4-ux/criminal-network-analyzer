@@ -205,6 +205,36 @@ const stylesheet = [
     'width': 1.8,
     'opacity': 0.85
   }},
+  { selector: 'edge[type="CO_ACCUSED"]', style: { 
+    'line-color': '#ff4757', 
+    'target-arrow-color': '#ff4757', 
+    'width': 2.4,
+    'opacity': 0.9
+  }},
+  { selector: 'edge[type="ASSOCIATED_WITH"]', style: { 
+    'line-color': '#ffa502', 
+    'target-arrow-color': '#ffa502', 
+    'width': 2.2,
+    'opacity': 0.85
+  }},
+  { selector: 'edge[type="OPERATES"]', style: { 
+    'line-color': '#a29bfe', 
+    'target-arrow-color': '#a29bfe', 
+    'width': 2.2,
+    'opacity': 0.85
+  }},
+  { selector: 'edge[type="OPERATES_VEHICLE"]', style: { 
+    'line-color': '#7bed9f', 
+    'target-arrow-color': '#7bed9f', 
+    'width': 2.0,
+    'opacity': 0.85
+  }},
+  { selector: 'edge[type="OPERATES_IN"]', style: { 
+    'line-color': '#54a0ff', 
+    'target-arrow-color': '#54a0ff', 
+    'width': 2.0,
+    'opacity': 0.85
+  }},
   { selector: 'edge[type="MENTIONED_IN_FIR"]', style: { 
     'line-color': '#ff5252', 
     'target-arrow-color': '#ff5252', 
@@ -288,13 +318,13 @@ const layout = {
   fit: true,
   padding: 40,
   randomize: true,
-  componentSpacing: 60,
-  nodeRepulsion: 8000,
-  nodeOverlap: 30,
-  idealEdgeLength: 80,
+  componentSpacing: 90,
+  nodeRepulsion: 18000,
+  nodeOverlap: 25,
+  idealEdgeLength: 90,
   edgeElasticity: 32,
   nestingFactor: 1.2,
-  gravity: 1.0,
+  gravity: 0.35,
   numIter: 1000,
   initialTemp: 200,
   coolingFactor: 0.95,
