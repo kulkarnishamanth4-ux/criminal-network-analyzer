@@ -275,6 +275,9 @@ const stylesheet = [
   { selector: '.temporal-hidden', style: {
     'display': 'none',
   }},
+  { selector: 'node.connection-source', style: {
+    'border-color': '#64ffda', 'border-width': 4, 'shadow-blur': 15, 'shadow-color': '#64ffda'
+  }},
 ];
 
 const layout = {
@@ -298,9 +301,17 @@ const layout = {
   minTemp: 1.0,
 };
 
-export default function GraphCanvas({ elements, activeCase, onNodeSelect, onClearSelection, highlightPath }) {
+export default function GraphCanvas({ elements, activeCase, onNodeSelect, onClearSelection, highlightPath, onFindConnection }) {
   const cyRef = useRef(null);
   const [timelineFilter, setTimelineFilter] = useState(null);
+  const [connectionMode, setConnectionMode] = useState(false);
+  const [selectedForConnection, setSelectedForConnection] = useState([]);
+
+  const connectionModeRef = useRef(false);
+  const selectedForConnectionRef = useRef([]);
+  useEffect(() => { connectionModeRef.current = connectionMode; }, [connectionMode]);
+  useEffect(() => { selectedForConnectionRef.current = selectedForConnection; }, [selectedForConnection]);
+
 
   useEffect(() => {
     if (!cyRef.current || timelineFilter === null) return;
@@ -429,6 +440,22 @@ export default function GraphCanvas({ elements, activeCase, onNodeSelect, onClea
     
     const handleTapNode = (evt) => {
       const node = evt.target;
+      
+      if (connectionModeRef.current) {
+        if (selectedForConnectionRef.current.length === 0) {
+          setSelectedForConnection([node.data()]);
+          node.addClass('connection-source');
+        } else if (selectedForConnectionRef.current.length === 1) {
+          const source = selectedForConnectionRef.current[0];
+          const target = node.data();
+          if (onFindConnection) onFindConnection(source.id, target.id);
+          setSelectedForConnection([]);
+          cy.nodes().removeClass('connection-source');
+          setConnectionMode(false);
+        }
+        return;
+      }
+      
       cy.edges().removeClass('edge-selected').unselect();
       highlightNeighborhood(cy, node);
       onNodeSelect(node.data());
@@ -442,6 +469,12 @@ export default function GraphCanvas({ elements, activeCase, onNodeSelect, onClea
     
     const handleTapBg = (evt) => {
       if (evt.target === cy) {
+        if (connectionModeRef.current) {
+          setSelectedForConnection([]);
+          cy.nodes().removeClass('connection-source');
+          // intentionally do not turn off connection mode here, just clear selection
+          return;
+        }
         clearHighlight(cy);
         cy.edges().removeClass('edge-selected').unselect();
         onClearSelection();
@@ -508,6 +541,25 @@ export default function GraphCanvas({ elements, activeCase, onNodeSelect, onClea
       ) : (
         <>
           <TimelineScrubber elements={elements} onFilter={setTimelineFilter} />
+          <div className="absolute top-4 right-4 z-20 flex flex-col items-end gap-2">
+            <button 
+              onClick={() => { 
+                setConnectionMode(!connectionMode); 
+                setSelectedForConnection([]);
+                if (cyRef.current) cyRef.current.nodes().removeClass('connection-source');
+              }}
+              className={`px-3 py-1.5 rounded text-sm font-bold shadow-lg transition-colors ${connectionMode ? 'bg-[#64ffda] text-black' : 'bg-[#0a1628] text-white border border-[#1e3a5f] hover:bg-[#1e3a5f]'}`}
+            >
+              {connectionMode ? 'Exit Connection Mode' : '🔗 Connection Mode'}
+            </button>
+            {connectionMode && (
+              <div className="bg-[#0a1628]/90 border border-[#64ffda] rounded-lg p-3 text-xs text-[#c8d6e5] min-w-[200px] shadow-lg">
+                <div className="text-[#64ffda] font-bold mb-1">Connection Tracer Active</div>
+                {selectedForConnection.length === 0 && <div>Click first entity (source)...</div>}
+                {selectedForConnection.length === 1 && <div>Source: <span className="text-[#f9ca24]">{selectedForConnection[0].label}</span><br/>Click second entity (target)...</div>}
+              </div>
+            )}
+          </div>
           <div className="absolute bottom-6 right-6 z-10 flex flex-col gap-2">
             <button onClick={() => cyRef.current && cyRef.current.zoom(cyRef.current.zoom() * 1.2)} className="w-10 h-10 bg-[var(--bg-card)] border border-[var(--border)] rounded flex items-center justify-center text-white hover:bg-[var(--bg-highlight)] transition-colors shadow-lg" title="Zoom In">
               <FiZoomIn size={18} />

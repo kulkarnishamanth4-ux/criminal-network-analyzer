@@ -3,9 +3,12 @@ from backend.graph.builder import build_graph_from_db, invalidate_graph_cache
 from backend.graph.algorithms import update_entity_metrics
 from backend.graph.anomaly_detector import detect_all_anomalies
 
-def compute_all_analytics(db: Session):
+def compute_all_analytics(db: Session, case_id: str = "custom_investigation"):
     invalidate_graph_cache()
-    G = build_graph_from_db(db, force_rebuild=True)
+    G = build_graph_from_db(db, force_rebuild=True, case_id=case_id)
     update_entity_metrics(db, G)
-    detect_all_anomalies(db, G)
+    try:
+        detect_all_anomalies(db, G, case_id=case_id)
+    except Exception:
+        pass
     invalidate_graph_cache()

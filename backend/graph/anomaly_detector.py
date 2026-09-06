@@ -6,10 +6,10 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-def detect_all_anomalies(db: Session, G: nx.Graph) -> list[dict]:
-    """Run all anomaly detection rules. Clears old anomalies first to avoid duplicates."""
-    # Clear previous anomalies
-    db.query(Anomaly).delete()
+def detect_all_anomalies(db: Session, G: nx.Graph, case_id: str = "custom_investigation") -> list[dict]:
+    """Run all anomaly detection rules. Clears old anomalies for the specific case first to avoid duplicates."""
+    # Clear previous anomalies for this case only
+    db.query(Anomaly).filter(Anomaly.case_id == case_id).delete()
     db.commit()
 
     results = []
@@ -26,7 +26,8 @@ def detect_all_anomalies(db: Session, G: nx.Graph) -> list[dict]:
             title=r.get("title"),
             description=r.get("description"),
             evidence=r.get("evidence"),
-            entity_ids=r.get("entity_ids")
+            entity_ids=r.get("entity_ids"),
+            case_id=case_id
         )
         db.add(a)
         anomalies.append(r)

@@ -47,10 +47,10 @@ export const getEntityDossier = (entityId) => {
   return client.get(`/api/entity/${entityId}/dossier`).then(res => res.data);
 };
 
-export const uploadFile = (type, file) => {
+export const uploadFile = (type, file, caseId) => {
   const formData = new FormData();
   formData.append('file', file);
-  return client.post(`/api/upload/${type}`, formData, {
+  return client.post(`/api/upload/${type}?case_id=${caseId || 'custom_investigation'}`, formData, {
     headers: { 'Content-Type': 'multipart/form-data' }
   }).then(res => res.data);
 };
@@ -168,4 +168,25 @@ export const getSection65BCertificate = (blockIndex) => {
 export const getCryptoFlow = (caseId = 'cyber_bengaluru', walletAddress = null) => {
   return client.get('/api/blockchain/crypto-flow', { params: { case_id: caseId, wallet_address: walletAddress } }).then(res => res.data);
 };
+
+// === FILE MANAGER ===
+export const getUploadedFiles = (caseId) => 
+  client.get(`/api/files/${caseId}`).then(res => res.data);
+
+export const getFilePreview = (caseId, fileId) => 
+  client.get(`/api/files/${caseId}/${fileId}/preview`).then(res => res.data);
+
+// === ALIAS PROBABILITY ===
+export const checkAliasMatch = (nameA, nameB, caseId, context = '') => 
+  client.post('/api/alias/probability', { name_a: nameA, name_b: nameB, case_id: caseId, context }).then(res => res.data);
+
+// === AUDIT LOGS ===
+export const getAuditLogs = (limit = 50, severity = null) => 
+  client.get('/api/audit/logs', { params: { limit, severity } }).then(res => res.data);
+
+export const verifyAuditIntegrity = () => 
+  client.get('/api/audit/verify').then(res => res.data);
+
+export const exportAuditReport = () => 
+  client.get('/api/audit/export').then(res => res.data);
 

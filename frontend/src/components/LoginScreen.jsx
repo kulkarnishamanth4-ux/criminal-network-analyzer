@@ -1,6 +1,13 @@
 import React, { useState } from 'react';
 import { FiLock, FiUser, FiShield, FiAlertTriangle } from 'react-icons/fi';
 
+const USERS = [
+  { username: 'director', password: 'director', displayName: 'Director Sharma', role: 'DIRECTOR', level: 4, clearance: 'TOP SECRET' },
+  { username: 'admin', password: 'admin', displayName: 'Superintendent Verma', role: 'ADMIN', level: 3, clearance: 'SECRET' },
+  { username: 'officer', password: 'officer', displayName: 'Inspector Rajesh', role: 'INVESTIGATOR', level: 2, clearance: 'CONFIDENTIAL' },
+  { username: 'constable', password: 'constable', displayName: 'Constable Yadav', role: 'CONSTABLE', level: 1, clearance: 'RESTRICTED' }
+];
+
 export default function LoginScreen({ onLogin }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -13,10 +20,9 @@ export default function LoginScreen({ onLogin }) {
     setError('');
     
     setTimeout(() => {
-      if (username.toLowerCase() === 'admin' && password === 'admin') {
-        onLogin({ username: 'Director Sharma', role: 'ADMIN' });
-      } else if (username.toLowerCase() === 'officer' && password === 'officer') {
-        onLogin({ username: 'Officer Rajesh', role: 'INVESTIGATOR' });
+      const user = USERS.find(u => u.username.toLowerCase() === username.toLowerCase() && u.password === password);
+      if (user) {
+        onLogin({ username: user.displayName, role: user.role, level: user.level, clearance: user.clearance });
       } else {
         setError('Invalid clearance credentials. Access denied.');
         setIsLoading(false);
@@ -99,7 +105,10 @@ export default function LoginScreen({ onLogin }) {
           </button>
           
           <div className="text-center">
-            <p className="text-[10px] text-gray-600 font-mono mt-4">
+            <p className="text-[10px] text-gray-500 font-mono mt-4 mb-2">
+              Valid credentials: director / admin / officer / constable
+            </p>
+            <p className="text-[10px] text-gray-600 font-mono">
               UNAUTHORIZED ACCESS IS STRICTLY PROHIBITED<br/>
               ALL ACTIONS ARE LOGGED AND MONITORED
             </p>

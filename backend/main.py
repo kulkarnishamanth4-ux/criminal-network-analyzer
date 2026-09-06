@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from backend.config import CORS_ORIGINS
 from backend.database.schema import init_db, get_db, SessionLocal
 from backend.database.models import Base, Entity
-from backend.api import routes_upload, routes_network, routes_analytics, routes_search, routes_report, routes_experimental, routes_chat
+from backend.api import routes_upload, routes_network, routes_analytics, routes_search, routes_report, routes_experimental, routes_chat, routes_blockchain, routes_files, routes_alias, routes_audit
 from scripts.seed_d_company import seed_dawood_case
 from scripts.seed_other_cases import seed_additional_cases
 from backend.graph.algorithms import update_entity_metrics
@@ -33,6 +33,9 @@ app.include_router(routes_report.router, prefix="/api", tags=["Report"])
 app.include_router(routes_experimental.router, prefix="/api", tags=["Experimental"])
 app.include_router(routes_chat.router, prefix="/api", tags=["Chat"])
 app.include_router(routes_blockchain.router, prefix="/api", tags=["Blockchain"])
+app.include_router(routes_files.router, prefix="/api", tags=["Files"])
+app.include_router(routes_alias.router, prefix="/api", tags=["Alias"])
+app.include_router(routes_audit.router, prefix="/api", tags=["Audit"])
 
 import threading
 
@@ -46,7 +49,7 @@ def run_startup_tasks():
         # seed_additional_cases(db) removed to prevent infinite duplication on reboot
             
         print("Computing Graph Metrics (PageRank, Betweenness, Communities) for all cases...")
-        cases = ["dawood", "drug_punjab", "ht_assam", "cyber_bengaluru", "money_gujarat", "arms_chhattisgarh", "wildlife_kerala", "extortion_up"]
+        cases = ["dawood", "drug_punjab", "ht_assam", "cyber_bengaluru", "money_gujarat", "arms_chhattisgarh", "wildlife_kerala", "extortion_up", "custom_investigation"]
         for cid in cases:
             G = build_graph_from_db(db, force_rebuild=True, case_id=cid)
             update_entity_metrics(db, G)

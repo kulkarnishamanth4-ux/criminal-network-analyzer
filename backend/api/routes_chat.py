@@ -8,6 +8,8 @@ from google.genai import types
 from backend.database.schema import get_db
 from backend.database.crud import get_dashboard_stats, get_all_anomalies
 from backend.graph.algorithms import get_top_influencers
+from backend.security.guardrails import sanitize_prompt
+from backend.security.audit_logger import audit_logger
 
 router = APIRouter()
 
@@ -17,6 +19,28 @@ class ChatRequest(BaseModel):
 
 @router.post("/chat")
 async def chat_with_agent(req: ChatRequest, db: Session = Depends(get_db)):
+    # 0. Prompt Injection & Jailbreak Guardrails
+    safety_check = sanitize_prompt(req.message)
+    if not safety_check['is_safe']:
+        threats_str = ", ".join(safety_check['threats_detected']) if safety_check['threats_detected'] else "High Risk Heuristic"
+        audit_logger.log_event(
+            action="PROMPT_INJECTION_BLOCKED",
+            user="operator",
+            resource=f"/api/chat?case_id={req.case_id}",
+            details=f"Threats: {threats_str} | Risk Score: {safety_check['risk_score']}",
+            severity="CRITICAL"
+        )
+        return {"response": f"[SECURITY ALERT] Prompt blocked by CrimeNet LLM Guardrails. Detected threat pattern: {threats_str}. Incident logged to SIEM audit chain."}
+    
+    cleaned_message = safety_check['sanitized_input']
+    audit_logger.log_event(
+        action="AI_QUERY",
+        user="operator",
+        resource=f"/api/chat?case_id={req.case_id}",
+        details=f"Query evaluated on case: {req.case_id}",
+        severity="INFO"
+    )
+
     api_key = os.environ.get("GEMINI_API_KEY")
     if not api_key:
         return {"response": "[SYSTEM ERROR] GEMINI_API_KEY environment variable is not set. Please add your API key to your Render dashboard environment variables to enable the live LLM AI."}
@@ -69,7 +93,7 @@ async def chat_with_agent(req: ChatRequest, db: Session = Depends(get_db)):
         
         interaction = await client.aio.interactions.create(
             model="gemini-3.5-flash-lite",
-            input=req.message,
+            input=cleaned_message,
             system_instruction=system_instruction,
             timeout=60.0
         )

@@ -12,8 +12,9 @@ import LandingPage from './components/LandingPage';
 import GeospatialMap from './components/GeospatialMap';
 import ChatBot from './components/ChatBot';
 import LoginScreen from './components/LoginScreen';
+import AuditLogViewer from './components/AuditLogViewer';
 import { FiShare2, FiMap } from 'react-icons/fi';
-import { getFullGraph, getDashboardStats, getPredictedLinks } from './api/client';
+import { getFullGraph, getDashboardStats, getPredictedLinks, getShortestPath } from './api/client';
 
 function App() {
   const [showApp, setShowApp] = useState(false);
@@ -30,6 +31,23 @@ function App() {
 
   const [activeCase, setActiveCase] = useState('dawood');
   const [currentUser, setCurrentUser] = useState(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [showAuditModal, setShowAuditModal] = useState(false);
+
+  const canAccess = (feature) => {
+    if (!currentUser) return false;
+    const level = currentUser.level || 0;
+    const permissions = {
+      'upload': level >= 2,
+      'chat': level >= 2,
+      'alias': level >= 3,
+      'experimental': level >= 3,
+      'blockchain': level >= 3,
+      'audit': level >= 3,
+      'report': level >= 2,
+    };
+    return permissions[feature] ?? false;
+  };
 
   const showToast = (message, type = 'success') => {
     setToast({ message, type });
@@ -140,9 +158,22 @@ function App() {
     showToast(`Spotlighted ${nodeIds.length} tactical strike targets on canvas`, 'info');
   };
 
-  if (!showApp) {
-    return <LandingPage onEnter={() => setShowApp(true)} />;
-  }
+  const handleTwoClickConnection = async (sourceId, targetId) => {
+    try {
+      const result = await getShortestPath(sourceId, targetId, activeCase);
+      if (result.path && result.path.length > 0) {
+        setHighlightPath(result.path);
+        showToast(`Connection found: ${result.path.length} hops`, 'success');
+      } else {
+        showToast('No connection found between selected entities', 'warning');
+      }
+    } catch (err) {
+      showToast('Connection search failed', 'error');
+    }
+  };
+
+  if (!showApp) return <LandingPage onEnter={() => setShowApp(true)} />;
+  if (!isLoggedIn) return <LoginScreen onLogin={(user) => { setCurrentUser(user); setIsLoggedIn(true); }} />;
 
   return (
     <div className="flex flex-col h-screen w-screen overflow-hidden bg-[var(--bg-primary)] text-[var(--text-primary)]">
@@ -152,6 +183,9 @@ function App() {
         onBlockchainClick={() => setShowBlockchainModal(true)}
         activeCase={activeCase}
         onCaseChange={handleCaseChange}
+        currentUser={currentUser}
+        onAuditClick={() => setShowAuditModal(true)}
+        onLogout={() => { setIsLoggedIn(false); setCurrentUser(null); }}
       />
       
       <div className="flex flex-1 overflow-hidden relative">
@@ -193,6 +227,7 @@ function App() {
                 onNodeSelect={handleNodeSelect} 
                 onClearSelection={handleClearSelection}
                 highlightPath={highlightPath}
+                onFindConnection={handleTwoClickConnection}
               />
               <NodeLegend />
               <PathFinder onPathFound={handlePathFound} activeCase={activeCase} />
@@ -214,29 +249,32 @@ function App() {
         />
       </div>
 
-      {showUploadModal && (
+      {showUploadModal && canAccess('upload') && (
         <UploadModal 
+          activeCase={activeCase}
           onClose={() => setShowUploadModal(false)} 
           onSuccess={handleUploadSuccess} 
         />
       )}
 
-      {showExperimentalModal && (
+      {showExperimentalModal && canAccess('experimental') && (
         <ExperimentalLabsModal 
           onClose={() => setShowExperimentalModal(false)}
           onHighlightNodes={handleHighlightNodes} activeCase={activeCase}
         />
       )}
 
-      {showBlockchainModal && (
+      {showBlockchainModal && canAccess('blockchain') && (
         <BlockchainLedgerModal 
           onClose={() => setShowBlockchainModal(false)}
           activeCase={activeCase}
         />
       )}
 
+      <AuditLogViewer isOpen={showAuditModal} onClose={() => setShowAuditModal(false)} />
+
       {/* Floating AI Assistant */}
-      <ChatBot activeCase={activeCase} />
+      {canAccess('chat') && <ChatBot activeCase={activeCase} />}
 
       {/* Toast Notification */}
       {toast && (

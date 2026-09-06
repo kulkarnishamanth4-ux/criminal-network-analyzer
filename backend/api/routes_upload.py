@@ -1,8 +1,10 @@
-from fastapi import APIRouter, UploadFile, File, Depends, Request
+from fastapi import APIRouter, UploadFile, File, Depends, Request, Query
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 from backend.database.schema import get_db
 from backend.database import crud
+from backend.database.models import UploadedFile
+from backend.security.audit_logger import audit_logger
 from backend.nlp.pipeline import extract_entities_from_text, classify_crime
 from backend.nlp.parsers import parse_cdr_csv, parse_financial_csv, parse_vehicle_csv
 from backend.main_helpers import compute_all_analytics
@@ -22,7 +24,12 @@ async def read_and_validate_upload(file: UploadFile, max_size: int = MAX_UPLOAD_
 
 @router.post("/upload/fir")
 @limiter.limit("30/minute")
-async def upload_fir(request: Request, file: UploadFile = File(...), db: Session = Depends(get_db)):
+async def upload_fir(
+    request: Request,
+    file: UploadFile = File(...),
+    case_id: str = Query("custom_investigation"),
+    db: Session = Depends(get_db)
+):
     try:
         content = await read_and_validate_upload(file)
         try:
@@ -44,45 +51,89 @@ async def upload_fir(request: Request, file: UploadFile = File(...), db: Session
             raw_text=text,
             crime_type=classification.get('crime_type'),
             crime_confidence=classification.get('confidence'),
-            extracted_entities=extracted
+            extracted_entities=extracted,
+            case_id=case_id
         )
         
         entities_created = 0
         entity_ids = []
         
         for p in extracted.get("persons", []):
-            ent = crud.get_or_create_entity(db, "PERSON", p["name"])
+            ent = crud.get_or_create_entity(db, "PERSON", p["name"], case_id=case_id)
             entity_ids.append(ent.id)
             entities_created += 1
         for p in extracted.get("locations", []):
-            ent = crud.get_or_create_entity(db, "LOCATION", p["name"])
+            ent = crud.get_or_create_entity(db, "LOCATION", p["name"], case_id=case_id)
             entity_ids.append(ent.id)
             entities_created += 1
         for p in extracted.get("phones", []):
-            ent = crud.get_or_create_entity(db, "PHONE", p["number"])
+            ent = crud.get_or_create_entity(db, "PHONE", p["number"], case_id=case_id)
             entity_ids.append(ent.id)
             entities_created += 1
         for p in extracted.get("vehicles", []):
-            ent = crud.get_or_create_entity(db, "VEHICLE", p["plate"])
+            ent = crud.get_or_create_entity(db, "VEHICLE", p["plate"], case_id=case_id)
             entity_ids.append(ent.id)
             entities_created += 1
         for p in extracted.get("organizations", []):
-            ent = crud.get_or_create_entity(db, "ORGANIZATION", p["name"])
+            ent = crud.get_or_create_entity(db, "ORGANIZATION", p["name"], case_id=case_id)
             entity_ids.append(ent.id)
             entities_created += 1
         
         # Create MENTIONED_IN_FIR relationships between all entities found in the same FIR
+        rel_count = 0
+        new_relationships = []
         for i in range(len(entity_ids)):
             for j in range(i + 1, len(entity_ids)):
-                crud.create_relationship(db, entity_ids[i], entity_ids[j], "MENTIONED_IN_FIR", properties={"fir_id": fir.id})
+                new_relationships.append(
+                    crud.Relationship(
+                        source_id=entity_ids[i],
+                        target_id=entity_ids[j],
+                        rel_type="MENTIONED_IN_FIR",
+                        weight=1.0,
+                        properties={"fir_id": fir.id},
+                        case_id=case_id
+                    )
+                )
+                rel_count += 1
             
-        compute_all_analytics(db)
+        if new_relationships:
+            db.add_all(new_relationships)
+            db.commit()
+            
+        compute_all_analytics(db, case_id=case_id)
+
+        # Save to uploaded_files record
+        uploaded_record = UploadedFile(
+            filename=file.filename or "fir_document.txt",
+            file_type="fir",
+            file_size=len(content),
+            raw_content=text,
+            parsed_preview={
+                "entities": extracted,
+                "crime_type": fir.crime_type,
+                "crime_confidence": fir.crime_confidence,
+                "entities_count": entities_created,
+                "relationships_count": rel_count
+            },
+            case_id=case_id
+        )
+        db.add(uploaded_record)
+        db.commit()
+
+        # Audit log entry
+        audit_logger.log_event(
+            action="FILE_UPLOAD",
+            user="operator",
+            resource=f"fir/{file.filename}",
+            details=f"Case: {case_id} | Extracted: {entities_created} entities, {rel_count} relationships",
+            severity="INFO"
+        )
         
         return {
             "status": "success",
             "fir_id": fir.id,
             "entities_extracted": entities_created,
-            "relationships_created": len(entity_ids) * (len(entity_ids) - 1) // 2,
+            "relationships_created": rel_count,
             "crime_type": fir.crime_type,
             "crime_confidence": fir.crime_confidence
         }
@@ -94,7 +145,12 @@ async def upload_fir(request: Request, file: UploadFile = File(...), db: Session
 
 @router.post("/upload/cdr")
 @limiter.limit("30/minute")
-async def upload_cdr(request: Request, file: UploadFile = File(...), db: Session = Depends(get_db)):
+async def upload_cdr(
+    request: Request,
+    file: UploadFile = File(...),
+    case_id: str = Query("custom_investigation"),
+    db: Session = Depends(get_db)
+):
     try:
         content = await read_and_validate_upload(file)
         records = parse_cdr_csv(content)
@@ -102,12 +158,42 @@ async def upload_cdr(request: Request, file: UploadFile = File(...), db: Session
         if not records:
             return JSONResponse(status_code=400, content={"status": "error", "message": "No valid CDR records found in file"})
         
+        new_relationships = []
         for r in records:
-            caller = crud.get_or_create_entity(db, "PHONE", r["caller"])
-            receiver = crud.get_or_create_entity(db, "PHONE", r["receiver"])
-            crud.create_relationship(db, caller.id, receiver.id, "CALLED", properties=r)
+            caller = crud.get_or_create_entity(db, "PHONE", r["caller"], case_id=case_id)
+            receiver = crud.get_or_create_entity(db, "PHONE", r["receiver"], case_id=case_id)
+            new_relationships.append(crud.Relationship(source_id=caller.id, target_id=receiver.id, rel_type="CALLED", properties=r, case_id=case_id))
             
-        compute_all_analytics(db)
+        if new_relationships:
+            db.add_all(new_relationships)
+            db.commit()
+            
+        compute_all_analytics(db, case_id=case_id)
+
+        try:
+            raw_preview = content.decode("utf-8")[:5000]
+        except Exception:
+            raw_preview = str(content[:5000])
+
+        uploaded_record = UploadedFile(
+            filename=file.filename or "cdr_records.csv",
+            file_type="cdr",
+            file_size=len(content),
+            raw_content=raw_preview,
+            parsed_preview={"records": records[:100], "total_records": len(records)},
+            case_id=case_id
+        )
+        db.add(uploaded_record)
+        db.commit()
+
+        audit_logger.log_event(
+            action="FILE_UPLOAD",
+            user="operator",
+            resource=f"cdr/{file.filename}",
+            details=f"Case: {case_id} | Processed: {len(records)} CDR records",
+            severity="INFO"
+        )
+
         return {"status": "success", "records_processed": len(records)}
     except ValueError as val_err:
         return JSONResponse(status_code=413, content={"status": "error", "message": str(val_err)})
@@ -117,7 +203,12 @@ async def upload_cdr(request: Request, file: UploadFile = File(...), db: Session
 
 @router.post("/upload/financial")
 @limiter.limit("30/minute")
-async def upload_financial(request: Request, file: UploadFile = File(...), db: Session = Depends(get_db)):
+async def upload_financial(
+    request: Request,
+    file: UploadFile = File(...),
+    case_id: str = Query("custom_investigation"),
+    db: Session = Depends(get_db)
+):
     try:
         content = await read_and_validate_upload(file)
         records = parse_financial_csv(content)
@@ -125,17 +216,47 @@ async def upload_financial(request: Request, file: UploadFile = File(...), db: S
         if not records:
             return JSONResponse(status_code=400, content={"status": "error", "message": "No valid financial records found in file"})
         
+        new_relationships = []
         for r in records:
-            sender_acc = crud.get_or_create_entity(db, "BANK_ACCOUNT", r["sender_account"])
-            receiver_acc = crud.get_or_create_entity(db, "BANK_ACCOUNT", r["receiver_account"])
-            sender = crud.get_or_create_entity(db, "PERSON", r.get("sender_name", "Unknown"))
-            receiver = crud.get_or_create_entity(db, "PERSON", r.get("receiver_name", "Unknown"))
+            sender_acc = crud.get_or_create_entity(db, "BANK_ACCOUNT", r["sender_account"], case_id=case_id)
+            receiver_acc = crud.get_or_create_entity(db, "BANK_ACCOUNT", r["receiver_account"], case_id=case_id)
+            sender = crud.get_or_create_entity(db, "PERSON", r.get("sender_name", "Unknown"), case_id=case_id)
+            receiver = crud.get_or_create_entity(db, "PERSON", r.get("receiver_name", "Unknown"), case_id=case_id)
             
-            crud.create_relationship(db, sender.id, sender_acc.id, "OWNS_ACCOUNT")
-            crud.create_relationship(db, receiver.id, receiver_acc.id, "OWNS_ACCOUNT")
-            crud.create_relationship(db, sender_acc.id, receiver_acc.id, "TRANSFERRED_MONEY_TO", weight=r.get("amount", 1.0), properties=r)
+            new_relationships.append(crud.Relationship(source_id=sender.id, target_id=sender_acc.id, rel_type="OWNS_ACCOUNT", case_id=case_id))
+            new_relationships.append(crud.Relationship(source_id=receiver.id, target_id=receiver_acc.id, rel_type="OWNS_ACCOUNT", case_id=case_id))
+            new_relationships.append(crud.Relationship(source_id=sender_acc.id, target_id=receiver_acc.id, rel_type="TRANSFERRED_MONEY_TO", weight=r.get("amount", 1.0), properties=r, case_id=case_id))
             
-        compute_all_analytics(db)
+        if new_relationships:
+            db.add_all(new_relationships)
+            db.commit()
+            
+        compute_all_analytics(db, case_id=case_id)
+
+        try:
+            raw_preview = content.decode("utf-8")[:5000]
+        except Exception:
+            raw_preview = str(content[:5000])
+
+        uploaded_record = UploadedFile(
+            filename=file.filename or "financial_ledger.csv",
+            file_type="financial",
+            file_size=len(content),
+            raw_content=raw_preview,
+            parsed_preview={"records": records[:100], "total_records": len(records)},
+            case_id=case_id
+        )
+        db.add(uploaded_record)
+        db.commit()
+
+        audit_logger.log_event(
+            action="FILE_UPLOAD",
+            user="operator",
+            resource=f"financial/{file.filename}",
+            details=f"Case: {case_id} | Processed: {len(records)} financial transactions",
+            severity="INFO"
+        )
+
         return {"status": "success", "records_processed": len(records)}
     except ValueError as val_err:
         return JSONResponse(status_code=413, content={"status": "error", "message": str(val_err)})
@@ -145,7 +266,12 @@ async def upload_financial(request: Request, file: UploadFile = File(...), db: S
 
 @router.post("/upload/vehicle")
 @limiter.limit("30/minute")
-async def upload_vehicle(request: Request, file: UploadFile = File(...), db: Session = Depends(get_db)):
+async def upload_vehicle(
+    request: Request,
+    file: UploadFile = File(...),
+    case_id: str = Query("custom_investigation"),
+    db: Session = Depends(get_db)
+):
     try:
         content = await read_and_validate_upload(file)
         records = parse_vehicle_csv(content)
@@ -153,12 +279,42 @@ async def upload_vehicle(request: Request, file: UploadFile = File(...), db: Ses
         if not records:
             return JSONResponse(status_code=400, content={"status": "error", "message": "No valid vehicle records found in file"})
         
+        new_relationships = []
         for r in records:
-            vehicle = crud.get_or_create_entity(db, "VEHICLE", r["plate_number"])
-            loc = crud.get_or_create_entity(db, "LOCATION", r["location"])
-            crud.create_relationship(db, vehicle.id, loc.id, "SPOTTED_AT", properties=r)
+            vehicle = crud.get_or_create_entity(db, "VEHICLE", r["plate_number"], case_id=case_id)
+            loc = crud.get_or_create_entity(db, "LOCATION", r["location"], case_id=case_id)
+            new_relationships.append(crud.Relationship(source_id=vehicle.id, target_id=loc.id, rel_type="SPOTTED_AT", properties=r, case_id=case_id))
             
-        compute_all_analytics(db)
+        if new_relationships:
+            db.add_all(new_relationships)
+            db.commit()
+            
+        compute_all_analytics(db, case_id=case_id)
+
+        try:
+            raw_preview = content.decode("utf-8")[:5000]
+        except Exception:
+            raw_preview = str(content[:5000])
+
+        uploaded_record = UploadedFile(
+            filename=file.filename or "vehicle_sightings.csv",
+            file_type="vehicle",
+            file_size=len(content),
+            raw_content=raw_preview,
+            parsed_preview={"records": records[:100], "total_records": len(records)},
+            case_id=case_id
+        )
+        db.add(uploaded_record)
+        db.commit()
+
+        audit_logger.log_event(
+            action="FILE_UPLOAD",
+            user="operator",
+            resource=f"vehicle/{file.filename}",
+            details=f"Case: {case_id} | Processed: {len(records)} vehicle sightings",
+            severity="INFO"
+        )
+
         return {"status": "success", "records_processed": len(records)}
     except ValueError as val_err:
         return JSONResponse(status_code=413, content={"status": "error", "message": str(val_err)})

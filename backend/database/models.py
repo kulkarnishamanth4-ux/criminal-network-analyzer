@@ -54,3 +54,14 @@ class Anomaly(Base):
     entity_ids = Column(JSON, default=list)
     created_at = Column(DateTime, default=datetime.utcnow)
     case_id = Column(String(50), nullable=True, default="dawood", index=True)
+
+class UploadedFile(Base):
+    __tablename__ = "uploaded_files"
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    filename = Column(String(255), nullable=False)
+    file_type = Column(String(50), nullable=False)  # fir, cdr, financial, vehicle
+    file_size = Column(Integer)
+    raw_content = Column(Text)
+    parsed_preview = Column(JSON)
+    case_id = Column(String(50), index=True, default="custom_investigation")
+    uploaded_at = Column(DateTime, default=datetime.utcnow)

@@ -48,8 +48,8 @@ def get_entity_relationships(db: Session, entity_id: int) -> list[dict]:
         result.append({"relationship": rel, "related_entity": ent, "direction": "incoming"})
     return result
 
-def create_fir(db: Session, raw_text: str, fir_number: str = None, date=None, police_station=None, district=None, crime_type: str = None, crime_confidence: float = None, extracted_entities: list = None) -> FIR:
-    fir = FIR(fir_number=fir_number, raw_text=raw_text, crime_type=crime_type, crime_confidence=crime_confidence, extracted_entities=extracted_entities or [], date=date, police_station=police_station, district=district)
+def create_fir(db: Session, raw_text: str, fir_number: str = None, date=None, police_station=None, district=None, crime_type: str = None, crime_confidence: float = None, extracted_entities: list = None, case_id: str = "dawood") -> FIR:
+    fir = FIR(fir_number=fir_number, raw_text=raw_text, crime_type=crime_type, crime_confidence=crime_confidence, extracted_entities=extracted_entities or [], date=date, police_station=police_station, district=district, case_id=case_id)
     db.add(fir)
     db.commit()
     db.refresh(fir)
