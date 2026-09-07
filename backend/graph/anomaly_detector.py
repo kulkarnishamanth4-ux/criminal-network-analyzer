@@ -207,8 +207,8 @@ def detect_ghost_connectors(db: Session, G: nx.Graph) -> list[dict]:
                     anomalies.append({
                         "anomaly_type": "GHOST_CONNECTOR",
                         "severity": "HIGH",
-                        "title": f"Ghost Connector: {ent.name}",
-                        "description": f"{ent.name} ({ent.entity_type}) has only {deg[node]} direct connections but sits on {betw:.1%} of all shortest paths — likely a broker or intermediary.",
+                        "title": f"Physical-Exclusive Intermediary: {ent.name}",
+                        "description": f"{ent.name} ({ent.entity_type}) has only {deg[node]} direct connections but sits on {betw:.1%} of all shortest paths — likely an undocumented broker or intermediary operating via physical-exclusive channels.",
                         "evidence": [
                             f"Degree: {deg[node]}",
                             f"Betweenness centrality: {betw:.4f}",

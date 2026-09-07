@@ -138,7 +138,7 @@ def seed_data():
     a1 = Anomaly(
         anomaly_type="BURST_CALLING",
         severity="CRITICAL",
-        title="Panic Entropy: Burst Calling Detected post-FIR",
+        title="Confession-Probability Index: Burst Calling Detected post-FIR",
         description="Mohanlal made 15 calls to Vikram Sharma in a 30 minute window following police action.",
         entity_ids=[mohan.id, vikram.id]
     )
@@ -147,7 +147,7 @@ def seed_data():
     a2 = Anomaly(
         anomaly_type="CIRCULAR_TRANSACTION",
         severity="HIGH",
-        title="Hawala Smurfing Ring Detected",
+        title="Hawala Betrayal Index Ring Detected",
         description="Funds traversing from Diamond Merchants to mules and looping back.",
         entity_ids=[diamond_corp.id, mule1.id, mule2.id]
     )

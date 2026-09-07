@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FiUser, FiPhone, FiMapPin, FiBriefcase, FiDollarSign, FiActivity, FiChevronDown, FiChevronUp, FiAlertTriangle, FiTrendingUp, FiUsers, FiClock, FiArrowRight } from 'react-icons/fi';
 import { getEntityDossier } from '../api/client';
+import { normalizeAnomalyText } from '../utils/anomalyNormalizer';
 
 const getIcon = (type) => {
   switch (type?.toUpperCase()) {
@@ -176,8 +177,8 @@ export default function EntityDossier({ entityData, onEntitySelect, onExpandNetw
                       <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: sevColor }}></span>
                       <span className="font-bold text-[10px] uppercase tracking-wider" style={{ color: sevColor }}>{a.severity}</span>
                     </div>
-                    <div className="text-[var(--text-primary)] font-medium">{a.title}</div>
-                    {a.description && <div className="text-[var(--text-secondary)] text-[10px] mt-1">{a.description}</div>}
+                    <div className="text-[var(--text-primary)] font-medium">{normalizeAnomalyText(a.title)}</div>
+                    {a.description && <div className="text-[var(--text-secondary)] text-[10px] mt-1">{normalizeAnomalyText(a.description)}</div>}
                   </li>
                 );
               })}

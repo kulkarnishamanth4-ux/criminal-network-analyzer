@@ -178,7 +178,7 @@ def seed_dawood_case():
     a1 = Anomaly(
         anomaly_type="BURST_CALLING",
         severity="CRITICAL",
-        title="Panic Entropy: Severe Nocturnal Burst Calling",
+        title="Confession-Probability Index: Severe Nocturnal Burst Calling",
         description="Abu Salem exhibited severe circadian desynchronization, initiating 25 back-to-back calls to Chhota Shakeel between 02:00 AM and 04:00 AM immediately following FIR_MUM_EXT_2026_9981.",
         entity_ids=[salem.id, shakeel.id, salem_phone.id, s_phone.id]
     )
@@ -187,7 +187,7 @@ def seed_dawood_case():
     a2 = Anomaly(
         anomaly_type="GHOST_CONNECTOR",
         severity="HIGH",
-        title="Ghost Rendezvous Detected at Taj Lands End",
+        title="Physical-Exclusive Meeting Detected at Taj Lands End",
         description="Abu Salem (MH-01-AB-1234) and Firoz Khan (MH-02-CD-5678) were co-located at Taj Lands End parking within 10 minutes of each other. No telephonic contact exists between them, indicating deliberate operational security (OpSec) avoidance.",
         entity_ids=[salem.id, shooter1.id, salem_car.id, shooter_bike.id, taj_hotel.id]
     )
@@ -196,11 +196,20 @@ def seed_dawood_case():
     a3 = Anomaly(
         anomaly_type="CIRCULAR_TRANSACTION",
         severity="CRITICAL",
-        title="Hawala Smurfing: Cross-Border Layering",
-        description="D-International Trading (Dubai) routed ?25,000,000 to HDFC-MUM-111, which was immediately layered across 48 hours to ICICI-MUM-222, and subsequently used to fund sharpshooter accounts.",
+        title="Hawala Betrayal Index: Cross-Border Layering Loop",
+        description="D-International Trading (Dubai) routed ₹25,000,000 to HDFC-MUM-111, which was immediately layered across 48 hours to ICICI-MUM-222, and subsequently used to fund sharpshooter accounts.",
         entity_ids=[front_company.id, dubai_acc.id, mumbai_acc_1.id, mumbai_acc_2.id, shooter_acc.id]
     )
     db.add(a3)
+
+    a4 = Anomaly(
+        anomaly_type="GEO_ANOMALY",
+        severity="CRITICAL",
+        title="Optical Plate-Cloning Paradox: Trans-National Movement",
+        description="Burner IMEI linked to Dawood Ibrahim syndicate pinged Clifton, Karachi cell tower and 45 minutes later activated via Dubai IP relay, exceeding physical transit limits.",
+        entity_ids=[boss.id, boss_phone.id]
+    )
+    db.add(a4)
 
     db.commit()
     print("SUCCESS: Operation Syndicate (D-Company Variant) has been successfully seeded into the master database.")

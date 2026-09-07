@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FiBell, FiAlertCircle } from 'react-icons/fi';
 import { getAnomalies } from '../api/client';
+import { normalizeAnomalyText } from '../utils/anomalyNormalizer';
 
 export default function AlertsFeed({ onEntitySelect, activeCase }) {
   const [anomalies, setAnomalies] = useState([]);
@@ -49,9 +50,11 @@ export default function AlertsFeed({ onEntitySelect, activeCase }) {
                 </div>
                 <span className="text-[9px] opacity-70">Just now</span>
               </div>
-              <h3 className="text-sm font-bold mb-1 text-[var(--text-primary)]">{anomaly.title}</h3>
+              <h3 className="text-sm font-bold mb-1 text-[var(--text-primary)]">
+                {normalizeAnomalyText(anomaly.title)}
+              </h3>
               <p className="text-xs text-[var(--text-secondary)] mb-2 line-clamp-2 group-hover:line-clamp-none transition-all">
-                {anomaly.description}
+                {normalizeAnomalyText(anomaly.description)}
               </p>
               {anomaly.entity_ids && anomaly.entity_ids.length > 0 && (
                 <div className="flex flex-wrap gap-1 mt-2">
