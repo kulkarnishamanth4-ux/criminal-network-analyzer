@@ -180,6 +180,9 @@ export const getFilePreview = (caseId, fileId) =>
 export const checkAliasMatch = (nameA, nameB, caseId, context = '') => 
   client.post('/api/alias/probability', { name_a: nameA, name_b: nameB, case_id: caseId, context }).then(res => res.data);
 
+export const getSuggestedSuspects = (caseId) =>
+  client.get('/api/alias/suggest-suspects', { params: { case_id: caseId } }).then(res => res.data);
+
 // === AUDIT LOGS ===
 export const getAuditLogs = (limit = 50, severity = null) => 
   client.get('/api/audit/logs', { params: { limit, severity } }).then(res => res.data);
