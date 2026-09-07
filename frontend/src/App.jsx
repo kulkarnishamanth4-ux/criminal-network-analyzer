@@ -35,6 +35,14 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showAuditModal, setShowAuditModal] = useState(false);
 
+  // Two-Click Connection Tracer State
+  const [isConnectionMode, setIsConnectionMode] = useState(false);
+  const [connectionSource, setConnectionSource] = useState(null);
+  const [connectionTarget, setConnectionTarget] = useState(null);
+  const [connectionPathResult, setConnectionPathResult] = useState(null);
+  const [isPathFinderOpen, setIsPathFinderOpen] = useState(false);
+  const [pathLoading, setPathLoading] = useState(false);
+
   const canAccess = (feature) => {
     if (!currentUser) return false;
     const level = currentUser.level || 0;
@@ -90,6 +98,121 @@ function App() {
     setActiveCase(newCase);
     setSelectedEntity(null);
     setHighlightPath(null);
+    handleExitConnectionMode();
+  };
+
+  const handleStartConnectionMode = () => {
+    setIsConnectionMode(true);
+    setIsPathFinderOpen(true);
+    setConnectionSource(null);
+    setConnectionTarget(null);
+    setConnectionPathResult(null);
+    setHighlightPath(null);
+    setSelectedEntity(null);
+  };
+
+  const handleExitConnectionMode = () => {
+    setIsConnectionMode(false);
+    setIsPathFinderOpen(false);
+    setConnectionSource(null);
+    setConnectionTarget(null);
+    setConnectionPathResult(null);
+    setHighlightPath(null);
+  };
+
+  const handleResetConnection = () => {
+    setConnectionSource(null);
+    setConnectionTarget(null);
+    setConnectionPathResult(null);
+    setHighlightPath(null);
+  };
+
+  const executeShortestPath = async (src, tgt) => {
+    if (!src || !tgt) return;
+    setPathLoading(true);
+    try {
+      const result = await getShortestPath(src.id, tgt.id, activeCase);
+      setConnectionPathResult(result);
+      if (result.found && result.path && result.path.length > 0) {
+        setHighlightPath(result.path);
+        const hops = result.length ?? (result.path.length - 1);
+        showToast(`✓ Traced connection: ${hops} hops between ${src.label || src.name} and ${tgt.label || tgt.name}!`, 'success');
+      } else {
+        setHighlightPath(null);
+        showToast(result.message || 'No direct connection found between selected entities', 'warning');
+      }
+    } catch (err) {
+      console.error("Shortest path error", err);
+      setConnectionPathResult({ found: false, message: 'Connection lookup failed' });
+      showToast('Path lookup failed', 'error');
+    } finally {
+      setPathLoading(false);
+    }
+  };
+
+  const handleConnectionNodeClick = async (nodeData) => {
+    const formattedNode = {
+      id: nodeData.id,
+      name: nodeData.label || nodeData.name,
+      label: nodeData.label || nodeData.name,
+      entity_type: nodeData.type || nodeData.entity_type,
+      type: nodeData.type || nodeData.entity_type,
+    };
+
+    if (!connectionSource) {
+      // 1st click: Set Source
+      setConnectionSource(formattedNode);
+      setConnectionTarget(null);
+      setConnectionPathResult(null);
+      setHighlightPath([formattedNode.id]);
+      showToast(`Source set: "${formattedNode.name}". Now click target entity on canvas.`, 'info');
+    } else if (!connectionTarget) {
+      // 2nd click: Set Target
+      if (String(connectionSource.id) === String(formattedNode.id)) {
+        showToast('Please click a different entity as target', 'warning');
+        return;
+      }
+      setConnectionTarget(formattedNode);
+      await executeShortestPath(connectionSource, formattedNode);
+    } else {
+      // 3rd click after path found: start new trace
+      setConnectionSource(formattedNode);
+      setConnectionTarget(null);
+      setConnectionPathResult(null);
+      setHighlightPath([formattedNode.id]);
+      showToast(`New trace started! Source: "${formattedNode.name}". Click target entity.`, 'info');
+    }
+  };
+
+  const handleSelectSource = (srcNode) => {
+    const formatted = {
+      id: srcNode.id,
+      name: srcNode.name || srcNode.label,
+      label: srcNode.name || srcNode.label,
+      entity_type: srcNode.entity_type || srcNode.type,
+      type: srcNode.entity_type || srcNode.type,
+    };
+    setConnectionSource(formatted);
+    setConnectionPathResult(null);
+    if (connectionTarget) {
+      executeShortestPath(formatted, connectionTarget);
+    } else {
+      setHighlightPath([formatted.id]);
+    }
+  };
+
+  const handleSelectTarget = (tgtNode) => {
+    const formatted = {
+      id: tgtNode.id,
+      name: tgtNode.name || tgtNode.label,
+      label: tgtNode.name || tgtNode.label,
+      entity_type: tgtNode.entity_type || tgtNode.type,
+      type: tgtNode.entity_type || tgtNode.type,
+    };
+    setConnectionTarget(formatted);
+    if (connectionSource) {
+      executeShortestPath(connectionSource, formatted);
+    }
   };
 
   useEffect(() => {
@@ -159,20 +282,6 @@ function App() {
     showToast(`Spotlighted ${nodeIds.length} tactical strike targets on canvas`, 'info');
   };
 
-  const handleTwoClickConnection = async (sourceId, targetId) => {
-    try {
-      const result = await getShortestPath(sourceId, targetId, activeCase);
-      if (result.path && result.path.length > 0) {
-        setHighlightPath(result.path);
-        showToast(`Connection found: ${result.path.length} hops`, 'success');
-      } else {
-        showToast('No connection found between selected entities', 'warning');
-      }
-    } catch (err) {
-      showToast('Connection search failed', 'error');
-    }
-  };
-
   if (!showApp) return <LandingPage onEnter={() => setShowApp(true)} />;
   if (!isLoggedIn) return <LoginScreen onLogin={(user) => { setCurrentUser(user); setIsLoggedIn(true); }} />;
 
@@ -228,10 +337,39 @@ function App() {
                 onNodeSelect={handleNodeSelect} 
                 onClearSelection={handleClearSelection}
                 highlightPath={highlightPath}
-                onFindConnection={handleTwoClickConnection}
+                isConnectionMode={isConnectionMode}
+                connectionSource={connectionSource}
+                connectionTarget={connectionTarget}
+                connectionPathResult={connectionPathResult}
+                onConnectionNodeClick={handleConnectionNodeClick}
+                onExitConnectionMode={handleExitConnectionMode}
+                onResetConnection={handleResetConnection}
               />
               <NodeLegend />
-              <PathFinder onPathFound={handlePathFound} activeCase={activeCase} />
+              <PathFinder 
+                isOpen={isPathFinderOpen}
+                onOpen={handleStartConnectionMode}
+                onClose={handleExitConnectionMode}
+                source={connectionSource}
+                target={connectionTarget}
+                pathResult={connectionPathResult}
+                onSelectSource={handleSelectSource}
+                onSelectTarget={handleSelectTarget}
+                onClearSource={() => { 
+                  setConnectionSource(null); 
+                  setConnectionPathResult(null); 
+                  setHighlightPath(null); 
+                }}
+                onClearTarget={() => { 
+                  setConnectionTarget(null); 
+                  setConnectionPathResult(null); 
+                  if (connectionSource) setHighlightPath([connectionSource.id]); 
+                }}
+                onReset={handleResetConnection}
+                onFindPath={() => executeShortestPath(connectionSource, connectionTarget)}
+                activeCase={activeCase}
+                loading={pathLoading}
+              />
             </>
           ) : (
             <GeospatialMap 

@@ -306,7 +306,20 @@ const stylesheet = [
     'display': 'none',
   }},
   { selector: 'node.connection-source', style: {
-    'border-color': '#64ffda', 'border-width': 4, 'shadow-blur': 15, 'shadow-color': '#64ffda'
+    'border-color': '#64ffda',
+    'border-width': 5,
+    'shadow-blur': 25,
+    'shadow-color': '#64ffda',
+    'shadow-opacity': 1,
+    'z-index': 1000,
+  }},
+  { selector: 'node.connection-target', style: {
+    'border-color': '#f9ca24',
+    'border-width': 5,
+    'shadow-blur': 25,
+    'shadow-color': '#f9ca24',
+    'shadow-opacity': 1,
+    'z-index': 1000,
   }},
 ];
 
@@ -331,16 +344,43 @@ const layout = {
   minTemp: 1.0,
 };
 
-export default function GraphCanvas({ elements, activeCase, onNodeSelect, onClearSelection, highlightPath, onFindConnection }) {
+export default function GraphCanvas({ 
+  elements, 
+  activeCase, 
+  onNodeSelect, 
+  onClearSelection, 
+  highlightPath, 
+  isConnectionMode = false,
+  connectionSource = null,
+  connectionTarget = null,
+  connectionPathResult = null,
+  onConnectionNodeClick,
+  onExitConnectionMode,
+  onResetConnection
+}) {
   const cyRef = useRef(null);
   const [timelineFilter, setTimelineFilter] = useState(null);
-  const [connectionMode, setConnectionMode] = useState(false);
-  const [selectedForConnection, setSelectedForConnection] = useState([]);
 
-  const connectionModeRef = useRef(false);
-  const selectedForConnectionRef = useRef([]);
-  useEffect(() => { connectionModeRef.current = connectionMode; }, [connectionMode]);
-  useEffect(() => { selectedForConnectionRef.current = selectedForConnection; }, [selectedForConnection]);
+  const isConnectionModeRef = useRef(isConnectionMode);
+  const onConnectionNodeClickRef = useRef(onConnectionNodeClick);
+  useEffect(() => { isConnectionModeRef.current = isConnectionMode; }, [isConnectionMode]);
+  useEffect(() => { onConnectionNodeClickRef.current = onConnectionNodeClick; }, [onConnectionNodeClick]);
+
+  // Sync source and target node highlighting on Cytoscape
+  useEffect(() => {
+    if (!cyRef.current) return;
+    const cy = cyRef.current;
+    cy.nodes().removeClass('connection-source').removeClass('connection-target');
+
+    if (connectionSource) {
+      const s = cy.getElementById(String(connectionSource.id));
+      if (s.length) s.addClass('connection-source');
+    }
+    if (connectionTarget) {
+      const t = cy.getElementById(String(connectionTarget.id));
+      if (t.length) t.addClass('connection-target');
+    }
+  }, [connectionSource, connectionTarget]);
 
 
   useEffect(() => {
@@ -471,17 +511,9 @@ export default function GraphCanvas({ elements, activeCase, onNodeSelect, onClea
     const handleTapNode = (evt) => {
       const node = evt.target;
       
-      if (connectionModeRef.current) {
-        if (selectedForConnectionRef.current.length === 0) {
-          setSelectedForConnection([node.data()]);
-          node.addClass('connection-source');
-        } else if (selectedForConnectionRef.current.length === 1) {
-          const source = selectedForConnectionRef.current[0];
-          const target = node.data();
-          if (onFindConnection) onFindConnection(source.id, target.id);
-          setSelectedForConnection([]);
-          cy.nodes().removeClass('connection-source');
-          setConnectionMode(false);
+      if (isConnectionModeRef.current) {
+        if (onConnectionNodeClickRef.current) {
+          onConnectionNodeClickRef.current(node.data());
         }
         return;
       }
@@ -499,10 +531,7 @@ export default function GraphCanvas({ elements, activeCase, onNodeSelect, onClea
     
     const handleTapBg = (evt) => {
       if (evt.target === cy) {
-        if (connectionModeRef.current) {
-          setSelectedForConnection([]);
-          cy.nodes().removeClass('connection-source');
-          // intentionally do not turn off connection mode here, just clear selection
+        if (isConnectionModeRef.current) {
           return;
         }
         clearHighlight(cy);
@@ -530,18 +559,33 @@ export default function GraphCanvas({ elements, activeCase, onNodeSelect, onClea
     };
   }, [onNodeSelect, onClearSelection, highlightNeighborhood, clearHighlight]);
 
-  // Highlight path from PathFinder
+  // Highlight path from PathFinder or Two-Click Connection Tracer
   useEffect(() => {
-    if (!cyRef.current || !highlightPath || highlightPath.length === 0) return;
+    if (!cyRef.current) return;
     const cy = cyRef.current;
-    clearHighlight(cy);
     
+    if (!highlightPath || highlightPath.length === 0) {
+      if (isConnectionMode && connectionSource) {
+        cy.elements().addClass('dimmed').removeClass('highlighted');
+        const sNode = cy.getElementById(String(connectionSource.id));
+        if (sNode.length) sNode.removeClass('dimmed').addClass('highlighted');
+      } else {
+        clearHighlight(cy);
+      }
+      return;
+    }
+    
+    clearHighlight(cy);
     const pathIds = highlightPath.map(String);
     cy.elements().addClass('dimmed').removeClass('highlighted');
     
+    const highlightedElements = [];
     pathIds.forEach(id => {
       const node = cy.getElementById(id);
-      if (node.length) node.removeClass('dimmed').addClass('highlighted');
+      if (node.length) {
+        node.removeClass('dimmed').addClass('highlighted');
+        highlightedElements.push(node);
+      }
     });
     
     for (let i = 0; i < pathIds.length - 1; i++) {
@@ -550,8 +594,23 @@ export default function GraphCanvas({ elements, activeCase, onNodeSelect, onClea
         return (s === pathIds[i] && t === pathIds[i+1]) || (s === pathIds[i+1] && t === pathIds[i]);
       });
       edges.removeClass('dimmed').addClass('highlighted');
+      edges.forEach(e => highlightedElements.push(e));
     }
-  }, [highlightPath, clearHighlight]);
+
+    // Zoom and pan smoothly to the highlighted path
+    if (highlightedElements.length > 1) {
+      try {
+        const collection = cy.collection(highlightedElements);
+        cy.animate({
+          fit: { eles: collection, padding: 80 },
+          duration: 500,
+          easing: 'ease-in-out'
+        });
+      } catch {
+        // Safe fallback
+      }
+    }
+  }, [highlightPath, isConnectionMode, connectionSource, clearHighlight]);
 
   return (
     <div className="w-full h-full bg-[#05050f] absolute inset-0 z-0">
@@ -571,25 +630,84 @@ export default function GraphCanvas({ elements, activeCase, onNodeSelect, onClea
       ) : (
         <>
           <TimelineScrubber elements={elements} onFilter={setTimelineFilter} />
-          <div className="absolute top-16 right-4 z-20 flex flex-col items-end gap-2">
-            <button 
-              onClick={() => { 
-                setConnectionMode(!connectionMode); 
-                setSelectedForConnection([]);
-                if (cyRef.current) cyRef.current.nodes().removeClass('connection-source');
-              }}
-              className={`px-3 py-1.5 rounded text-sm font-bold shadow-lg transition-colors ${connectionMode ? 'bg-[#64ffda] text-black' : 'bg-[#0a1628] text-white border border-[#1e3a5f] hover:bg-[#1e3a5f]'}`}
-            >
-              {connectionMode ? 'Exit Connection Mode' : '🔗 Connection Mode'}
-            </button>
-            {connectionMode && (
-              <div className="bg-[#0a1628]/90 border border-[#64ffda] rounded-lg p-3 text-xs text-[#c8d6e5] min-w-[200px] shadow-lg">
-                <div className="text-[#64ffda] font-bold mb-1">Connection Tracer Active</div>
-                {selectedForConnection.length === 0 && <div>Click first entity (source)...</div>}
-                {selectedForConnection.length === 1 && <div>Source: <span className="text-[#f9ca24]">{selectedForConnection[0].label}</span><br/>Click second entity (target)...</div>}
-              </div>
-            )}
-          </div>
+          
+          {/* Top-Center Floating HUD Banner for Connection Mode */}
+          {isConnectionMode && (
+            <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-30 animate-in fade-in slide-in-from-top-3 duration-200 pointer-events-auto">
+              {!connectionSource && (
+                <div className="flex items-center gap-3 px-5 py-2 rounded-full bg-[#0a1628]/95 border border-[#64ffda] shadow-[0_0_25px_rgba(100,255,218,0.35)] backdrop-blur-md">
+                  <span className="relative flex h-3 w-3">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#64ffda] opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-3 w-3 bg-[#64ffda]"></span>
+                  </span>
+                  <span className="text-xs text-white font-mono font-medium">
+                    <strong className="text-[#64ffda]">STEP 1:</strong> Click 1st entity on canvas to set <span className="text-[#64ffda] underline font-bold">SOURCE</span>
+                  </span>
+                  <button
+                    onClick={onExitConnectionMode}
+                    className="ml-2 text-xs text-gray-400 hover:text-white px-2 py-0.5 rounded bg-[#1e3a5f]/70 hover:bg-[#1e3a5f] border border-[#1e3a5f] font-mono transition-colors cursor-pointer"
+                    title="Exit Connection Mode"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              )}
+
+              {connectionSource && !connectionTarget && (
+                <div className="flex items-center gap-3 px-5 py-2 rounded-full bg-[#0a1628]/95 border border-[#f9ca24] shadow-[0_0_25px_rgba(249,202,36,0.35)] backdrop-blur-md">
+                  <span className="relative flex h-3 w-3">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#f9ca24] opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-3 w-3 bg-[#f9ca24]"></span>
+                  </span>
+                  <span className="text-xs text-white font-mono font-medium">
+                    Source: <strong className="text-[#64ffda]">{connectionSource.label || connectionSource.name}</strong> ➔ <strong className="text-[#f9ca24]">STEP 2:</strong> Click <span className="text-[#f9ca24] underline font-bold">TARGET</span> entity
+                  </span>
+                  <button
+                    onClick={onResetConnection}
+                    className="ml-2 text-xs text-gray-300 hover:text-white px-2.5 py-0.5 rounded bg-[#13233a] hover:bg-[#1e3a5f] border border-[#1e3a5f] font-mono transition-colors cursor-pointer"
+                    title="Change source entity"
+                  >
+                    Reset
+                  </button>
+                  <button
+                    onClick={onExitConnectionMode}
+                    className="text-xs text-gray-400 hover:text-white px-2 py-0.5 rounded bg-[#1e3a5f]/70 hover:bg-[#1e3a5f] border border-[#1e3a5f] font-mono transition-colors cursor-pointer"
+                    title="Exit Connection Mode"
+                  >
+                    ✕
+                  </button>
+                </div>
+              )}
+
+              {connectionSource && connectionTarget && (
+                <div className="flex items-center gap-3 px-5 py-2 rounded-full bg-[#0a1628]/95 border border-[#64ffda] shadow-[0_0_30px_rgba(100,255,218,0.4)] backdrop-blur-md">
+                  <span className="text-xs text-white font-mono font-medium flex items-center gap-2">
+                    <span className="text-[#64ffda] font-bold">✓ Path:</span>
+                    <span className="text-gray-200 font-semibold">{connectionSource.label || connectionSource.name}</span>
+                    <span className="text-[#64ffda]">➔</span>
+                    <span className="text-gray-200 font-semibold">{connectionTarget.label || connectionTarget.name}</span>
+                    <span className="ml-1 px-2.5 py-0.5 rounded-full bg-[#64ffda]/20 text-[#64ffda] font-bold text-[11px] border border-[#64ffda]/40">
+                      {connectionPathResult?.found ? `${connectionPathResult.length ?? (connectionPathResult.path?.length - 1)} Hops` : 'No Direct Link'}
+                    </span>
+                  </span>
+                  <button
+                    onClick={onResetConnection}
+                    className="ml-2 text-xs text-[#64ffda] hover:text-white px-2.5 py-0.5 rounded bg-[#13233a] hover:bg-[#1e3a5f] border border-[#64ffda]/50 hover:border-[#64ffda] font-mono transition-colors font-bold cursor-pointer"
+                    title="Trace another pair of entities"
+                  >
+                    ↺ Trace Another
+                  </button>
+                  <button
+                    onClick={onExitConnectionMode}
+                    className="text-xs text-gray-400 hover:text-white px-2 py-0.5 rounded bg-[#1e3a5f]/70 hover:bg-[#1e3a5f] border border-[#1e3a5f] font-mono transition-colors cursor-pointer"
+                    title="Exit Connection Mode"
+                  >
+                    ✕ Exit
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
           <div className="absolute bottom-6 right-6 z-10 flex flex-col gap-2">
             <button onClick={() => cyRef.current && cyRef.current.zoom(cyRef.current.zoom() * 1.2)} className="w-10 h-10 bg-[var(--bg-card)] border border-[var(--border)] rounded flex items-center justify-center text-white hover:bg-[var(--bg-highlight)] transition-colors shadow-lg" title="Zoom In">
               <FiZoomIn size={18} />
