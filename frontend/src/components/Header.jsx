@@ -78,7 +78,7 @@ export default function Header({
           <select 
             value={activeCase} 
             onChange={(e) => onCaseChange(e.target.value)}
-            className="w-full bg-[#0a1220] border border-[#1e3a5f] hover:border-[#64ffda]/50 text-[var(--text-accent)] text-xs sm:text-sm font-medium rounded-lg px-3 py-2 pr-8 focus:border-[var(--neon-green)] focus:ring-1 focus:ring-[var(--neon-green)] outline-none transition-all cursor-pointer shadow-inner"
+            className="w-full appearance-none bg-[#0a1220] border border-[#1e3a5f] hover:border-[#64ffda]/50 text-[var(--text-accent)] text-xs sm:text-sm font-medium rounded-lg px-3 py-2 pr-8 focus:border-[var(--neon-green)] focus:ring-1 focus:ring-[var(--neon-green)] outline-none transition-all cursor-pointer shadow-inner"
           >
             {cases.map(c => (
               <option key={c.id} value={c.id} className="bg-[#0a1220] text-gray-200 py-1">
