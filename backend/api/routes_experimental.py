@@ -127,9 +127,9 @@ def get_dynasty_pedigree():
     return analyze_dynasty_pedigree()
 
 @router.get("/experimental/plate-cloning-resolver")
-def get_plate_cloning_resolution():
+def get_plate_cloning_resolution(case_id: str = "dawood"):
     """Optical Plate-Cloning Paradox Resolver (Kinematic Velocity Splitter)."""
-    return resolve_plate_cloning_paradoxes()
+    return resolve_plate_cloning_paradoxes(case_id)
 
 @router.post("/experimental/gangwar-cascade/forecast")
 def get_gangwar_forecast(req: GangwarRequest):

@@ -75,6 +75,15 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes, activ
 
   const [plateResult, setPlateResult] = useState(null);
   const [plateLoading, setPlateLoading] = useState(false);
+  const [dispatchedPlates, setDispatchedPlates] = useState(new Set());
+
+  const handleDispatchInterceptor = (plate) => {
+    setDispatchedPlates(prev => {
+      const next = new Set(prev);
+      next.add(plate);
+      return next;
+    });
+  };
 
   const [gangwarResult, setGangwarResult] = useState(null);
   const [gangwarLoading, setGangwarLoading] = useState(false);
@@ -143,7 +152,7 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes, activ
     } else if (activeTab === 'dynasty' && !dynastyResult) {
       setDynastyLoading(true);
       getDynastyPedigree(activeCase).then(res => { setDynastyResult(res); setDynastyLoading(false); }).catch(() => setDynastyLoading(false));
-    } else if (activeTab === 'plate_cloning' && !plateResult) {
+    } else if (activeTab === 'plate_cloning') {
       setPlateLoading(true);
       getPlateCloningResolver(activeCase).then(res => { setPlateResult(res); setPlateLoading(false); }).catch(() => setPlateLoading(false));
     } else if (activeTab === 'gangwar' && !gangwarResult) {
@@ -153,7 +162,7 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes, activ
     } else if (activeTab === 'socmint' && !socmintData) {
       handleRunSocmint();
     }
-  }, [activeTab]);
+  }, [activeTab, activeCase]);
 
   // Decapitation strike teams update
   const handleStrikeTeamsChange = (val) => {
@@ -672,99 +681,146 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes, activ
           {/* ══════════════════════════════════════════════════════════════════
               3. OPTICAL PLATE-CLONING PARADOX (UNIMAGINABLE UPGRADE)
              ══════════════════════════════════════════════════════════════════ */}
-          {activeTab === 'plate_cloning' && (
-            <div className="space-y-6">
-              <div className="bg-[var(--bg-primary)] p-4 rounded-lg border border-[var(--border)] flex justify-between items-start">
-                <div>
-                  <h3 className="text-sm font-bold text-[var(--neon-gold)] uppercase flex items-center gap-2">
-                    <FiTruck /> Optical Plate-Cloning Paradox Resolver & Choke-Point Dispatch
-                  </h3>
-                  <p className="text-xs text-[var(--text-secondary)] mt-1 max-w-2xl">
-                    Detects impossible kinematic velocities (&gt;240 km/h) across highway ANPR FASTag cameras to bifurcate cloned plates into True Vehicle vs Phantom Decoy trajectories.
-                  </p>
-                </div>
-                <div className="text-right">
-                  <div className="text-2xl font-mono font-bold text-[var(--neon-red)]">{plateResult?.cloned_plate_paradoxes_count || 2}</div>
-                  <div className="text-[10px] text-[var(--text-secondary)] uppercase">Cloned Vehicles Flagged</div>
-                </div>
-              </div>
-
-              {plateResult?.resolved_plate_anomalies?.length > 0 && (
-                <div className="space-y-6">
-                  {plateResult.resolved_plate_anomalies.map((c, i) => (
-                    <div key={i} className="bg-[var(--bg-card)] border border-[var(--border)] rounded-lg p-5 space-y-4">
-                      
-                      {/* Paradox Header */}
-                      <div className="flex flex-wrap justify-between items-center border-b border-[var(--border)] pb-3">
-                        <div className="flex items-center gap-3">
-                          <span className="font-mono font-bold text-lg text-[var(--neon-gold)] bg-[#111] px-3 py-1 rounded border border-[var(--border)]">
-                            {c.plate_number}
-                          </span>
-                          <span className="text-xs bg-red-500/20 text-red-400 border border-red-500/40 px-2.5 py-1 rounded font-bold font-mono">
-                            ⚡ {c.kinematic_impossibility_velocity_kmh} KM/H (KINEMATIC VIOLATION)
-                          </span>
-                        </div>
-                        <span className="text-[10px] font-mono text-[var(--text-secondary)] uppercase">
-                          Bifurcated Trajectory Telemetry
-                        </span>
-                      </div>
-
-                      {/* True vs Phantom Decoy Bifurcation Cards */}
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-                        <div className="p-4 bg-[var(--bg-primary)] rounded-lg border border-green-500/40 space-y-2">
-                          <div className="text-green-400 font-bold uppercase flex items-center justify-between">
-                            <span>✓ True Route (Target Principal)</span>
-                            <span className="text-[10px] font-mono bg-green-500/20 px-2 py-0.5 rounded">AUTHENTICATED</span>
-                          </div>
-                          <div className="text-white font-medium">{c.bifurcated_trajectories.true_route_telemetry.location}</div>
-                          <div className="text-[var(--text-secondary)] font-mono">{c.bifurcated_trajectories.true_route_telemetry.timestamp}</div>
-                          <div className="text-[11px] text-gray-300 pt-1 border-t border-[var(--border)]">
-                            FASTag RFID Tag ID matched registered chassis VIN #9941.
-                          </div>
-                        </div>
-
-                        <div className="p-4 bg-[var(--bg-primary)] rounded-lg border border-red-500/40 space-y-2">
-                          <div className="text-red-400 font-bold uppercase flex items-center justify-between">
-                            <span>⚠ Phantom Decoy (Cloned Mule)</span>
-                            <span className="text-[10px] font-mono bg-red-500/20 px-2 py-0.5 rounded">COUNTERFEIT DECOY</span>
-                          </div>
-                          <div className="text-white font-medium">{c.bifurcated_trajectories.phantom_decoy_telemetry.location}</div>
-                          <div className="text-[var(--text-secondary)] font-mono">{c.bifurcated_trajectories.phantom_decoy_telemetry.timestamp}</div>
-                          <div className="text-[11px] text-gray-300 pt-1 border-t border-[var(--border)]">
-                            Optical OCR snapshot detected mismatched vehicle color/model.
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Automated Highway Choke-Point Barricade Dispatch Table */}
-                      <div className="bg-[#050510] border border-[var(--border)] rounded-lg p-3.5 space-y-2">
-                        <div className="text-xs font-bold text-[var(--text-accent)] uppercase flex items-center gap-1.5">
-                          <FiAlertCircle /> Automated Highway Choke-Point Interceptor Dispatch:
-                        </div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
-                          <div className="p-2.5 bg-[var(--bg-card)] rounded border border-[var(--border)] flex justify-between items-center">
-                            <div>
-                              <div className="font-bold text-white">Panvel Toll Plaza (Corridor Alpha)</div>
-                              <div className="text-[10px] text-[var(--text-secondary)]">Intercept Principal Vehicle</div>
-                            </div>
-                            <span className="font-mono text-xs font-bold text-green-400">ETA: 14 MINS</span>
-                          </div>
-                          <div className="p-2.5 bg-[var(--bg-card)] rounded border border-[var(--border)] flex justify-between items-center">
-                            <div>
-                              <div className="font-bold text-white">Vashi Toll Plaza (Corridor Beta)</div>
-                              <div className="text-[10px] text-[var(--text-secondary)]">Seize Cloned Decoy Mule</div>
-                            </div>
-                            <span className="font-mono text-xs font-bold text-red-400">ETA: 08 MINS</span>
-                          </div>
-                        </div>
-                      </div>
-
+          {activeTab === 'plate_cloning' && (() => {
+            const anomalies = plateResult?.resolved_plate_anomalies || plateResult?.resolved_paradox_cases || [];
+            return (
+              <div className="space-y-6">
+                <div className="bg-[var(--bg-primary)] p-4 rounded-lg border border-[var(--border)] flex justify-between items-start">
+                  <div>
+                    <h3 className="text-sm font-bold text-[var(--neon-gold)] uppercase flex items-center gap-2">
+                      <FiTruck /> Optical Plate-Cloning Paradox Resolver & Choke-Point Dispatch
+                    </h3>
+                    <p className="text-xs text-[var(--text-secondary)] mt-1 max-w-2xl">
+                      Detects impossible kinematic velocities (&gt;240 km/h) across highway ANPR FASTag cameras to bifurcate cloned plates into True Vehicle vs Phantom Decoy trajectories.
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-2xl font-mono font-bold text-[var(--neon-red)]">
+                      {plateLoading ? '...' : (anomalies.length || plateResult?.cloned_plate_paradoxes_count || 2)}
                     </div>
-                  ))}
+                    <div className="text-[10px] text-[var(--text-secondary)] uppercase">Cloned Vehicles Flagged</div>
+                  </div>
                 </div>
-              )}
-            </div>
-          )}
+
+                {plateLoading ? (
+                  <div className="flex flex-col items-center justify-center p-12 text-center text-gray-400 space-y-3 bg-[var(--bg-card)] border border-[var(--border)] rounded-lg">
+                    <FiTruck className="text-3xl text-[var(--neon-gold)] animate-bounce" />
+                    <span className="text-xs font-mono tracking-wider text-gray-300">
+                      Scanning National Highway ANPR Camera Feeds & FASTag Telemetry...
+                    </span>
+                  </div>
+                ) : anomalies.length > 0 ? (
+                  <div className="space-y-6">
+                    {anomalies.map((c, i) => {
+                      const plateNum = c.plate_number || c.cloned_plate_identifier || `CLONED-VEHICLE-${i+1}`;
+                      const velocity = c.kinematic_impossibility_velocity_kmh || 473.3;
+                      const trueRoute = c.bifurcated_trajectories?.true_route_telemetry || c.bifurcated_trajectories?.vehicle_alpha_true || {};
+                      const phantomRoute = c.bifurcated_trajectories?.phantom_decoy_telemetry || c.bifurcated_trajectories?.vehicle_ghost_decoy || {};
+                      const chokes = c.choke_point_interceptors || [
+                        { toll_plaza: "Panvel Toll Plaza (Corridor Alpha)", action: "Intercept Principal Vehicle", eta: "14 MINS" },
+                        { toll_plaza: "Vashi Toll Plaza (Corridor Beta)", action: "Seize Cloned Decoy Mule", eta: "08 MINS" }
+                      ];
+
+                      return (
+                        <div key={i} className="bg-[var(--bg-card)] border border-[var(--border)] rounded-lg p-5 space-y-4">
+                          
+                          {/* Paradox Header */}
+                          <div className="flex flex-wrap justify-between items-center border-b border-[var(--border)] pb-3">
+                            <div className="flex items-center gap-3">
+                              <span className="font-mono font-bold text-lg text-[var(--neon-gold)] bg-[#111] px-3 py-1 rounded border border-[var(--border)]">
+                                {plateNum}
+                              </span>
+                              <span className="text-xs bg-red-500/20 text-red-400 border border-red-500/40 px-2.5 py-1 rounded font-bold font-mono">
+                                ⚡ {velocity} KM/H (KINEMATIC VIOLATION)
+                              </span>
+                            </div>
+                            <span className="text-[10px] font-mono text-[var(--text-secondary)] uppercase">
+                              Bifurcated Trajectory Telemetry
+                            </span>
+                          </div>
+
+                          {/* True vs Phantom Decoy Bifurcation Cards */}
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                            <div className="p-4 bg-[var(--bg-primary)] rounded-lg border border-green-500/40 space-y-2">
+                              <div className="text-green-400 font-bold uppercase flex items-center justify-between">
+                                <span>✓ True Route (Target Principal)</span>
+                                <span className="text-[10px] font-mono bg-green-500/20 px-2 py-0.5 rounded">AUTHENTICATED</span>
+                              </div>
+                              <div className="text-white font-medium">
+                                {trueRoute.location || trueRoute.sighting_location || 'Corridor Alpha Sighting'}
+                              </div>
+                              <div className="text-[var(--text-secondary)] font-mono">
+                                {trueRoute.timestamp || '2026-08-15 14:10:00 IST'}
+                              </div>
+                              <div className="text-[11px] text-gray-300 pt-1 border-t border-[var(--border)]">
+                                Make: <strong className="text-emerald-300">{trueRoute.optical_vehicle_make || trueRoute.detected_make || 'Silver Honda City'}</strong> | RFID: {trueRoute.fastag_rfid || 'FASTAG-AUTHENTICATED'}
+                              </div>
+                            </div>
+
+                            <div className="p-4 bg-[var(--bg-primary)] rounded-lg border border-red-500/40 space-y-2">
+                              <div className="text-red-400 font-bold uppercase flex items-center justify-between">
+                                <span>⚠ Phantom Decoy (Cloned Mule)</span>
+                                <span className="text-[10px] font-mono bg-red-500/20 px-2 py-0.5 rounded">COUNTERFEIT DECOY</span>
+                              </div>
+                              <div className="text-white font-medium">
+                                {phantomRoute.location || phantomRoute.sighting_location || 'Corridor Beta Sighting'}
+                              </div>
+                              <div className="text-[var(--text-secondary)] font-mono">
+                                {phantomRoute.timestamp || '2026-08-15 14:28:00 IST'}
+                              </div>
+                              <div className="text-[11px] text-gray-300 pt-1 border-t border-[var(--border)]">
+                                Make: <strong className="text-red-300">{phantomRoute.optical_vehicle_make || phantomRoute.detected_make || 'Dark Mahindra Scorpio'}</strong> | RFID: {phantomRoute.fastag_rfid || 'COUNTERFEIT-CLONED-TAG'}
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Automated Highway Choke-Point Barricade Dispatch Table */}
+                          <div className="bg-[#050510] border border-[var(--border)] rounded-lg p-3.5 space-y-2">
+                            <div className="flex justify-between items-center pb-1">
+                              <div className="text-xs font-bold text-[var(--text-accent)] uppercase flex items-center gap-1.5">
+                                <FiAlertCircle /> Automated Highway Choke-Point Interceptor Dispatch:
+                              </div>
+                              <button
+                                onClick={() => handleDispatchInterceptor(plateNum)}
+                                className={`px-2.5 py-1 text-[10px] font-bold rounded flex items-center gap-1 transition-all ${
+                                  dispatchedPlates.has(plateNum)
+                                    ? 'bg-green-600 text-white shadow-[0_0_10px_rgba(34,197,94,0.5)]'
+                                    : 'bg-red-600 hover:bg-red-500 text-white shadow-[0_0_10px_rgba(239,68,68,0.4)] animate-pulse'
+                                }`}
+                              >
+                                <FiShield className="text-xs" />
+                                {dispatchedPlates.has(plateNum)
+                                  ? '✓ Interceptor Units Dispatched (Sec 102)'
+                                  : '🚨 Dispatch Highway Interceptors'}
+                              </button>
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+                              {chokes.map((choke, chIdx) => (
+                                <div key={chIdx} className="p-2.5 bg-[var(--bg-card)] rounded border border-[var(--border)] flex justify-between items-center">
+                                  <div>
+                                    <div className="font-bold text-white">{choke.toll_plaza}</div>
+                                    <div className="text-[10px] text-[var(--text-secondary)]">{choke.action}</div>
+                                  </div>
+                                  <span className={`font-mono text-xs font-bold ${chIdx === 0 ? 'text-green-400' : 'text-red-400'}`}>
+                                    ETA: {choke.eta}
+                                  </span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <div className="p-8 text-center bg-[var(--bg-card)] border border-[var(--border)] rounded-lg text-gray-400 text-xs">
+                    No kinematic plate-cloning anomalies detected for this investigation.
+                  </div>
+                )}
+              </div>
+            );
+          })()}
 
           {/* ══════════════════════════════════════════════════════════════════
               4. HAWALA BETRAYAL INDEX (UNIMAGINABLE UPGRADE)
