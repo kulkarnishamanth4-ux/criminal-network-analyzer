@@ -571,7 +571,7 @@ export default function GraphCanvas({ elements, activeCase, onNodeSelect, onClea
       ) : (
         <>
           <TimelineScrubber elements={elements} onFilter={setTimelineFilter} />
-          <div className="absolute top-4 right-4 z-20 flex flex-col items-end gap-2">
+          <div className="absolute top-16 right-4 z-20 flex flex-col items-end gap-2">
             <button 
               onClick={() => { 
                 setConnectionMode(!connectionMode); 

@@ -51,7 +51,7 @@ export default function Header({
   }, []);
 
   return (
-    <header className="h-16 bg-[#060a14] border-b border-[#1e3a5f] flex items-center justify-between px-5 z-40 shadow-xl relative">
+    <header className="h-16 bg-[#060a14] border-b border-[#1e3a5f] flex items-center justify-between px-5 z-50 shadow-xl relative">
       {/* Brand & Title */}
       <div className="flex items-center gap-3 shrink-0">
         <div className="w-9 h-9 rounded-lg bg-[#0c1829] border border-[#64ffda]/30 flex items-center justify-center shadow-[0_0_12px_rgba(100,255,218,0.2)]">
@@ -111,7 +111,7 @@ export default function Header({
 
             {/* Dropdown Menu Popover */}
             {suiteMenuOpen && (
-              <div className="absolute right-0 top-full mt-2 w-72 bg-[#0a1424] border border-[#1e3a5f] rounded-xl shadow-2xl p-2 z-50 animate-in fade-in slide-in-from-top-2 duration-150 backdrop-blur-xl">
+              <div className="absolute right-0 top-full mt-2 w-72 bg-[#0a1424] border border-[#1e3a5f] rounded-xl shadow-2xl p-2 z-[60] animate-in fade-in slide-in-from-top-2 duration-150 backdrop-blur-xl">
                 <div className="px-3 py-2 border-b border-[#1e3a5f]/60 mb-1 flex items-center justify-between">
                   <span className="text-[10px] font-mono uppercase tracking-wider text-[#8892b0]">Security & Analytics Suite</span>
                   <span className="text-[9px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-mono font-bold">L{level} ACTIVE</span>

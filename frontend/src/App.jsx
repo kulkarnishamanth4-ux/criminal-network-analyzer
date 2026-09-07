@@ -189,7 +189,7 @@ function App() {
         onLogout={() => { setIsLoggedIn(false); setCurrentUser(null); }}
       />
       
-      <div className="flex flex-1 overflow-hidden relative">
+      <div className="flex flex-1 overflow-hidden relative z-0">
         <LeftPanel 
           key={activeCase}
           stats={stats} 
@@ -200,7 +200,7 @@ function App() {
         
         <main className="flex-1 relative flex flex-col bg-[#05050f]">
           {/* View Toggle */}
-          <div className="absolute top-4 right-4 z-50 flex bg-[#111] p-1 rounded-lg border border-[#333] shadow-lg">
+          <div className="absolute top-4 right-4 z-20 flex bg-[#111] p-1 rounded-lg border border-[#333] shadow-lg">
             <button 
               onClick={() => setViewMode('network')}
               className={`flex items-center gap-2 px-3 py-1.5 text-xs font-bold rounded-md transition-colors ${viewMode === 'network' ? 'bg-[var(--text-accent)] text-[#000]' : 'text-gray-400 hover:text-white'}`}

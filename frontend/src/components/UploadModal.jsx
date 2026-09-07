@@ -192,7 +192,7 @@ export default function UploadModal({ onClose, onSuccess, activeCase }) {
   }, [previewData]);
 
   return (
-    <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-3 sm:p-6 animate-in fade-in duration-200">
+    <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-[100] flex items-center justify-center p-3 sm:p-6 animate-in fade-in duration-200">
       <div className="bg-[#080f1d] border border-[#1e3a5f] rounded-xl w-full max-w-5xl h-[88vh] shadow-[0_0_30px_rgba(0,0,0,0.8)] flex flex-col text-[#c8d6e5] overflow-hidden">
         
         {/* Header */}
