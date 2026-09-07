@@ -14,8 +14,8 @@ import ChatBot from './components/ChatBot';
 import LoginScreen from './components/LoginScreen';
 import AuditLogViewer from './components/AuditLogViewer';
 import ErrorBoundary from './components/ErrorBoundary';
-import { FiShare2, FiMap } from 'react-icons/fi';
-import { getFullGraph, getDashboardStats, getPredictedLinks, getShortestPath } from './api/client';
+import { FiShare2, FiMap, FiRotateCcw, FiFileText } from 'react-icons/fi';
+import { getFullGraph, getDashboardStats, getPredictedLinks, getShortestPath, resetInvestigation, loadSampleInvestigation } from './api/client';
 
 function App() {
   const [showApp, setShowApp] = useState(false);
@@ -236,6 +236,33 @@ function App() {
     loadData();
   };
 
+  const handleResetCase = async () => {
+    if (!window.confirm("Reset this investigation to a blank canvas? All uploaded data for this case will be wiped.")) return;
+    try {
+      await resetInvestigation(activeCase);
+      showToast('Investigation reset to clean canvas.', 'info');
+      setSelectedEntity(null);
+      setHighlightPath(null);
+      loadData(activeCase);
+    } catch (err) {
+      console.error(err);
+      showToast('Failed to reset investigation', 'error');
+    }
+  };
+
+  const handleLoadSampleCase = async () => {
+    try {
+      await loadSampleInvestigation(activeCase);
+      showToast('Loaded verified sample FIR investigation.', 'success');
+      setSelectedEntity(null);
+      setHighlightPath(null);
+      loadData(activeCase);
+    } catch (err) {
+      console.error(err);
+      showToast('Failed to load sample dataset', 'error');
+    }
+  };
+
   const handlePathFound = (path) => {
     setHighlightPath(path);
     showToast(`Connection traced: ${path.length - 1} hops`, 'info');
@@ -308,20 +335,42 @@ function App() {
         />
         
         <main className="flex-1 relative flex flex-col bg-[#05050f]">
-          {/* View Toggle */}
-          <div className="absolute top-4 right-4 z-20 flex bg-[#111] p-1 rounded-lg border border-[#333] shadow-lg">
-            <button 
-              onClick={() => setViewMode('network')}
-              className={`flex items-center gap-2 px-3 py-1.5 text-xs font-bold rounded-md transition-colors ${viewMode === 'network' ? 'bg-[var(--text-accent)] text-[#000]' : 'text-gray-400 hover:text-white'}`}
-            >
-              <FiShare2 size={14} /> Network View
-            </button>
-            <button 
-              onClick={() => setViewMode('map')}
-              className={`flex items-center gap-2 px-3 py-1.5 text-xs font-bold rounded-md transition-colors ${viewMode === 'map' ? 'bg-[var(--text-accent)] text-[#000]' : 'text-gray-400 hover:text-white'}`}
-            >
-              <FiMap size={14} /> Map View
-            </button>
+          {/* Top-Right Canvas Controls */}
+          <div className="absolute top-4 right-4 z-20 flex items-center gap-2.5">
+            {activeCase === 'custom_investigation' && (
+              <div className="flex items-center gap-1.5 bg-[#0a1424]/90 p-1 rounded-lg border border-[#1e3a5f] shadow-lg backdrop-blur-md">
+                <button
+                  onClick={handleLoadSampleCase}
+                  className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold rounded bg-[#10223a] hover:bg-[#162c4b] border border-[#1e3a5f] hover:border-[#64ffda] text-[#64ffda] transition-colors cursor-pointer"
+                  title="Load verified sample FIR dataset"
+                >
+                  <FiFileText size={12} /> Load Verified Sample
+                </button>
+                <button
+                  onClick={handleResetCase}
+                  className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold rounded bg-[#201018] hover:bg-[#2e1420] border border-red-500/40 hover:border-red-500 text-red-400 transition-colors cursor-pointer"
+                  title="Clear this investigation to a blank canvas"
+                >
+                  <FiRotateCcw size={12} /> Reset Canvas
+                </button>
+              </div>
+            )}
+
+            {/* View Toggle */}
+            <div className="flex bg-[#111] p-1 rounded-lg border border-[#333] shadow-lg">
+              <button 
+                onClick={() => setViewMode('network')}
+                className={`flex items-center gap-2 px-3 py-1.5 text-xs font-bold rounded-md transition-colors ${viewMode === 'network' ? 'bg-[var(--text-accent)] text-[#000]' : 'text-gray-400 hover:text-white'}`}
+              >
+                <FiShare2 size={14} /> Network View
+              </button>
+              <button 
+                onClick={() => setViewMode('map')}
+                className={`flex items-center gap-2 px-3 py-1.5 text-xs font-bold rounded-md transition-colors ${viewMode === 'map' ? 'bg-[var(--text-accent)] text-[#000]' : 'text-gray-400 hover:text-white'}`}
+              >
+                <FiMap size={14} /> Map View
+              </button>
+            </div>
           </div>
 
           {isLoading ? (

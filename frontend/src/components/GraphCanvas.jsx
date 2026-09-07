@@ -10,6 +10,8 @@ function truncateLabel(label, type) {
   const str = String(label);
   if (type === 'BANK_ACCOUNT' && str.length > 6) return '•••' + str.slice(-4);
   if (type === 'PHONE' && str.length > 6) return '•••' + str.slice(-4);
+  if (type === 'LOCATION' && str.length > 14) return str.slice(0, 12) + '…';
+  if (type === 'ORGANIZATION' && str.length > 15) return str.slice(0, 13) + '…';
   if (str.length > 18) return str.slice(0, 16) + '…';
   return str;
 }
@@ -326,18 +328,18 @@ const stylesheet = [
 const layout = {
   name: 'cose',
   animate: true,
-  animationDuration: 800,
+  animationDuration: 750,
   animationEasing: 'ease-out',
   fit: true,
-  padding: 40,
-  randomize: true,
-  componentSpacing: 90,
-  nodeRepulsion: 18000,
-  nodeOverlap: 25,
-  idealEdgeLength: 90,
-  edgeElasticity: 32,
-  nestingFactor: 1.2,
-  gravity: 0.35,
+  padding: 55,
+  randomize: false,
+  componentSpacing: 120,
+  nodeRepulsion: 75000,
+  nodeOverlap: 10,
+  idealEdgeLength: 110,
+  edgeElasticity: 45,
+  nestingFactor: 1.1,
+  gravity: 0.25,
   numIter: 1000,
   initialTemp: 200,
   coolingFactor: 0.95,
@@ -425,39 +427,53 @@ export default function GraphCanvas({
       const role = String(n.properties?.role || '').toLowerCase();
       const nameLower = rawLabel.toLowerCase();
 
-      // Threat Level Logic:
-      // HIGH: Bosses, Kingpins, Apex Targets (Size: 58px)
-      // MEDIUM: Lieutenants, Enforcers, Key Hubs (Size: 38px)
-      // LOW: Burner phones, bank accounts, vehicles, drop points (Size: 22px)
+      // Threat & Node Size Logic:
+      // HIGH: Apex Kingpins, Cartel Bosses (Size: 52px, Font: 11px)
+      // MEDIUM: Lieutenants, Enforcers, Key Hubs (Size: 34px, Font: 9.5px)
+      // LOW/NORMAL: Standard Suspects (28px), Orgs (26px), Locations (24px), Phones/Vehicles/Accounts (22px)
       let threatLevel = 'LOW';
       let nodeSize = 22;
-      let fontSize = '9px';
-      let borderWidth = 1.5;
+      let fontSize = '8.5px';
+      let borderWidth = 1.4;
 
       const isHighRole = role.includes('boss') || role.includes('head') || role.includes('mastermind') || role.includes('don') || role.includes('commander') || role.includes('leader') || role.includes('cartel');
       const isHighName = nameLower.includes('dawood') || nameLower.includes('shakeel') || nameLower.includes('salem') || nameLower.includes('tiger memon') || nameLower.includes('d-international');
 
-      if (isHighRole || isHighName || pr >= 0.07 || risk >= 0.7) {
+      if (type === 'PERSON' && (isHighRole || isHighName || pr >= 0.08 || risk >= 0.7)) {
         threatLevel = 'HIGH';
-        nodeSize = 58;
-        fontSize = '12px';
-        borderWidth = 3.5;
+        nodeSize = 52;
+        fontSize = '11px';
+        borderWidth = 3.2;
+      } else if (type === 'PERSON' && (pr >= 0.03 || risk >= 0.35 || role.includes('lt') || role.includes('lieutenant') || role.includes('distributor') || role.includes('tech lead') || role.includes('shooter'))) {
+        threatLevel = 'MEDIUM';
+        nodeSize = 34;
+        fontSize = '9.5px';
+        borderWidth = 2.0;
+      } else if (type === 'PERSON') {
+        threatLevel = 'LOW';
+        nodeSize = 28;
+        fontSize = '9.0px';
+        borderWidth = 1.6;
+      } else if (type === 'ORGANIZATION') {
+        threatLevel = (pr >= 0.05 || risk >= 0.5) ? 'MEDIUM' : 'LOW';
+        nodeSize = 26;
+        fontSize = '8.5px';
+        borderWidth = 1.6;
+      } else if (type === 'LOCATION') {
+        threatLevel = 'LOW';
+        nodeSize = 24;
+        fontSize = '8.5px';
+        borderWidth = 1.4;
+      } else if (type === 'PHONE' || type === 'BANK_ACCOUNT' || type === 'VEHICLE') {
+        threatLevel = 'LOW';
+        nodeSize = 22;
+        fontSize = '8.0px';
+        borderWidth = 1.2;
       } else {
-        const isMedRole = role.includes('lt') || role.includes('lieutenant') || role.includes('distributor') || role.includes('tech lead') || role.includes('angadia') || role.includes('shooter') || role.includes('transporter') || role.includes('proxy');
-        const isMedType = type === 'ORGANIZATION' || type === 'LOCATION';
-        const isMedName = nameLower.includes('firoz') || nameLower.includes('roshan') || nameLower.includes('safehouse');
-
-        if (isMedRole || isMedName || isMedType || pr >= 0.025 || risk >= 0.35) {
-          threatLevel = 'MEDIUM';
-          nodeSize = 38;
-          fontSize = '10.5px';
-          borderWidth = 2.2;
-        } else {
-          threatLevel = 'LOW';
-          nodeSize = 22;
-          fontSize = '9px';
-          borderWidth = 1.5;
-        }
+        threatLevel = 'LOW';
+        nodeSize = 22;
+        fontSize = '8.5px';
+        borderWidth = 1.4;
       }
 
       return {

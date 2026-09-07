@@ -47,12 +47,20 @@ export const getEntityDossier = (entityId) => {
   return client.get(`/api/entity/${entityId}/dossier`).then(res => res.data);
 };
 
-export const uploadFile = (type, file, caseId) => {
+export const uploadFile = (type, file, caseId, clearExisting = false) => {
   const formData = new FormData();
   formData.append('file', file);
-  return client.post(`/api/upload/${type}?case_id=${caseId || 'custom_investigation'}`, formData, {
+  return client.post(`/api/upload/${type}?case_id=${caseId || 'custom_investigation'}&clear_existing=${clearExisting}`, formData, {
     headers: { 'Content-Type': 'multipart/form-data' }
   }).then(res => res.data);
+};
+
+export const resetInvestigation = (caseId = 'custom_investigation') => {
+  return client.post(`/api/investigation/reset?case_id=${caseId}`).then(res => res.data);
+};
+
+export const loadSampleInvestigation = (caseId = 'custom_investigation') => {
+  return client.post(`/api/investigation/load-sample?case_id=${caseId}`).then(res => res.data);
 };
 
 export const getShortestPath = (sourceId, targetId, caseId = 'dawood') => {

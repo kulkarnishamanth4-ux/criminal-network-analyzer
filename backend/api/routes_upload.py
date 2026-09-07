@@ -11,6 +11,7 @@ from backend.main_helpers import compute_all_analytics
 from backend.limiter import limiter
 import traceback
 import re
+import os
 
 router = APIRouter()
 
@@ -29,6 +30,7 @@ async def upload_fir(
     request: Request,
     file: UploadFile = File(...),
     case_id: str = Query("custom_investigation"),
+    clear_existing: bool = Query(False),
     db: Session = Depends(get_db)
 ):
     try:
@@ -40,6 +42,13 @@ async def upload_fir(
         
         if not text.strip():
             return JSONResponse(status_code=400, content={"status": "error", "message": "Empty file uploaded"})
+        
+        # Optionally wipe old dirty data for this investigation if user requested a fresh import
+        if clear_existing:
+            db.query(crud.Relationship).filter(crud.Relationship.case_id == case_id).delete()
+            db.query(crud.Entity).filter(crud.Entity.case_id == case_id).delete()
+            db.query(crud.FIR).filter(crud.FIR.case_id == case_id).delete()
+            db.commit()
         
         # Get existing entities for fuzzy matching (typo snapping)
         existing_entities = {e.name for e in db.query(crud.Entity).all()}
@@ -408,3 +417,186 @@ async def upload_vehicle(
     except Exception as e:
         traceback.print_exc()
         return JSONResponse(status_code=500, content={"status": "error", "message": f"Failed to process vehicle data: {str(e)}"})
+
+@router.post("/investigation/reset")
+def reset_investigation(case_id: str = Query("custom_investigation"), db: Session = Depends(get_db)):
+    """Wipes all entities, relationships, files, and anomalies for a custom case."""
+    try:
+        del_rels = db.query(crud.Relationship).filter(crud.Relationship.case_id == case_id).delete()
+        del_ents = db.query(crud.Entity).filter(crud.Entity.case_id == case_id).delete()
+        del_firs = db.query(crud.FIR).filter(crud.FIR.case_id == case_id).delete()
+        del_files = db.query(UploadedFile).filter(UploadedFile.case_id == case_id).delete()
+        del_anom = db.query(crud.Anomaly).filter(crud.Anomaly.case_id == case_id).delete()
+        db.commit()
+
+        compute_all_analytics(db, case_id=case_id)
+
+        audit_logger.log_event(
+            action="CASE_RESET",
+            user="operator",
+            resource=f"case/{case_id}",
+            details=f"Wiped {del_ents} entities and {del_rels} relationships for case {case_id}",
+            severity="WARNING"
+        )
+        return {
+            "status": "success", 
+            "message": f"Investigation '{case_id}' reset to clean slate.",
+            "deleted_entities": del_ents,
+            "deleted_relationships": del_rels
+        }
+    except Exception as e:
+        traceback.print_exc()
+        return JSONResponse(status_code=500, content={"status": "error", "message": str(e)})
+
+@router.post("/investigation/load-sample")
+def load_sample_investigation(case_id: str = Query("custom_investigation"), db: Session = Depends(get_db)):
+    """Resets the case and loads the clean, verified sample FIR report dataset."""
+    try:
+        sample_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "frontend", "public", "samples", "sample_fir_report.txt")
+        if not os.path.exists(sample_path):
+            sample_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "frontend", "dist", "samples", "sample_fir_report.txt")
+        
+        if not os.path.exists(sample_path):
+            return JSONResponse(status_code=404, content={"status": "error", "message": "Sample FIR file not found"})
+
+        with open(sample_path, "r", encoding="utf-8") as f:
+            text = f.read()
+
+        # Wipe old data
+        db.query(crud.Relationship).filter(crud.Relationship.case_id == case_id).delete()
+        db.query(crud.Entity).filter(crud.Entity.case_id == case_id).delete()
+        db.query(crud.FIR).filter(crud.FIR.case_id == case_id).delete()
+        db.query(UploadedFile).filter(UploadedFile.case_id == case_id).delete()
+        db.query(crud.Anomaly).filter(crud.Anomaly.case_id == case_id).delete()
+        db.commit()
+
+        # Extract cleanly
+        extracted = extract_entities_from_text(text)
+        classification = classify_crime(text)
+
+        fir = crud.create_fir(
+            db=db,
+            raw_text=text,
+            crime_type=classification.get("crime_type"),
+            crime_confidence=classification.get("confidence"),
+            extracted_entities=extracted,
+            case_id=case_id
+        )
+
+        person_ents = []
+        for p in extracted.get("persons", []):
+            props = {"aliases": p.get("aliases", [])} if p.get("aliases") else {}
+            ent = crud.get_or_create_entity(db, "PERSON", p["name"], properties=props, case_id=case_id)
+            person_ents.append(ent)
+
+        loc_ents = []
+        for l in extracted.get("locations", []):
+            ent = crud.get_or_create_entity(db, "LOCATION", l["name"], case_id=case_id)
+            loc_ents.append(ent)
+
+        phone_ents = []
+        for ph in extracted.get("phones", []):
+            ent = crud.get_or_create_entity(db, "PHONE", ph["number"], case_id=case_id)
+            phone_ents.append(ent)
+
+        veh_ents = []
+        for v in extracted.get("vehicles", []):
+            ent = crud.get_or_create_entity(db, "VEHICLE", v["plate"], case_id=case_id)
+            veh_ents.append(ent)
+
+        org_ents = []
+        for o in extracted.get("organizations", []):
+            ent = crud.get_or_create_entity(db, "ORGANIZATION", o["name"], case_id=case_id)
+            org_ents.append(ent)
+
+        new_relationships = []
+        existing_rel_pairs = set()
+
+        def add_rel(src_id, tgt_id, rel_type, weight=1.0, props=None):
+            if src_id == tgt_id: return
+            pair = tuple(sorted((src_id, tgt_id))) + (rel_type,)
+            if pair not in existing_rel_pairs:
+                existing_rel_pairs.add(pair)
+                new_relationships.append(
+                    crud.Relationship(
+                        source_id=src_id,
+                        target_id=tgt_id,
+                        rel_type=rel_type,
+                        weight=weight,
+                        properties=props or {"fir_id": fir.id},
+                        case_id=case_id
+                    )
+                )
+
+        if person_ents:
+            primary_person = person_ents[0]
+            for p_ent in person_ents[1:]:
+                add_rel(primary_person.id, p_ent.id, "CO_ACCUSED", weight=2.0)
+
+            for i in range(len(person_ents)):
+                for j in range(i + 1, len(person_ents)):
+                    p1, p2 = person_ents[i], person_ents[j]
+                    for s in re.split(r'[\n.]+', text):
+                        if p1.name.lower() in s.lower() and p2.name.lower() in s.lower():
+                            if any(kw in s.lower() for kw in ['transfer', 'sent', 'paid', 'hawala', 'amount', 'lakh', 'crore']):
+                                add_rel(p1.id, p2.id, "TRANSFERRED_MONEY_TO", weight=2.5)
+
+        def resolve_target_person(item_name: str):
+            if not person_ents: return None
+            item_lower = item_name.lower()
+            for s in re.split(r'[\n.]+', text):
+                if item_lower in s.lower():
+                    for p_ent in person_ents:
+                        if p_ent.name.lower() in s.lower():
+                            return p_ent
+            return person_ents[0]
+
+        for ph in phone_ents:
+            t = resolve_target_person(ph.name)
+            if t: add_rel(t.id, ph.id, "OWNS_PHONE", weight=3.0)
+
+        for v in veh_ents:
+            t = resolve_target_person(v.name)
+            if t: add_rel(t.id, v.id, "OPERATES_VEHICLE", weight=3.0)
+
+        for o in org_ents:
+            t = resolve_target_person(o.name)
+            if t: add_rel(t.id, o.id, "OPERATES", weight=2.5)
+
+        for l in loc_ents:
+            t = resolve_target_person(l.name)
+            if t: add_rel(t.id, l.id, "OPERATES_IN", weight=2.0)
+
+        db.add_all(new_relationships)
+        db.commit()
+
+        compute_all_analytics(db, case_id=case_id)
+
+        # Upload record
+        uploaded_record = UploadedFile(
+            filename="sample_fir_report.txt",
+            file_type="fir",
+            file_size=len(text.encode("utf-8")),
+            raw_content=text,
+            parsed_preview={
+                "entities": extracted,
+                "crime_type": fir.crime_type,
+                "crime_confidence": fir.crime_confidence,
+                "entities_count": len(person_ents)+len(loc_ents)+len(phone_ents)+len(veh_ents)+len(org_ents),
+                "relationships_count": len(new_relationships)
+            },
+            case_id=case_id
+        )
+        db.add(uploaded_record)
+        db.commit()
+
+        return {
+            "status": "success",
+            "message": "Clean sample investigation loaded successfully.",
+            "entities_created": len(person_ents)+len(loc_ents)+len(phone_ents)+len(veh_ents)+len(org_ents),
+            "relationships_created": len(new_relationships)
+        }
+    except Exception as e:
+        traceback.print_exc()
+        return JSONResponse(status_code=500, content={"status": "error", "message": str(e)})
+

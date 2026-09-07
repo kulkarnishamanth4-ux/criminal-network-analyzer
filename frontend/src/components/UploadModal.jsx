@@ -12,11 +12,13 @@ import {
   FiHardDrive,
   FiAlertTriangle
 } from 'react-icons/fi';
-import { uploadFile, getUploadedFiles, getFilePreview } from '../api/client';
+import { uploadFile, getUploadedFiles, getFilePreview, resetInvestigation, loadSampleInvestigation } from '../api/client';
 
 export default function UploadModal({ onClose, onSuccess, activeCase }) {
   const [activeTab, setActiveTab] = useState('fir');
   const [isUploading, setIsUploading] = useState(false);
+  const [isActionLoading, setIsActionLoading] = useState(false);
+  const [clearExisting, setClearExisting] = useState(activeCase === 'custom_investigation');
   const [result, setResult] = useState(null);
   
   const [uploadedFiles, setUploadedFiles] = useState([]);
@@ -54,13 +56,13 @@ export default function UploadModal({ onClose, onSuccess, activeCase }) {
     setResult(null);
     
     try {
-      const res = await uploadFile(activeTab, acceptedFiles[0], activeCase);
+      const res = await uploadFile(activeTab, acceptedFiles[0], activeCase, clearExisting);
       setResult({ success: true, data: res });
       await loadUploadedFiles();
       setTimeout(() => {
         setResult(null);
         if (onSuccess) onSuccess();
-      }, 2000);
+      }, 1500);
     } catch (err) {
       console.error(err);
       const msg = err.response?.data?.message || 'Upload failed. Please check server logs.';
@@ -68,7 +70,44 @@ export default function UploadModal({ onClose, onSuccess, activeCase }) {
     } finally {
       setIsUploading(false);
     }
-  }, [activeTab, activeCase, onSuccess, loadUploadedFiles]);
+  }, [activeTab, activeCase, clearExisting, onSuccess, loadUploadedFiles]);
+
+  const handleResetCase = async () => {
+    if (!window.confirm(`Are you sure you want to reset case "${activeCase}" to an empty canvas?`)) return;
+    setIsActionLoading(true);
+    try {
+      await resetInvestigation(activeCase);
+      await loadUploadedFiles();
+      setResult({ success: true, data: { message: "Case reset successfully." } });
+      setTimeout(() => {
+        setResult(null);
+        if (onSuccess) onSuccess();
+      }, 1200);
+    } catch (err) {
+      console.error("Reset error:", err);
+      setResult({ success: false, error: "Failed to reset case." });
+    } finally {
+      setIsActionLoading(false);
+    }
+  };
+
+  const handleLoadSample = async () => {
+    setIsActionLoading(true);
+    try {
+      const res = await loadSampleInvestigation(activeCase);
+      await loadUploadedFiles();
+      setResult({ success: true, data: res });
+      setTimeout(() => {
+        setResult(null);
+        if (onSuccess) onSuccess();
+      }, 1200);
+    } catch (err) {
+      console.error("Sample error:", err);
+      setResult({ success: false, error: "Failed to load sample dataset." });
+    } finally {
+      setIsActionLoading(false);
+    }
+  };
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ 
     onDrop,
@@ -349,6 +388,40 @@ export default function UploadModal({ onClose, onSuccess, activeCase }) {
                     <FiAlertTriangle /> {result.error}
                   </div>
                 )}
+
+                {/* Investigation Management Controls */}
+                <div className="flex flex-wrap items-center justify-between gap-2 mt-4 pt-3 border-t border-[#1e3a5f]/60 text-xs">
+                  <label className="flex items-center gap-2 text-[#c8d6e5] cursor-pointer select-none">
+                    <input 
+                      type="checkbox" 
+                      checked={clearExisting} 
+                      onChange={(e) => setClearExisting(e.target.checked)} 
+                      className="rounded border-[#1e3a5f] bg-[#070e1a] text-[#64ffda] focus:ring-0 cursor-pointer"
+                    />
+                    <span className="font-mono text-[11px]">Clear previous data before importing</span>
+                  </label>
+
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={handleLoadSample}
+                      disabled={isActionLoading || isUploading}
+                      className="px-3 py-1.5 text-[11px] font-mono rounded-lg bg-[#10223a] border border-[#1e3a5f] hover:border-[#64ffda] text-[#64ffda] transition-colors flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                      title="Load clean verified sample FIR dataset"
+                    >
+                      <FiFileText size={12} /> Load Verified Sample
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleResetCase}
+                      disabled={isActionLoading || isUploading}
+                      className="px-3 py-1.5 text-[11px] font-mono rounded-lg bg-[#241018] border border-red-500/40 hover:border-red-500 text-red-400 transition-colors flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                      title="Wipe this case to a blank slate"
+                    >
+                      <FiX size={12} /> Reset Case
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
 
