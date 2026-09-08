@@ -93,7 +93,7 @@ export default function Header({
       {/* Action Controls & User Section */}
       <div className="flex items-center gap-2.5 shrink-0">
         {/* Unified Intelligence Suite Dropdown */}
-        {level >= 2 && (
+        {level >= 3 && (
           <div className="relative" ref={suiteMenuRef}>
             <button 
               onClick={() => setSuiteMenuOpen(!suiteMenuOpen)}
@@ -118,67 +118,60 @@ export default function Header({
                 </div>
 
                 <div className="space-y-1">
-                  {level >= 3 && (
-                    <button
-                      onClick={() => { onBlockchainClick(); setSuiteMenuOpen(false); }}
-                      className="w-full flex items-start gap-3 p-2 rounded-lg hover:bg-[#13233a] text-left transition-colors group"
-                    >
-                      <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 group-hover:border-emerald-400 shrink-0 mt-0.5">
-                        <FiLink size={15} />
-                      </div>
-                      <div>
-                        <div className="text-xs font-semibold text-white group-hover:text-emerald-400">Blockchain & Crypto</div>
-                        <div className="text-[10px] text-[#8892b0]">PoA Ledger & Narco-Flow Tracker</div>
-                      </div>
-                    </button>
-                  )}
-
-                  {level >= 3 && (
-                    <button
-                      onClick={() => { onAuditClick(); setSuiteMenuOpen(false); }}
-                      className="w-full flex items-start gap-3 p-2 rounded-lg hover:bg-[#13233a] text-left transition-colors group"
-                    >
-                      <div className="w-8 h-8 rounded-lg bg-blue-500/10 border border-blue-500/30 flex items-center justify-center text-blue-400 group-hover:border-blue-400 shrink-0 mt-0.5">
-                        <FiShield size={15} />
-                      </div>
-                      <div>
-                        <div className="text-xs font-semibold text-white group-hover:text-blue-400">SIEM & CERT-In Logs</div>
-                        <div className="text-[10px] text-[#8892b0]">Cryptographic Chain Audit Trail</div>
-                      </div>
-                    </button>
-                  )}
-
-                  {level >= 3 && (
-                    <button
-                      onClick={() => { onExperimentalClick(); setSuiteMenuOpen(false); }}
-                      className="w-full flex items-start gap-3 p-2 rounded-lg hover:bg-[#13233a] text-left transition-colors group"
-                    >
-                      <div className="w-8 h-8 rounded-lg bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400 group-hover:border-purple-400 shrink-0 mt-0.5">
-                        <FiCpu size={15} />
-                      </div>
-                      <div>
-                        <div className="text-xs font-semibold text-white group-hover:text-purple-400">Experimental Labs</div>
-                        <div className="text-[10px] text-[#8892b0]">9 AI Topology & Strike Algorithms</div>
-                      </div>
-                    </button>
-                  )}
-
                   <button
-                    onClick={() => { window.open(`${API_URL}/api/report/generate?case_id=${activeCase}`, '_blank'); setSuiteMenuOpen(false); }}
-                    className="w-full flex items-start gap-3 p-2 rounded-lg hover:bg-[#13233a] text-left transition-colors group"
+                    onClick={() => { onBlockchainClick(); setSuiteMenuOpen(false); }}
+                    className="w-full flex items-start gap-3 p-2 rounded-lg hover:bg-[#13233a] text-left transition-colors group cursor-pointer"
                   >
-                    <div className="w-8 h-8 rounded-lg bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 group-hover:border-amber-400 shrink-0 mt-0.5">
-                      <FiFileText size={15} />
+                    <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 group-hover:border-emerald-400 shrink-0 mt-0.5">
+                      <FiLink size={15} />
                     </div>
                     <div>
-                      <div className="text-xs font-semibold text-white group-hover:text-amber-400">Intelligence Report</div>
-                      <div className="text-[10px] text-[#8892b0]">Generate PDF Case Dossier</div>
+                      <div className="text-xs font-semibold text-white group-hover:text-emerald-400">Blockchain & Crypto</div>
+                      <div className="text-[10px] text-[#8892b0]">PoA Ledger & Narco-Flow Tracker</div>
+                    </div>
+                  </button>
+
+                  <button
+                    onClick={() => { onAuditClick(); setSuiteMenuOpen(false); }}
+                    className="w-full flex items-start gap-3 p-2 rounded-lg hover:bg-[#13233a] text-left transition-colors group cursor-pointer"
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-blue-500/10 border border-blue-500/30 flex items-center justify-center text-blue-400 group-hover:border-blue-400 shrink-0 mt-0.5">
+                      <FiShield size={15} />
+                    </div>
+                    <div>
+                      <div className="text-xs font-semibold text-white group-hover:text-blue-400">SIEM & CERT-In Logs</div>
+                      <div className="text-[10px] text-[#8892b0]">Cryptographic Chain Audit Trail</div>
+                    </div>
+                  </button>
+
+                  <button
+                    onClick={() => { onExperimentalClick(); setSuiteMenuOpen(false); }}
+                    className="w-full flex items-start gap-3 p-2 rounded-lg hover:bg-[#13233a] text-left transition-colors group cursor-pointer"
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400 group-hover:border-purple-400 shrink-0 mt-0.5">
+                      <FiCpu size={15} />
+                    </div>
+                    <div>
+                      <div className="text-xs font-semibold text-white group-hover:text-purple-400">Experimental Labs</div>
+                      <div className="text-[10px] text-[#8892b0]">9 AI Topology & Strike Algorithms</div>
                     </div>
                   </button>
                 </div>
               </div>
             )}
           </div>
+        )}
+
+        {/* Standalone Generate Report Button */}
+        {level >= 2 && (
+          <button
+            onClick={() => window.open(`${API_URL}/api/report/generate?case_id=${activeCase}`, '_blank')}
+            className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold border border-[#1e3a5f] bg-[#0d1829] text-[#c8d6e5] hover:border-amber-400/60 hover:text-amber-300 hover:shadow-[0_0_12px_rgba(245,158,11,0.25)] transition-all cursor-pointer"
+            title="Generate & Download Official Case Dossier (PDF)"
+          >
+            <FiFileText className="text-amber-400" size={14} />
+            <span className="hidden md:inline">Generate Report</span>
+          </button>
         )}
 
         {/* Primary Action: Data Ingestion */}
