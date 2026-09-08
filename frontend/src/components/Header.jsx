@@ -158,7 +158,7 @@ export default function Header({
                       </div>
                       <div>
                         <div className="text-xs font-semibold text-white group-hover:text-purple-400">Experimental Labs</div>
-                        <div className="text-[10px] text-[#8892b0]">13 AI Topology & Strike Algorithms</div>
+                        <div className="text-[10px] text-[#8892b0]">10 AI Topology & Strike Algorithms</div>
                       </div>
                     </button>
                   )}

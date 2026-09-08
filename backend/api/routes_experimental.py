@@ -7,10 +7,7 @@ from backend.graph.ghost_rendezvous import detect_ghost_rendezvous
 from backend.nlp.stylometry import analyze_stylometry
 from backend.nlp.interrogation_engine import interrogate_suspect
 from backend.nlp.ghost_acoustic import analyze_ambient_acoustics
-from backend.graph.hawala_fluid import simulate_hawala_fluid_dynamics
-from backend.analytics.panic_entropy import calculate_panic_profile
 from backend.graph.quantum_mole import detect_internal_leaks
-from backend.nlp.cryptolalia import decode_dark_slang
 from backend.nlp.honeypot_sting import simulate_honeypot_exchange
 from backend.graph.dynasty_pedigree import analyze_dynasty_pedigree
 from backend.graph.plate_cloning import resolve_plate_cloning_paradoxes
@@ -34,14 +31,6 @@ class InterrogationRequest(BaseModel):
 class AcousticRequest(BaseModel):
     case_id: Optional[str] = "dawood"
     audio_profile_id: Optional[str] = "intercept_call_001"
-
-class HawalaFluidRequest(BaseModel):
-    case_id: Optional[str] = "dawood"
-    frozen_account_ids: Optional[List[int]] = []
-
-class CryptolaliaRequest(BaseModel):
-    case_id: Optional[str] = "dawood"
-    text: str
 
 class HoneypotRequest(BaseModel):
     case_id: Optional[str] = "dawood"
@@ -96,25 +85,10 @@ def analyze_acoustics(req: AcousticRequest):
     """Project Ghost-Acoustic: micro-ambient acoustic geo-triangulation."""
     return analyze_ambient_acoustics(req.audio_profile_id)
 
-@router.post("/experimental/hawala-fluid/simulate")
-def simulate_hawala_fluid(req: HawalaFluidRequest, db: Session = Depends(get_db)):
-    """Hawala Fluid Dynamics & Synthetic Liquidity Flash-Crash simulation."""
-    return simulate_hawala_fluid_dynamics(db, req.frozen_account_ids)
-
-@router.get("/experimental/panic-entropy/{entity_id}")
-def get_panic_entropy(entity_id: int, db: Session = Depends(get_db)):
-    """Cognitive Exhaust & Panic-Entropy Profiler calculating confession probability."""
-    return calculate_panic_profile(db, entity_id)
-
 @router.get("/experimental/quantum-mole")
 def get_quantum_mole(db: Session = Depends(get_db)):
     """Quantum Mole-Hunter: Negative-topology internal leak detector."""
     return detect_internal_leaks(db)
-
-@router.post("/experimental/cryptolalia/decode")
-def decode_cryptolalia(req: CryptolaliaRequest):
-    """Criminal-Slang Analyzer: Evolving Decryption (Criminal-Slang Radar)."""
-    return decode_dark_slang(req.text)
 
 @router.post("/experimental/honeypot-sting/simulate")
 def run_honeypot_sting(req: HoneypotRequest):

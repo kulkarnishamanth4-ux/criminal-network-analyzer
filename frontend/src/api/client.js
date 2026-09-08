@@ -95,20 +95,8 @@ export const analyzeAcoustics = (audioProfileId = "intercept_call_001", caseId =
   return client.post('/api/experimental/ghost-acoustic/analyze', { audio_profile_id: audioProfileId, case_id: caseId }).then(res => res.data);
 };
 
-export const simulateHawalaFluid = (frozenAccountIds = [], caseId = "dawood") => {
-  return client.post('/api/experimental/hawala-fluid/simulate', { frozen_account_ids: frozenAccountIds, case_id: caseId }).then(res => res.data);
-};
-
-export const getPanicEntropy = (entityId, caseId = "dawood") => {
-  return client.get(`/api/experimental/panic-entropy/${entityId}`, { params: { case_id: caseId } }).then(res => res.data);
-};
-
 export const getQuantumMole = (caseId = "dawood") => {
   return client.get('/api/experimental/quantum-mole', { params: { case_id: caseId } }).then(res => res.data);
-};
-
-export const decodeCryptolalia = (text, caseId = "dawood") => {
-  return client.post('/api/experimental/cryptolalia/decode', { text, case_id: caseId }).then(res => res.data);
 };
 
 export const simulateHoneypotSting = (threatMessage, turnIndex = 1, caseId = "dawood") => {

@@ -178,7 +178,7 @@ def seed_dawood_case():
     a1 = Anomaly(
         anomaly_type="BURST_CALLING",
         severity="CRITICAL",
-        title="Confession-Probability Index: Severe Nocturnal Burst Calling",
+        title="Severe Nocturnal Burst Calling Alert",
         description="Abu Salem exhibited severe circadian desynchronization, initiating 25 back-to-back calls to Chhota Shakeel between 02:00 AM and 04:00 AM immediately following FIR_MUM_EXT_2026_9981.",
         entity_ids=[salem.id, shakeel.id, salem_phone.id, s_phone.id]
     )
@@ -196,7 +196,7 @@ def seed_dawood_case():
     a3 = Anomaly(
         anomaly_type="CIRCULAR_TRANSACTION",
         severity="CRITICAL",
-        title="Hawala Betrayal Index: Cross-Border Layering Loop",
+        title="Cross-Border Hawala Layering Loop",
         description="D-International Trading (Dubai) routed ₹25,000,000 to HDFC-MUM-111, which was immediately layered across 48 hours to ICICI-MUM-222, and subsequently used to fund sharpshooter accounts.",
         entity_ids=[front_company.id, dubai_acc.id, mumbai_acc_1.id, mumbai_acc_2.id, shooter_acc.id]
     )

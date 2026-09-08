@@ -6,16 +6,18 @@ const CANONICAL_MAPPINGS = [
   { pattern: /Impossible Transit Velocity/gi, replacement: 'Optical Plate-Cloning Paradox' },
   { pattern: /Transit Velocity/gi, replacement: 'Optical Plate-Cloning' },
   
-  // Hawala Betrayal Index
-  { pattern: /Hawala Smurfing/gi, replacement: 'Hawala Betrayal Index' },
-  { pattern: /Hawala Fluid Dynamics/gi, replacement: 'Hawala Betrayal Index' },
+  // Hawala Layering
+  { pattern: /Hawala Betrayal Index/gi, replacement: 'Cross-Border Hawala Layering' },
+  { pattern: /Hawala Smurfing/gi, replacement: 'Cross-Border Hawala Layering' },
+  { pattern: /Hawala Fluid Dynamics/gi, replacement: 'Cross-Border Hawala Layering' },
   
   // Physical-Exclusive Meetings
   { pattern: /Ghost Rendezvous/gi, replacement: 'Physical-Exclusive Meeting' },
   { pattern: /Ghost Connector/gi, replacement: 'Physical-Exclusive Intermediary' },
   
-  // Confession-Probability Index
-  { pattern: /Panic Entropy/gi, replacement: 'Confession-Probability Index' },
+  // Circadian Burst Calling
+  { pattern: /Confession-Probability Index/gi, replacement: 'Circadian Burst Calling Alert' },
+  { pattern: /Panic Entropy/gi, replacement: 'Circadian Burst Calling Alert' },
   
   // Arrest Aftermath Predictor
   { pattern: /Gangwar Cascade/gi, replacement: 'Arrest Aftermath Prediction' },
@@ -29,8 +31,9 @@ const CANONICAL_MAPPINGS = [
   // Criminal Dynasty
   { pattern: /Dynasty Pedigree/gi, replacement: 'Criminal Dynasty History' },
   
-  // Criminal Slang
-  { pattern: /Cryptolalia/gi, replacement: 'Criminal-Slang Analysis' }
+  // Coded Intercepts
+  { pattern: /Criminal-Slang Analysis/gi, replacement: 'Coded Intelligence Translation' },
+  { pattern: /Cryptolalia/gi, replacement: 'Coded Intelligence' }
 ];
 
 export function normalizeAnomalyText(text) {

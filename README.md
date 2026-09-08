@@ -23,18 +23,15 @@ A dedicated, hardware-accelerated MacOS-style dock interface housing advanced ma
 1. **Spectral Graph Decapitation** - Finds the minimal strike sequence to shatter cartel networks.
 2. **Physical-Exclusive Meetings** - Exposes covert physical meetups between suspects maintaining radio silence.
 3. **Optical Plate-Cloning Paradox** - Detects impossible kinematic highway velocities to flag cloned decoy vehicles.
-4. **Hawala Betrayal Index** - Models financial conduits as fluid pipes to simulate account freeze cascades and calculate internal betrayal risk.
-5. **Accused Interrogation Simulator** - AI persona mimicking suspect linguistics for mock interrogations.
-6. **Acoustic Geo-Triangulation** - Decomposes 50Hz mains power micro-drift to geolocate audio intercepts.
-7. **Confession-Probability Index** - Chronobiological Shannon Entropy tracking to pinpoint confession windows.
-8. **Voice-Cloned Sting Honeypot** - Autonomous AI victim persona stalling scammers to extract intelligence.
-9. **Arrest Aftermath Predictor** - Forecasts non-linear retaliatory and power-vacuum cascades following suspect arrests.
-10. **Criminal Dynasty History** - Hypergraph kinship mapping predicting next-gen cartel successors.
-11. **Vulnerability Detection Counter AI** - Adversarial underworld AI that attacks CrimeNet to discover blind spots.
-12. **Syntax DNA Stylometry** - Linguistic fingerprinting to match anonymous manifestos to known suspects.
-13. **Criminal-Slang Analyzer** - Translates underworld euphemisms and masked criminal code words in real-time.
-14. **Internal-Leak Analyzer** - Detects corrupt insider leaks via honeytoken beacon traps.
-15. **SOCMINT Threat Scanner** - Extracts threat levels, handles, and EXIF coordinates from intercepted social media broadcasts.
+4. **Accused Interrogation Simulator** - AI persona mimicking suspect linguistics for mock interrogations.
+5. **Acoustic Geo-Triangulation** - Decomposes 50Hz mains power micro-drift to geolocate audio intercepts.
+6. **Voice-Cloned Sting Honeypot** - Autonomous AI victim persona stalling scammers to extract intelligence.
+7. **Arrest Aftermath Predictor** - Forecasts non-linear retaliatory and power-vacuum cascades following suspect arrests.
+8. **Criminal Dynasty History** - Hypergraph kinship mapping predicting next-gen cartel successors.
+9. **Vulnerability Detection Counter AI** - Adversarial underworld AI that attacks CrimeNet to discover blind spots.
+10. **Syntax DNA Stylometry** - Linguistic fingerprinting to match anonymous manifestos to known suspects.
+11. **Internal-Leak Analyzer** - Detects corrupt insider leaks via honeytoken beacon traps.
+12. **SOCMINT Threat Scanner** - Extracts threat levels, handles, and EXIF coordinates from intercepted social media broadcasts.
 
 ### UI / UX Architecture
 - **Cosmic WebGL Landing Page** - A hardware-accelerated interactive particle system (`ogl` and `framer-motion`) welcoming users into the matrix.

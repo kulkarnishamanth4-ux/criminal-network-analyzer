@@ -9,8 +9,7 @@ import {
 import { 
   getDecapitation, getGhostRendezvous, matchStylometry, 
   interrogateSuspect, getSuspectsList, analyzeAcoustics,
-  simulateHawalaFluid, getPanicEntropy, getQuantumMole,
-  decodeCryptolalia, simulateHoneypotSting,
+  getQuantumMole, simulateHoneypotSting,
   getDynastyPedigree, getPlateCloningResolver,
   forecastGangwarCascade, runMoriartyRedteam, analyzeSocmint
 } from '../api/client';
@@ -51,20 +50,8 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes, activ
   const [acousticLoading, setAcousticLoading] = useState(false);
   const [selectedAudioCall, setSelectedAudioCall] = useState('intercept_call_001');
 
-  const [hawalaResult, setHawalaResult] = useState(null);
-  const [hawalaLoading, setHawalaLoading] = useState(false);
-  const [frozenNodes, setFrozenNodes] = useState([1, 4]);
-
-  const [panicResult, setPanicResult] = useState(null);
-  const [panicLoading, setPanicLoading] = useState(false);
-  const [selectedPanicSuspectId, setSelectedPanicSuspectId] = useState('');
-
   const [moleResult, setMoleResult] = useState(null);
   const [moleLoading, setMoleLoading] = useState(false);
-
-  const [cryptolaliaInput, setCryptolaliaInput] = useState('bhaiji 50 peti aur gulab jamun ready hai... chidiya ka arrangement karlo jaldi');
-  const [cryptolaliaResult, setCryptolaliaResult] = useState(null);
-  const [cryptolaliaLoading, setCryptolaliaLoading] = useState(false);
 
   const [honeypotInput, setHoneypotInput] = useState('Aakhri baar bol raha hu, 10 lakh rupay is UPI par bhej mule_merchant@sbi nahi toh parivar khatam!');
   const [honeypotResult, setHoneypotResult] = useState(null);
@@ -119,7 +106,6 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes, activ
       setSuspects(sList);
       if (sList.length > 0) {
         setSelectedSuspectId(sList[0].id);
-        setSelectedPanicSuspectId(sList[0].id);
         setMessages([{
           sender: 'system',
           text: `Connected to accused persona: ${sList[0].name} (${sList[0].role || 'Suspect'}). Multi-Modal interrogation room initialized.`
@@ -138,15 +124,9 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes, activ
       getGhostRendezvous(48, activeCase).then(res => { setGhostData(res); setGhostLoading(false); }).catch(() => setGhostLoading(false));
     } else if (activeTab === 'acoustic' && !acousticResult) {
       handleRunAcoustics('intercept_call_001');
-    } else if (activeTab === 'hawala_fluid' && !hawalaResult) {
-      handleRunHawalaFluid();
-    } else if (activeTab === 'panic' && selectedPanicSuspectId && !panicResult) {
-      handleRunPanic(selectedPanicSuspectId);
     } else if (activeTab === 'quantum_mole' && !moleResult) {
       setMoleLoading(true);
       getQuantumMole(activeCase).then(res => { setMoleResult(res); setMoleLoading(false); }).catch(() => setMoleLoading(false));
-    } else if (activeTab === 'cryptolalia' && !cryptolaliaResult) {
-      handleRunCryptolalia(cryptolaliaInput);
     } else if (activeTab === 'honeypot' && !honeypotResult) {
       handleRunHoneypot(honeypotInput);
     } else if (activeTab === 'dynasty' && !dynastyResult) {
@@ -255,48 +235,6 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes, activ
     setAcousticLoading(false);
   };
 
-  const handleRunHawalaFluid = async (frozenIds = frozenNodes) => {
-    setHawalaLoading(true);
-    try {
-      const res = await simulateHawalaFluid(frozenIds, activeCase);
-      setHawalaResult(res);
-    } catch (err) { console.error(err); }
-    setHawalaLoading(false);
-  };
-
-  const toggleFreezeNode = (nodeId) => {
-    let next;
-    if (frozenNodes.includes(nodeId)) {
-      next = frozenNodes.filter(id => id !== nodeId);
-    } else {
-      next = [...frozenNodes, nodeId];
-    }
-    setFrozenNodes(next);
-    handleRunHawalaFluid(next);
-  };
-
-  const handleRunPanic = async (sId) => {
-    setSelectedPanicSuspectId(sId);
-    setPanicLoading(true);
-    try {
-      const res = await getPanicEntropy(sId, activeCase);
-      setPanicResult(res);
-    } catch (err) { console.error(err); }
-    setPanicLoading(false);
-  };
-
-  const handleRunCryptolalia = async (text) => {
-    const txt = text || cryptolaliaInput;
-    if (!txt.trim()) return;
-    if (text) setCryptolaliaInput(text);
-    setCryptolaliaLoading(true);
-    try {
-      const res = await decodeCryptolalia(txt, activeCase);
-      setCryptolaliaResult(res);
-    } catch (err) { console.error(err); }
-    setCryptolaliaLoading(false);
-  };
-
   const handleRunHoneypot = async (msg) => {
     const threat = msg || honeypotInput;
     if (!threat.trim()) return;
@@ -339,7 +277,7 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes, activ
     setSocmintLoading(false);
   };
 
-  // 14 Modules Categorized into 4 Command Tiers
+  // 11 Modules Categorized into 4 Command Tiers
   const categories = {
     tactical: {
       name: ' Tactical & Kinetic Operations',
@@ -347,7 +285,6 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes, activ
         { id: 'decapitation', label: ' Decapitation Strike' },
         { id: 'ghost', label: ' Physical-Exclusive Meetings' },
         { id: 'plate_cloning', label: ' Optical Plate-Cloning' },
-        { id: 'hawala_fluid', label: ' Hawala Betrayal Index' },
         { id: 'socmint', label: ' SOCMINT Threat Scanner' }
       ]
     },
@@ -355,7 +292,6 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes, activ
       name: ' Cognitive, Audio & Forensics',
       tabs: [
         { id: 'interrogate', label: ' Accused Interrogation Simulator' },
-        { id: 'panic', label: ' Confession-Probability Index' },
         { id: 'honeypot', label: ' Voice-Cloned Sting Honeypot' }
       ]
     },
@@ -371,7 +307,6 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes, activ
       name: ' Counter-Intel & Cryptography',
       tabs: [
         { id: 'stylometry', label: ' Syntax DNA Stylometry' },
-        { id: 'cryptolalia', label: ' Criminal-Slang Analyzer' },
         { id: 'quantum_mole', label: ' Internal-Leak Analyzer' }
       ]
     }
@@ -397,7 +332,7 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes, activ
                 </span>
               </div>
               <p className="text-xs text-[var(--text-secondary)]">
-                National Security Command Suite: Spectral Decapitation, Spatiotemporal Tracking, Interrogation Fact-Checking & Hawala Betrayal
+                National Security Command Suite: Spectral Decapitation, Spatiotemporal Tracking & Interrogation Fact-Checking
               </p>
             </div>
           </div>
@@ -823,121 +758,7 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes, activ
           })()}
 
           {/* ══════════════════════════════════════════════════════════════════
-              4. HAWALA BETRAYAL INDEX (UNIMAGINABLE UPGRADE)
-             ══════════════════════════════════════════════════════════════════ */}
-          {activeTab === 'hawala_fluid' && (
-            <div className="space-y-6">
-              <div className="bg-[var(--bg-primary)] p-4 rounded-lg border border-[var(--border)] flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                <div>
-                  <h3 className="text-sm font-bold text-[var(--neon-gold)] uppercase flex items-center gap-2">
-                    <FiDroplet /> Hawala Betrayal Index & Interactive Fluid Pipe Conduit Visualizer
-                  </h3>
-                  <p className="text-xs text-[var(--text-secondary)] mt-1 max-w-2xl">
-                    Uses Max-Flow / Min-Cut (Ford-Fulkerson algorithm) to model financial conduits as fluid pipes, simulate account freezes, and calculate internal syndicate betrayal risk.
-                  </p>
-                </div>
-                <button 
-                  onClick={() => handleRunHawalaFluid()} 
-                  className="px-4 py-2 bg-[var(--neon-gold)] text-[#0a0a1a] font-bold text-xs rounded hover:opacity-90 transition-opacity"
-                >
-                  {hawalaLoading ? 'Simulating...' : 'Recalculate Betrayal Index'}
-                </button>
-              </div>
-
-              {/* Interactive Fluid Pipe Conduit Diagram */}
-              <div className="bg-[var(--bg-card)] border border-[var(--border)] p-5 rounded-lg space-y-4">
-                <div className="flex justify-between items-center">
-                  <div className="text-xs font-bold text-white uppercase tracking-wider">
-                    Interactive Smurfing Pipeline & Frozen Node Simulation (Click Node to Freeze)
-                  </div>
-                  <span className="text-[10px] font-mono text-[var(--neon-gold)]">
-                    {frozenNodes.length} ACCOUNTS FREEZE-LOCKED ❄️
-                  </span>
-                </div>
-
-                <div className="grid grid-cols-2 md:grid-cols-5 gap-3 pt-2">
-                  {[
-                    { id: 1, name: "Apex Controller (Dubai)", type: "Origin Master", inr: "5.0 Cr" },
-                    { id: 2, name: "Angadia Courier #1 (Surat)", type: "Primary Transit", inr: "2.5 Cr" },
-                    { id: 3, name: "Shell Bullion Front (Mumbai)", type: "Layering Hub", inr: "1.8 Cr" },
-                    { id: 4, name: "Mule Account A (Bank)", type: "Smurfing Mule", inr: "45 Lakhs" },
-                    { id: 5, name: "Offshore Real Estate (Cashout)", type: "Terminal Sink", inr: "3.2 Cr" }
-                  ].map((node) => {
-                    const isFrozen = frozenNodes.includes(node.id);
-                    return (
-                      <div
-                        key={node.id}
-                        onClick={() => toggleFreezeNode(node.id)}
-                        className={`p-3 rounded-lg border cursor-pointer transition-all ${
-                          isFrozen 
-                            ? 'bg-red-950/30 border-red-500 text-white shadow-[0_0_12px_rgba(255,0,0,0.3)]' 
-                            : 'bg-[var(--bg-primary)] border-[var(--border)] text-gray-300 hover:border-[var(--neon-gold)]'
-                        }`}
-                      >
-                        <div className="flex justify-between items-center text-[10px] mb-1 font-mono">
-                          <span>NODE #{node.id}</span>
-                          <span>{isFrozen ? '❄️ FROZEN' : 'FLOWING'}</span>
-                        </div>
-                        <div className="text-xs font-bold text-white truncate">{node.name}</div>
-                        <div className="text-[10px] text-[var(--text-secondary)]">{node.type}</div>
-                        <div className="text-xs font-mono font-bold text-[var(--neon-gold)] mt-2">{node.inr}</div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {hawalaResult && (
-                <>
-                  <div className="bg-yellow-500/10 border border-yellow-500/30 p-4 rounded-lg text-xs text-[var(--neon-gold)] font-mono leading-relaxed">
-                    {hawalaResult.tactical_fluid_assessment}
-                  </div>
-
-                  {/* 4 Fluid Pressure Telemetry Gauges */}
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                    <div className="bg-[var(--bg-card)] p-3.5 rounded-lg border border-[var(--border)] text-center">
-                      <div className="text-[10px] text-[var(--text-secondary)] uppercase font-mono">Liquidity Starvation</div>
-                      <div className="text-2xl font-bold text-[var(--neon-red)] mt-1">
-                        {hawalaResult.fluid_pressure_metrics.downstream_liquidity_starvation_pct}%
-                      </div>
-                    </div>
-                    <div className="bg-[var(--bg-card)] p-3.5 rounded-lg border border-[var(--border)] text-center">
-                      <div className="text-[10px] text-[var(--text-secondary)] uppercase font-mono">Upstream Pressure Backlog</div>
-                      <div className="text-2xl font-bold text-[var(--neon-gold)] mt-1">
-                        ₹{(hawalaResult.fluid_pressure_metrics.upstream_backlog_conduit_inr/100000).toFixed(1)}L
-                      </div>
-                    </div>
-                    <div className="bg-[var(--bg-card)] p-3.5 rounded-lg border border-[var(--border)] text-center">
-                      <div className="text-[10px] text-[var(--text-secondary)] uppercase font-mono">Isolated Mules</div>
-                      <div className="text-2xl font-bold text-[var(--text-accent)] mt-1">
-                        {hawalaResult.fluid_pressure_metrics.isolated_downstream_mules}
-                      </div>
-                    </div>
-                    <div className="bg-[var(--bg-card)] p-3.5 rounded-lg border border-[var(--border)] text-center">
-                      <div className="text-[10px] text-[var(--text-secondary)] uppercase font-mono">Betrayal Risk Index</div>
-                      <div className="text-2xl font-bold text-green-400 mt-1">
-                        {hawalaResult.fluid_pressure_metrics.syndicate_internal_betrayal_risk_index}%
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Game-Theoretic Informant Breakdown */}
-                  <div className="p-4 bg-[var(--bg-primary)] border border-[var(--border)] rounded-lg space-y-2 text-xs">
-                    <div className="font-bold text-white uppercase text-xs flex items-center gap-2">
-                      <FiTrendingUp className="text-[var(--neon-gold)]" /> Game-Theoretic Informant Defection Forecast:
-                    </div>
-                    <p className="text-gray-300 leading-relaxed">
-                      Freezing the smurfing bottleneck nodes cuts off operative liquidity. 
-                      Couriers with &gt;₹25 Lakhs unpaid liability face an <strong>89.4% probability of turning State Approver (Informant)</strong> to avoid syndicate retribution.
-                    </p>
-                  </div>
-                </>
-              )}
-            </div>
-          )}
-
-          {/* ══════════════════════════════════════════════════════════════════
-              5. ACCUSED INTERROGATION SIMULATOR (UNIMAGINABLE UPGRADE)
+              ACCUSED INTERROGATION SIMULATOR
              ══════════════════════════════════════════════════════════════════ */}
           {activeTab === 'interrogate' && (
             <div className="h-full flex flex-col space-y-4">
@@ -1211,24 +1032,6 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes, activ
                 </button>
               </div>
 
-              {/* Real-Time Inline Underworld Slang Highlight */}
-              <div className="p-3 bg-[var(--bg-card)] border border-[var(--border)] rounded-lg space-y-1.5">
-                <div className="text-[10px] text-[var(--text-secondary)] font-mono uppercase">
-                  Real-Time Slang (Cryptolalia) Inline De-Masker:
-                </div>
-                <div className="text-xs text-white leading-relaxed font-mono">
-                  {socmintInput.includes("50 peti") ? (
-                    <span>
-                      {socmintInput.split("50 peti")[0]}
-                      <span className="bg-yellow-500/20 text-yellow-300 border border-yellow-500/50 px-1.5 py-0.5 rounded font-bold">50 peti [₹50 Lakhs Cash]</span>
-                      {socmintInput.split("50 peti")[1]}
-                    </span>
-                  ) : (
-                    socmintInput
-                  )}
-                </div>
-              </div>
-
               {socmintData && (
                 <div className="space-y-4 animate-in fade-in duration-300">
                   <div className="grid grid-cols-2 gap-4">
@@ -1318,40 +1121,7 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes, activ
           )}
 
           {/* ══════════════════════════════════════════════════════════════════
-              7. CONFESSION-PROBABILITY INDEX
-             ══════════════════════════════════════════════════════════════════ */}
-          {activeTab === 'panic' && (
-            <div className="space-y-6">
-              <div className="bg-[var(--bg-primary)] p-4 rounded-lg border flex justify-between items-center">
-                <div>
-                  <h3 className="text-sm font-bold text-green-400 uppercase flex items-center gap-2"><FiActivity /> Confession-Probability Index & Shannon Entropy Profiler</h3>
-                  <p className="text-xs text-[var(--text-secondary)] mt-1">Measures temporal entropy and circadian decay to pinpoint optimal confession windows.</p>
-                </div>
-                <select value={selectedPanicSuspectId} onChange={e => handleRunPanic(e.target.value)} className="bg-[var(--bg-card)] border text-[var(--text-accent)] text-xs rounded px-3 py-1.5">
-                  {suspects.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
-                </select>
-              </div>
-              {panicResult && (
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                  <div className="bg-[var(--bg-card)] p-4 rounded border text-center">
-                    <div className="text-[10px] text-[var(--text-secondary)] uppercase">Panic Entropy Index</div>
-                    <div className="text-3xl font-bold text-green-500 mt-1">{panicResult.panic_entropy_metrics.panic_entropy_index_pct}%</div>
-                  </div>
-                  <div className="bg-[var(--bg-card)] p-4 rounded border text-center">
-                    <div className="text-[10px] text-[var(--text-secondary)] uppercase">Confession Probability</div>
-                    <div className="text-3xl font-bold text-[var(--neon-green)] mt-1">{panicResult.panic_entropy_metrics.confession_approver_probability_pct}%</div>
-                  </div>
-                  <div className="bg-[var(--bg-card)] p-4 rounded border text-center">
-                    <div className="text-[10px] text-[var(--text-secondary)] uppercase">Temporal Shannon Entropy</div>
-                    <div className="text-3xl font-bold text-[var(--neon-gold)] mt-1">{panicResult.panic_entropy_metrics.temporal_shannon_entropy_bits} bits</div>
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* ══════════════════════════════════════════════════════════════════
-              8. VOICE-CLONED STING HONEYPOT
+              VOICE-CLONED STING HONEYPOT
              ══════════════════════════════════════════════════════════════════ */}
           {activeTab === 'honeypot' && (
             <div className="space-y-6">
@@ -1596,29 +1366,7 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes, activ
           )}
 
           {/* ══════════════════════════════════════════════════════════════════
-              13. CRIMINAL-SLANG ANALYZER
-             ══════════════════════════════════════════════════════════════════ */}
-          {activeTab === 'cryptolalia' && (
-            <div className="space-y-4">
-              <div className="bg-[var(--bg-primary)] p-4 rounded border">
-                <h3 className="text-sm font-bold text-[var(--neon-gold)] uppercase flex items-center gap-2"><FiVolume2 /> Criminal-Slang Analyzer & Code Decryption</h3>
-                <p className="text-xs text-[var(--text-secondary)] mt-1">Auto-translates masked underworld code words into plain English intelligence.</p>
-              </div>
-              <div className="flex gap-2">
-                <input type="text" value={cryptolaliaInput} onChange={e => setCryptolaliaInput(e.target.value)} className="flex-1 bg-[var(--bg-primary)] border rounded px-3 py-1.5 text-xs text-white" />
-                <button onClick={() => handleRunCryptolalia()} className="px-4 py-1.5 bg-[var(--neon-gold)] text-[#0a0a1a] font-bold text-xs rounded">Decipher</button>
-              </div>
-              {cryptolaliaResult && (
-                <div className="p-4 bg-[var(--bg-card)] border rounded space-y-2">
-                  <div className="text-xs text-[var(--text-secondary)]">Decrypted Intelligence:</div>
-                  <div className="text-sm font-mono text-[var(--text-accent)] p-2.5 bg-[var(--bg-primary)] rounded">{cryptolaliaResult.decrypted_intelligence_translation}</div>
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* ══════════════════════════════════════════════════════════════════
-              14. INTERNAL-LEAK ANALYZER
+              INTERNAL-LEAK ANALYZER
              ══════════════════════════════════════════════════════════════════ */}
           {activeTab === 'quantum_mole' && (
             <div className="space-y-4">
