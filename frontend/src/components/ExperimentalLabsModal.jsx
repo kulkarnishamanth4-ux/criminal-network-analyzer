@@ -11,7 +11,7 @@ import {
   interrogateSuspect, getSuspectsList, analyzeAcoustics,
   getQuantumMole, simulateHoneypotSting,
   getDynastyPedigree, getPlateCloningResolver,
-  forecastGangwarCascade, runMoriartyRedteam, analyzeSocmint
+  runMoriartyRedteam, analyzeSocmint
 } from '../api/client';
 import Dock from './Dock';
 
@@ -71,9 +71,6 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes, activ
       return next;
     });
   };
-
-  const [gangwarResult, setGangwarResult] = useState(null);
-  const [gangwarLoading, setGangwarLoading] = useState(false);
 
   const [moriartyResult, setMoriartyResult] = useState(null);
   const [moriartyLoading, setMoriartyLoading] = useState(false);
@@ -135,8 +132,6 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes, activ
     } else if (activeTab === 'plate_cloning') {
       setPlateLoading(true);
       getPlateCloningResolver(activeCase).then(res => { setPlateResult(res); setPlateLoading(false); }).catch(() => setPlateLoading(false));
-    } else if (activeTab === 'gangwar' && !gangwarResult) {
-      handleRunGangwar();
     } else if (activeTab === 'moriarty' && !moriartyResult) {
       handleRunMoriarty('HAWALA_MICRO_SMURFING_EVASION');
     } else if (activeTab === 'socmint' && !socmintData) {
@@ -247,15 +242,6 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes, activ
     setHoneypotLoading(false);
   };
 
-  const handleRunGangwar = async (trigger = "FIR_001_VIKRAM_SHARMA_NARCOTICS_CRACKDOWN") => {
-    setGangwarLoading(true);
-    try {
-      const res = await forecastGangwarCascade(trigger);
-      setGangwarResult(res);
-    } catch (err) { console.error(err); }
-    setGangwarLoading(false);
-  };
-
   const handleRunMoriarty = async (vector) => {
     const v = vector || selectedMoriartyVector;
     setSelectedMoriartyVector(v);
@@ -277,7 +263,7 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes, activ
     setSocmintLoading(false);
   };
 
-  // 11 Modules Categorized into 4 Command Tiers
+  // 10 Modules Categorized into 4 Command Tiers
   const categories = {
     tactical: {
       name: ' Tactical & Kinetic Operations',
@@ -298,7 +284,6 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes, activ
     wargaming: {
       name: ' Chaos, Lineage & War-Gaming',
       tabs: [
-        { id: 'gangwar', label: ' Arrest Aftermath Predictor' },
         { id: 'dynasty', label: ' Criminal Dynasty History' },
         { id: 'moriarty', label: ' Vulnerability Detection Counter AI' }
       ]
@@ -1182,56 +1167,7 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes, activ
           )}
 
           {/* ══════════════════════════════════════════════════════════════════
-              9. ARREST AFTERMATH PREDICTOR
-             ══════════════════════════════════════════════════════════════════ */}
-          {activeTab === 'gangwar' && (
-            <div className="space-y-6">
-              <div className="bg-[var(--bg-primary)] p-4 rounded-lg border border-[var(--border)] flex justify-between items-start">
-                <div>
-                  <h3 className="text-sm font-bold text-green-500 uppercase flex items-center gap-2"><FiTrendingUp /> Arrest Aftermath & Retaliation Predictor</h3>
-                  <p className="text-xs text-[var(--text-secondary)] mt-1 max-w-2xl">
-                    Implements Spatiotemporal Hawkes Point Processes to forecast 14-day retaliatory shooting cascades and target strike zones following key arrests.
-                  </p>
-                </div>
-                <button onClick={() => handleRunGangwar()} className="px-4 py-2 bg-green-600 hover:bg-green-500 text-white font-bold text-xs rounded">
-                  Forecast Arrest Aftermath
-                </button>
-              </div>
-
-              {gangwarResult && (
-                <div className="space-y-4 animate-in fade-in duration-300">
-                  <div className="p-3 bg-[var(--bg-card)] border border-[var(--border)] rounded flex justify-between items-center text-xs">
-                    <div>Trigger Event: <strong>{gangwarResult.trigger_event}</strong></div>
-                    <div className="text-[var(--neon-gold)] font-bold">Peak Hazard: {gangwarResult.hawkes_point_process_metrics.peak_syndicate_shockwave_window}</div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <div className="text-xs font-semibold uppercase tracking-wider text-[var(--text-secondary)]">Predicted Strike Target Sectors</div>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                      {gangwarResult.predicted_strike_targets.map((st, i) => (
-                        <div key={i} className="bg-[var(--bg-card)] p-3.5 rounded border border-[var(--border)] space-y-1.5">
-                          <div className="flex justify-between items-center">
-                            <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-green-500/20 text-green-400">PRIORITY #{st.priority}</span>
-                            <span className="font-mono font-bold text-xs text-green-400">{st.probability_pct}% RISK</span>
-                          </div>
-                          <div className="font-bold text-sm text-white">{st.target_sector}</div>
-                          <div className="text-xs text-[var(--text-secondary)]">Faction: {st.suspected_instigator}</div>
-                          <div className="text-[10px] text-[var(--neon-gold)]">Window: {st.peak_risk_window}</div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="p-3 bg-green-950/20 border border-green-500/30 rounded text-xs text-white">
-                    <strong>Pre-Emptive Action: </strong>{gangwarResult.tactical_deterrence_protocol}
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* ══════════════════════════════════════════════════════════════════
-              10. CRIMINAL DYNASTY HISTORY
+              CRIMINAL DYNASTY HISTORY
              ══════════════════════════════════════════════════════════════════ */}
           {activeTab === 'dynasty' && (
             <div className="space-y-6">

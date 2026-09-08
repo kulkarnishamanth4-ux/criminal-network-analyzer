@@ -111,10 +111,6 @@ export const getPlateCloningResolver = (caseId = "dawood") => {
   return client.get('/api/experimental/plate-cloning-resolver', { params: { case_id: caseId } }).then(res => res.data);
 };
 
-export const forecastGangwarCascade = (triggerEvent = "FIR_001_VIKRAM_SHARMA_NARCOTICS_CRACKDOWN", caseId = "dawood") => {
-  return client.post('/api/experimental/gangwar-cascade/forecast', { trigger_event: triggerEvent, case_id: caseId }).then(res => res.data);
-};
-
 export const runMoriartyRedteam = (attackVector = "HAWALA_MICRO_SMURFING_EVASION", caseId = "dawood") => {
   return client.post('/api/experimental/moriarty-redteam/attack-and-patch', { attack_vector: attackVector, case_id: caseId }).then(res => res.data);
 };

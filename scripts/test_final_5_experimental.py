@@ -7,12 +7,11 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 from backend.nlp.honeypot_sting import simulate_honeypot_exchange
 from backend.graph.dynasty_pedigree import analyze_dynasty_pedigree
 from backend.graph.plate_cloning import resolve_plate_cloning_paradoxes
-from backend.analytics.gangwar_cascade import forecast_gangwar_cascade
 from backend.nlp.moriarty_redteam import execute_moriarty_redteam_attack
 
 def run_tests():
     print("==================================================")
-    print("[*] TESTING FINAL 5 EXPERIMENTAL ENGINES (15 TOTAL)")
+    print("[*] TESTING REMAINING EXPERIMENTAL ENGINES")
     print("==================================================")
     
     # 1. Test Honeypot Sting Agent
@@ -46,17 +45,6 @@ def run_tests():
     assert plate['status'] == "success"
     assert plate['cloned_plate_paradoxes_detected'] > 0
     print("[+] Plate Cloning Paradox Resolver Passed!")
-    
-    # 4. Test Macro Chaos-Theory Gang War Cascade
-    print("\n4. Testing Macro Chaos-Theory Gang War Cascade Forecaster...")
-    gw = forecast_gangwar_cascade("FIR_001_NARCOTICS_CRACKDOWN")
-    print(f"Status: {gw['status']}")
-    print(f"Peak Shockwave Window: {gw['hawkes_point_process_metrics']['peak_syndicate_shockwave_window']}")
-    print(f"Predicted Strike Targets: {len(gw['predicted_strike_targets'])}")
-    for st in gw['predicted_strike_targets']:
-        print(f"  Sector: {st['target_sector']} (Risk: {st['probability_pct']}%)")
-    assert gw['status'] == "success"
-    print("[+] Gang War Cascade Forecaster Passed!")
     
     # 5. Test Project Moriarty Red-Team AI
     print("\n5. Testing Project Moriarty Autonomous Red-Team AI...")

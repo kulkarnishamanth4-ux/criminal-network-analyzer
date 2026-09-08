@@ -26,12 +26,11 @@ A dedicated, hardware-accelerated MacOS-style dock interface housing advanced ma
 4. **Accused Interrogation Simulator** - AI persona mimicking suspect linguistics for mock interrogations.
 5. **Acoustic Geo-Triangulation** - Decomposes 50Hz mains power micro-drift to geolocate audio intercepts.
 6. **Voice-Cloned Sting Honeypot** - Autonomous AI victim persona stalling scammers to extract intelligence.
-7. **Arrest Aftermath Predictor** - Forecasts non-linear retaliatory and power-vacuum cascades following suspect arrests.
-8. **Criminal Dynasty History** - Hypergraph kinship mapping predicting next-gen cartel successors.
-9. **Vulnerability Detection Counter AI** - Adversarial underworld AI that attacks CrimeNet to discover blind spots.
-10. **Syntax DNA Stylometry** - Linguistic fingerprinting to match anonymous manifestos to known suspects.
-11. **Internal-Leak Analyzer** - Detects corrupt insider leaks via honeytoken beacon traps.
-12. **SOCMINT Threat Scanner** - Extracts threat levels, handles, and EXIF coordinates from intercepted social media broadcasts.
+7. **Criminal Dynasty History** - Hypergraph kinship mapping predicting next-gen cartel successors.
+8. **Vulnerability Detection Counter AI** - Adversarial underworld AI that attacks CrimeNet to discover blind spots.
+9. **Syntax DNA Stylometry** - Linguistic fingerprinting to match anonymous manifestos to known suspects.
+10. **Internal-Leak Analyzer** - Detects corrupt insider leaks via honeytoken beacon traps.
+11. **SOCMINT Threat Scanner** - Extracts threat levels, handles, and EXIF coordinates from intercepted social media broadcasts.
 
 ### UI / UX Architecture
 - **Cosmic WebGL Landing Page** - A hardware-accelerated interactive particle system (`ogl` and `framer-motion`) welcoming users into the matrix.

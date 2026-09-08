@@ -11,7 +11,6 @@ from backend.graph.quantum_mole import detect_internal_leaks
 from backend.nlp.honeypot_sting import simulate_honeypot_exchange
 from backend.graph.dynasty_pedigree import analyze_dynasty_pedigree
 from backend.graph.plate_cloning import resolve_plate_cloning_paradoxes
-from backend.analytics.gangwar_cascade import forecast_gangwar_cascade
 from backend.nlp.moriarty_redteam import execute_moriarty_redteam_attack
 from pydantic import BaseModel
 from typing import List, Optional
@@ -36,10 +35,6 @@ class HoneypotRequest(BaseModel):
     case_id: Optional[str] = "dawood"
     threat_message: str
     turn_index: Optional[int] = 1
-
-class GangwarRequest(BaseModel):
-    case_id: Optional[str] = "dawood"
-    trigger_event: Optional[str] = "FIR_001_VIKRAM_SHARMA_NARCOTICS_CRACKDOWN"
 
 class MoriartyRequest(BaseModel):
     case_id: Optional[str] = "dawood"
@@ -104,11 +99,6 @@ def get_dynasty_pedigree():
 def get_plate_cloning_resolution(case_id: str = "dawood"):
     """Optical Plate-Cloning Paradox Resolver (Kinematic Velocity Splitter)."""
     return resolve_plate_cloning_paradoxes(case_id)
-
-@router.post("/experimental/gangwar-cascade/forecast")
-def get_gangwar_forecast(req: GangwarRequest):
-    """Macro Chaos-Theory Gang War Cascade Forecaster (Hawkes Point Processes)."""
-    return forecast_gangwar_cascade(req.trigger_event)
 
 @router.post("/experimental/moriarty-redteam/attack-and-patch")
 def run_moriarty_redteam(req: MoriartyRequest):

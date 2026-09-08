@@ -19,8 +19,9 @@ const CANONICAL_MAPPINGS = [
   { pattern: /Confession-Probability Index/gi, replacement: 'Circadian Burst Calling Alert' },
   { pattern: /Panic Entropy/gi, replacement: 'Circadian Burst Calling Alert' },
   
-  // Arrest Aftermath Predictor
-  { pattern: /Gangwar Cascade/gi, replacement: 'Arrest Aftermath Prediction' },
+  // Conflict Escalation
+  { pattern: /Gangwar Cascade/gi, replacement: 'Conflict Escalation Prediction' },
+  { pattern: /Arrest Aftermath/gi, replacement: 'Conflict Escalation' },
   
   // Internal-Leak Analyzer
   { pattern: /Quantum Mole/gi, replacement: 'Internal-Leak Detection' },

@@ -108,7 +108,7 @@ def seed_data():
     crud.create_relationship(db, veh_cloned.id, loc_mumbai.id, "SPOTTED_AT", weight=1.0, timestamp=now - timedelta(days=1, hours=12), properties={"source": "ANPR Toll Naka", "speed": "45 km/h", "lane": "Fastag-1"})
     crud.create_relationship(db, veh_cloned.id, loc_delhi.id, "SPOTTED_AT", weight=1.0, timestamp=now - timedelta(days=1, hours=12, minutes=15), properties={"source": "ANPR Highway Cam", "speed": "60 km/h", "lane": "L2"}) # Impossible travel time
     # ==========================================
-    # 3. FIR DATA (For NLP extraction & Gangwar cascade)
+    # 3. FIR DATA (For NLP extraction & timeline)
     # ==========================================
     f1 = FIR(
         fir_number="FIR_001_VIKRAM_SHARMA_NARCOTICS_CRACKDOWN",
