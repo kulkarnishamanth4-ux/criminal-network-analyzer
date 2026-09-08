@@ -172,6 +172,12 @@ export const getUploadedFiles = (caseId) =>
 export const getFilePreview = (caseId, fileId) => 
   client.get(`/api/files/${caseId}/${fileId}/preview`).then(res => res.data);
 
+export const deleteUploadedFile = (caseId, fileId) =>
+  client.delete(`/api/files/${caseId}/${fileId}`).then(res => res.data);
+
+export const clearAllUploadedFiles = (caseId) =>
+  client.delete(`/api/files/${caseId}`).then(res => res.data);
+
 // === ALIAS PROBABILITY ===
 export const checkAliasMatch = (nameA, nameB, caseId, context = '') => 
   client.post('/api/alias/probability', { name_a: nameA, name_b: nameB, case_id: caseId, context }).then(res => res.data);

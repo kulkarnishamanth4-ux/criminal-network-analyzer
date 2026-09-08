@@ -10,9 +10,21 @@ import {
   FiDatabase, 
   FiCalendar, 
   FiHardDrive,
-  FiAlertTriangle
+  FiAlertTriangle,
+  FiTrash2,
+  FiChevronDown,
+  FiChevronUp
 } from 'react-icons/fi';
-import { uploadFile, getUploadedFiles, getFilePreview, resetInvestigation, loadSampleInvestigation, restoreCanonicalCase } from '../api/client';
+import { 
+  uploadFile, 
+  getUploadedFiles, 
+  getFilePreview, 
+  deleteUploadedFile, 
+  clearAllUploadedFiles, 
+  resetInvestigation, 
+  loadSampleInvestigation, 
+  restoreCanonicalCase 
+} from '../api/client';
 
 const CANONICAL_CASES = [
   'dawood', 'drug_punjab', 'ht_assam', 'cyber_bengaluru',
@@ -26,6 +38,8 @@ export default function UploadModal({ onClose, onSuccess, activeCase }) {
   const [activeTab, setActiveTab] = useState('fir');
   const [isUploading, setIsUploading] = useState(false);
   const [isActionLoading, setIsActionLoading] = useState(false);
+  const [deletingFileId, setDeletingFileId] = useState(null);
+  const [isVaultCollapsed, setIsVaultCollapsed] = useState(false);
   const [clearExisting, setClearExisting] = useState(targetCase === 'custom_investigation');
   const [result, setResult] = useState(null);
   
@@ -171,6 +185,50 @@ export default function UploadModal({ onClose, onSuccess, activeCase }) {
     setPreviewError(null);
   };
 
+  const handleDeleteFile = async (file) => {
+    if (!file) return;
+    const confirmMsg = `Are you sure you want to remove "${file.filename}" from the Evidence Vault?`;
+    if (!window.confirm(confirmMsg)) return;
+
+    setDeletingFileId(file.id);
+    try {
+      await deleteUploadedFile(targetCase, file.id);
+      if (selectedFile?.id === file.id) {
+        closePreview();
+      }
+      await loadUploadedFiles();
+      setResult({ success: true, data: { message: `File "${file.filename}" removed from Evidence Vault.` } });
+      setTimeout(() => setResult(null), 2500);
+    } catch (err) {
+      console.error("Delete file error:", err);
+      setResult({ success: false, error: err.response?.data?.detail || "Failed to remove file from vault." });
+      setTimeout(() => setResult(null), 3000);
+    } finally {
+      setDeletingFileId(null);
+    }
+  };
+
+  const handleClearAllFiles = async () => {
+    if (uploadedFiles.length === 0) return;
+    const confirmMsg = `Are you sure you want to remove all ${uploadedFiles.length} uploaded files from the Evidence Vault?`;
+    if (!window.confirm(confirmMsg)) return;
+
+    setIsActionLoading(true);
+    try {
+      await clearAllUploadedFiles(targetCase);
+      closePreview();
+      await loadUploadedFiles();
+      setResult({ success: true, data: { message: "All evidence files removed from vault." } });
+      setTimeout(() => setResult(null), 2500);
+    } catch (err) {
+      console.error("Clear all files error:", err);
+      setResult({ success: false, error: "Failed to clear evidence vault." });
+      setTimeout(() => setResult(null), 3000);
+    } finally {
+      setIsActionLoading(false);
+    }
+  };
+
   const typeColors = {
     fir: 'bg-red-500/20 text-red-400 border border-red-500/40',
     cdr: 'bg-teal-500/20 text-teal-400 border border-teal-500/40',
@@ -302,7 +360,7 @@ export default function UploadModal({ onClose, onSuccess, activeCase }) {
         <div className="flex flex-1 overflow-hidden relative">
           
           {/* Main Vault & Ingestion View */}
-          <div className={`flex flex-col w-full overflow-y-auto p-6 space-y-6 ${selectedFile ? 'hidden' : 'block'}`}>
+          <div className={`flex flex-col w-full overflow-y-auto custom-scrollbar p-6 space-y-5 pb-16 ${selectedFile ? 'hidden' : 'block'}`}>
             
             {isProtectedCase && (
               <div className="p-3 bg-amber-500/10 border border-amber-500/30 rounded-xl flex items-center gap-2.5 text-xs text-amber-200 shadow-inner">
@@ -484,49 +542,117 @@ export default function UploadModal({ onClose, onSuccess, activeCase }) {
             </div>
 
             {/* Section C: Evidence Vault (Uploaded Files) */}
-            <div className="border border-[#1e3a5f]/80 rounded-xl p-4 bg-[#0a1526]/60 flex-1">
+            <div className="border border-[#1e3a5f]/80 rounded-xl p-4 bg-[#0a1526]/60 transition-all">
               <div className="flex items-center justify-between mb-3">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-[#64ffda] flex items-center gap-2">
-                  <FiHardDrive size={14} /> Uploaded Evidence Vault ({uploadedFiles.length})
-                </h3>
-                <span className="text-[10px] text-[#8892b0]">Click any file to preview contents</span>
+                <div className="flex items-center gap-2.5">
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-[#64ffda] flex items-center gap-2">
+                    <FiHardDrive size={14} /> Uploaded Evidence Vault ({uploadedFiles.length})
+                  </h3>
+                  {uploadedFiles.length > 0 && (
+                    <span className="text-[10px] text-gray-400 font-mono bg-[#10223a] px-2 py-0.5 rounded border border-[#1e3a5f]">
+                      {uploadedFiles.length} {uploadedFiles.length === 1 ? 'file' : 'files'}
+                    </span>
+                  )}
+                </div>
+
+                <div className="flex items-center gap-2 sm:gap-3">
+                  <span className="hidden md:inline text-[10px] text-[#8892b0]">
+                    {uploadedFiles.length > 2 ? 'Scroll list to view all files' : 'Click file to preview'}
+                  </span>
+
+                  {uploadedFiles.length > 0 && (
+                    <button
+                      onClick={handleClearAllFiles}
+                      disabled={isActionLoading}
+                      className="flex items-center gap-1 text-[10px] font-mono text-red-400 hover:text-white bg-red-500/10 hover:bg-red-500/80 px-2 py-1 rounded border border-red-500/30 hover:border-red-500 transition-colors cursor-pointer disabled:opacity-50"
+                      title="Remove all uploaded files from the vault"
+                    >
+                      <FiTrash2 size={11} /> Clear All
+                    </button>
+                  )}
+
+                  <button
+                    onClick={() => setIsVaultCollapsed(!isVaultCollapsed)}
+                    className="flex items-center gap-1 text-[11px] font-mono text-[#64ffda] bg-[#10223a] hover:bg-[#162c4b] border border-[#1e3a5f] hover:border-[#64ffda] px-2.5 py-1 rounded-lg transition-colors cursor-pointer"
+                    title={isVaultCollapsed ? "Expand Evidence Vault" : "Collapse Evidence Vault to view more of the tab"}
+                  >
+                    {isVaultCollapsed ? (
+                      <>
+                        <span>Expand</span>
+                        <FiChevronDown size={13} />
+                      </>
+                    ) : (
+                      <>
+                        <span>Collapse</span>
+                        <FiChevronUp size={13} />
+                      </>
+                    )}
+                  </button>
+                </div>
               </div>
 
-              {uploadedFiles.length === 0 ? (
-                <div className="text-xs text-gray-500 text-center py-8 border border-dashed border-[#1e3a5f]/40 rounded-lg">
-                  No files uploaded yet for this investigation. Use the upload area above or try a sample kit!
-                </div>
-              ) : (
-                <div className="space-y-2 max-h-60 overflow-y-auto pr-1">
-                  {uploadedFiles.map((file) => (
-                    <div 
-                      key={file.id} 
-                      onClick={() => handlePreview(file)}
-                      className="flex justify-between items-center p-3 border border-[#1e3a5f] hover:border-[#64ffda] rounded-lg cursor-pointer transition-all bg-[#0c1a2f] hover:bg-[#12233f] group"
-                    >
-                      <div className="flex items-center gap-3 truncate">
-                        <span className={`px-2 py-0.5 text-[10px] font-mono font-bold uppercase rounded ${typeColors[file.file_type] || 'bg-gray-700 text-gray-200'}`}>
-                          {file.file_type}
-                        </span>
-                        <span className="text-sm text-white font-medium group-hover:text-[#64ffda] transition-colors truncate">
-                          {file.filename}
-                        </span>
-                      </div>
-
-                      <div className="flex items-center gap-4 text-xs text-gray-400 font-mono shrink-0">
-                        <span className="flex items-center gap-1">
-                          <FiHardDrive size={11} /> {formatFileSize(file.file_size)}
-                        </span>
-                        <span className="hidden sm:flex items-center gap-1">
-                          <FiCalendar size={11} /> {formatDate(file.uploaded_at)}
-                        </span>
-                        <button className="flex items-center gap-1 text-[11px] text-[#64ffda] bg-[#64ffda]/10 px-2 py-1 rounded border border-[#64ffda]/30 group-hover:bg-[#64ffda] group-hover:text-black transition-colors">
-                          <FiEye size={12} /> Preview
-                        </button>
-                      </div>
+              {!isVaultCollapsed && (
+                <>
+                  {uploadedFiles.length === 0 ? (
+                    <div className="text-xs text-gray-500 text-center py-6 border border-dashed border-[#1e3a5f]/40 rounded-lg">
+                      No files uploaded yet for this investigation. Use the upload area above or try a sample kit!
                     </div>
-                  ))}
-                </div>
+                  ) : (
+                    <div className="space-y-2 max-h-52 overflow-y-auto pr-1.5 custom-scrollbar">
+                      {uploadedFiles.map((file) => (
+                        <div 
+                          key={file.id} 
+                          onClick={() => handlePreview(file)}
+                          className="flex justify-between items-center p-2.5 border border-[#1e3a5f] hover:border-[#64ffda] rounded-lg cursor-pointer transition-all bg-[#0c1a2f] hover:bg-[#12233f] group"
+                        >
+                          <div className="flex items-center gap-2.5 truncate">
+                            <span className={`px-2 py-0.5 text-[10px] font-mono font-bold uppercase rounded ${typeColors[file.file_type] || 'bg-gray-700 text-gray-200'}`}>
+                              {file.file_type}
+                            </span>
+                            <span className="text-xs sm:text-sm text-white font-medium group-hover:text-[#64ffda] transition-colors truncate">
+                              {file.filename}
+                            </span>
+                          </div>
+
+                          <div className="flex items-center gap-2 sm:gap-3 text-xs text-gray-400 font-mono shrink-0">
+                            <span className="flex items-center gap-1 text-[11px]">
+                              <FiHardDrive size={11} /> {formatFileSize(file.file_size)}
+                            </span>
+                            <span className="hidden sm:flex items-center gap-1 text-[11px]">
+                              <FiCalendar size={11} /> {formatDate(file.uploaded_at)}
+                            </span>
+
+                            {/* Preview Button */}
+                            <button 
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handlePreview(file);
+                              }}
+                              className="flex items-center gap-1 text-[11px] text-[#64ffda] bg-[#64ffda]/10 px-2 py-1 rounded border border-[#64ffda]/30 group-hover:bg-[#64ffda] group-hover:text-black transition-colors cursor-pointer"
+                              title="Preview file content and entities"
+                            >
+                              <FiEye size={12} /> Preview
+                            </button>
+
+                            {/* Remove Button */}
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleDeleteFile(file);
+                              }}
+                              disabled={deletingFileId === file.id}
+                              className="flex items-center gap-1 text-[11px] text-red-400 hover:text-white bg-red-500/10 hover:bg-red-500/80 px-2 py-1 rounded border border-red-500/30 hover:border-red-500 transition-colors cursor-pointer disabled:opacity-50"
+                              title={`Remove ${file.filename} from vault`}
+                            >
+                              <FiTrash2 size={12} />
+                              <span className="hidden sm:inline">{deletingFileId === file.id ? 'Removing...' : 'Remove'}</span>
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </>
               )}
             </div>
 
@@ -550,10 +676,17 @@ export default function UploadModal({ onClose, onSuccess, activeCase }) {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2.5">
+                  <button 
+                    onClick={() => handleDeleteFile(selectedFile)}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-red-500/40 bg-red-500/10 hover:bg-red-500 hover:text-white text-xs font-semibold text-red-400 transition-colors cursor-pointer"
+                    title="Remove this file from the vault"
+                  >
+                    <FiTrash2 size={13} /> Remove File
+                  </button>
                   <button 
                     onClick={closePreview} 
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[#1e3a5f] hover:border-red-500/50 hover:bg-red-500/10 text-xs font-semibold text-gray-300 hover:text-red-400 transition-colors"
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[#1e3a5f] hover:border-gray-500/50 hover:bg-[#10223a] text-xs font-semibold text-gray-300 hover:text-white transition-colors cursor-pointer"
                   >
                     <FiX size={14} /> Close Preview
                   </button>
