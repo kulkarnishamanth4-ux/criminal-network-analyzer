@@ -254,12 +254,30 @@ function StatCard({ title, value, icon, highlight }) {
   );
 }
 
-export default function LeftPanel({ stats, onEntitySelect, onCommunitySelect, activeCase }) {
+export default function LeftPanel({ 
+  stats, 
+  onEntitySelect, 
+  onCommunitySelect, 
+  activeCase,
+  isCollapsed: controlledCollapsed,
+  onToggleCollapse
+}) {
   const [influencers, setInfluencers] = useState([]);
   const [communities, setCommunities] = useState([]);
   const [predictions, setPredictions] = useState(CASE_PREDICTIONS[activeCase] || []);
   const [loading, setLoading] = useState(true);
   const [isCollapsed, setIsCollapsed] = useState(false);
+  
+  useEffect(() => {
+    if (controlledCollapsed !== undefined) {
+      setIsCollapsed(controlledCollapsed);
+    }
+  }, [controlledCollapsed]);
+
+  const handleToggleCollapse = (val) => {
+    setIsCollapsed(val);
+    if (onToggleCollapse) onToggleCollapse(val);
+  };
   
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
@@ -310,8 +328,8 @@ export default function LeftPanel({ stats, onEntitySelect, onCommunitySelect, ac
 
   if (isCollapsed) {
     return (
-      <aside className="w-[40px] bg-[var(--bg-card)] border-r border-[var(--border)] h-full flex flex-col z-10 shadow-lg shrink-0 items-center pt-4">
-        <button onClick={() => setIsCollapsed(false)} className="text-[var(--text-secondary)] hover:text-white p-2 rounded hover:bg-[var(--bg-primary)]" title="Expand Panel">
+      <aside className="w-[40px] bg-[var(--bg-card)] border-r border-[var(--border)] h-full flex flex-col z-10 shadow-lg shrink-0 items-center pt-4 transition-all duration-300">
+        <button onClick={() => handleToggleCollapse(false)} className="text-[var(--text-secondary)] hover:text-white p-2 rounded hover:bg-[var(--bg-primary)] cursor-pointer" title="Expand Panel">
           <FiChevronRight size={18} />
         </button>
       </aside>
@@ -319,8 +337,8 @@ export default function LeftPanel({ stats, onEntitySelect, onCommunitySelect, ac
   }
 
   return (
-    <aside className="w-[280px] bg-[var(--bg-card)] border-r border-[var(--border)] h-full overflow-y-auto flex flex-col z-10 shadow-lg shrink-0 relative">
-      <button onClick={() => setIsCollapsed(true)} className="absolute top-3 right-3 z-50 text-[var(--text-secondary)] hover:text-white p-1 rounded hover:bg-[var(--bg-primary)]" title="Collapse Panel">
+    <aside className="w-[280px] bg-[var(--bg-card)] border-r border-[var(--border)] h-full overflow-y-auto flex flex-col z-10 shadow-lg shrink-0 relative transition-all duration-300">
+      <button onClick={() => handleToggleCollapse(true)} className="absolute top-3 right-3 z-50 text-[var(--text-secondary)] hover:text-white p-1 rounded hover:bg-[var(--bg-primary)] cursor-pointer" title="Collapse Panel">
         <FiChevronLeft size={16} />
       </button>
       <div className="p-4 space-y-6 pt-10">

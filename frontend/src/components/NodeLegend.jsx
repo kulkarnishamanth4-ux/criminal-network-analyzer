@@ -1,8 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FiLayers, FiX, FiInfo } from 'react-icons/fi';
 
-export default function NodeLegend() {
+export default function NodeLegend({ forceClose }) {
   const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    if (forceClose) setIsOpen(false);
+  }, [forceClose]);
 
   const legendItems = [
     { type: 'Person', color: '#ff4757', shape: 'rounded-full' },

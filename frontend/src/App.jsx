@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Header from './components/Header';
 import LeftPanel from './components/LeftPanel';
 import GraphCanvas from './components/GraphCanvas';
@@ -34,6 +34,13 @@ function App() {
   const [currentUser, setCurrentUser] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showAuditModal, setShowAuditModal] = useState(false);
+
+  // Panel Collapse & Layout States
+  const [isLeftPanelCollapsed, setIsLeftPanelCollapsed] = useState(false);
+  const [isRightPanelCollapsed, setIsRightPanelCollapsed] = useState(false);
+  const [isTimelineCollapsed, setIsTimelineCollapsed] = useState(false);
+  const [fitTrigger, setFitTrigger] = useState(0);
+  const prevPanelStateRef = useRef({ left: false, right: false, timeline: false });
 
   // Two-Click Connection Tracer State
   const [isConnectionMode, setIsConnectionMode] = useState(false);
@@ -102,6 +109,18 @@ function App() {
   };
 
   const handleStartConnectionMode = () => {
+    // Save current panel states before auto-collapsing
+    prevPanelStateRef.current = {
+      left: isLeftPanelCollapsed,
+      right: isRightPanelCollapsed,
+      timeline: isTimelineCollapsed
+    };
+
+    // Auto-collapse Left Panel, Right Panel, and bottom Timeline Panel
+    setIsLeftPanelCollapsed(true);
+    setIsRightPanelCollapsed(true);
+    setIsTimelineCollapsed(true);
+
     setIsConnectionMode(true);
     setIsPathFinderOpen(true);
     setConnectionSource(null);
@@ -109,6 +128,9 @@ function App() {
     setConnectionPathResult(null);
     setHighlightPath(null);
     setSelectedEntity(null);
+
+    // Trigger Cytoscape Fit to Screen on expanded canvas
+    setFitTrigger(prev => prev + 1);
   };
 
   const handleExitConnectionMode = () => {
@@ -118,6 +140,16 @@ function App() {
     setConnectionTarget(null);
     setConnectionPathResult(null);
     setHighlightPath(null);
+
+    // Restore previous panel states
+    if (prevPanelStateRef.current) {
+      setIsLeftPanelCollapsed(prevPanelStateRef.current.left);
+      setIsRightPanelCollapsed(prevPanelStateRef.current.right);
+      setIsTimelineCollapsed(prevPanelStateRef.current.timeline);
+    }
+
+    // Trigger Fit to Screen to adapt to restored canvas dimensions
+    setFitTrigger(prev => prev + 1);
   };
 
   const handleResetConnection = () => {
@@ -125,6 +157,7 @@ function App() {
     setConnectionTarget(null);
     setConnectionPathResult(null);
     setHighlightPath(null);
+    setFitTrigger(prev => prev + 1);
   };
 
   const executeShortestPath = async (src, tgt) => {
@@ -338,7 +371,9 @@ function App() {
           stats={stats} 
           onEntitySelect={handleNodeSelect} 
           onCommunitySelect={handleCommunitySelect} 
-          activeCase={activeCase} 
+          activeCase={activeCase}
+          isCollapsed={isLeftPanelCollapsed}
+          onToggleCollapse={setIsLeftPanelCollapsed}
         />
         
         <main className="flex-1 relative flex flex-col bg-[#05050f]">
@@ -400,8 +435,11 @@ function App() {
                 onConnectionNodeClick={handleConnectionNodeClick}
                 onExitConnectionMode={handleExitConnectionMode}
                 onResetConnection={handleResetConnection}
+                fitTrigger={fitTrigger}
+                isTimelineCollapsed={isTimelineCollapsed}
+                onToggleTimelineCollapse={setIsTimelineCollapsed}
               />
-              <NodeLegend />
+              <NodeLegend forceClose={isConnectionMode} />
               <PathFinder 
                 isOpen={isPathFinderOpen}
                 onOpen={handleStartConnectionMode}
@@ -441,6 +479,8 @@ function App() {
           onEntitySelect={handleNodeSelect}
           onExpandNetwork={handleExpandNetwork}
           activeCase={activeCase}
+          isCollapsed={isRightPanelCollapsed}
+          onToggleCollapse={setIsRightPanelCollapsed}
         />
       </div>
 

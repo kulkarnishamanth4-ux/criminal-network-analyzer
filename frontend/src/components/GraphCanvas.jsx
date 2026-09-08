@@ -358,15 +358,66 @@ export default function GraphCanvas({
   connectionPathResult = null,
   onConnectionNodeClick,
   onExitConnectionMode,
-  onResetConnection
+  onResetConnection,
+  fitTrigger = 0,
+  isTimelineCollapsed = false,
+  onToggleTimelineCollapse
 }) {
   const cyRef = useRef(null);
+  const containerRef = useRef(null);
   const [timelineFilter, setTimelineFilter] = useState(null);
 
   const isConnectionModeRef = useRef(isConnectionMode);
   const onConnectionNodeClickRef = useRef(onConnectionNodeClick);
   useEffect(() => { isConnectionModeRef.current = isConnectionMode; }, [isConnectionMode]);
   useEffect(() => { onConnectionNodeClickRef.current = onConnectionNodeClick; }, [onConnectionNodeClick]);
+
+  // Auto-resize Cytoscape whenever canvas container dimensions change (e.g. side panels collapse/expand)
+  useEffect(() => {
+    if (!containerRef.current) return;
+    const ro = new ResizeObserver(() => {
+      if (cyRef.current && !cyRef.current.destroyed()) {
+        cyRef.current.resize();
+      }
+    });
+    ro.observe(containerRef.current);
+    return () => ro.disconnect();
+  }, []);
+
+  // Fit to screen when fitTrigger fires or entering connection mode
+  useEffect(() => {
+    if (!cyRef.current) return;
+    const cy = cyRef.current;
+
+    const runFit = () => {
+      try {
+        if (!cy.destroyed()) {
+          cy.resize();
+          cy.animate({
+            fit: { padding: 50 },
+            duration: 350,
+            easing: 'ease-out'
+          });
+        }
+      } catch {
+        try {
+          cy.fit(undefined, 50);
+        } catch {}
+      }
+    };
+
+    // Stagger to allow CSS transitions (sidebar collapse duration 300ms) to settle
+    runFit();
+    const t1 = setTimeout(runFit, 60);
+    const t2 = setTimeout(runFit, 180);
+    const t3 = setTimeout(runFit, 320);
+
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+      clearTimeout(t3);
+    };
+  }, [fitTrigger, isConnectionMode]);
 
   // Sync source and target node highlighting on Cytoscape
   useEffect(() => {
@@ -629,7 +680,7 @@ export default function GraphCanvas({
   }, [highlightPath, isConnectionMode, connectionSource, clearHighlight]);
 
   return (
-    <div className="w-full h-full bg-[#05050f] absolute inset-0 z-0">
+    <div ref={containerRef} className="w-full h-full bg-[#05050f] absolute inset-0 z-0">
       {cyElements.length === 0 ? (
         <div className="flex flex-col items-center justify-center h-full text-center select-none">
           <div className="text-6xl mb-6 opacity-20"></div>
@@ -645,7 +696,12 @@ export default function GraphCanvas({
         </div>
       ) : (
         <>
-          <TimelineScrubber elements={elements} onFilter={setTimelineFilter} />
+          <TimelineScrubber 
+            elements={elements} 
+            onFilter={setTimelineFilter} 
+            isMinimized={isTimelineCollapsed}
+            onToggleMinimize={onToggleTimelineCollapse}
+          />
           
           {/* Top-Center Floating HUD Banner for Connection Mode */}
           {isConnectionMode && (
@@ -725,13 +781,22 @@ export default function GraphCanvas({
             </div>
           )}
           <div className="absolute bottom-6 right-6 z-10 flex flex-col gap-2">
-            <button onClick={() => cyRef.current && cyRef.current.zoom(cyRef.current.zoom() * 1.2)} className="w-10 h-10 bg-[var(--bg-card)] border border-[var(--border)] rounded flex items-center justify-center text-white hover:bg-[var(--bg-highlight)] transition-colors shadow-lg" title="Zoom In">
+            <button onClick={() => cyRef.current && cyRef.current.zoom(cyRef.current.zoom() * 1.2)} className="w-10 h-10 bg-[var(--bg-card)] border border-[var(--border)] rounded flex items-center justify-center text-white hover:bg-[var(--bg-highlight)] transition-colors shadow-lg cursor-pointer" title="Zoom In">
               <FiZoomIn size={18} />
             </button>
-            <button onClick={() => cyRef.current && cyRef.current.zoom(cyRef.current.zoom() * 0.8)} className="w-10 h-10 bg-[var(--bg-card)] border border-[var(--border)] rounded flex items-center justify-center text-white hover:bg-[var(--bg-highlight)] transition-colors shadow-lg" title="Zoom Out">
+            <button onClick={() => cyRef.current && cyRef.current.zoom(cyRef.current.zoom() * 0.8)} className="w-10 h-10 bg-[var(--bg-card)] border border-[var(--border)] rounded flex items-center justify-center text-white hover:bg-[var(--bg-highlight)] transition-colors shadow-lg cursor-pointer" title="Zoom Out">
               <FiZoomOut size={18} />
             </button>
-            <button onClick={() => cyRef.current && cyRef.current.fit()} className="w-10 h-10 bg-[var(--bg-card)] border border-[var(--border)] rounded flex items-center justify-center text-white hover:bg-[var(--bg-highlight)] transition-colors shadow-lg" title="Fit to Screen">
+            <button 
+              onClick={() => {
+                if (cyRef.current) {
+                  cyRef.current.resize();
+                  cyRef.current.fit(undefined, 50);
+                }
+              }} 
+              className="w-10 h-10 bg-[var(--bg-card)] border border-[var(--border)] rounded flex items-center justify-center text-white hover:bg-[var(--bg-highlight)] transition-colors shadow-lg cursor-pointer" 
+              title="Fit to Screen"
+            >
               <FiCrosshair size={18} />
             </button>
           </div>

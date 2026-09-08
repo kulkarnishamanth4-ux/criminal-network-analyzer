@@ -1,11 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import { FiClock, FiChevronDown, FiChevronUp, FiMaximize2, FiMinimize2 } from 'react-icons/fi';
 
-export default function TimelineScrubber({ elements, onFilter }) {
+export default function TimelineScrubber({ 
+  elements, 
+  onFilter,
+  isMinimized: controlledMinimized,
+  onToggleMinimize
+}) {
   const [minDate, setMinDate] = useState(null);
   const [maxDate, setMaxDate] = useState(null);
   const [currentDate, setCurrentDate] = useState(null);
   const [isMinimized, setIsMinimized] = useState(false);
+
+  useEffect(() => {
+    if (controlledMinimized !== undefined) {
+      setIsMinimized(controlledMinimized);
+    }
+  }, [controlledMinimized]);
+
+  const handleToggleMinimize = (val) => {
+    setIsMinimized(val);
+    if (onToggleMinimize) onToggleMinimize(val);
+  };
 
   useEffect(() => {
     if (!elements || !elements.edges) return;
@@ -45,8 +61,8 @@ export default function TimelineScrubber({ elements, onFilter }) {
     return (
       <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 z-20 animate-in fade-in zoom-in-95 duration-200">
         <button
-          onClick={() => setIsMinimized(false)}
-          className="flex items-center gap-2.5 px-4 py-2 rounded-full bg-[#0a1220]/95 border border-[#1e3a5f] hover:border-[#64ffda] text-[#c8d6e5] text-xs font-mono shadow-2xl backdrop-blur-md transition-all hover:scale-105 group"
+          onClick={() => handleToggleMinimize(false)}
+          className="flex items-center gap-2.5 px-4 py-2 rounded-full bg-[#0a1220]/95 border border-[#1e3a5f] hover:border-[#64ffda] text-[#c8d6e5] text-xs font-mono shadow-2xl backdrop-blur-md transition-all hover:scale-105 group cursor-pointer"
           title="Click to expand Temporal Timeline Scrubber"
         >
           <FiClock className="text-[#64ffda] group-hover:rotate-45 transition-transform" size={14} />
@@ -76,7 +92,7 @@ export default function TimelineScrubber({ elements, onFilter }) {
         <div className="flex items-center gap-3">
           <span className="opacity-70 font-mono">{formatDate(maxDate)}</span>
           <button 
-            onClick={() => setIsMinimized(true)}
+            onClick={() => handleToggleMinimize(true)}
             className="text-gray-300 hover:text-white px-2.5 py-1 rounded-md bg-[#13233a] hover:bg-[#1e3a5f] border border-[#1e3a5f] hover:border-[#64ffda]/50 transition-all flex items-center gap-1.5 text-[11px] font-mono shadow-sm group cursor-pointer"
             title="Minimize Timeline Scrubber to floating bottom pill"
           >
