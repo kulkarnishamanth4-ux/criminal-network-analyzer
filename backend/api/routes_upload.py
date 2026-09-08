@@ -17,6 +17,38 @@ router = APIRouter()
 
 MAX_UPLOAD_SIZE = 10 * 1024 * 1024  # 10 MB limit
 
+PROTECTED_CANONICAL_CASES = {
+    "dawood",
+    "drug_punjab",
+    "ht_assam",
+    "cyber_bengaluru",
+    "money_gujarat",
+    "arms_chhattisgarh",
+    "wildlife_kerala",
+    "extortion_up"
+}
+
+def resolve_safe_case_id(case_id: str, client_ip: str = "0.0.0.0") -> tuple[str, bool, str | None]:
+    """
+    Guards canonical syndicate dossiers against evidence contamination or accidental overwriting.
+    Redirects user uploads and test sample loads to 'custom_investigation'.
+    """
+    if case_id in PROTECTED_CANONICAL_CASES:
+        audit_logger.log_event(
+            action="REDIRECT_PROTECTED_CASE_WRITE",
+            user="operator",
+            resource=case_id,
+            details=f"Prevented modification of sealed case '{case_id}'. Safely routed to 'custom_investigation'.",
+            severity="WARNING",
+            ip_address=client_ip
+        )
+        return (
+            "custom_investigation",
+            True,
+            f"Official syndicate case '{case_id}' is cryptographically sealed to preserve baseline integrity. Evidence was safely ingested into the 'New Investigation' workspace."
+        )
+    return (case_id, False, None)
+
 async def read_and_validate_upload(file: UploadFile, max_size: int = MAX_UPLOAD_SIZE) -> bytes:
     """Reads file content up to max_size + 1 and enforces file size ceiling."""
     content = await file.read(max_size + 1)
@@ -34,6 +66,9 @@ async def upload_fir(
     db: Session = Depends(get_db)
 ):
     try:
+        client_ip = request.client.host if request.client else "0.0.0.0"
+        target_case_id, was_redirected, notice = resolve_safe_case_id(case_id, client_ip)
+
         content = await read_and_validate_upload(file)
         try:
             text = content.decode("utf-8")
@@ -45,13 +80,15 @@ async def upload_fir(
         
         # Optionally wipe old dirty data for this investigation if user requested a fresh import
         if clear_existing:
-            db.query(crud.Relationship).filter(crud.Relationship.case_id == case_id).delete()
-            db.query(crud.Entity).filter(crud.Entity.case_id == case_id).delete()
-            db.query(crud.FIR).filter(crud.FIR.case_id == case_id).delete()
+            db.query(crud.Relationship).filter(crud.Relationship.case_id == target_case_id).delete()
+            db.query(crud.Entity).filter(crud.Entity.case_id == target_case_id).delete()
+            db.query(crud.FIR).filter(crud.FIR.case_id == target_case_id).delete()
+            db.query(UploadedFile).filter(UploadedFile.case_id == target_case_id).delete()
+            db.query(crud.Anomaly).filter(crud.Anomaly.case_id == target_case_id).delete()
             db.commit()
         
         # Get existing entities for fuzzy matching (typo snapping)
-        existing_entities = {e.name for e in db.query(crud.Entity).all()}
+        existing_entities = {e.name for e in db.query(crud.Entity).filter(crud.Entity.case_id == target_case_id).all()}
         extracted = extract_entities_from_text(text, known_entities=existing_entities)
         
         classification = classify_crime(text)
@@ -62,36 +99,36 @@ async def upload_fir(
             crime_type=classification.get('crime_type'),
             crime_confidence=classification.get('confidence'),
             extracted_entities=extracted,
-            case_id=case_id
+            case_id=target_case_id
         )
         
         # Create entities by type
         person_ents = []
         for p in extracted.get("persons", []):
             props = {"aliases": p.get("aliases", [])} if p.get("aliases") else {}
-            ent = crud.get_or_create_entity(db, "PERSON", p["name"], properties=props, case_id=case_id)
+            ent = crud.get_or_create_entity(db, "PERSON", p["name"], properties=props, case_id=target_case_id)
             if p.get("aliases") and not (ent.properties and ent.properties.get("aliases")):
                 ent.properties = {**(ent.properties or {}), "aliases": p["aliases"]}
             person_ents.append(ent)
             
         loc_ents = []
         for l in extracted.get("locations", []):
-            ent = crud.get_or_create_entity(db, "LOCATION", l["name"], case_id=case_id)
+            ent = crud.get_or_create_entity(db, "LOCATION", l["name"], case_id=target_case_id)
             loc_ents.append(ent)
             
         phone_ents = []
         for ph in extracted.get("phones", []):
-            ent = crud.get_or_create_entity(db, "PHONE", ph["number"], case_id=case_id)
+            ent = crud.get_or_create_entity(db, "PHONE", ph["number"], case_id=target_case_id)
             phone_ents.append(ent)
             
         veh_ents = []
         for v in extracted.get("vehicles", []):
-            ent = crud.get_or_create_entity(db, "VEHICLE", v["plate"], case_id=case_id)
+            ent = crud.get_or_create_entity(db, "VEHICLE", v["plate"], case_id=target_case_id)
             veh_ents.append(ent)
             
         org_ents = []
         for o in extracted.get("organizations", []):
-            ent = crud.get_or_create_entity(db, "ORGANIZATION", o["name"], case_id=case_id)
+            ent = crud.get_or_create_entity(db, "ORGANIZATION", o["name"], case_id=target_case_id)
             org_ents.append(ent)
             
         entities_created = len(person_ents) + len(loc_ents) + len(phone_ents) + len(veh_ents) + len(org_ents)
@@ -113,7 +150,7 @@ async def upload_fir(
                         rel_type=rel_type,
                         weight=weight,
                         properties=props or {"fir_id": fir.id},
-                        case_id=case_id
+                        case_id=target_case_id
                     )
                 )
 
@@ -196,7 +233,7 @@ async def upload_fir(
             db.add_all(new_relationships)
             db.commit()
             
-        compute_all_analytics(db, case_id=case_id)
+        compute_all_analytics(db, case_id=target_case_id)
 
         # Save to uploaded_files record
         uploaded_record = UploadedFile(
@@ -211,7 +248,7 @@ async def upload_fir(
                 "entities_count": entities_created,
                 "relationships_count": rel_count
             },
-            case_id=case_id
+            case_id=target_case_id
         )
         db.add(uploaded_record)
         db.commit()
@@ -221,12 +258,15 @@ async def upload_fir(
             action="FILE_UPLOAD",
             user="operator",
             resource=f"fir/{file.filename}",
-            details=f"Case: {case_id} | Extracted: {entities_created} entities, {rel_count} relationships",
+            details=f"Case: {target_case_id} | Extracted: {entities_created} entities, {rel_count} relationships",
             severity="INFO"
         )
         
         return {
             "status": "success",
+            "message": notice or "FIR document ingested successfully.",
+            "target_case": target_case_id,
+            "was_redirected": was_redirected,
             "fir_id": fir.id,
             "entities_extracted": entities_created,
             "relationships_created": rel_count,
@@ -248,6 +288,9 @@ async def upload_cdr(
     db: Session = Depends(get_db)
 ):
     try:
+        client_ip = request.client.host if request.client else "0.0.0.0"
+        target_case_id, was_redirected, notice = resolve_safe_case_id(case_id, client_ip)
+
         content = await read_and_validate_upload(file)
         records = parse_cdr_csv(content)
         
@@ -256,15 +299,15 @@ async def upload_cdr(
         
         new_relationships = []
         for r in records:
-            caller = crud.get_or_create_entity(db, "PHONE", r["caller"], case_id=case_id)
-            receiver = crud.get_or_create_entity(db, "PHONE", r["receiver"], case_id=case_id)
-            new_relationships.append(crud.Relationship(source_id=caller.id, target_id=receiver.id, rel_type="CALLED", properties=r, case_id=case_id))
+            caller = crud.get_or_create_entity(db, "PHONE", r["caller"], case_id=target_case_id)
+            receiver = crud.get_or_create_entity(db, "PHONE", r["receiver"], case_id=target_case_id)
+            new_relationships.append(crud.Relationship(source_id=caller.id, target_id=receiver.id, rel_type="CALLED", properties=r, case_id=target_case_id))
             
         if new_relationships:
             db.add_all(new_relationships)
             db.commit()
             
-        compute_all_analytics(db, case_id=case_id)
+        compute_all_analytics(db, case_id=target_case_id)
 
         try:
             raw_preview = content.decode("utf-8")[:5000]
@@ -277,7 +320,7 @@ async def upload_cdr(
             file_size=len(content),
             raw_content=raw_preview,
             parsed_preview={"records": records[:100], "total_records": len(records)},
-            case_id=case_id
+            case_id=target_case_id
         )
         db.add(uploaded_record)
         db.commit()
@@ -286,11 +329,17 @@ async def upload_cdr(
             action="FILE_UPLOAD",
             user="operator",
             resource=f"cdr/{file.filename}",
-            details=f"Case: {case_id} | Processed: {len(records)} CDR records",
+            details=f"Case: {target_case_id} | Processed: {len(records)} CDR records",
             severity="INFO"
         )
 
-        return {"status": "success", "records_processed": len(records)}
+        return {
+            "status": "success",
+            "message": notice or f"Processed {len(records)} CDR records.",
+            "target_case": target_case_id,
+            "was_redirected": was_redirected,
+            "records_processed": len(records)
+        }
     except ValueError as val_err:
         return JSONResponse(status_code=413, content={"status": "error", "message": str(val_err)})
     except Exception as e:
@@ -306,6 +355,9 @@ async def upload_financial(
     db: Session = Depends(get_db)
 ):
     try:
+        client_ip = request.client.host if request.client else "0.0.0.0"
+        target_case_id, was_redirected, notice = resolve_safe_case_id(case_id, client_ip)
+
         content = await read_and_validate_upload(file)
         records = parse_financial_csv(content)
         
@@ -314,20 +366,20 @@ async def upload_financial(
         
         new_relationships = []
         for r in records:
-            sender_acc = crud.get_or_create_entity(db, "BANK_ACCOUNT", r["sender_account"], case_id=case_id)
-            receiver_acc = crud.get_or_create_entity(db, "BANK_ACCOUNT", r["receiver_account"], case_id=case_id)
-            sender = crud.get_or_create_entity(db, "PERSON", r.get("sender_name", "Unknown"), case_id=case_id)
-            receiver = crud.get_or_create_entity(db, "PERSON", r.get("receiver_name", "Unknown"), case_id=case_id)
+            sender_acc = crud.get_or_create_entity(db, "BANK_ACCOUNT", r["sender_account"], case_id=target_case_id)
+            receiver_acc = crud.get_or_create_entity(db, "BANK_ACCOUNT", r["receiver_account"], case_id=target_case_id)
+            sender = crud.get_or_create_entity(db, "PERSON", r.get("sender_name", "Unknown"), case_id=target_case_id)
+            receiver = crud.get_or_create_entity(db, "PERSON", r.get("receiver_name", "Unknown"), case_id=target_case_id)
             
-            new_relationships.append(crud.Relationship(source_id=sender.id, target_id=sender_acc.id, rel_type="OWNS_ACCOUNT", case_id=case_id))
-            new_relationships.append(crud.Relationship(source_id=receiver.id, target_id=receiver_acc.id, rel_type="OWNS_ACCOUNT", case_id=case_id))
-            new_relationships.append(crud.Relationship(source_id=sender_acc.id, target_id=receiver_acc.id, rel_type="TRANSFERRED_MONEY_TO", weight=r.get("amount", 1.0), properties=r, case_id=case_id))
+            new_relationships.append(crud.Relationship(source_id=sender.id, target_id=sender_acc.id, rel_type="OWNS_ACCOUNT", case_id=target_case_id))
+            new_relationships.append(crud.Relationship(source_id=receiver.id, target_id=receiver_acc.id, rel_type="OWNS_ACCOUNT", case_id=target_case_id))
+            new_relationships.append(crud.Relationship(source_id=sender_acc.id, target_id=receiver_acc.id, rel_type="TRANSFERRED_MONEY_TO", weight=r.get("amount", 1.0), properties=r, case_id=target_case_id))
             
         if new_relationships:
             db.add_all(new_relationships)
             db.commit()
             
-        compute_all_analytics(db, case_id=case_id)
+        compute_all_analytics(db, case_id=target_case_id)
 
         try:
             raw_preview = content.decode("utf-8")[:5000]
@@ -340,7 +392,7 @@ async def upload_financial(
             file_size=len(content),
             raw_content=raw_preview,
             parsed_preview={"records": records[:100], "total_records": len(records)},
-            case_id=case_id
+            case_id=target_case_id
         )
         db.add(uploaded_record)
         db.commit()
@@ -349,11 +401,17 @@ async def upload_financial(
             action="FILE_UPLOAD",
             user="operator",
             resource=f"financial/{file.filename}",
-            details=f"Case: {case_id} | Processed: {len(records)} financial transactions",
+            details=f"Case: {target_case_id} | Processed: {len(records)} financial transactions",
             severity="INFO"
         )
 
-        return {"status": "success", "records_processed": len(records)}
+        return {
+            "status": "success",
+            "message": notice or f"Processed {len(records)} financial transactions.",
+            "target_case": target_case_id,
+            "was_redirected": was_redirected,
+            "records_processed": len(records)
+        }
     except ValueError as val_err:
         return JSONResponse(status_code=413, content={"status": "error", "message": str(val_err)})
     except Exception as e:
@@ -369,6 +427,9 @@ async def upload_vehicle(
     db: Session = Depends(get_db)
 ):
     try:
+        client_ip = request.client.host if request.client else "0.0.0.0"
+        target_case_id, was_redirected, notice = resolve_safe_case_id(case_id, client_ip)
+
         content = await read_and_validate_upload(file)
         records = parse_vehicle_csv(content)
         
@@ -377,15 +438,15 @@ async def upload_vehicle(
         
         new_relationships = []
         for r in records:
-            vehicle = crud.get_or_create_entity(db, "VEHICLE", r["plate_number"], case_id=case_id)
-            loc = crud.get_or_create_entity(db, "LOCATION", r["location"], case_id=case_id)
-            new_relationships.append(crud.Relationship(source_id=vehicle.id, target_id=loc.id, rel_type="SPOTTED_AT", properties=r, case_id=case_id))
+            vehicle = crud.get_or_create_entity(db, "VEHICLE", r["plate_number"], case_id=target_case_id)
+            loc = crud.get_or_create_entity(db, "LOCATION", r["location"], case_id=target_case_id)
+            new_relationships.append(crud.Relationship(source_id=vehicle.id, target_id=loc.id, rel_type="SPOTTED_AT", properties=r, case_id=target_case_id))
             
         if new_relationships:
             db.add_all(new_relationships)
             db.commit()
             
-        compute_all_analytics(db, case_id=case_id)
+        compute_all_analytics(db, case_id=target_case_id)
 
         try:
             raw_preview = content.decode("utf-8")[:5000]
@@ -398,7 +459,7 @@ async def upload_vehicle(
             file_size=len(content),
             raw_content=raw_preview,
             parsed_preview={"records": records[:100], "total_records": len(records)},
-            case_id=case_id
+            case_id=target_case_id
         )
         db.add(uploaded_record)
         db.commit()
@@ -407,11 +468,17 @@ async def upload_vehicle(
             action="FILE_UPLOAD",
             user="operator",
             resource=f"vehicle/{file.filename}",
-            details=f"Case: {case_id} | Processed: {len(records)} vehicle sightings",
+            details=f"Case: {target_case_id} | Processed: {len(records)} vehicle sightings",
             severity="INFO"
         )
 
-        return {"status": "success", "records_processed": len(records)}
+        return {
+            "status": "success",
+            "message": notice or f"Processed {len(records)} vehicle sightings.",
+            "target_case": target_case_id,
+            "was_redirected": was_redirected,
+            "records_processed": len(records)
+        }
     except ValueError as val_err:
         return JSONResponse(status_code=413, content={"status": "error", "message": str(val_err)})
     except Exception as e:
@@ -421,6 +488,14 @@ async def upload_vehicle(
 @router.post("/investigation/reset")
 def reset_investigation(case_id: str = Query("custom_investigation"), db: Session = Depends(get_db)):
     """Wipes all entities, relationships, files, and anomalies for a custom case."""
+    if case_id in PROTECTED_CANONICAL_CASES:
+        return JSONResponse(
+            status_code=403, 
+            content={
+                "status": "error", 
+                "message": f"Case '{case_id}' is a sealed canonical syndicate dossier and cannot be wiped. Use 'restore-canonical' if you wish to reset it to official baseline."
+            }
+        )
     try:
         del_rels = db.query(crud.Relationship).filter(crud.Relationship.case_id == case_id).delete()
         del_ents = db.query(crud.Entity).filter(crud.Entity.case_id == case_id).delete()
@@ -450,8 +525,10 @@ def reset_investigation(case_id: str = Query("custom_investigation"), db: Sessio
 
 @router.post("/investigation/load-sample")
 def load_sample_investigation(case_id: str = Query("custom_investigation"), db: Session = Depends(get_db)):
-    """Resets the case and loads the clean, verified sample FIR report dataset."""
+    """Resets the target case and loads the clean, verified sample FIR report dataset."""
     try:
+        client_ip = "0.0.0.0"
+        target_case_id, was_redirected, notice = resolve_safe_case_id(case_id, client_ip)
         sample_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "frontend", "public", "samples", "sample_fir_report.txt")
         if not os.path.exists(sample_path):
             sample_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "frontend", "dist", "samples", "sample_fir_report.txt")
@@ -462,12 +539,12 @@ def load_sample_investigation(case_id: str = Query("custom_investigation"), db: 
         with open(sample_path, "r", encoding="utf-8") as f:
             text = f.read()
 
-        # Wipe old data
-        db.query(crud.Relationship).filter(crud.Relationship.case_id == case_id).delete()
-        db.query(crud.Entity).filter(crud.Entity.case_id == case_id).delete()
-        db.query(crud.FIR).filter(crud.FIR.case_id == case_id).delete()
-        db.query(UploadedFile).filter(UploadedFile.case_id == case_id).delete()
-        db.query(crud.Anomaly).filter(crud.Anomaly.case_id == case_id).delete()
+        # Wipe old data for target case
+        db.query(crud.Relationship).filter(crud.Relationship.case_id == target_case_id).delete()
+        db.query(crud.Entity).filter(crud.Entity.case_id == target_case_id).delete()
+        db.query(crud.FIR).filter(crud.FIR.case_id == target_case_id).delete()
+        db.query(UploadedFile).filter(UploadedFile.case_id == target_case_id).delete()
+        db.query(crud.Anomaly).filter(crud.Anomaly.case_id == target_case_id).delete()
         db.commit()
 
         # Extract cleanly
@@ -480,33 +557,33 @@ def load_sample_investigation(case_id: str = Query("custom_investigation"), db: 
             crime_type=classification.get("crime_type"),
             crime_confidence=classification.get("confidence"),
             extracted_entities=extracted,
-            case_id=case_id
+            case_id=target_case_id
         )
 
         person_ents = []
         for p in extracted.get("persons", []):
             props = {"aliases": p.get("aliases", [])} if p.get("aliases") else {}
-            ent = crud.get_or_create_entity(db, "PERSON", p["name"], properties=props, case_id=case_id)
+            ent = crud.get_or_create_entity(db, "PERSON", p["name"], properties=props, case_id=target_case_id)
             person_ents.append(ent)
 
         loc_ents = []
         for l in extracted.get("locations", []):
-            ent = crud.get_or_create_entity(db, "LOCATION", l["name"], case_id=case_id)
+            ent = crud.get_or_create_entity(db, "LOCATION", l["name"], case_id=target_case_id)
             loc_ents.append(ent)
 
         phone_ents = []
         for ph in extracted.get("phones", []):
-            ent = crud.get_or_create_entity(db, "PHONE", ph["number"], case_id=case_id)
+            ent = crud.get_or_create_entity(db, "PHONE", ph["number"], case_id=target_case_id)
             phone_ents.append(ent)
 
         veh_ents = []
         for v in extracted.get("vehicles", []):
-            ent = crud.get_or_create_entity(db, "VEHICLE", v["plate"], case_id=case_id)
+            ent = crud.get_or_create_entity(db, "VEHICLE", v["plate"], case_id=target_case_id)
             veh_ents.append(ent)
 
         org_ents = []
         for o in extracted.get("organizations", []):
-            ent = crud.get_or_create_entity(db, "ORGANIZATION", o["name"], case_id=case_id)
+            ent = crud.get_or_create_entity(db, "ORGANIZATION", o["name"], case_id=target_case_id)
             org_ents.append(ent)
 
         new_relationships = []
@@ -524,7 +601,7 @@ def load_sample_investigation(case_id: str = Query("custom_investigation"), db: 
                         rel_type=rel_type,
                         weight=weight,
                         properties=props or {"fir_id": fir.id},
-                        case_id=case_id
+                        case_id=target_case_id
                     )
                 )
 
@@ -570,7 +647,7 @@ def load_sample_investigation(case_id: str = Query("custom_investigation"), db: 
         db.add_all(new_relationships)
         db.commit()
 
-        compute_all_analytics(db, case_id=case_id)
+        compute_all_analytics(db, case_id=target_case_id)
 
         # Upload record
         uploaded_record = UploadedFile(
@@ -585,18 +662,63 @@ def load_sample_investigation(case_id: str = Query("custom_investigation"), db: 
                 "entities_count": len(person_ents)+len(loc_ents)+len(phone_ents)+len(veh_ents)+len(org_ents),
                 "relationships_count": len(new_relationships)
             },
-            case_id=case_id
+            case_id=target_case_id
         )
         db.add(uploaded_record)
         db.commit()
 
         return {
             "status": "success",
-            "message": "Clean sample investigation loaded successfully.",
+            "message": notice or "Clean sample investigation loaded successfully.",
+            "target_case": target_case_id,
+            "was_redirected": was_redirected,
             "entities_created": len(person_ents)+len(loc_ents)+len(phone_ents)+len(veh_ents)+len(org_ents),
             "relationships_created": len(new_relationships)
         }
     except Exception as e:
         traceback.print_exc()
         return JSONResponse(status_code=500, content={"status": "error", "message": str(e)})
+
+@router.post("/investigation/restore-canonical")
+def restore_canonical_case(case_id: str = Query("dawood"), db: Session = Depends(get_db)):
+    """Restores a canonical syndicate case to its pristine baseline state."""
+    if case_id not in PROTECTED_CANONICAL_CASES:
+        return JSONResponse(
+            status_code=400, 
+            content={"status": "error", "message": f"'{case_id}' is not a protected canonical syndicate case."}
+        )
+    try:
+        # Wipe all records belonging to this canonical case
+        db.query(crud.Relationship).filter(crud.Relationship.case_id == case_id).delete()
+        db.query(crud.Entity).filter(crud.Entity.case_id == case_id).delete()
+        db.query(crud.FIR).filter(crud.FIR.case_id == case_id).delete()
+        db.query(UploadedFile).filter(UploadedFile.case_id == case_id).delete()
+        db.query(crud.Anomaly).filter(crud.Anomaly.case_id == case_id).delete()
+        db.commit()
+
+        if case_id == "dawood":
+            from scripts.seed_d_company import seed_dawood_case
+            seed_dawood_case()
+        else:
+            from scripts.seed_other_cases import seed_additional_cases
+            seed_additional_cases(db, target_case_id=case_id)
+
+        compute_all_analytics(db, case_id=case_id)
+
+        audit_logger.log_event(
+            action="CASE_RESTORE",
+            user="operator",
+            resource=f"case/{case_id}",
+            details=f"Restored sealed canonical case '{case_id}' to official baseline.",
+            severity="INFO"
+        )
+        return {
+            "status": "success",
+            "case_id": case_id,
+            "message": f"Canonical syndicate case '{case_id}' has been restored to its official baseline."
+        }
+    except Exception as e:
+        traceback.print_exc()
+        return JSONResponse(status_code=500, content={"status": "error", "message": str(e)})
+
 

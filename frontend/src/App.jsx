@@ -230,20 +230,24 @@ function App() {
     setHighlightPath(null);
   };
 
-  const handleUploadSuccess = () => {
+  const handleUploadSuccess = (targetCase) => {
     setShowUploadModal(false);
-    showToast('Data ingested successfully. Network updated.');
-    loadData();
+    const destination = targetCase || 'custom_investigation';
+    showToast(`Data ingested successfully into ${destination === 'custom_investigation' ? 'New Investigation' : destination}.`, 'success');
+    if (destination !== activeCase) {
+      setActiveCase(destination);
+    }
+    loadData(destination);
   };
 
   const handleResetCase = async () => {
     if (!window.confirm("Reset this investigation to a blank canvas? All uploaded data for this case will be wiped.")) return;
     try {
-      await resetInvestigation(activeCase);
+      await resetInvestigation('custom_investigation');
       showToast('Investigation reset to clean canvas.', 'info');
       setSelectedEntity(null);
       setHighlightPath(null);
-      loadData(activeCase);
+      loadData('custom_investigation');
     } catch (err) {
       console.error(err);
       showToast('Failed to reset investigation', 'error');
@@ -252,11 +256,14 @@ function App() {
 
   const handleLoadSampleCase = async () => {
     try {
-      await loadSampleInvestigation(activeCase);
+      await loadSampleInvestigation('custom_investigation');
       showToast('Loaded verified sample FIR investigation.', 'success');
       setSelectedEntity(null);
       setHighlightPath(null);
-      loadData(activeCase);
+      if (activeCase !== 'custom_investigation') {
+        setActiveCase('custom_investigation');
+      }
+      loadData('custom_investigation');
     } catch (err) {
       console.error(err);
       showToast('Failed to load sample dataset', 'error');

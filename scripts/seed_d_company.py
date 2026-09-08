@@ -207,7 +207,8 @@ def seed_dawood_case():
         severity="CRITICAL",
         title="Optical Plate-Cloning Paradox: Trans-National Movement",
         description="Burner IMEI linked to Dawood Ibrahim syndicate pinged Clifton, Karachi cell tower and 45 minutes later activated via Dubai IP relay, exceeding physical transit limits.",
-        entity_ids=[boss.id, boss_phone.id]
+        entity_ids=[dawood.id, d_phone.id],
+        case_id="dawood"
     )
     db.add(a4)
 

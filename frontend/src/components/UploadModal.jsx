@@ -12,13 +12,21 @@ import {
   FiHardDrive,
   FiAlertTriangle
 } from 'react-icons/fi';
-import { uploadFile, getUploadedFiles, getFilePreview, resetInvestigation, loadSampleInvestigation } from '../api/client';
+import { uploadFile, getUploadedFiles, getFilePreview, resetInvestigation, loadSampleInvestigation, restoreCanonicalCase } from '../api/client';
+
+const CANONICAL_CASES = [
+  'dawood', 'drug_punjab', 'ht_assam', 'cyber_bengaluru',
+  'money_gujarat', 'arms_chhattisgarh', 'wildlife_kerala', 'extortion_up'
+];
 
 export default function UploadModal({ onClose, onSuccess, activeCase }) {
+  const isProtectedCase = CANONICAL_CASES.includes(activeCase);
+  const targetCase = isProtectedCase ? 'custom_investigation' : activeCase;
+
   const [activeTab, setActiveTab] = useState('fir');
   const [isUploading, setIsUploading] = useState(false);
   const [isActionLoading, setIsActionLoading] = useState(false);
-  const [clearExisting, setClearExisting] = useState(activeCase === 'custom_investigation');
+  const [clearExisting, setClearExisting] = useState(targetCase === 'custom_investigation');
   const [result, setResult] = useState(null);
   
   const [uploadedFiles, setUploadedFiles] = useState([]);
@@ -35,15 +43,14 @@ export default function UploadModal({ onClose, onSuccess, activeCase }) {
   ];
 
   const loadUploadedFiles = useCallback(async () => {
-    if (!activeCase) return;
     try {
-      const files = await getUploadedFiles(activeCase);
+      const files = await getUploadedFiles(targetCase);
       setUploadedFiles(Array.isArray(files) ? files : []);
     } catch (err) {
       console.error("Failed to load files", err);
       setUploadedFiles([]);
     }
-  }, [activeCase]);
+  }, [targetCase]);
 
   useEffect(() => {
     loadUploadedFiles();
@@ -56,12 +63,18 @@ export default function UploadModal({ onClose, onSuccess, activeCase }) {
     setResult(null);
     
     try {
-      const res = await uploadFile(activeTab, acceptedFiles[0], activeCase, clearExisting);
-      setResult({ success: true, data: res });
+      const res = await uploadFile(activeTab, acceptedFiles[0], targetCase, clearExisting);
+      const destinationCase = res.target_case || targetCase;
+      setResult({ 
+        success: true, 
+        data: res, 
+        notice: res.notice,
+        destinationCase 
+      });
       await loadUploadedFiles();
       setTimeout(() => {
         setResult(null);
-        if (onSuccess) onSuccess();
+        if (onSuccess) onSuccess(destinationCase);
       }, 1500);
     } catch (err) {
       console.error(err);
@@ -70,18 +83,37 @@ export default function UploadModal({ onClose, onSuccess, activeCase }) {
     } finally {
       setIsUploading(false);
     }
-  }, [activeTab, activeCase, clearExisting, onSuccess, loadUploadedFiles]);
+  }, [activeTab, targetCase, clearExisting, onSuccess, loadUploadedFiles]);
 
   const handleResetCase = async () => {
-    if (!window.confirm(`Are you sure you want to reset case "${activeCase}" to an empty canvas?`)) return;
+    if (isProtectedCase) {
+      if (!window.confirm(`Restore canonical case "${activeCase}" to its official syndicate baseline? All original entities and relationships will be verified and re-seeded.`)) return;
+      setIsActionLoading(true);
+      try {
+        await restoreCanonicalCase(activeCase);
+        setResult({ success: true, data: { message: `Official case '${activeCase}' restored to baseline.` } });
+        setTimeout(() => {
+          setResult(null);
+          if (onSuccess) onSuccess(activeCase);
+        }, 1200);
+      } catch (err) {
+        console.error("Restore error:", err);
+        setResult({ success: false, error: "Failed to restore canonical case." });
+      } finally {
+        setIsActionLoading(false);
+      }
+      return;
+    }
+
+    if (!window.confirm(`Are you sure you want to reset case "${targetCase}" to an empty canvas?`)) return;
     setIsActionLoading(true);
     try {
-      await resetInvestigation(activeCase);
+      await resetInvestigation(targetCase);
       await loadUploadedFiles();
       setResult({ success: true, data: { message: "Case reset successfully." } });
       setTimeout(() => {
         setResult(null);
-        if (onSuccess) onSuccess();
+        if (onSuccess) onSuccess(targetCase);
       }, 1200);
     } catch (err) {
       console.error("Reset error:", err);
@@ -94,12 +126,12 @@ export default function UploadModal({ onClose, onSuccess, activeCase }) {
   const handleLoadSample = async () => {
     setIsActionLoading(true);
     try {
-      const res = await loadSampleInvestigation(activeCase);
+      const res = await loadSampleInvestigation('custom_investigation');
       await loadUploadedFiles();
-      setResult({ success: true, data: res });
+      setResult({ success: true, data: res, destinationCase: 'custom_investigation' });
       setTimeout(() => {
         setResult(null);
-        if (onSuccess) onSuccess();
+        if (onSuccess) onSuccess('custom_investigation');
       }, 1200);
     } catch (err) {
       console.error("Sample error:", err);
@@ -244,11 +276,16 @@ export default function UploadModal({ onClose, onSuccess, activeCase }) {
               <h2 className="text-base font-bold text-white tracking-wide">
                 Evidence Ingestion Hub
               </h2>
-              <div className="text-[11px] text-[#8892b0] flex items-center gap-2">
-                <span>Active Case:</span>
-                <span className="font-mono text-[#64ffda] bg-[#64ffda]/10 px-1.5 py-0.2 rounded border border-[#64ffda]/20">
-                  {activeCase}
+              <div className="text-[11px] text-[#8892b0] flex items-center gap-2 flex-wrap">
+                <span>Destination:</span>
+                <span className="font-mono text-[#64ffda] bg-[#64ffda]/10 px-1.5 py-0.5 rounded border border-[#64ffda]/20 font-bold">
+                  {targetCase === 'custom_investigation' ? '🆕 New Investigation' : targetCase}
                 </span>
+                {isProtectedCase && (
+                  <span className="text-[10px] font-mono text-amber-300 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/30 flex items-center gap-1">
+                    🛡️ Official Case "{activeCase}" Sealed & Protected
+                  </span>
+                )}
               </div>
             </div>
           </div>
@@ -266,6 +303,15 @@ export default function UploadModal({ onClose, onSuccess, activeCase }) {
           
           {/* Main Vault & Ingestion View */}
           <div className={`flex flex-col w-full overflow-y-auto p-6 space-y-6 ${selectedFile ? 'hidden' : 'block'}`}>
+            
+            {isProtectedCase && (
+              <div className="p-3 bg-amber-500/10 border border-amber-500/30 rounded-xl flex items-center gap-2.5 text-xs text-amber-200 shadow-inner">
+                <FiAlertTriangle className="text-amber-400 shrink-0 text-base" />
+                <span>
+                  <strong>Official Dossier Protected:</strong> You are viewing <em>{activeCase}</em>. Official syndicate cases are write-protected. All ingested evidence and test sample kits are safely isolated into the <strong>New Investigation</strong> workspace to prevent case contamination.
+                </span>
+              </div>
+            )}
             
             {/* Section A: Sample Data Downloads */}
             <div className="border border-[#1e3a5f]/80 rounded-xl p-4 bg-[#0a1526]/60 shadow-inner">
@@ -407,19 +453,31 @@ export default function UploadModal({ onClose, onSuccess, activeCase }) {
                       onClick={handleLoadSample}
                       disabled={isActionLoading || isUploading}
                       className="px-3 py-1.5 text-[11px] font-mono rounded-lg bg-[#10223a] border border-[#1e3a5f] hover:border-[#64ffda] text-[#64ffda] transition-colors flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
-                      title="Load clean verified sample FIR dataset"
+                      title="Load clean verified sample FIR dataset into New Investigation"
                     >
                       <FiFileText size={12} /> Load Verified Sample
                     </button>
-                    <button
-                      type="button"
-                      onClick={handleResetCase}
-                      disabled={isActionLoading || isUploading}
-                      className="px-3 py-1.5 text-[11px] font-mono rounded-lg bg-[#241018] border border-red-500/40 hover:border-red-500 text-red-400 transition-colors flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
-                      title="Wipe this case to a blank slate"
-                    >
-                      <FiX size={12} /> Reset Case
-                    </button>
+                    {isProtectedCase ? (
+                      <button
+                        type="button"
+                        onClick={handleResetCase}
+                        disabled={isActionLoading || isUploading}
+                        className="px-3 py-1.5 text-[11px] font-mono rounded-lg bg-[#0d2238] border border-cyan-500/40 hover:border-cyan-400 text-cyan-300 transition-colors flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                        title="Restore this canonical syndicate dossier to its official baseline"
+                      >
+                        <FiCheckCircle size={12} /> Restore Official Baseline
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={handleResetCase}
+                        disabled={isActionLoading || isUploading}
+                        className="px-3 py-1.5 text-[11px] font-mono rounded-lg bg-[#241018] border border-red-500/40 hover:border-red-500 text-red-400 transition-colors flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                        title="Wipe this custom investigation to a blank canvas"
+                      >
+                        <FiX size={12} /> Reset Canvas
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>

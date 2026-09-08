@@ -115,10 +115,8 @@ def generate_case_data(db: Session, case_id: str, case_name: str, location_base:
             case_id=case_id
         )
 
-def seed_additional_cases(db: Session):
+def seed_additional_cases(db: Session, target_case_id: str = None):
     from backend.database.models import Entity
-    # We will force recreate by checking if drug_punjab has > 15 nodes.
-    # Actually, we don't need to check, main.py drops all tables on startup if we just delete the sqlite file.
     
     print("Seeding deeply intricate organized crime cases (with geospatial/anomalies)...")
     
@@ -174,7 +172,10 @@ def seed_additional_cases(db: Session):
         }
     ]
     
+    if target_case_id:
+        cases = [c for c in cases if c["id"] == target_case_id]
+
     for c in cases:
         generate_case_data(db, c["id"], c["name"], c["loc"], c["roles"], c["names"], c["assets"], c["coords"])
     
-    print("Additional cases seeded successfully.")
+    print(f"Cases seeded successfully (target={target_case_id or 'all'}).")

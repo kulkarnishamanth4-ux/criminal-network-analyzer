@@ -63,6 +63,10 @@ export const loadSampleInvestigation = (caseId = 'custom_investigation') => {
   return client.post(`/api/investigation/load-sample?case_id=${caseId}`).then(res => res.data);
 };
 
+export const restoreCanonicalCase = (caseId = 'dawood') => {
+  return client.post(`/api/investigation/restore-canonical?case_id=${caseId}`).then(res => res.data);
+};
+
 export const getShortestPath = (sourceId, targetId, caseId = 'dawood') => {
   return client.get('/api/graph/shortest-path', { params: { source_id: sourceId, target_id: targetId, case_id: caseId } }).then(res => res.data);
 };

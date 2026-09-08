@@ -1,5 +1,6 @@
 import React, { useMemo, useEffect } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, Polyline, useMap } from 'react-leaflet';
+import { FiZoomIn, FiZoomOut, FiCrosshair } from 'react-icons/fi';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
@@ -94,6 +95,57 @@ function MapBoundsFitter({ geoNodes }) {
   }, [geoNodes, map]);
 
   return null;
+}
+
+// Custom floating Zoom In, Zoom Out, and Fit to Screen controls matching Network View
+function MapControls({ geoNodes }) {
+  const map = useMap();
+
+  const handleZoomIn = () => {
+    map.zoomIn();
+  };
+
+  const handleZoomOut = () => {
+    map.zoomOut();
+  };
+
+  const handleFit = () => {
+    if (!geoNodes || geoNodes.length === 0) return;
+    if (geoNodes.length === 1) {
+      map.setView(geoNodes[0].coords, 12, { animate: true });
+      return;
+    }
+    const bounds = L.latLngBounds(geoNodes.map(n => n.coords));
+    map.fitBounds(bounds, { padding: [60, 60], maxZoom: 14, animate: true });
+  };
+
+  return (
+    <div className="leaflet-bottom leaflet-right" style={{ pointerEvents: 'none', zIndex: 1000 }}>
+      <div className="leaflet-control flex flex-col gap-2 mb-6 mr-6" style={{ pointerEvents: 'auto' }}>
+        <button 
+          onClick={handleZoomIn} 
+          className="w-10 h-10 bg-[var(--bg-card)] border border-[var(--border)] hover:border-[#64ffda] rounded flex items-center justify-center text-white hover:bg-[var(--bg-card-hover)] transition-all shadow-lg cursor-pointer" 
+          title="Zoom In"
+        >
+          <FiZoomIn size={18} />
+        </button>
+        <button 
+          onClick={handleZoomOut} 
+          className="w-10 h-10 bg-[var(--bg-card)] border border-[var(--border)] hover:border-[#64ffda] rounded flex items-center justify-center text-white hover:bg-[var(--bg-card-hover)] transition-all shadow-lg cursor-pointer" 
+          title="Zoom Out"
+        >
+          <FiZoomOut size={18} />
+        </button>
+        <button 
+          onClick={handleFit} 
+          className="w-10 h-10 bg-[var(--bg-card)] border border-[var(--border)] hover:border-[#64ffda] rounded flex items-center justify-center text-white hover:bg-[var(--bg-card-hover)] transition-all shadow-lg cursor-pointer" 
+          title="Fit to Screen"
+        >
+          <FiCrosshair size={18} />
+        </button>
+      </div>
+    </div>
+  );
 }
 
 export default function GeospatialMap({ elements, onNodeSelect, selectedEntity }) {
@@ -225,6 +277,7 @@ export default function GeospatialMap({ elements, onNodeSelect, selectedEntity }
         zoomControl={false}
       >
         <MapBoundsFitter geoNodes={mapData.geoNodes} />
+        <MapControls geoNodes={mapData.geoNodes} />
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
