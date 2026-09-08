@@ -296,6 +296,16 @@ def predict_crime_types(db: Session, G: nx.Graph, community_id: int = None, case
 
     results = []
 
+    # Domain requirement map to prevent spurious generic graph overlaps
+    PRIMARY_DOMAIN_INDICATORS = {
+        "Drug Trafficking": ["drug_keywords"],
+        "Extortion": ["threat_keywords"],
+        "Kidnapping / Human Trafficking": ["trafficking_keywords", "ransom_keywords"],
+        "Arms Smuggling": ["arms_keywords", "known_arms_associate"],
+        "Money Laundering": ["circular_transactions", "hawala_keywords", "shell_company_mention", "rapid_fund_movement"],
+        "Fraud / Cybercrime": ["fraud_keywords", "phishing_patterns", "identity_theft_indicators"]
+    }
+
     for crime, indicators in GENERAL_CRIME_INDICATORS.items():
         score = 0
         total_possible = sum(indicators.values())
@@ -309,13 +319,44 @@ def predict_crime_types(db: Session, G: nx.Graph, community_id: int = None, case
             else:
                 matched_list.append({"name": ind_name, "matched": False, "description": desc})
 
+        # Require at least one core domain indicator to prevent cross-case false positives
+        required_inds = PRIMARY_DOMAIN_INDICATORS.get(crime, [])
+        has_primary = any(
+            item["matched"] for item in matched_list if item["name"] in required_inds
+        )
+        if not has_primary:
+            continue
+
         confidence = score / total_possible if total_possible > 0 else 0
-        if confidence > 0:
+        if confidence >= 0.35:
             results.append({
                 "crime_type": crime,
                 "confidence": round(confidence, 2),
                 "indicators": matched_list
             })
+
+    # Also check if FIRs in this case have an explicit crime_type classification
+    firs = db.query(FIR).filter(FIR.case_id == case_id).all()
+    for fir in firs:
+        if fir.crime_type and fir.crime_type != "Unknown":
+            existing = next((r for r in results if r["crime_type"].lower() == fir.crime_type.lower()), None)
+            if existing:
+                existing["confidence"] = max(existing["confidence"], round(fir.crime_confidence or 0.85, 2))
+                existing["indicators"].append({
+                    "name": "FIR Formal Charge Classification",
+                    "matched": True,
+                    "description": f"FIR police station record explicitly filed under {fir.crime_type}"
+                })
+            else:
+                results.append({
+                    "crime_type": fir.crime_type,
+                    "confidence": round(fir.crime_confidence or 0.85, 2),
+                    "indicators": [{
+                        "name": "FIR Formal Charge Classification",
+                        "matched": True,
+                        "description": f"FIR police station record explicitly filed under {fir.crime_type}"
+                    }]
+                })
 
     return sorted(results, key=lambda x: x['confidence'], reverse=True)
 

@@ -125,27 +125,66 @@ def get_communities_summary(db: Session, case_id: str = "dawood") -> list[dict]:
         ]
     }
 
-    # Assign tactical aliases based on case and cluster index
-    profiles = CASE_COMMUNITY_PROFILES.get(case_id, CASE_COMMUNITY_PROFILES["dawood"])
     sorted_cids = sorted(communities.keys())
 
-    for idx, cid in enumerate(sorted_cids):
-        data = communities[cid]
-        member_names = [m["name"].lower() for m in data["members"]]
-        
-        # Priority keyword checks
-        if any("dawood" in n for n in member_names):
-            data["alias"] = "D-Company Global Command"
-            data["dominant_crime_type"] = "Cross-Border Strategic Command & Elite Coordination"
-        elif any("salem" in n for n in member_names):
-            data["alias"] = "Abu Salem Extortion Cadre"
-            data["dominant_crime_type"] = "Extortion, Bollywood Threat Ops & Contract Hits"
-        elif any("memon" in n for n in member_names):
-            data["alias"] = "Tiger Memon Financial Ring"
-            data["dominant_crime_type"] = "Cross-Border Hawala, Smurfing & Shell Operations"
-        else:
+    if case_id in CASE_COMMUNITY_PROFILES:
+        profiles = CASE_COMMUNITY_PROFILES[case_id]
+        for idx, cid in enumerate(sorted_cids):
+            data = communities[cid]
+            member_names = [m["name"].lower() for m in data["members"]]
+            
+            # Priority keyword checks strictly for dawood case
+            if case_id == "dawood":
+                if any("dawood" in n for n in member_names):
+                    data["alias"] = "D-Company Global Command"
+                    data["dominant_crime_type"] = "Cross-Border Strategic Command & Elite Coordination"
+                    continue
+                elif any("salem" in n for n in member_names):
+                    data["alias"] = "Abu Salem Extortion Cadre"
+                    data["dominant_crime_type"] = "Extortion, Bollywood Threat Ops & Contract Hits"
+                    continue
+                elif any("memon" in n for n in member_names):
+                    data["alias"] = "Tiger Memon Financial Ring"
+                    data["dominant_crime_type"] = "Cross-Border Hawala, Smurfing & Shell Operations"
+                    continue
+
             profile = profiles[idx % len(profiles)]
             data["alias"] = f"{profile[0]} (Cluster {cid})"
             data["dominant_crime_type"] = profile[1]
+    else:
+        # Dynamic case-grounded cluster naming for custom investigations and user uploads
+        for idx, cid in enumerate(sorted_cids):
+            data = communities[cid]
+            members = data.get("members", [])
+            types = [m["type"] for m in members]
+            
+            person = next((m["name"] for m in members if m["type"] == "PERSON"), None)
+            org = next((m["name"] for m in members if m["type"] == "ORGANIZATION"), None)
+            lead = person or org
+            
+            bank_count = types.count("BANK_ACCOUNT")
+            loc_count = types.count("LOCATION")
+            veh_count = types.count("VEHICLE")
+            phone_count = types.count("PHONE")
+            
+            if bank_count >= 2:
+                if lead:
+                    data["alias"] = f"{lead} Financial Ring (Cluster {cid})"
+                else:
+                    data["alias"] = f"Hawala & Shell Conduit (Cluster {cid})"
+                data["dominant_crime_type"] = "Fund Layering & Transaction Cycle"
+            elif lead:
+                data["alias"] = f"{lead} Operative Cell (Cluster {cid})"
+                data["dominant_crime_type"] = "Primary Syndicate Operations & Command"
+            elif loc_count > 0 or veh_count > 0:
+                loc = next((m["name"] for m in members if m["type"] == "LOCATION"), None)
+                data["alias"] = f"{loc or 'Regional'} Transit Network (Cluster {cid})"
+                data["dominant_crime_type"] = "Logistics, Movement & Asset Staging"
+            elif phone_count > 0:
+                data["alias"] = f"Cellular Intercept Group (Cluster {cid})"
+                data["dominant_crime_type"] = "Burner Telecommunications & Coordination"
+            else:
+                data["alias"] = f"Syndicate Operative Group (Cluster {cid})"
+                data["dominant_crime_type"] = "Co-Conspirator Network Operations"
             
     return list(communities.values())

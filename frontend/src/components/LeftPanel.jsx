@@ -285,10 +285,10 @@ export default function LeftPanel({
 
   useEffect(() => {
     setLoading(true);
-    // Instant initial load for smooth UX
-    if (CASE_PREDICTIONS[activeCase]) {
-      setPredictions(CASE_PREDICTIONS[activeCase]);
-    }
+    // Immediately set predictions for the selected case or clear for custom
+    setPredictions(CASE_PREDICTIONS[activeCase] || []);
+    setInfluencers([]);
+    setCommunities([]);
 
     Promise.all([
       getTopInfluencers(10, activeCase).catch(() => ({})),
@@ -299,13 +299,12 @@ export default function LeftPanel({
       setCommunities(Array.isArray(comm) ? comm : (comm?.communities || []));
       
       const predList = Array.isArray(pred) ? pred : (pred?.predictions || []);
-      // If backend returned valid case-specific predictions
-      if (predList && predList.length > 0 && predList[0]?.indicators?.length > 0 && predList[0]?.crime_type !== "Money Laundering") {
+      if (predList && predList.length > 0) {
         setPredictions(predList);
       } else if (CASE_PREDICTIONS[activeCase]) {
         setPredictions(CASE_PREDICTIONS[activeCase]);
-      } else if (predList.length > 0) {
-        setPredictions(predList);
+      } else {
+        setPredictions([]);
       }
       setLoading(false);
     });
@@ -433,7 +432,7 @@ export default function LeftPanel({
           </h2>
           {loading ? (
             <div className="animate-pulse h-20 bg-[var(--bg-primary)] rounded"></div>
-          ) : (
+          ) : influencers.length > 0 ? (
             <div className="space-y-2">
               {influencers.slice(0, 5).map((inf, i) => {
                 const maxPr = Math.max(...influencers.map(x => x.pagerank || 0), 0.0001);
@@ -457,6 +456,10 @@ export default function LeftPanel({
                 </div>
               )})}
             </div>
+          ) : (
+            <div className="p-2.5 text-[11px] text-[var(--text-secondary)] text-center font-mono border border-dashed border-[var(--border)] rounded-lg">
+              No key targets found
+            </div>
           )}
         </div>
 
@@ -467,7 +470,7 @@ export default function LeftPanel({
           </h2>
           {loading ? (
             <div className="animate-pulse h-20 bg-[var(--bg-primary)] rounded"></div>
-          ) : (
+          ) : communities.length > 0 ? (
             <div className="space-y-2">
               {communities.slice(0, 5).map(com => (
                 <div 
@@ -489,6 +492,10 @@ export default function LeftPanel({
                 </div>
               ))}
             </div>
+          ) : (
+            <div className="p-2.5 text-[11px] text-[var(--text-secondary)] text-center font-mono border border-dashed border-[var(--border)] rounded-lg">
+              No syndicate clusters detected
+            </div>
           )}
         </div>
 
@@ -499,7 +506,7 @@ export default function LeftPanel({
           </h2>
           {loading && predictions.length === 0 ? (
              <div className="animate-pulse h-20 bg-[var(--bg-primary)] rounded"></div>
-          ) : (
+          ) : predictions.length > 0 ? (
             <div className="space-y-2.5">
               {predictions.map((pred, i) => {
                 const confPct = Math.round(pred.confidence * 100);
@@ -527,6 +534,10 @@ export default function LeftPanel({
                   </div>
                 );
               })}
+            </div>
+          ) : (
+            <div className="p-2.5 text-[11px] text-[var(--text-secondary)] text-center font-mono border border-dashed border-[var(--border)] rounded-lg">
+              {activeCase === 'custom_investigation' ? 'Upload evidence or load sample to generate predictive intel' : 'No predictive intel available'}
             </div>
           )}
         </div>
