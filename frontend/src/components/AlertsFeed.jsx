@@ -3,16 +3,32 @@ import { FiBell, FiAlertCircle } from 'react-icons/fi';
 import { getAnomalies } from '../api/client';
 import { normalizeAnomalyText } from '../utils/anomalyNormalizer';
 
-export default function AlertsFeed({ onEntitySelect, activeCase }) {
+export default function AlertsFeed({ onEntitySelect, activeCase, dataVersion = 0, threatCount }) {
   const [anomalies, setAnomalies] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    getAnomalies(activeCase).then(res => {
-      setAnomalies(res.anomalies || []);
-      setLoading(false);
-    }).catch(() => setLoading(false));
-  }, [activeCase]);
+    let isMounted = true;
+    setLoading(true);
+    getAnomalies(activeCase)
+      .then(res => {
+        if (isMounted) {
+          setAnomalies(res?.anomalies || []);
+          setLoading(false);
+        }
+      })
+      .catch(err => {
+        console.error("Failed to load anomalies:", err);
+        if (isMounted) {
+          setAnomalies([]);
+          setLoading(false);
+        }
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [activeCase, dataVersion, threatCount]);
 
   const getSeverityColor = (severity) => {
     switch (severity?.toUpperCase()) {
@@ -26,9 +42,16 @@ export default function AlertsFeed({ onEntitySelect, activeCase }) {
 
   return (
     <div className="flex flex-col h-full">
-      <div className="p-4 border-b border-[var(--border)] bg-[var(--bg-card)] sticky top-0 z-10 flex items-center gap-2">
-        <FiBell className="text-[var(--text-accent)]" />
-        <h2 className="text-sm font-semibold uppercase tracking-wider">Live Intel Feed</h2>
+      <div className="p-4 border-b border-[var(--border)] bg-[var(--bg-card)] sticky top-0 z-10 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <FiBell className="text-[var(--text-accent)]" />
+          <h2 className="text-sm font-semibold uppercase tracking-wider">Live Intel Feed</h2>
+        </div>
+        {anomalies.length > 0 && (
+          <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-red-500/20 text-red-400 border border-red-500/30">
+            {anomalies.length} {anomalies.length === 1 ? 'threat' : 'threats'}
+          </span>
+        )}
       </div>
       
       <div className="flex-1 overflow-y-auto p-4 space-y-3">

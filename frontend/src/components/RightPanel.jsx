@@ -8,6 +8,8 @@ export default function RightPanel({
   onEntitySelect, 
   onExpandNetwork, 
   activeCase,
+  dataVersion = 0,
+  threatCount,
   isCollapsed: controlledCollapsed,
   onToggleCollapse
 }) {
@@ -55,7 +57,13 @@ export default function RightPanel({
         </div>
       ) : (
         <div className="pt-8">
-          <AlertsFeed onEntitySelect={onEntitySelect} activeCase={activeCase} />
+          <AlertsFeed 
+            key={`${activeCase}_${dataVersion}`}
+            onEntitySelect={onEntitySelect} 
+            activeCase={activeCase} 
+            dataVersion={dataVersion}
+            threatCount={threatCount}
+          />
         </div>
       )}
     </aside>

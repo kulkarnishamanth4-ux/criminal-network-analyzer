@@ -496,10 +496,13 @@ function App() {
         </main>
         
         <RightPanel 
+          key={`${activeCase}_${dataVersion}`}
           selectedEntity={selectedEntity} 
           onEntitySelect={handleNodeSelect}
           onExpandNetwork={handleExpandNetwork}
           activeCase={activeCase}
+          dataVersion={dataVersion}
+          threatCount={stats?.anomalies_count}
           isCollapsed={isRightPanelCollapsed}
           onToggleCollapse={setIsRightPanelCollapsed}
         />
