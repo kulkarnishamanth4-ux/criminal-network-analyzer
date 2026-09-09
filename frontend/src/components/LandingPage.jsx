@@ -54,20 +54,20 @@ export default function LandingPage({ onEnter }) {
 
       <div className="relative z-10 flex-1 flex flex-col items-center justify-center text-center px-4 -mt-16 pointer-events-none">
         <div className="flex items-center gap-3 bg-[#0a0a0a] border border-[#222222] rounded-full p-1 pr-4 mb-8 pointer-events-auto">
-          <span className="bg-white text-black text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest">NEW</span>
-          <span className="text-xs text-gray-400 font-medium">Deployed v2.0 Matrix Protocols</span>
+          <span className="bg-white text-black text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest">INTELLIGENCE PLATFORM</span>
+          <span className="text-xs text-gray-400 font-medium">Multi-Source Criminal Network Analytics</span>
         </div>
 
-        <h2 className="text-5xl md:text-[5.5rem] font-extrabold tracking-tight max-w-5xl mb-12 leading-[1.1] pointer-events-auto">
-          Algorithms that dismantle <br /> the criminal underworld
+        <h2 className="text-4xl sm:text-5xl md:text-[5rem] font-extrabold tracking-tight max-w-5xl mb-12 leading-[1.1] pointer-events-auto">
+          Advanced Graph Intelligence for <br /> Organized Crime Disruption
         </h2>
 
         <div className="flex items-center gap-4 pointer-events-auto">
           <button 
             onClick={onEnter} 
-            className="bg-white text-black font-bold text-sm px-8 py-3.5 rounded-xl hover:scale-105 transition-transform"
+            className="bg-white text-black font-bold text-sm px-8 py-3.5 rounded-xl hover:scale-105 transition-transform cursor-pointer"
           >
-            Get started
+            Enter Command Center
           </button>
         </div>
       </div>
