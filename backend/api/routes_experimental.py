@@ -8,10 +8,8 @@ from backend.nlp.stylometry import analyze_stylometry
 from backend.nlp.interrogation_engine import interrogate_suspect
 from backend.nlp.ghost_acoustic import analyze_ambient_acoustics
 from backend.graph.quantum_mole import detect_internal_leaks
-from backend.nlp.honeypot_sting import simulate_honeypot_exchange
 from backend.graph.dynasty_pedigree import analyze_dynasty_pedigree
 from backend.graph.plate_cloning import resolve_plate_cloning_paradoxes
-from backend.nlp.moriarty_redteam import execute_moriarty_redteam_attack
 from pydantic import BaseModel
 from typing import List, Optional
 
@@ -30,15 +28,6 @@ class InterrogationRequest(BaseModel):
 class AcousticRequest(BaseModel):
     case_id: Optional[str] = "dawood"
     audio_profile_id: Optional[str] = "intercept_call_001"
-
-class HoneypotRequest(BaseModel):
-    case_id: Optional[str] = "dawood"
-    threat_message: str
-    turn_index: Optional[int] = 1
-
-class MoriartyRequest(BaseModel):
-    case_id: Optional[str] = "dawood"
-    attack_vector: Optional[str] = "HAWALA_MICRO_SMURFING_EVASION"
 
 class SocmintRequest(BaseModel):
     case_id: Optional[str] = "dawood"
@@ -85,11 +74,6 @@ def get_quantum_mole(db: Session = Depends(get_db)):
     """Quantum Mole-Hunter: Negative-topology internal leak detector."""
     return detect_internal_leaks(db)
 
-@router.post("/experimental/honeypot-sting/simulate")
-def run_honeypot_sting(req: HoneypotRequest):
-    """Autonomous Voice-Cloned Sting Honeypot against extortionists."""
-    return simulate_honeypot_exchange(req.threat_message, req.turn_index)
-
 @router.get("/experimental/dynasty-pedigree")
 def get_dynasty_pedigree():
     """Multi-Generational Crime Dynasty Pedigree Engine (30-Year Lineage)."""
@@ -99,11 +83,6 @@ def get_dynasty_pedigree():
 def get_plate_cloning_resolution(case_id: str = "dawood"):
     """Optical Plate-Cloning Paradox Resolver (Kinematic Velocity Splitter)."""
     return resolve_plate_cloning_paradoxes(case_id)
-
-@router.post("/experimental/moriarty-redteam/attack-and-patch")
-def run_moriarty_redteam(req: MoriartyRequest):
-    """Project Moriarty: Autonomous Counter-Forensic Red-Team AI."""
-    return execute_moriarty_redteam_attack(req.attack_vector)
 
 @router.post("/experimental/socmint/analyze")
 def analyze_socmint(req: SocmintRequest):

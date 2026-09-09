@@ -99,20 +99,12 @@ export const getQuantumMole = (caseId = "dawood") => {
   return client.get('/api/experimental/quantum-mole', { params: { case_id: caseId } }).then(res => res.data);
 };
 
-export const simulateHoneypotSting = (threatMessage, turnIndex = 1, caseId = "dawood") => {
-  return client.post('/api/experimental/honeypot-sting/simulate', { threat_message: threatMessage, turn_index: turnIndex, case_id: caseId }).then(res => res.data);
-};
-
 export const getDynastyPedigree = (caseId = "dawood") => {
   return client.get('/api/experimental/dynasty-pedigree', { params: { case_id: caseId } }).then(res => res.data);
 };
 
 export const getPlateCloningResolver = (caseId = "dawood") => {
   return client.get('/api/experimental/plate-cloning-resolver', { params: { case_id: caseId } }).then(res => res.data);
-};
-
-export const runMoriartyRedteam = (attackVector = "HAWALA_MICRO_SMURFING_EVASION", caseId = "dawood") => {
-  return client.post('/api/experimental/moriarty-redteam/attack-and-patch', { attack_vector: attackVector, case_id: caseId }).then(res => res.data);
 };
 
 export const sendChatMessage = (message) => {

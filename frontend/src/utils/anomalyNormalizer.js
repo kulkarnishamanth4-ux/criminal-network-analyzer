@@ -26,8 +26,6 @@ const CANONICAL_MAPPINGS = [
   // Internal-Leak Analyzer
   { pattern: /Quantum Mole/gi, replacement: 'Internal-Leak Detection' },
   
-  // Counter AI
-  { pattern: /Moriarty Redteam/gi, replacement: 'Vulnerability Detection Counter AI' },
   
   // Criminal Dynasty
   { pattern: /Dynasty Pedigree/gi, replacement: 'Criminal Dynasty History' },

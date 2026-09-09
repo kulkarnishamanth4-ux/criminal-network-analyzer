@@ -9,9 +9,9 @@ import {
 import { 
   getDecapitation, getGhostRendezvous, matchStylometry, 
   interrogateSuspect, getSuspectsList, analyzeAcoustics,
-  getQuantumMole, simulateHoneypotSting,
+  getQuantumMole,
   getDynastyPedigree, getPlateCloningResolver,
-  runMoriartyRedteam, analyzeSocmint
+  analyzeSocmint
 } from '../api/client';
 import Dock from './Dock';
 
@@ -53,10 +53,6 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes, activ
   const [moleResult, setMoleResult] = useState(null);
   const [moleLoading, setMoleLoading] = useState(false);
 
-  const [honeypotInput, setHoneypotInput] = useState('Aakhri baar bol raha hu, 10 lakh rupay is UPI par bhej mule_merchant@sbi nahi toh parivar khatam!');
-  const [honeypotResult, setHoneypotResult] = useState(null);
-  const [honeypotLoading, setHoneypotLoading] = useState(false);
-
   const [dynastyResult, setDynastyResult] = useState(null);
   const [dynastyLoading, setDynastyLoading] = useState(false);
 
@@ -71,10 +67,6 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes, activ
       return next;
     });
   };
-
-  const [moriartyResult, setMoriartyResult] = useState(null);
-  const [moriartyLoading, setMoriartyLoading] = useState(false);
-  const [selectedMoriartyVector, setSelectedMoriartyVector] = useState('HAWALA_MICRO_SMURFING_EVASION');
 
   const [socmintData, setSocmintData] = useState(null);
   const [socmintLoading, setSocmintLoading] = useState(false);
@@ -124,16 +116,12 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes, activ
     } else if (activeTab === 'quantum_mole' && !moleResult) {
       setMoleLoading(true);
       getQuantumMole(activeCase).then(res => { setMoleResult(res); setMoleLoading(false); }).catch(() => setMoleLoading(false));
-    } else if (activeTab === 'honeypot' && !honeypotResult) {
-      handleRunHoneypot(honeypotInput);
     } else if (activeTab === 'dynasty' && !dynastyResult) {
       setDynastyLoading(true);
       getDynastyPedigree(activeCase).then(res => { setDynastyResult(res); setDynastyLoading(false); }).catch(() => setDynastyLoading(false));
     } else if (activeTab === 'plate_cloning') {
       setPlateLoading(true);
       getPlateCloningResolver(activeCase).then(res => { setPlateResult(res); setPlateLoading(false); }).catch(() => setPlateLoading(false));
-    } else if (activeTab === 'moriarty' && !moriartyResult) {
-      handleRunMoriarty('HAWALA_MICRO_SMURFING_EVASION');
     } else if (activeTab === 'socmint' && !socmintData) {
       handleRunSocmint();
     }
@@ -230,28 +218,6 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes, activ
     setAcousticLoading(false);
   };
 
-  const handleRunHoneypot = async (msg) => {
-    const threat = msg || honeypotInput;
-    if (!threat.trim()) return;
-    if (msg) setHoneypotInput(msg);
-    setHoneypotLoading(true);
-    try {
-      const res = await simulateHoneypotSting(threat, 2, activeCase);
-      setHoneypotResult(res);
-    } catch (err) { console.error(err); }
-    setHoneypotLoading(false);
-  };
-
-  const handleRunMoriarty = async (vector) => {
-    const v = vector || selectedMoriartyVector;
-    setSelectedMoriartyVector(v);
-    setMoriartyLoading(true);
-    try {
-      const res = await runMoriartyRedteam(v, activeCase);
-      setMoriartyResult(res);
-    } catch (err) { console.error(err); }
-    setMoriartyLoading(false);
-  };
 
   const handleRunSocmint = async (customTxt) => {
     const txt = customTxt || socmintInput;
@@ -263,7 +229,7 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes, activ
     setSocmintLoading(false);
   };
 
-  // 10 Modules Categorized into 4 Command Tiers
+  // 8 Modules Categorized into 4 Command Tiers
   const categories = {
     tactical: {
       name: ' Tactical & Kinetic Operations',
@@ -277,15 +243,13 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes, activ
     cognitive: {
       name: ' Cognitive, Audio & Forensics',
       tabs: [
-        { id: 'interrogate', label: ' Accused Interrogation Simulator' },
-        { id: 'honeypot', label: ' Voice-Cloned Sting Honeypot' }
+        { id: 'interrogate', label: ' Accused Interrogation Simulator' }
       ]
     },
     wargaming: {
       name: ' Chaos, Lineage & War-Gaming',
       tabs: [
-        { id: 'dynasty', label: ' Criminal Dynasty History' },
-        { id: 'moriarty', label: ' Vulnerability Detection Counter AI' }
+        { id: 'dynasty', label: ' Criminal Dynasty History' }
       ]
     },
     counterintel: {
@@ -1105,66 +1069,6 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes, activ
             </div>
           )}
 
-          {/* ══════════════════════════════════════════════════════════════════
-              VOICE-CLONED STING HONEYPOT
-             ══════════════════════════════════════════════════════════════════ */}
-          {activeTab === 'honeypot' && (
-            <div className="space-y-6">
-              <div className="bg-[var(--bg-primary)] p-4 rounded-lg border border-[var(--border)] flex justify-between items-start">
-                <div>
-                  <h3 className="text-sm font-bold text-[var(--text-accent)] uppercase flex items-center gap-2"><FiMic /> Autonomous Voice-Cloned Sting Honeypot</h3>
-                  <p className="text-xs text-[var(--text-secondary)] mt-1 max-w-2xl">
-                    Autonomous conversational AI victim persona stalling extortionists and cyber-scammers while live-extracting UPI handles, mule accounts, and physical meetup coordinates.
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  value={honeypotInput}
-                  onChange={e => setHoneypotInput(e.target.value)}
-                  placeholder="Simulate extortionist threat message..."
-                  className="flex-1 bg-[var(--bg-primary)] border border-[var(--border)] rounded px-4 py-2 text-xs text-white"
-                />
-                <button
-                  onClick={() => handleRunHoneypot()}
-                  className="px-5 py-2 bg-[var(--text-accent)] text-[#0a0a1a] font-bold text-xs rounded hover:opacity-90"
-                >
-                  Deploy Sting Persona
-                </button>
-              </div>
-
-              {honeypotResult && (
-                <div className="space-y-4 animate-in fade-in duration-300">
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                    <div className="bg-[var(--bg-card)] p-3.5 rounded border border-[var(--border)]">
-                      <div className="text-[10px] text-[var(--text-secondary)] uppercase">Stall Duration</div>
-                      <div className="text-2xl font-bold font-mono text-[var(--neon-green)] mt-1">{honeypotResult.simulated_call_duration_minutes} min</div>
-                      <div className="text-[10px] text-[var(--text-secondary)] mt-1">Victim Persona: {honeypotResult.victim_persona_used}</div>
-                    </div>
-                    <div className="bg-[var(--bg-card)] p-3.5 rounded border border-[var(--border)]">
-                      <div className="text-[10px] text-[var(--text-secondary)] uppercase">Extracted UPI / Accounts</div>
-                      <div className="text-sm font-bold font-mono text-[var(--neon-gold)] mt-1 truncate">{honeypotResult.harvested_intelligence.extracted_upi_handles[0]}</div>
-                      <div className="text-[10px] text-[var(--text-secondary)] mt-1">IFSC: Bank Account Captured</div>
-                    </div>
-                    <div className="bg-[var(--bg-card)] p-3.5 rounded border border-[var(--border)]">
-                      <div className="text-[10px] text-[var(--text-secondary)] uppercase">Caller Aggression</div>
-                      <div className="text-xl font-bold font-mono text-green-400 mt-1">{honeypotResult.voice_biomarkers_telemetry.caller_aggression_level}</div>
-                      <div className="text-[10px] text-[var(--text-secondary)] mt-1">Acoustic: Call-Center Echo</div>
-                    </div>
-                  </div>
-
-                  <div className="p-4 bg-[var(--bg-card)] border border-[var(--border)] rounded-lg space-y-2">
-                    <div className="text-[10px] text-[var(--text-secondary)] uppercase">Synthetic Honeypot Voice Response:</div>
-                    <div className="text-xs italic leading-relaxed text-white p-3 bg-[var(--bg-primary)] rounded border border-[var(--border)]">
-                      "{honeypotResult.honeypot_synthetic_response}"
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
 
           {/* ══════════════════════════════════════════════════════════════════
               CRIMINAL DYNASTY HISTORY
@@ -1221,57 +1125,6 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes, activ
             </div>
           )}
 
-          {/* ══════════════════════════════════════════════════════════════════
-              11. VULNERABILITY DETECTION COUNTER AI
-             ══════════════════════════════════════════════════════════════════ */}
-          {activeTab === 'moriarty' && (
-            <div className="space-y-6">
-              <div className="bg-[var(--bg-primary)] p-4 rounded-lg border border-[var(--border)] flex justify-between items-start">
-                <div>
-                  <h3 className="text-sm font-bold text-green-500 uppercase flex items-center gap-2"><FiCrosshair /> Vulnerability Detection Counter AI (Red-Team)</h3>
-                  <p className="text-xs text-[var(--text-secondary)] mt-1 max-w-2xl">
-                    Adversarial underworld AI that attacks CrimeNet from the outside to discover algorithmic blind spots and auto-generates defensive anomaly heuristics.
-                  </p>
-                </div>
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => handleRunMoriarty('HAWALA_MICRO_SMURFING_EVASION')}
-                    className={`text-xs px-3 py-1.5 rounded border ${selectedMoriartyVector === 'HAWALA_MICRO_SMURFING_EVASION' ? 'bg-green-500 text-white font-bold' : 'border-[var(--border)] text-[var(--text-secondary)]'}`}
-                  >
-                    Smurfing Attack
-                  </button>
-                  <button
-                    onClick={() => handleRunMoriarty('BURNER_SIM_ROUND_ROBIN')}
-                    className={`text-xs px-3 py-1.5 rounded border ${selectedMoriartyVector === 'BURNER_SIM_ROUND_ROBIN' ? 'bg-green-500 text-white font-bold' : 'border-[var(--border)] text-[var(--text-secondary)]'}`}
-                  >
-                    SIM Round-Robin
-                  </button>
-                </div>
-              </div>
-
-              {moriartyResult && (
-                <div className="space-y-4 animate-in fade-in duration-300">
-                  <div className="p-4 bg-[var(--bg-card)] border border-[var(--border)] rounded-lg space-y-3">
-                    <div className="flex justify-between items-center pb-2 border-b border-[var(--border)]">
-                      <div className="font-bold text-sm text-green-400"> {moriartyResult.attack_simulation_executed}</div>
-                      <span className="text-xs font-mono font-bold text-[var(--neon-green)]">+{moriartyResult.system_resilience_gain_pct}% RESILIENCE</span>
-                    </div>
-                    <div className="text-xs text-[var(--text-secondary)]"><strong>Counter AI Exploit Logic: </strong>{moriartyResult.moriarty_adversarial_exploit}</div>
-                    <div className="text-xs text-green-300"><strong>Algorithmic Blindspot Exposed: </strong>{moriartyResult.algorithmic_blindspot_exposed}</div>
-                  </div>
-
-                  <div className="p-4 bg-[var(--bg-primary)] border border-[var(--neon-green)]/40 rounded-lg space-y-2 text-xs">
-                    <div className="flex justify-between items-center text-[var(--neon-green)] font-bold">
-                      <span> Auto-Synthesized Defensive Patch Deployed:</span>
-                      <span className="font-mono text-[10px] bg-[var(--neon-green)]/20 px-2 py-0.5 rounded">RUNTIME ACTIVE</span>
-                    </div>
-                    <div className="font-mono font-bold text-white text-sm">{moriartyResult.auto_synthesized_defensive_patch.rule_name}</div>
-                    <div className="text-[var(--text-secondary)]">Condition: {moriartyResult.auto_synthesized_defensive_patch.patch_architecture.trigger_condition}</div>
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
 
           {/* ══════════════════════════════════════════════════════════════════
               12. SYNTAX DNA STYLOMETRY

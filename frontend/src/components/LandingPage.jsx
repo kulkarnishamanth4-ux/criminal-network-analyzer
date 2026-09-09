@@ -10,9 +10,7 @@ export default function LandingPage({ onEnter }) {
     { name: "Physical-Exclusive Meetings", desc: "Exposes covert physical meetups between suspects maintaining radio silence." },
     { name: "Optical Plate-Cloning Paradox", desc: "Detects impossible kinematic highway velocities to flag cloned decoy vehicles." },
     { name: "Accused Interrogation Simulator", desc: "AI persona mimicking suspect linguistics for mock interrogations." },
-    { name: "Voice-Cloned Sting Honeypot", desc: "Autonomous AI victim persona stalling scammers to extract intelligence." },
     { name: "Criminal Dynasty History", desc: "Hypergraph kinship mapping predicting next-gen cartel successors and lineages." },
-    { name: "Vulnerability Detection Counter AI", desc: "Adversarial underworld AI that attacks CrimeNet to discover blind spots." },
     { name: "Syntax DNA Stylometry", desc: "Linguistic fingerprinting to match anonymous manifestos to known suspects." },
     { name: "Internal-Leak Analyzer", desc: "Detects corrupt insider leaks and compromised access points via honeytoken beacon traps." }
   ];
