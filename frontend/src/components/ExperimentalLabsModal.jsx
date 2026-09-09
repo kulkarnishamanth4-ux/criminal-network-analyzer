@@ -7,13 +7,12 @@ import {
   FiDownload, FiSliders, FiClock, FiMapPin, FiLayers, FiAlertCircle
 } from 'react-icons/fi';
 import { 
-  getDecapitation, getGhostRendezvous, matchStylometry, 
-  interrogateSuspect, getSuspectsList, analyzeAcoustics,
+  getDecapitation, getGhostRendezvous, 
+  interrogateSuspect, getSuspectsList,
   getQuantumMole,
   getDynastyPedigree, getPlateCloningResolver,
   analyzeSocmint
 } from '../api/client';
-import Dock from './Dock';
 
 export default function ExperimentalLabsModal({ onClose, onHighlightNodes, activeCase }) {
   const [activeCategory, setActiveCategory] = useState('tactical');
@@ -42,13 +41,6 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes, activ
   const [confessionPropensity, setConfessionPropensity] = useState(18);
   const [demeanorState, setDemeanorState] = useState('Defiant & Evasive');
 
-  const [stylometryInput, setStylometryInput] = useState('');
-  const [stylometryResult, setStylometryResult] = useState(null);
-  const [stylometryLoading, setStylometryLoading] = useState(false);
-
-  const [acousticResult, setAcousticResult] = useState(null);
-  const [acousticLoading, setAcousticLoading] = useState(false);
-  const [selectedAudioCall, setSelectedAudioCall] = useState('intercept_call_001');
 
   const [moleResult, setMoleResult] = useState(null);
   const [moleLoading, setMoleLoading] = useState(false);
@@ -196,29 +188,6 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes, activ
     handleSendQuestion(q);
   };
 
-  const handleRunStylometry = async (sampleText) => {
-    const txt = sampleText || stylometryInput;
-    if (!txt.trim()) return;
-    if (sampleText) setStylometryInput(sampleText);
-    setStylometryLoading(true);
-    try {
-      const res = await matchStylometry(txt, activeCase);
-      setStylometryResult(res);
-    } catch (err) { console.error(err); }
-    setStylometryLoading(false);
-  };
-
-  const handleRunAcoustics = async (audioId) => {
-    setSelectedAudioCall(audioId);
-    setAcousticLoading(true);
-    try {
-      const res = await analyzeAcoustics(audioId, activeCase);
-      setAcousticResult(res);
-    } catch (err) { console.error(err); }
-    setAcousticLoading(false);
-  };
-
-
   const handleRunSocmint = async (customTxt) => {
     const txt = customTxt || socmintInput;
     setSocmintLoading(true);
@@ -229,7 +198,7 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes, activ
     setSocmintLoading(false);
   };
 
-  // 8 Modules Categorized into 4 Command Tiers
+  // 7 Modules Categorized into 4 Command Tiers
   const categories = {
     tactical: {
       name: ' Tactical & Kinetic Operations',
@@ -255,7 +224,6 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes, activ
     counterintel: {
       name: ' Counter-Intel & Cryptography',
       tabs: [
-        { id: 'stylometry', label: ' Syntax DNA Stylometry' },
         { id: 'quantum_mole', label: ' Internal-Leak Analyzer' }
       ]
     }
@@ -1126,33 +1094,6 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes, activ
           )}
 
 
-          {/* ══════════════════════════════════════════════════════════════════
-              12. SYNTAX DNA STYLOMETRY
-             ══════════════════════════════════════════════════════════════════ */}
-          {activeTab === 'stylometry' && (
-            <div className="space-y-4">
-              <div className="bg-[var(--bg-primary)] p-4 rounded border">
-                <h3 className="text-sm font-bold text-[var(--text-accent)] uppercase flex items-center gap-2"><FiCode /> Hinglish Syntax DNA Matcher</h3>
-                <p className="text-xs text-[var(--text-secondary)] mt-1">Attributes extortion SMS & dark-web posts to known suspects based on dialect syntax markers.</p>
-              </div>
-              <div className="flex gap-2">
-                {[
-                  { label: 'Extortion Threat', text: 'CALL KYUN NAHI UTHA RAHA HAI?! Aakhri baar bol raha hu... hafta nahi diya toh parivar khatam!!' },
-                  { label: 'Hawala Ledger', text: 'account number bhej diya... party se 50 peti confirm karo... entry match honi chahiye' }
-                ].map((s, i) => (
-                  <button key={i} onClick={() => handleRunStylometry(s.text)} className="text-xs bg-[var(--bg-card)] px-3 py-1.5 rounded border text-[var(--text-secondary)] hover:text-white">
-                    {s.label}
-                  </button>
-                ))}
-              </div>
-              {stylometryResult && (
-                <div className="p-4 bg-[var(--bg-card)] border rounded space-y-2">
-                  <div className="text-sm font-bold text-[var(--neon-green)]">Top Attribution: {stylometryResult.top_attribution} ({stylometryResult.top_confidence}%)</div>
-                  <div className="text-xs text-[var(--text-secondary)]">{stylometryResult.summary}</div>
-                </div>
-              )}
-            </div>
-          )}
 
           {/* ══════════════════════════════════════════════════════════════════
               INTERNAL-LEAK ANALYZER

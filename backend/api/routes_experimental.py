@@ -4,7 +4,6 @@ from backend.database.schema import get_db
 from backend.database.models import Entity
 from backend.graph.decapitation import compute_decapitation_strategy
 from backend.graph.ghost_rendezvous import detect_ghost_rendezvous
-from backend.nlp.stylometry import analyze_stylometry
 from backend.nlp.interrogation_engine import interrogate_suspect
 from backend.nlp.ghost_acoustic import analyze_ambient_acoustics
 from backend.graph.quantum_mole import detect_internal_leaks
@@ -14,10 +13,6 @@ from pydantic import BaseModel
 from typing import List, Optional
 
 router = APIRouter()
-
-class StylometryRequest(BaseModel):
-    case_id: Optional[str] = "dawood"
-    text: str
 
 class InterrogationRequest(BaseModel):
     case_id: Optional[str] = "dawood"
@@ -42,11 +37,6 @@ def get_decapitation(max_targets: int = 3, case_id: str = "dawood", db: Session 
 def get_ghost_rendezvous(max_time_diff_hours: int = 48, db: Session = Depends(get_db)):
     """Uncovers covert physical rendezvous between suspects with zero direct telecom/financial contact."""
     return detect_ghost_rendezvous(db, max_time_diff_hours)
-
-@router.post("/experimental/stylometry/match")
-def match_stylometry(req: StylometryRequest, db: Session = Depends(get_db)):
-    """Attributes unclassified text/SMS/chat snippets to suspects via Syntax DNA & Hinglish dialect markers."""
-    return analyze_stylometry(req.text, db)
 
 @router.post("/experimental/interrogate")
 def interrogate(req: InterrogationRequest, db: Session = Depends(get_db)):

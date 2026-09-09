@@ -19,16 +19,14 @@ Built for the **Smart India Hackathon 2026** | Problem Statement sponsored by th
 - **Person 360 Dossier** - Complete profile of any entity with all known connections, criminal history, and risk score.
 
 ### Experimental Command Center (Matrix Modules)
-A dedicated, hardware-accelerated MacOS-style dock interface housing advanced mathematical and predictive modules:
+A dedicated interface housing advanced mathematical and predictive modules:
 1. **Spectral Graph Decapitation** - Finds the minimal strike sequence to shatter cartel networks.
 2. **Physical-Exclusive Meetings** - Exposes covert physical meetups between suspects maintaining radio silence.
 3. **Optical Plate-Cloning Paradox** - Detects impossible kinematic highway velocities to flag cloned decoy vehicles.
-4. **Accused Interrogation Simulator** - AI persona mimicking suspect linguistics for mock interrogations.
-5. **Acoustic Geo-Triangulation** - Decomposes 50Hz mains power micro-drift to geolocate audio intercepts.
+4. **SOCMINT Threat Scanner** - Extracts threat levels, handles, and EXIF coordinates from intercepted social media broadcasts.
+5. **Accused Interrogation Simulator** - AI persona mimicking suspect linguistics for mock interrogations.
 6. **Criminal Dynasty History** - Hypergraph kinship mapping predicting next-gen cartel successors.
-7. **Syntax DNA Stylometry** - Linguistic fingerprinting to match anonymous manifestos to known suspects.
-8. **Internal-Leak Analyzer** - Detects corrupt insider leaks via honeytoken beacon traps.
-9. **SOCMINT Threat Scanner** - Extracts threat levels, handles, and EXIF coordinates from intercepted social media broadcasts.
+7. **Internal-Leak Analyzer** - Detects corrupt insider leaks via honeytoken beacon traps.
 
 ### UI / UX Architecture
 - **Cosmic WebGL Landing Page** - A hardware-accelerated interactive particle system (`ogl` and `framer-motion`) welcoming users into the matrix.

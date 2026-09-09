@@ -79,20 +79,12 @@ export const getGhostRendezvous = (maxHours = 48, caseId = "dawood") => {
   return client.get('/api/experimental/ghost-rendezvous', { params: { max_time_diff_hours: maxHours, case_id: caseId } }).then(res => res.data);
 };
 
-export const matchStylometry = (text, caseId = "dawood") => {
-  return client.post('/api/experimental/stylometry/match', { text, case_id: caseId }).then(res => res.data);
-};
-
 export const interrogateSuspect = (entityId, question, history = []) => {
   return client.post('/api/experimental/interrogate', { entity_id: entityId, question, history }).then(res => res.data);
 };
 
 export const getSuspectsList = (caseId = "dawood") => {
   return client.get('/api/experimental/suspects', { params: { case_id: caseId } }).then(res => res.data);
-};
-
-export const analyzeAcoustics = (audioProfileId = "intercept_call_001", caseId = "dawood") => {
-  return client.post('/api/experimental/ghost-acoustic/analyze', { audio_profile_id: audioProfileId, case_id: caseId }).then(res => res.data);
 };
 
 export const getQuantumMole = (caseId = "dawood") => {
