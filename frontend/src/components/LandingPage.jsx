@@ -59,7 +59,7 @@ export default function LandingPage({ onEnter }) {
         </div>
 
         <h2 className="text-4xl sm:text-5xl md:text-[5rem] font-extrabold tracking-tight max-w-5xl mb-12 leading-[1.1] pointer-events-auto">
-          Advanced Graph Intelligence for <br /> Organized Crime Disruption
+          Predictive Graph Analytics for <br /> Criminal Syndicate Disruption
         </h2>
 
         <div className="flex items-center gap-4 pointer-events-auto">
