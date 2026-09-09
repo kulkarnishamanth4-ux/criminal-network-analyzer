@@ -406,7 +406,6 @@ function App() {
       
       <div className="flex flex-1 overflow-hidden relative z-0">
         <LeftPanel 
-          key={activeCase}
           stats={stats} 
           dataVersion={dataVersion}
           onEntitySelect={handleNodeSelect} 
@@ -496,7 +495,6 @@ function App() {
         </main>
         
         <RightPanel 
-          key={activeCase}
           selectedEntity={selectedEntity} 
           onEntitySelect={handleNodeSelect}
           onExpandNetwork={handleExpandNetwork}
