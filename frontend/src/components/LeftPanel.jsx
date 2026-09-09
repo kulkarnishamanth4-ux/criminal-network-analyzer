@@ -256,6 +256,7 @@ function StatCard({ title, value, icon, highlight }) {
 
 export default function LeftPanel({ 
   stats, 
+  dataVersion = 0,
   onEntitySelect, 
   onCommunitySelect, 
   activeCase,
@@ -267,6 +268,7 @@ export default function LeftPanel({
   const [predictions, setPredictions] = useState(CASE_PREDICTIONS[activeCase] || []);
   const [loading, setLoading] = useState(true);
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [expandedPredIndex, setExpandedPredIndex] = useState(null);
   
   useEffect(() => {
     if (controlledCollapsed !== undefined) {
@@ -308,7 +310,7 @@ export default function LeftPanel({
       }
       setLoading(false);
     });
-  }, [activeCase]);
+  }, [activeCase, dataVersion, stats?.total_entities, stats?.total_relationships]);
 
   useEffect(() => {
     if (searchQuery.trim().length < 2) {
@@ -514,8 +516,13 @@ export default function LeftPanel({
                 const textColor = confPct >= 90 ? 'text-[#ff4757]' : confPct >= 75 ? 'text-[#ffa502]' : 'text-[var(--neon-teal)]';
                 const matchedCount = pred.indicators?.filter(x => x.matched !== false).length || pred.indicators?.length || 0;
                 
+                const isExpanded = expandedPredIndex === i;
                 return (
-                  <div key={i} className="bg-[var(--bg-primary)] p-2.5 rounded border border-[var(--border)] hover:border-[var(--text-accent)] transition-all">
+                  <div 
+                    key={i} 
+                    onClick={() => setExpandedPredIndex(isExpanded ? null : i)}
+                    className="bg-[var(--bg-primary)] p-2.5 rounded border border-[var(--border)] hover:border-[var(--text-accent)] transition-all cursor-pointer"
+                  >
                     <div className="flex justify-between items-center text-xs mb-1.5">
                       <span className="text-[var(--text-primary)] font-medium truncate pr-2" title={pred.crime_type}>
                         {pred.crime_type}
@@ -530,7 +537,26 @@ export default function LeftPanel({
                     </div>
                     <div className="text-[10px] text-[var(--text-secondary)] flex justify-between items-center">
                       <span>{matchedCount} matching indicator{matchedCount !== 1 ? 's' : ''}</span>
+                      <span className="text-[9px] text-[var(--text-accent)] font-mono">{isExpanded ? 'Hide ▲' : 'Evidence ▼'}</span>
                     </div>
+
+                    {isExpanded && pred.indicators && pred.indicators.length > 0 && (
+                      <div className="mt-2 pt-2 border-t border-[var(--border)] space-y-1.5">
+                        {pred.indicators.map((ind, idx) => (
+                          <div key={idx} className="text-[10px] flex items-start gap-1.5 leading-tight">
+                            <span className={`font-mono text-[9px] font-bold shrink-0 mt-0.5 ${ind.matched !== false ? 'text-green-400' : 'text-gray-500'}`}>
+                              {ind.matched !== false ? '[+]' : '[-]'}
+                            </span>
+                            <div className="min-w-0">
+                              <span className={`font-medium ${ind.matched !== false ? 'text-gray-200' : 'text-gray-500'}`}>
+                                {ind.name.replace(/_/g, ' ')}:
+                              </span>{' '}
+                              <span className="text-gray-400 text-[9px]">{ind.description}</span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 );
               })}

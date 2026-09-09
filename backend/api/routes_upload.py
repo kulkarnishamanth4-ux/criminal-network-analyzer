@@ -12,6 +12,24 @@ from backend.limiter import limiter
 import traceback
 import re
 import os
+from datetime import datetime
+
+def parse_iso_datetime(val):
+    if not val:
+        return None
+    if isinstance(val, datetime):
+        return val
+    val_str = str(val).strip()
+    try:
+        return datetime.fromisoformat(val_str.replace('Z', '+00:00'))
+    except Exception:
+        pass
+    for fmt in ('%Y-%m-%d %H:%M:%S', '%Y-%m-%d', '%d-%m-%Y', '%d/%m/%Y', '%Y/%m/%d %H:%M:%S'):
+        try:
+            return datetime.strptime(val_str, fmt)
+        except Exception:
+            continue
+    return None
 
 router = APIRouter()
 
@@ -137,7 +155,11 @@ async def upload_fir(
         new_relationships = []
         existing_rel_pairs = set()
 
-        def add_rel(src_id, tgt_id, rel_type, weight=1.0, props=None):
+        # Parse FIR incident/filing date for chronological timeline progression
+        fir_date_match = re.search(r'Date[:\s]+(\d{1,2}[-/]\d{1,2}[-/]\d{2,4})', text)
+        fir_ts = parse_iso_datetime(fir_date_match.group(1)) if fir_date_match else datetime.utcnow()
+
+        def add_rel(src_id, tgt_id, rel_type, weight=1.0, props=None, rel_ts=None):
             if src_id == tgt_id:
                 return
             pair = tuple(sorted((src_id, tgt_id))) + (rel_type,)
@@ -150,6 +172,7 @@ async def upload_fir(
                         rel_type=rel_type,
                         weight=weight,
                         properties=props or {"fir_id": fir.id},
+                        timestamp=rel_ts or fir_ts,
                         case_id=target_case_id
                     )
                 )
@@ -301,7 +324,8 @@ async def upload_cdr(
         for r in records:
             caller = crud.get_or_create_entity(db, "PHONE", r["caller"], case_id=target_case_id)
             receiver = crud.get_or_create_entity(db, "PHONE", r["receiver"], case_id=target_case_id)
-            new_relationships.append(crud.Relationship(source_id=caller.id, target_id=receiver.id, rel_type="CALLED", properties=r, case_id=target_case_id))
+            ts = parse_iso_datetime(r.get("timestamp"))
+            new_relationships.append(crud.Relationship(source_id=caller.id, target_id=receiver.id, rel_type="CALLED", properties=r, timestamp=ts, case_id=target_case_id))
             
         if new_relationships:
             db.add_all(new_relationships)
@@ -370,10 +394,11 @@ async def upload_financial(
             receiver_acc = crud.get_or_create_entity(db, "BANK_ACCOUNT", r["receiver_account"], case_id=target_case_id)
             sender = crud.get_or_create_entity(db, "PERSON", r.get("sender_name", "Unknown"), case_id=target_case_id)
             receiver = crud.get_or_create_entity(db, "PERSON", r.get("receiver_name", "Unknown"), case_id=target_case_id)
+            ts = parse_iso_datetime(r.get("timestamp"))
             
-            new_relationships.append(crud.Relationship(source_id=sender.id, target_id=sender_acc.id, rel_type="OWNS_ACCOUNT", case_id=target_case_id))
-            new_relationships.append(crud.Relationship(source_id=receiver.id, target_id=receiver_acc.id, rel_type="OWNS_ACCOUNT", case_id=target_case_id))
-            new_relationships.append(crud.Relationship(source_id=sender_acc.id, target_id=receiver_acc.id, rel_type="TRANSFERRED_MONEY_TO", weight=r.get("amount", 1.0), properties=r, case_id=target_case_id))
+            new_relationships.append(crud.Relationship(source_id=sender.id, target_id=sender_acc.id, rel_type="OWNS_ACCOUNT", timestamp=ts, case_id=target_case_id))
+            new_relationships.append(crud.Relationship(source_id=receiver.id, target_id=receiver_acc.id, rel_type="OWNS_ACCOUNT", timestamp=ts, case_id=target_case_id))
+            new_relationships.append(crud.Relationship(source_id=sender_acc.id, target_id=receiver_acc.id, rel_type="TRANSFERRED_MONEY_TO", weight=r.get("amount", 1.0), properties=r, timestamp=ts, case_id=target_case_id))
             
         if new_relationships:
             db.add_all(new_relationships)
@@ -440,7 +465,8 @@ async def upload_vehicle(
         for r in records:
             vehicle = crud.get_or_create_entity(db, "VEHICLE", r["plate_number"], case_id=target_case_id)
             loc = crud.get_or_create_entity(db, "LOCATION", r["location"], case_id=target_case_id)
-            new_relationships.append(crud.Relationship(source_id=vehicle.id, target_id=loc.id, rel_type="SPOTTED_AT", properties=r, case_id=target_case_id))
+            ts = parse_iso_datetime(r.get("timestamp"))
+            new_relationships.append(crud.Relationship(source_id=vehicle.id, target_id=loc.id, rel_type="SPOTTED_AT", properties=r, timestamp=ts, case_id=target_case_id))
             
         if new_relationships:
             db.add_all(new_relationships)
@@ -589,7 +615,11 @@ def load_sample_investigation(case_id: str = Query("custom_investigation"), db: 
         new_relationships = []
         existing_rel_pairs = set()
 
-        def add_rel(src_id, tgt_id, rel_type, weight=1.0, props=None):
+        # Parse FIR incident/filing date for chronological timeline progression
+        fir_date_match = re.search(r'Date[:\s]+(\d{1,2}[-/]\d{1,2}[-/]\d{2,4})', text)
+        fir_ts = parse_iso_datetime(fir_date_match.group(1)) if fir_date_match else datetime(2024, 3, 15, 10, 0, 0)
+
+        def add_rel(src_id, tgt_id, rel_type, weight=1.0, props=None, rel_ts=None):
             if src_id == tgt_id: return
             pair = tuple(sorted((src_id, tgt_id))) + (rel_type,)
             if pair not in existing_rel_pairs:
@@ -601,6 +631,7 @@ def load_sample_investigation(case_id: str = Query("custom_investigation"), db: 
                         rel_type=rel_type,
                         weight=weight,
                         properties=props or {"fir_id": fir.id},
+                        timestamp=rel_ts or fir_ts,
                         case_id=target_case_id
                     )
                 )
@@ -643,6 +674,52 @@ def load_sample_investigation(case_id: str = Query("custom_investigation"), db: 
         for l in loc_ents:
             t = resolve_target_person(l.name)
             if t: add_rel(t.id, l.id, "OPERATES_IN", weight=2.0)
+
+        # Ingest companion verified sample records (Financial, CDR, Vehicles) to provide full 360 multi-source intelligence
+        sample_dir = os.path.dirname(sample_path)
+
+        fin_path = os.path.join(sample_dir, "sample_financial_ledger.csv")
+        if os.path.exists(fin_path):
+            try:
+                with open(fin_path, "rb") as f:
+                    fin_records = parse_financial_csv(f.read())
+                for r in fin_records:
+                    sender_acc = crud.get_or_create_entity(db, "BANK_ACCOUNT", r["sender_account"], case_id=target_case_id)
+                    receiver_acc = crud.get_or_create_entity(db, "BANK_ACCOUNT", r["receiver_account"], case_id=target_case_id)
+                    sender = crud.get_or_create_entity(db, "PERSON", r.get("sender_name", "Unknown"), case_id=target_case_id)
+                    receiver = crud.get_or_create_entity(db, "PERSON", r.get("receiver_name", "Unknown"), case_id=target_case_id)
+                    ts = parse_iso_datetime(r.get("timestamp"))
+                    add_rel(sender.id, sender_acc.id, "OWNS_ACCOUNT", weight=1.0, rel_ts=ts)
+                    add_rel(receiver.id, receiver_acc.id, "OWNS_ACCOUNT", weight=1.0, rel_ts=ts)
+                    add_rel(sender_acc.id, receiver_acc.id, "TRANSFERRED_MONEY_TO", weight=r.get("amount", 1.0), props=r, rel_ts=ts)
+            except Exception as e:
+                print("Failed to load sample financial data:", e)
+
+        cdr_path = os.path.join(sample_dir, "sample_cdr_records.csv")
+        if os.path.exists(cdr_path):
+            try:
+                with open(cdr_path, "rb") as f:
+                    cdr_records = parse_cdr_csv(f.read())
+                for r in cdr_records:
+                    caller = crud.get_or_create_entity(db, "PHONE", r["caller"], case_id=target_case_id)
+                    receiver = crud.get_or_create_entity(db, "PHONE", r["receiver"], case_id=target_case_id)
+                    ts = parse_iso_datetime(r.get("timestamp"))
+                    add_rel(caller.id, receiver.id, "CALLED", weight=1.0, props=r, rel_ts=ts)
+            except Exception as e:
+                print("Failed to load sample CDR data:", e)
+
+        veh_path = os.path.join(sample_dir, "sample_vehicle_sightings.csv")
+        if os.path.exists(veh_path):
+            try:
+                with open(veh_path, "rb") as f:
+                    veh_records = parse_vehicle_csv(f.read())
+                for r in veh_records:
+                    veh = crud.get_or_create_entity(db, "VEHICLE", r["plate_number"], case_id=target_case_id)
+                    loc = crud.get_or_create_entity(db, "LOCATION", r["location"], case_id=target_case_id)
+                    ts = parse_iso_datetime(r.get("timestamp"))
+                    add_rel(veh.id, loc.id, "SPOTTED_AT", weight=1.0, props=r, rel_ts=ts)
+            except Exception as e:
+                print("Failed to load sample vehicle data:", e)
 
         db.add_all(new_relationships)
         db.commit()

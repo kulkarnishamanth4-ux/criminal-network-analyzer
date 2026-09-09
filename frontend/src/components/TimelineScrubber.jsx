@@ -39,10 +39,19 @@ export default function TimelineScrubber({
     });
 
     if (min !== Infinity && max !== -Infinity) {
+      if (min === max) {
+        min = min - 86400000;
+        max = max + 86400000;
+      }
       setMinDate(min);
       setMaxDate(max);
       setCurrentDate(max);
       onFilter(max);
+    } else {
+      setMinDate(null);
+      setMaxDate(null);
+      setCurrentDate(null);
+      onFilter(null);
     }
   }, [elements]);
 

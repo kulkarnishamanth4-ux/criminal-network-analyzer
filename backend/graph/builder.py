@@ -30,7 +30,18 @@ def build_graph_from_db(db: Session, force_rebuild: bool = False, case_id: str =
     relationships = db.query(Relationship).filter(rel_filter).all()
     for r in relationships:
         if r.source_id in case_entities and r.target_id in case_entities:
-            G.add_edge(r.source_id, r.target_id, id=r.id, rel_type=r.rel_type, weight=r.weight, properties=r.properties, timestamp=r.timestamp)
+            raw_ts = r.timestamp
+            if not raw_ts and isinstance(r.properties, dict):
+                p_ts = r.properties.get("timestamp")
+                if p_ts:
+                    try:
+                        from datetime import datetime
+                        raw_ts = datetime.fromisoformat(str(p_ts).replace('Z', '+00:00'))
+                    except Exception:
+                        raw_ts = p_ts
+            if not raw_ts:
+                raw_ts = r.created_at
+            G.add_edge(r.source_id, r.target_id, id=r.id, rel_type=r.rel_type, weight=r.weight, properties=r.properties, timestamp=raw_ts)
         
     _cached_graphs[case_id] = G
     return G
@@ -50,7 +61,7 @@ def graph_to_json(G: nx.Graph) -> dict:
     edges = []
     for source, target, data in G.edges(data=True):
         ts = data.get("timestamp")
-        ts_str = ts.isoformat() if ts else None
+        ts_str = ts.isoformat() if hasattr(ts, 'isoformat') else (str(ts) if ts else None)
         edge_id = f"edge_{data.get('id')}" if data.get('id') is not None else f"edge_{source}_{target}"
         edges.append({
             "id": edge_id, 

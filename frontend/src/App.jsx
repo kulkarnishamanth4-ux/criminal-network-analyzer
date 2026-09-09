@@ -43,6 +43,7 @@ function App() {
   const [toast, setToast] = useState(null);
 
   const [activeCase, setActiveCase] = useState('dawood');
+  const [dataVersion, setDataVersion] = useState(0);
   const [currentUser, setCurrentUser] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showAuditModal, setShowAuditModal] = useState(false);
@@ -106,6 +107,7 @@ function App() {
       
       if (graphRes) setGraphData({ nodes: graphRes.nodes || [], edges: finalEdges });
       if (statsRes) setStats(statsRes);
+      setDataVersion(v => v + 1);
     } catch (err) {
       console.error("Failed to load initial data", err);
     } finally {
@@ -434,8 +436,9 @@ function App() {
       
       <div className="flex flex-1 overflow-hidden relative z-0">
         <LeftPanel 
-          key={activeCase}
+          key={`${activeCase}_${dataVersion}`}
           stats={stats} 
+          dataVersion={dataVersion}
           onEntitySelect={handleNodeSelect} 
           onCommunitySelect={handleCommunitySelect} 
           activeCase={activeCase}
