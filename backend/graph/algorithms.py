@@ -37,7 +37,10 @@ def update_entity_metrics(db: Session, G: nx.Graph):
     bw = compute_betweenness(G)
     comm = detect_communities(G)
     
-    entities = db.query(Entity).all()
+    node_ids = [int(n) for n in G.nodes if isinstance(n, int) or (isinstance(n, str) and n.isdigit())]
+    if not node_ids:
+        return
+    entities = db.query(Entity).filter(Entity.id.in_(node_ids)).all()
     for e in entities:
         if e.id in pr:
             e.pagerank = pr[e.id]
