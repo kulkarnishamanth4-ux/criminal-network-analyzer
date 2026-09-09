@@ -178,8 +178,14 @@ export const getSuggestedSuspects = (caseId) =>
   client.get('/api/alias/suggest-suspects', { params: { case_id: caseId } }).then(res => res.data);
 
 // === AUDIT LOGS ===
-export const getAuditLogs = (limit = 50, severity = null) => 
-  client.get('/api/audit/logs', { params: { limit, severity } }).then(res => res.data);
+export const getAuditLogs = (limit = 100, severity = null, query = null) => 
+  client.get('/api/audit/logs', { params: { limit, severity, q: query } }).then(res => res.data);
+
+export const logAuditEvent = (payload) =>
+  client.post('/api/audit/log', payload).then(res => res.data).catch(err => {
+    console.warn('Silent audit log failure', err);
+    return null;
+  });
 
 export const verifyAuditIntegrity = () => 
   client.get('/api/audit/verify').then(res => res.data);

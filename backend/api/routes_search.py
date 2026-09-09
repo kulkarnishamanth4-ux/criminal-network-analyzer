@@ -25,6 +25,18 @@ def entity_to_dict(e):
 @limiter.limit("60/minute")
 def search(request: Request, q: str, type: str = None, limit: int = 20, case_id: str = None, db: Session = Depends(get_db)):
     results = crud.search_entities(db, q, type, limit, case_id)
+    try:
+        from backend.security.audit_logger import audit_logger
+        audit_logger.log_event(
+            action="INTELLIGENCE_SEARCH",
+            user=request.headers.get("X-User-Id", "OFFICER-ATS-402"),
+            resource=f"QUERY:{q}",
+            details=f"Search executed for '{q}' (Type Filter: {type or 'ALL'}, Case: {case_id or 'ALL'}) - {len(results)} matches retrieved",
+            severity="INFO",
+            ip_address=request.client.host if request.client else "127.0.0.1"
+        )
+    except Exception:
+        pass
     return {"results": [entity_to_dict(e) for e in results]}
 
 
@@ -36,6 +48,32 @@ def entity_dossier(request: Request, entity_id: int, db: Session = Depends(get_d
         return {"error": "Entity not found"}
 
     entity = data["entity"]
+    try:
+        from backend.security.audit_logger import audit_logger
+        props = entity.properties or {}
+        role = props.get("role") or props.get("classification")
+        if not role:
+            if entity.risk_score >= 0.7:
+                role = "Accused / Primary Target"
+            elif entity.entity_type == "PERSON":
+                role = "Person of Interest"
+            else:
+                role = entity.entity_type
+
+        is_victim = "victim" in str(role).lower() or props.get("status") == "Under Police Protection"
+        classification_prefix = "VICTIM" if is_victim else ("ACCUSED" if entity.risk_score >= 0.7 else entity.entity_type)
+
+        audit_logger.log_event(
+            action="ENTITY_DOSSIER_ACCESSED",
+            user=request.headers.get("X-User-Id", "OFFICER-ATS-402"),
+            resource=f"ENTITY:{entity.id}:{entity.name}",
+            details=f"Accessed 360-degree intelligence dossier for {classification_prefix} '{entity.name}' (Role: {role}, Risk: {round((entity.risk_score or 0)*100)}%, Case: {entity.case_id})",
+            severity="WARNING" if entity.risk_score >= 0.75 else "INFO",
+            ip_address=request.client.host if request.client else "127.0.0.1"
+        )
+    except Exception:
+        pass
+
     return {
         "entity": entity_to_dict(entity),
         "relationships": data.get("relationships", []),

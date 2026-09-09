@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Request
 from fastapi.responses import HTMLResponse
 from sqlalchemy.orm import Session
 from backend.database.schema import get_db
@@ -13,8 +13,20 @@ router = APIRouter()
 
 
 @router.get("/report/generate", response_class=HTMLResponse)
-def generate_report(case_id: str = "dawood", db: Session = Depends(get_db)):
+def generate_report(request: Request, case_id: str = "dawood", db: Session = Depends(get_db)):
     """Generate a printable intelligence report as HTML."""
+    try:
+        from backend.security.audit_logger import audit_logger
+        audit_logger.log_event(
+            action="INTELLIGENCE_REPORT_GENERATED",
+            user=request.headers.get("X-User-Id", "OFFICER-ATS-402"),
+            resource=f"REPORT:{case_id}",
+            details=f"Compiled official executive intelligence & court-admissible dossier report for case '{case_id}'",
+            severity="INFO",
+            ip_address=request.client.host if request.client else "127.0.0.1"
+        )
+    except Exception:
+        pass
     stats = get_dashboard_stats(db, case_id)
     influencers_data = get_top_influencers(db, 10, case_id)
     influencers = influencers_data.get("influencers", []) if isinstance(influencers_data, dict) else (influencers_data if isinstance(influencers_data, list) else [])

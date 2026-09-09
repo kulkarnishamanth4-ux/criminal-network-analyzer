@@ -8,7 +8,7 @@ import {
 import { 
   getBlockchainBlocks, mineEvidenceBlock, verifyBlockchain, 
   simulateTamperAttack, repairBlockchain, getSection65BCertificate, 
-  getCryptoFlow 
+  getCryptoFlow, logAuditEvent 
 } from '../api/client';
 
 export default function BlockchainLedgerModal({ onClose, activeCase = 'dawood' }) {
@@ -190,10 +190,25 @@ export default function BlockchainLedgerModal({ onClose, activeCase = 'dawood' }
   const toggleFreezeAccount = (accNumber) => {
     setFrozenAccounts(prev => {
       const next = new Set(prev);
-      if (next.has(accNumber)) {
-        next.delete(accNumber);
-      } else {
+      const isFreezing = !next.has(accNumber);
+      if (isFreezing) {
         next.add(accNumber);
+        logAuditEvent({
+          action: 'LEGAL_FREEZE_NOTICE_ISSUED',
+          resource: `ACCOUNT:${accNumber}`,
+          details: `Issued emergency freeze notice under Section 102 CrPC for suspected P2P mule cashout account (${accNumber})`,
+          severity: 'WARNING',
+          user: 'OFFICER-ATS-402'
+        });
+      } else {
+        next.delete(accNumber);
+        logAuditEvent({
+          action: 'LEGAL_FREEZE_REVOKED',
+          resource: `ACCOUNT:${accNumber}`,
+          details: `Revoked freeze notice for account (${accNumber}) pending additional judicial clearance`,
+          severity: 'INFO',
+          user: 'OFFICER-ATS-402'
+        });
       }
       return next;
     });

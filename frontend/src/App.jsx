@@ -15,7 +15,19 @@ import LoginScreen from './components/LoginScreen';
 import AuditLogViewer from './components/AuditLogViewer';
 import ErrorBoundary from './components/ErrorBoundary';
 import { FiShare2, FiMap, FiRotateCcw, FiFileText } from 'react-icons/fi';
-import { getFullGraph, getDashboardStats, getPredictedLinks, getShortestPath, resetInvestigation, loadSampleInvestigation } from './api/client';
+import { getFullGraph, getDashboardStats, getPredictedLinks, getShortestPath, resetInvestigation, loadSampleInvestigation, logAuditEvent } from './api/client';
+
+const CASE_NAMES = {
+  'custom_investigation': 'New Investigation (Custom Data Upload)',
+  'dawood': 'Operation Syndicate (Dawood D-Company)',
+  'drug_punjab': 'Operation Falcon: Golden Crescent Narcotics (Punjab)',
+  'ht_assam': 'Operation Rescue: Cross-Border Trafficking (Assam)',
+  'cyber_bengaluru': 'Project DarkWeb: Apex Crypto Extortion (Bengaluru)',
+  'money_gujarat': 'Operation Swarn: Diamond City Hawala (Surat)',
+  'arms_chhattisgarh': 'Operation Red Corridor: Jungle Arms (Bastar)',
+  'wildlife_kerala': 'Operation WildTusk: Ivory Poaching (Wayanad)',
+  'extortion_up': 'Operation Bahubali: Purvanchal Mafia (Gorakhpur)'
+};
 
 function App() {
   const [showApp, setShowApp] = useState(false);
@@ -106,6 +118,14 @@ function App() {
     setSelectedEntity(null);
     setHighlightPath(null);
     handleExitConnectionMode();
+    const caseTitle = CASE_NAMES[newCase] || newCase;
+    logAuditEvent({
+      action: 'CASE_SWITCHED',
+      resource: `CASE:${newCase}`,
+      details: `Officer switched active investigation workspace to '${caseTitle}'`,
+      severity: 'INFO',
+      user: currentUser?.name || currentUser?.badge || 'OFFICER-ATS-402'
+    });
   };
 
   const handleStartConnectionMode = () => {
@@ -169,7 +189,14 @@ function App() {
       if (result.found && result.path && result.path.length > 0) {
         setHighlightPath(result.path);
         const hops = result.length ?? (result.path.length - 1);
-        showToast(`✓ Traced connection: ${hops} hops between ${src.label || src.name} and ${tgt.label || tgt.name}!`, 'success');
+        showToast(`Traced connection: ${hops} hops between ${src.label || src.name} and ${tgt.label || tgt.name}`, 'success');
+        logAuditEvent({
+          action: 'CONNECTION_PATH_TRACED',
+          resource: `TRACE:${src.id}->${tgt.id}`,
+          details: `Traced ${hops}-hop criminal connection chain between '${src.label || src.name}' and '${tgt.label || tgt.name}' (Case: ${activeCase})`,
+          severity: 'INFO',
+          user: currentUser?.name || currentUser?.badge || 'OFFICER-ATS-402'
+        });
       } else {
         setHighlightPath(null);
         showToast(result.message || 'No direct connection found between selected entities', 'warning');
@@ -256,6 +283,22 @@ function App() {
 
   const handleNodeSelect = (node) => {
     setSelectedEntity(node);
+    if (!node) return;
+    const name = node.label || node.name || `Entity #${node.id}`;
+    const type = node.type || node.entity_type || 'ENTITY';
+    const props = node.properties || {};
+    const role = props.role || props.classification || '';
+    const isVictim = String(role).toLowerCase().includes('victim') || props.status === 'Under Police Protection';
+    const isAccused = (node.risk_score || 0) >= 0.7 || String(role).toLowerCase().includes('kingpin') || String(role).toLowerCase().includes('boss') || String(role).toLowerCase().includes('enforcer') || String(role).toLowerCase().includes('sharpshooter');
+    const classification = isVictim ? 'VICTIM' : (isAccused ? 'ACCUSED' : type);
+
+    logAuditEvent({
+      action: 'ENTITY_RECORD_ACCESSED',
+      resource: `ENTITY:${node.id}:${name}`,
+      details: `Officer inspected intelligence profile for ${classification} '${name}' (Role: ${role || type}, Risk: ${Math.round((node.risk_score || 0) * 100)}%, Case: ${activeCase})`,
+      severity: isAccused ? 'WARNING' : 'INFO',
+      user: currentUser?.name || currentUser?.badge || 'OFFICER-ATS-402'
+    });
   };
 
   const handleClearSelection = () => {
@@ -350,7 +393,21 @@ function App() {
   };
 
   if (!showApp) return <LandingPage onEnter={() => setShowApp(true)} />;
-  if (!isLoggedIn) return <LoginScreen onLogin={(user) => { setCurrentUser(user); setIsLoggedIn(true); }} />;
+  if (!isLoggedIn) return (
+    <LoginScreen 
+      onLogin={(user) => { 
+        setCurrentUser(user); 
+        setIsLoggedIn(true);
+        logAuditEvent({
+          action: 'OFFICER_SESSION_AUTHENTICATED',
+          resource: `USER:${user.badge || user.id || 'OFFICER'}`,
+          details: `Authorized login: ${user.name} (${user.role || 'Forensic Examiner'}, Level ${user.level || 1})`,
+          severity: 'INFO',
+          user: user.name || user.badge || 'OFFICER-ATS-402'
+        });
+      }} 
+    />
+  );
 
   return (
     <div className="flex flex-col h-screen w-screen overflow-hidden bg-[var(--bg-primary)] text-[var(--text-primary)]">
@@ -362,7 +419,17 @@ function App() {
         onCaseChange={handleCaseChange}
         currentUser={currentUser}
         onAuditClick={() => setShowAuditModal(true)}
-        onLogout={() => { setIsLoggedIn(false); setCurrentUser(null); }}
+        onLogout={() => {
+          logAuditEvent({
+            action: 'OFFICER_SESSION_LOGOUT',
+            resource: `USER:${currentUser?.badge || currentUser?.id || 'OFFICER'}`,
+            details: `Officer session terminated: ${currentUser?.name || 'Officer'}`,
+            severity: 'INFO',
+            user: currentUser?.name || currentUser?.badge || 'OFFICER-ATS-402'
+          });
+          setIsLoggedIn(false); 
+          setCurrentUser(null); 
+        }}
       />
       
       <div className="flex flex-1 overflow-hidden relative z-0">

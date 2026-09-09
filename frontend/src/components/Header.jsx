@@ -28,7 +28,7 @@ export default function Header({
   const suiteMenuRef = useRef(null);
 
   const cases = [
-    { id: 'custom_investigation', label: '🆕 New Investigation (Upload Your Data)' },
+    { id: 'custom_investigation', label: 'New Investigation (Custom Data Upload)' },
     { id: 'dawood', label: 'Operation Syndicate (Dawood D-Company)' },
     { id: 'drug_punjab', label: 'Operation Falcon: Golden Crescent Narcotics (Punjab)' },
     { id: 'ht_assam', label: 'Operation Rescue: Cross-Border Trafficking (Assam)' },
