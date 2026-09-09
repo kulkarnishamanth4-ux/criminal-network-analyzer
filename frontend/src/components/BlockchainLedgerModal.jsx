@@ -206,52 +206,52 @@ export default function BlockchainLedgerModal({ onClose, activeCase = 'dawood' }
       <div className="bg-[#0b0e14] border border-[#1e293b] w-full max-w-7xl h-[92vh] rounded-2xl flex flex-col shadow-[0_0_50px_rgba(0,0,0,0.8)] overflow-hidden text-gray-200">
         
         {/* Top Header */}
-        <div className="px-6 py-4 bg-[#0f172a] border-b border-[#1e293b] flex flex-wrap items-center justify-between gap-4">
+        <div className="px-5 py-3.5 bg-[#0d131f] border-b border-[#1e293b] flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-gradient-to-br from-emerald-500/20 to-cyan-500/20 border border-emerald-500/30 text-emerald-400">
-              <FiShield className="text-2xl" />
+            <div className="p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-400">
+              <FiShield className="text-xl" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h2 className="text-lg font-bold text-white tracking-wide">
-                  CRIMENET IMMUTABLE TRUST & CRYPTO INTELLIGENCE
+                <h2 className="text-base font-bold text-white tracking-wide">
+                  Blockchain & Crypto Intelligence
                 </h2>
-                <span className="text-[10px] uppercase font-bold tracking-widest px-2 py-0.5 rounded bg-emerald-950/80 text-emerald-400 border border-emerald-700/50">
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-950/70 text-emerald-400 border border-emerald-800/40">
                   PoA Consensus
                 </span>
-                <span className="text-[10px] uppercase font-bold tracking-widest px-2 py-0.5 rounded bg-blue-950/80 text-blue-400 border border-blue-700/50">
-                  Sec 65B IEA / Sec 63 BSA
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-blue-950/70 text-blue-400 border border-blue-800/40">
+                  Sec 65B / Sec 63
                 </span>
               </div>
-              <p className="text-xs text-gray-400 mt-0.5">
-                Tamper-Evident Evidence Ledger & Dark Web Cryptocurrency Narco-Flow De-Anonymizer
+              <p className="text-xs text-gray-400">
+                Tamper-evident chain of custody & dark web cryptocurrency tracking
               </p>
             </div>
           </div>
 
           {/* Tab Navigation */}
-          <div className="flex items-center bg-[#07090e] p-1 rounded-xl border border-[#1e293b]">
+          <div className="flex items-center bg-[#07090e] p-1 rounded-lg border border-[#1e293b]">
             <button
               onClick={() => setActiveTab('ledger')}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-all ${
+              className={`flex items-center gap-2 px-3.5 py-1.5 rounded-md text-xs font-semibold transition-all ${
                 activeTab === 'ledger'
-                  ? 'bg-emerald-500 text-black shadow-[0_0_15px_rgba(16,185,129,0.4)]'
+                  ? 'bg-emerald-500 text-black shadow-[0_0_12px_rgba(16,185,129,0.3)]'
                   : 'text-gray-400 hover:text-white'
               }`}
             >
-              <FiLink className="text-sm" />
-              Chain-of-Custody Block Ledger
+              <FiLink className="text-xs" />
+              Evidence Ledger
             </button>
             <button
               onClick={() => setActiveTab('crypto')}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-all ${
+              className={`flex items-center gap-2 px-3.5 py-1.5 rounded-md text-xs font-semibold transition-all ${
                 activeTab === 'crypto'
-                  ? 'bg-amber-500 text-black shadow-[0_0_15px_rgba(245,158,11,0.4)]'
+                  ? 'bg-amber-500 text-black shadow-[0_0_12px_rgba(245,158,11,0.3)]'
                   : 'text-gray-400 hover:text-white'
               }`}
             >
-              <span className="font-mono text-sm">₿</span>
-              Dark Web Crypto Flow Tracker
+              <FiActivity className="text-xs" />
+              Crypto Flow Tracker
             </button>
           </div>
 
@@ -262,8 +262,8 @@ export default function BlockchainLedgerModal({ onClose, activeCase = 'dawood' }
                 <button
                   onClick={handleVerify}
                   disabled={loading}
-                  className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-950/60 border border-emerald-600/40 text-emerald-300 rounded-lg text-xs font-semibold hover:bg-emerald-900/60 transition-all"
-                  title="Run SHA-256 Merkle Cryptographic Audit"
+                  className="flex items-center gap-1.5 px-3 py-1.5 bg-[#131d33] border border-[#1e293b] hover:border-emerald-500/50 text-emerald-400 rounded-lg text-xs font-medium hover:bg-[#16233f] transition-all"
+                  title="Verify SHA-256 Merkle Chain Integrity"
                 >
                   <FiRefreshCw className={`text-xs ${loading ? 'animate-spin' : ''}`} />
                   Verify Chain
@@ -273,7 +273,7 @@ export default function BlockchainLedgerModal({ onClose, activeCase = 'dawood' }
                   <button
                     onClick={handleRepairChain}
                     disabled={loading}
-                    className="flex items-center gap-1.5 px-3 py-1.5 bg-green-600 border border-green-400 text-white rounded-lg text-xs font-bold hover:bg-green-500 transition-all shadow-[0_0_15px_rgba(34,197,94,0.5)] animate-pulse"
+                    className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 border border-emerald-400 text-black font-bold rounded-lg text-xs hover:bg-emerald-500 transition-all shadow-[0_0_12px_rgba(16,185,129,0.4)]"
                   >
                     <FiShield className="text-xs" />
                     Restore Integrity
@@ -282,7 +282,7 @@ export default function BlockchainLedgerModal({ onClose, activeCase = 'dawood' }
                   <button
                     onClick={() => handleTamperSimulation(selectedBlock ? selectedBlock.index : 1)}
                     disabled={loading}
-                    className="flex items-center gap-1.5 px-3 py-1.5 bg-red-950/60 border border-red-600/40 text-red-300 rounded-lg text-xs font-semibold hover:bg-red-900/60 transition-all"
+                    className="flex items-center gap-1.5 px-3 py-1.5 bg-red-950/50 border border-red-800/40 text-red-300 rounded-lg text-xs font-medium hover:bg-red-900/50 transition-all"
                     title="Simulate adversarial byte modification on current block"
                   >
                     <FiAlertTriangle className="text-xs" />
@@ -292,19 +292,20 @@ export default function BlockchainLedgerModal({ onClose, activeCase = 'dawood' }
 
                 <button
                   onClick={() => setShowMineModal(true)}
-                  className="flex items-center gap-1.5 px-3 py-1.5 bg-cyan-950/60 border border-cyan-600/40 text-cyan-300 rounded-lg text-xs font-semibold hover:bg-cyan-900/60 transition-all"
+                  className="flex items-center gap-1.5 px-3 py-1.5 bg-cyan-950/50 border border-cyan-800/40 text-cyan-300 rounded-lg text-xs font-medium hover:bg-cyan-900/50 transition-all"
                 >
                   <FiPlusCircle className="text-xs" />
-                  Mine Evidence Block
+                  Mine Block
                 </button>
               </>
             )}
 
             <button
               onClick={onClose}
-              className="p-2 rounded-lg bg-[#1e293b]/60 text-gray-400 hover:text-white hover:bg-red-500/20 hover:border-red-500/40 border border-transparent transition-all"
+              className="p-1.5 rounded-lg bg-[#1e293b]/60 text-gray-400 hover:text-white hover:bg-red-500/20 hover:border-red-500/40 border border-transparent transition-all"
+              title="Close Modal"
             >
-              <FiX className="text-lg" />
+              <FiX className="text-base" />
             </button>
           </div>
         </div>
@@ -339,41 +340,47 @@ export default function BlockchainLedgerModal({ onClose, activeCase = 'dawood' }
               <div className="lg:w-7/12 flex flex-col gap-3 h-full overflow-hidden">
                 
                 {/* Status KPI Card */}
-                <div className={`p-4 rounded-xl border flex items-center justify-between transition-all ${
+                <div className={`p-3 rounded-xl border flex flex-wrap items-center justify-between gap-3 transition-all ${
                   isChainTampered 
-                    ? 'bg-red-950/30 border-red-500/60 shadow-[0_0_20px_rgba(239,68,68,0.2)]'
+                    ? 'bg-red-950/30 border-red-500/60 shadow-[0_0_15px_rgba(239,68,68,0.2)]'
                     : 'bg-[#0f172a]/60 border-[#1e293b]'
                 }`}>
                   <div className="flex items-center gap-3">
-                    <div className={`p-3 rounded-xl border ${
+                    <div className={`p-2 rounded-lg border ${
                       isChainTampered
                         ? 'bg-red-500/20 border-red-500 text-red-400 animate-pulse'
                         : 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400'
                     }`}>
-                      {isChainTampered ? <FiAlertOctagon className="text-2xl" /> : <FiCheckCircle className="text-2xl" />}
+                      {isChainTampered ? <FiAlertOctagon className="text-xl" /> : <FiCheckCircle className="text-xl" />}
                     </div>
                     <div>
                       <div className="flex items-center gap-2">
-                        <span className="text-xs font-mono uppercase tracking-wider text-gray-400">Chain Status:</span>
-                        <span className={`text-sm font-extrabold tracking-wider ${
+                        <span className="text-xs font-mono uppercase text-gray-400">Chain Status:</span>
+                        <span className={`text-xs font-bold tracking-wider ${
                           isChainTampered ? 'text-red-400' : 'text-emerald-400'
                         }`}>
-                          {isChainTampered ? 'CRITICAL: MERKLE ROOT INTEGRITY COMPROMISED' : '100% IMMUTABLE & VERIFIED'}
+                          {isChainTampered ? 'CRITICAL: INTEGRITY COMPROMISED' : '100% IMMUTABLE & VERIFIED'}
+                        </span>
+                        <span className="text-[11px] font-mono text-gray-500">
+                          ({blocks.length} Blocks)
                         </span>
                       </div>
-                      <p className="text-xs text-gray-400 mt-0.5">
+                      <p className="text-[11px] text-gray-400 mt-0.5">
                         {isChainTampered 
-                          ? `Corrupted Block Identified: Block #${chainStatus?.corrupted_block_index} failed SHA-256 payload seal.`
-                          : `Total Sealed Blocks: ${blocks.length} | Consensus: Proof-of-Authority (PoA) over CFSL & CBI Nodes.`
+                          ? `Corrupted block identified: Block #${chainStatus?.corrupted_block_index} failed SHA-256 payload seal.`
+                          : 'Proof-of-Authority (PoA) consensus notarized across CFSL and CBI nodes.'
                         }
                       </p>
                     </div>
                   </div>
 
-                  <div className="hidden sm:flex flex-col items-end text-xs font-mono text-gray-400">
-                    <span className="text-gray-500">Legal Standard</span>
-                    <span className="text-cyan-400 font-bold">Sec 65B Indian Evidence Act</span>
-                    <span className="text-blue-400 font-bold">Sec 63 BSA 2023</span>
+                  <div className="flex items-center gap-1.5 text-[11px] font-mono">
+                    <span className="px-2 py-0.5 rounded bg-[#0b0e14] border border-[#1e293b] text-cyan-400 font-medium">
+                      Sec 65B IEA
+                    </span>
+                    <span className="px-2 py-0.5 rounded bg-[#0b0e14] border border-[#1e293b] text-blue-400 font-medium">
+                      Sec 63 BSA 2023
+                    </span>
                   </div>
                 </div>
 
@@ -387,11 +394,11 @@ export default function BlockchainLedgerModal({ onClose, activeCase = 'dawood' }
                       </span>
                     </div>
                     <span className="text-[11px] text-gray-400 font-mono">
-                      Genesis $\to$ Current Block
+                      Chain Chronology (Oldest → Latest)
                     </span>
                   </div>
 
-                  <div className="flex-1 overflow-y-auto pr-1 space-y-2.5 custom-scrollbar">
+                  <div className="flex-1 overflow-y-auto pr-1 space-y-2 custom-scrollbar">
                     {blocks.map((block) => {
                       const isSelected = selectedBlock && selectedBlock.index === block.index;
                       const isCorrupted = chainStatus?.chain_status === 'TAMPERED' && chainStatus?.corrupted_block_index === block.index;
@@ -400,22 +407,17 @@ export default function BlockchainLedgerModal({ onClose, activeCase = 'dawood' }
                         <div
                           key={block.index}
                           onClick={() => setSelectedBlock(block)}
-                          className={`p-3 rounded-xl border transition-all cursor-pointer relative overflow-hidden ${
+                          className={`p-2.5 rounded-xl border transition-all cursor-pointer relative overflow-hidden ${
                             isCorrupted
                               ? 'bg-red-950/40 border-red-500 shadow-[0_0_15px_rgba(239,68,68,0.3)] animate-pulse'
                               : isSelected
-                              ? 'bg-[#131b2e] border-emerald-500/70 shadow-[0_0_15px_rgba(16,185,129,0.15)]'
+                              ? 'bg-[#131b2e] border-emerald-500/70 shadow-[0_0_12px_rgba(16,185,129,0.15)]'
                               : 'bg-[#0f172a]/50 border-[#1e293b] hover:border-gray-700 hover:bg-[#131d33]'
                           }`}
                         >
-                          {/* Block Link Wire Indicator */}
-                          {block.index > 0 && (
-                            <div className="absolute top-0 left-6 -translate-y-full h-2 w-0.5 bg-emerald-500/30"></div>
-                          )}
-
                           <div className="flex items-center justify-between gap-2">
-                            <div className="flex items-center gap-2">
-                              <span className={`text-xs font-mono font-bold px-2 py-0.5 rounded ${
+                            <div className="flex items-center gap-2 min-w-0">
+                              <span className={`text-xs font-mono font-bold px-1.5 py-0.5 rounded shrink-0 ${
                                 isCorrupted
                                   ? 'bg-red-500 text-black font-extrabold'
                                   : isSelected
@@ -424,17 +426,17 @@ export default function BlockchainLedgerModal({ onClose, activeCase = 'dawood' }
                               }`}>
                                 #{String(block.index).padStart(2, '0')}
                               </span>
-                              <span className="text-xs font-bold text-white truncate max-w-[180px] sm:max-w-[260px]">
+                              <span className="text-xs font-semibold text-white truncate">
                                 {block.evidence_type}
                               </span>
-                              <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-blue-950/60 border border-blue-800/40 text-blue-300">
+                              <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-blue-950/60 border border-blue-800/40 text-blue-300 shrink-0">
                                 {block.case_id.toUpperCase()}
                               </span>
                             </div>
 
-                            <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-2 shrink-0">
                               <span className="text-[10px] text-gray-400 font-mono">
-                                {block.timestamp ? new Date(block.timestamp).toLocaleTimeString() : 'N/A'}
+                                {block.timestamp ? new Date(block.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }) : 'N/A'}
                               </span>
                               {isCorrupted ? (
                                 <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-red-500 text-black">
@@ -448,18 +450,17 @@ export default function BlockchainLedgerModal({ onClose, activeCase = 'dawood' }
                             </div>
                           </div>
 
-                          <p className="text-xs text-gray-400 mt-1.5 line-clamp-1">
+                          <p className="text-xs text-gray-400 mt-1 line-clamp-1">
                             {block.payload_summary}
                           </p>
 
-                          <div className="mt-2 pt-2 border-t border-[#1e293b]/60 flex items-center justify-between text-[11px] font-mono text-gray-500">
-                            <div className="flex items-center gap-1 truncate max-w-[60%]">
-                              <span>Hash:</span>
-                              <span className="text-emerald-400/80 truncate">{block.hash}</span>
-                            </div>
-                            <div className="text-gray-400 flex items-center gap-1">
+                          <div className="mt-1.5 pt-1.5 border-t border-[#1e293b]/50 flex items-center justify-between text-[10px] font-mono text-gray-500">
+                            <div className="flex items-center gap-1 text-gray-400">
                               <span>Badge:</span>
-                              <span className="text-gray-200">{block.officer_badge}</span>
+                              <span className="text-gray-300 font-semibold">{block.officer_badge}</span>
+                            </div>
+                            <div className="truncate max-w-[50%] text-gray-500" title={block.validator_node}>
+                              {block.validator_node}
                             </div>
                           </div>
                         </div>
@@ -469,7 +470,7 @@ export default function BlockchainLedgerModal({ onClose, activeCase = 'dawood' }
                 </div>
               </div>
 
-              {/* Right Column: Selected Block Inspector & Cryptographic Verification Details */}
+              {/* Right Column: Selected Block Inspector */}
               <div className="lg:w-5/12 flex flex-col h-full bg-[#0b0e14] border border-[#1e293b] rounded-xl p-4 overflow-hidden">
                 {selectedBlock ? (
                   <div className="flex flex-col h-full overflow-y-auto pr-1 custom-scrollbar">
@@ -492,64 +493,77 @@ export default function BlockchainLedgerModal({ onClose, activeCase = 'dawood' }
 
                       <button
                         onClick={() => handleOpenCertificate(selectedBlock.index)}
-                        className="flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-black text-xs font-extrabold rounded-lg shadow-[0_0_15px_rgba(245,158,11,0.3)] transition-all"
+                        className="flex items-center gap-1.5 px-3 py-1.5 bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/40 text-cyan-300 hover:text-cyan-200 text-xs font-semibold rounded-lg transition-all shadow-[0_0_10px_rgba(6,182,212,0.15)]"
                       >
-                        <FiFileText className="text-xs" />
+                        <FiFileText className="text-xs text-cyan-400" />
                         Sec 65B Certificate
                       </button>
                     </div>
 
-                    {/* Hashes Audit Card */}
-                    <div className="mt-4 p-3 bg-[#07090e] border border-[#1e293b] rounded-xl space-y-2.5 text-xs font-mono">
-                      <div>
+                    {/* Cryptographic Verification Hashes */}
+                    <div className="mt-3 p-3 bg-[#07090e] border border-[#1e293b] rounded-xl space-y-2 text-xs font-mono">
+                      {/* Block Hash */}
+                      <div className="p-2 bg-[#0b0e14] rounded-lg border border-[#1e293b]/80">
                         <div className="flex items-center justify-between text-gray-400 mb-1">
-                          <span className="text-[11px] text-gray-400 uppercase">SHA-256 Block Header Hash</span>
+                          <span className="text-[10px] text-gray-400 uppercase font-semibold">SHA-256 Header Hash</span>
                           <button
                             onClick={() => handleCopy(selectedBlock.hash, 'block_hash')}
-                            className="text-emerald-400 hover:text-emerald-300 flex items-center gap-1"
+                            className="text-emerald-400 hover:text-emerald-300 flex items-center gap-1 text-[10px]"
+                            title="Copy SHA-256 hash"
                           >
                             {copiedHash === 'block_hash' ? <FiCheck className="text-xs" /> : <FiCopy className="text-xs" />}
-                            <span className="text-[10px]">{copiedHash === 'block_hash' ? 'Copied' : 'Copy'}</span>
+                            <span>{copiedHash === 'block_hash' ? 'Copied' : 'Copy'}</span>
                           </button>
                         </div>
-                        <div className="p-2 bg-[#0b0e14] rounded border border-[#1e293b] text-emerald-400 break-all text-[11px]">
+                        <div className="text-emerald-400 break-all text-[11px] select-all">
                           {selectedBlock.hash}
                         </div>
                       </div>
 
-                      <div>
+                      {/* Merkle Root */}
+                      <div className="p-2 bg-[#0b0e14] rounded-lg border border-[#1e293b]/80">
                         <div className="flex items-center justify-between text-gray-400 mb-1">
-                          <span className="text-[11px] text-gray-400 uppercase">Merkle Root (Payload Seal)</span>
+                          <span className="text-[10px] text-gray-400 uppercase font-semibold">Merkle Root (Payload Seal)</span>
                           <button
                             onClick={() => handleCopy(selectedBlock.merkle_root, 'merkle_root')}
-                            className="text-cyan-400 hover:text-cyan-300 flex items-center gap-1"
+                            className="text-cyan-400 hover:text-cyan-300 flex items-center gap-1 text-[10px]"
+                            title="Copy Merkle root"
                           >
                             {copiedHash === 'merkle_root' ? <FiCheck className="text-xs" /> : <FiCopy className="text-xs" />}
-                            <span className="text-[10px]">{copiedHash === 'merkle_root' ? 'Copied' : 'Copy'}</span>
+                            <span>{copiedHash === 'merkle_root' ? 'Copied' : 'Copy'}</span>
                           </button>
                         </div>
-                        <div className="p-2 bg-[#0b0e14] rounded border border-[#1e293b] text-cyan-400 break-all text-[11px]">
+                        <div className="text-cyan-400 break-all text-[11px] select-all">
                           {selectedBlock.merkle_root}
                         </div>
                       </div>
 
-                      <div>
+                      {/* Previous Block Hash */}
+                      <div className="p-2 bg-[#0b0e14] rounded-lg border border-[#1e293b]/80">
                         <div className="flex items-center justify-between text-gray-400 mb-1">
-                          <span className="text-[11px] text-gray-400 uppercase">Previous Block Hash</span>
+                          <span className="text-[10px] text-gray-400 uppercase font-semibold">Previous Block Hash</span>
+                          <button
+                            onClick={() => handleCopy(selectedBlock.previous_hash, 'prev_hash')}
+                            className="text-gray-400 hover:text-gray-300 flex items-center gap-1 text-[10px]"
+                            title="Copy previous hash"
+                          >
+                            {copiedHash === 'prev_hash' ? <FiCheck className="text-xs" /> : <FiCopy className="text-xs" />}
+                            <span>{copiedHash === 'prev_hash' ? 'Copied' : 'Copy'}</span>
+                          </button>
                         </div>
-                        <div className="p-2 bg-[#0b0e14] rounded border border-[#1e293b] text-gray-400 break-all text-[11px]">
+                        <div className="text-gray-400 break-all text-[11px] select-all">
                           {selectedBlock.previous_hash}
                         </div>
                       </div>
                     </div>
 
                     {/* Metadata Badges */}
-                    <div className="grid grid-cols-2 gap-2 mt-3">
-                      <div className="p-2.5 bg-[#07090e] border border-[#1e293b] rounded-lg">
+                    <div className="grid grid-cols-2 gap-2 mt-2.5">
+                      <div className="p-2 bg-[#07090e] border border-[#1e293b] rounded-lg">
                         <span className="text-[10px] uppercase text-gray-500 font-mono block">Investigating Officer</span>
                         <span className="text-xs font-semibold text-white">{selectedBlock.officer_badge}</span>
                       </div>
-                      <div className="p-2.5 bg-[#07090e] border border-[#1e293b] rounded-lg">
+                      <div className="p-2 bg-[#07090e] border border-[#1e293b] rounded-lg">
                         <span className="text-[10px] uppercase text-gray-500 font-mono block">Notarizing CFSL Node</span>
                         <span className="text-xs font-semibold text-emerald-400 truncate block" title={selectedBlock.validator_node}>
                           {selectedBlock.validator_node}
@@ -558,7 +572,7 @@ export default function BlockchainLedgerModal({ onClose, activeCase = 'dawood' }
                     </div>
 
                     {/* Evidence Payload Breakdown */}
-                    <div className="mt-4 flex-1 flex flex-col">
+                    <div className="mt-3 flex-1 flex flex-col min-h-0">
                       <div className="flex items-center justify-between mb-1.5">
                         <span className="text-xs font-bold uppercase tracking-wider text-gray-300">
                           Sealed Evidence Payload
@@ -567,7 +581,7 @@ export default function BlockchainLedgerModal({ onClose, activeCase = 'dawood' }
                           JSON Immutable Object
                         </span>
                       </div>
-                      <div className="p-3 bg-[#05070a] border border-[#1e293b] rounded-xl text-xs font-mono text-emerald-300/90 overflow-x-auto">
+                      <div className="p-3 bg-[#05070a] border border-[#1e293b] rounded-xl text-xs font-mono text-emerald-300/90 overflow-auto custom-scrollbar max-h-52">
                         <pre className="whitespace-pre-wrap">{JSON.stringify(selectedBlock.payload_data, null, 2)}</pre>
                       </div>
                     </div>
@@ -747,8 +761,8 @@ export default function BlockchainLedgerModal({ onClose, activeCase = 'dawood' }
                                 }`}
                               >
                                 {frozenAccounts.has(hop.mule_details.account_number)
-                                  ? '✓ Bank Account Frozen (Sec 102)'
-                                  : '🚨 Issue Bank Account Freeze Notice'}
+                                  ? 'Account Frozen (Sec 102)'
+                                  : 'Issue Bank Account Freeze Notice'}
                               </button>
                             </div>
 
