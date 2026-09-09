@@ -58,7 +58,7 @@ export default function RightPanel({
       ) : (
         <div className="pt-8">
           <AlertsFeed 
-            key={`${activeCase}_${dataVersion}`}
+            key={activeCase}
             onEntitySelect={onEntitySelect} 
             activeCase={activeCase} 
             dataVersion={dataVersion}
