@@ -197,7 +197,7 @@ def seed_dawood_case():
         anomaly_type="CIRCULAR_TRANSACTION",
         severity="CRITICAL",
         title="Cross-Border Hawala Layering Loop",
-        description="D-International Trading (Dubai) routed ₹25,000,000 to HDFC-MUM-111, which was immediately layered across 48 hours to ICICI-MUM-222, and subsequently used to fund sharpshooter accounts.",
+        description="D-International Trading (Dubai) routed ₹2,50,00,000 to HDFC-MUM-111, which was immediately layered across 48 hours to ICICI-MUM-222, and subsequently used to fund sharpshooter accounts.",
         entity_ids=[front_company.id, dubai_acc.id, mumbai_acc_1.id, mumbai_acc_2.id, shooter_acc.id]
     )
     db.add(a3)

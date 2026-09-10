@@ -2,6 +2,7 @@ import random
 from datetime import datetime, timedelta
 from sqlalchemy.orm import Session
 from backend.database.crud import get_or_create_entity, create_relationship, create_anomaly
+from backend.graph.anomaly_detector import format_inr
 
 def generate_case_data(db: Session, case_id: str, case_name: str, location_base: str, role_labels: dict, node_names: list, asset_types: dict, coords: dict):
     now = datetime.utcnow()
@@ -97,7 +98,7 @@ def generate_case_data(db: Session, case_id: str, case_name: str, location_base:
     # Create Anomalies
     anomaly_types = [
         ("BURST_CALLING", "HIGH", f"Sudden spike in encrypted VoIP calls mapped to {location_base}."),
-        ("RAPID_MONEY_FLOW", "CRITICAL", f"Hawala layer detected: {random.randint(5,15)} million INR routed through {asset_types['finance_prefix']} accounts in 12 hours."),
+        ("RAPID_MONEY_FLOW", "CRITICAL", f"Hawala layer detected: ₹{format_inr(random.randint(50, 150) * 100000)} routed through {asset_types['finance_prefix']} accounts in 12 hours."),
         ("GEO_ANOMALY", "MEDIUM", f"Co-location detected: {boss.name}'s vehicle and {lt1.name}'s burner phone pinged {locations[0].name} simultaneously."),
         ("GHOST_CONNECTOR", "HIGH", f"Undocumented mediator found relaying commands between {lt1.name} and {lt2.name}.")
     ]

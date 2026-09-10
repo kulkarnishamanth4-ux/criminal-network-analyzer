@@ -103,13 +103,41 @@ def detect_burst_calling(db: Session) -> list[dict]:
     return anomalies
 
 
+def format_inr(amount: float) -> str:
+    """Format numeric amount into Indian comma numbering system (lakhs, crores)."""
+    s = str(int(round(float(amount))))
+    if len(s) <= 3:
+        return s
+    last3 = s[-3:]
+    rest = s[:-3]
+    parts = []
+    while len(rest) > 2:
+        parts.insert(0, rest[-2:])
+        rest = rest[:-2]
+    if rest:
+        parts.insert(0, rest)
+    return ",".join(parts) + "," + last3
+
+
+def format_inr_text(text: str) -> str:
+    """Format any rupee currency amounts in a text string into Indian comma notation."""
+    if not text or not isinstance(text, str):
+        return text
+    import re
+    def repl(m):
+        raw = m.group(1).replace(",", "")
+        return "₹" + format_inr(raw)
+    return re.sub(r"₹\s*([0-9,]+)(?!\s*(?:[Ll]akh|[Cc]rore|[Cc]r\b))", repl, text)
+
+
+
 def detect_rapid_money_flow(db: Session) -> list[dict]:
-    """Flag accounts that both send and receive large amounts."""
+    """Flag accounts with rapid high-volume money movement (potential layering)."""
+    sent = db.query(Relationship).filter(
+        Relationship.rel_type == "TRANSFERRED_MONEY_TO"
+    ).all()
+
     anomalies = []
-
-    # Find accounts involved in both sending and receiving
-    sent = db.query(Relationship).filter(Relationship.rel_type == "TRANSFERRED_MONEY_TO").all()
-
     account_in = {}
     account_out = {}
     for r in sent:
@@ -135,10 +163,10 @@ def detect_rapid_money_flow(db: Session) -> list[dict]:
                 "anomaly_type": "RAPID_MONEY_FLOW",
                 "severity": severity,
                 "title": f"Money Layering: Account {ent_name}",
-                "description": f"Account received ₹{account_in[acct_id]:,.0f} and sent ₹{account_out[acct_id]:,.0f} — potential layering.",
+                "description": f"Account received ₹{format_inr(account_in[acct_id])} and sent ₹{format_inr(account_out[acct_id])} — potential layering.",
                 "evidence": [
-                    f"Total inflow: ₹{account_in[acct_id]:,.0f}",
-                    f"Total outflow: ₹{account_out[acct_id]:,.0f}"
+                    f"Total inflow: ₹{format_inr(account_in[acct_id])}",
+                    f"Total outflow: ₹{format_inr(account_out[acct_id])}"
                 ],
                 "entity_ids": [acct_id]
             })

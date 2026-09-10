@@ -31,13 +31,38 @@ const CANONICAL_MAPPINGS = [
   { pattern: /Cryptolalia/gi, replacement: 'Coded Intelligence' }
 ];
 
+/**
+ * Formats any Western-grouped currency strings (e.g. ₹1,500,000) into Indian comma notation (e.g. ₹15,00,000).
+ */
+export function formatIndianCurrencyString(text) {
+  if (!text || typeof text !== 'string') return text;
+  return text.replace(/₹\s*([\d,]+)(\.\d+)?(?!\s*(?:lakh|crore|cr|k|m|b)\b)/gi, (match, intPart, decPart) => {
+    const raw = intPart.replace(/,/g, '');
+    if (!/^\d+$/.test(raw)) return match;
+    const dec = decPart || '';
+    if (raw.length <= 3) return `₹${raw}${dec}`;
+    const last3 = raw.slice(-3);
+    let rest = raw.slice(0, -3);
+    const parts = [];
+    while (rest.length > 2) {
+      parts.unshift(rest.slice(-2));
+      rest = rest.slice(0, -2);
+    }
+    if (rest.length > 0) {
+      parts.unshift(rest);
+    }
+    return `₹${parts.join(',')},${last3}${dec}`;
+  });
+}
+
 export function normalizeAnomalyText(text) {
   if (!text || typeof text !== 'string') return text;
   let result = text;
   for (const { pattern, replacement } of CANONICAL_MAPPINGS) {
     result = result.replace(pattern, replacement);
   }
-  return result;
+  return formatIndianCurrencyString(result);
 }
 
 export default normalizeAnomalyText;
+

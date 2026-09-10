@@ -6,6 +6,7 @@ from backend.graph.algorithms import get_top_influencers, get_communities_summar
 from backend.graph.builder import build_graph_from_db
 from backend.graph.crime_predictor import predict_crime_types
 from backend.graph.link_prediction import predict_links
+from backend.graph.anomaly_detector import format_inr_text
 
 router = APIRouter()
 
@@ -22,8 +23,10 @@ def all_anomalies(case_id: str = "dawood", db: Session = Depends(get_db)):
     anomalies = get_all_anomalies(db, case_id)
     return {"anomalies": [
         {"id": a.id, "anomaly_type": a.anomaly_type, "severity": a.severity,
-         "title": a.title, "description": a.description,
-         "evidence": a.evidence or [], "entity_ids": a.entity_ids or []}
+         "title": format_inr_text(a.title),
+         "description": format_inr_text(a.description),
+         "evidence": [format_inr_text(str(e)) if isinstance(e, str) else e for e in (a.evidence or [])],
+         "entity_ids": a.entity_ids or []}
         for a in anomalies
     ]}
 
