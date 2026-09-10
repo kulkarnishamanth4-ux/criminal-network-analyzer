@@ -327,8 +327,12 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes, activ
                 {/* Tactical Units Slider */}
                 <div className="flex items-center gap-4 bg-[var(--bg-card)] p-2.5 rounded-lg border border-[var(--border)]">
                   <div className="text-right">
-                    <div className="text-[10px] text-[var(--text-secondary)] uppercase font-mono">SWAT Teams: {strikeTeams}</div>
-                    <div className="text-xs font-bold text-[var(--text-accent)]">{decapData?.syndicate_disruption_efficiency_pct || 88}% Collapse</div>
+                    <div className="text-[10px] text-[var(--text-secondary)] uppercase font-mono">
+                      {decapPhase === 'phase1' ? 'Phase 1 Impact' : decapPhase === 'phase2' ? 'Phase 2 Cumulative' : 'Phase 3 (Total)'} • SWAT: {strikeTeams}
+                    </div>
+                    <div className="text-xs font-bold text-[var(--text-accent)]">
+                      {decapData?.targets?.[decapPhase === 'phase1' ? 0 : decapPhase === 'phase2' ? 1 : 2]?.cumulative_fragmentation_pct ?? decapData?.syndicate_disruption_efficiency_pct ?? 0}% Collapse
+                    </div>
                   </div>
                   <input 
                     type="range" 
@@ -344,9 +348,24 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes, activ
               {/* 3-Phase Interactive Shockwave Stepper */}
               <div className="grid grid-cols-3 gap-2">
                 {[
-                  { id: 'phase1', label: 'Phase 1: Apex Hub Strike', sub: 'Neutralize Primary Hub Node' },
-                  { id: 'phase2', label: 'Phase 2: Edge Severance', sub: 'Fracture Command Channels' },
-                  { id: 'phase3', label: 'Phase 3: Percolation Collapse', sub: 'Isolate Singleton Clusters' }
+                  { 
+                    id: 'phase1', 
+                    label: 'Phase 1: Apex Hub Strike', 
+                    sub: 'Neutralize Primary Hub Node',
+                    pct: decapData?.targets?.[0]?.cumulative_fragmentation_pct
+                  },
+                  { 
+                    id: 'phase2', 
+                    label: 'Phase 2: Edge Severance', 
+                    sub: 'Fracture Command Channels',
+                    pct: decapData?.targets?.[1]?.cumulative_fragmentation_pct
+                  },
+                  { 
+                    id: 'phase3', 
+                    label: 'Phase 3: Percolation Collapse', 
+                    sub: 'Isolate Singleton Clusters',
+                    pct: decapData?.targets?.[2]?.cumulative_fragmentation_pct ?? decapData?.syndicate_disruption_efficiency_pct
+                  }
                 ].map((ph) => (
                   <button
                     key={ph.id}
@@ -357,7 +376,14 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes, activ
                         : 'bg-[var(--bg-primary)] border-[var(--border)] text-[var(--text-secondary)] hover:border-gray-600'
                     }`}
                   >
-                    <div className={`text-xs font-bold ${decapPhase === ph.id ? 'text-[var(--text-accent)]' : 'text-gray-300'}`}>{ph.label}</div>
+                    <div className="flex justify-between items-center">
+                      <div className={`text-xs font-bold ${decapPhase === ph.id ? 'text-[var(--text-accent)]' : 'text-gray-300'}`}>{ph.label}</div>
+                      {ph.pct !== undefined && (
+                        <span className="text-[10px] font-mono font-bold text-[var(--text-accent)] bg-[var(--text-accent)]/15 px-1.5 py-0.5 rounded border border-[var(--text-accent)]/30">
+                          {ph.pct}%
+                        </span>
+                      )}
+                    </div>
                     <div className="text-[10px] text-[var(--text-secondary)] mt-0.5">{ph.sub}</div>
                   </button>
                 ))}
@@ -372,6 +398,7 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes, activ
                       className={`bg-[var(--bg-card)] border rounded-lg p-4 relative flex flex-col justify-between transition-all ${
                         decapPhase === 'phase1' && idx === 0 ? 'border-[var(--neon-red)] shadow-[0_0_15px_rgba(255,107,107,0.3)]' :
                         decapPhase === 'phase2' && idx <= 1 ? 'border-orange-500 shadow-[0_0_12px_rgba(255,165,0,0.2)]' :
+                        decapPhase === 'phase3' ? 'border-[var(--text-accent)] shadow-[0_0_12px_rgba(100,255,218,0.25)]' :
                         'border-[var(--border)] hover:border-[var(--text-accent)]'
                       }`}
                     >
