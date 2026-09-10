@@ -13,10 +13,8 @@ import {
   getDynastyPedigree, getPlateCloningResolver,
   analyzeSocmint
 } from '../api/client';
-import Dock from './Dock';
 
 export default function ExperimentalLabsModal({ onClose, onHighlightNodes, activeCase }) {
-  const [activeCategory, setActiveCategory] = useState('tactical');
   const [activeTab, setActiveTab] = useState('decapitation');
   
   // ── States for modules ──
@@ -197,36 +195,16 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes, activ
     handleSendQuestion(q);
   };
 
-  // 7 Modules Categorized into 4 Command Tiers
-  const categories = {
-    tactical: {
-      name: ' Tactical & Kinetic Operations',
-      tabs: [
-        { id: 'decapitation', label: ' Decapitation Strike' },
-        { id: 'ghost', label: ' Physical-Exclusive Meetings' },
-        { id: 'plate_cloning', label: ' Optical Plate-Cloning' },
-        { id: 'socmint', label: ' SOCMINT Threat Scanner' }
-      ]
-    },
-    cognitive: {
-      name: ' Cognitive, Audio & Forensics',
-      tabs: [
-        { id: 'interrogate', label: ' Accused Interrogation Simulator' }
-      ]
-    },
-    wargaming: {
-      name: ' Chaos, Lineage & War-Gaming',
-      tabs: [
-        { id: 'dynasty', label: ' Criminal Dynasty History' }
-      ]
-    },
-    counterintel: {
-      name: ' Counter-Intel & Cryptography',
-      tabs: [
-        { id: 'quantum_mole', label: ' Internal-Leak Analyzer' }
-      ]
-    }
-  };
+  // 7 Standalone Experimental Modules
+  const features = [
+    { id: 'decapitation', label: 'Decapitation Strike', icon: <FiTarget size={15} /> },
+    { id: 'ghost', label: 'Physical-Exclusive Meetings', icon: <FiRadio size={15} /> },
+    { id: 'interrogate', label: 'Accused Interrogation Simulator', icon: <FiActivity size={15} /> },
+    { id: 'plate_cloning', label: 'Optical Plate-Cloning', icon: <FiTruck size={15} /> },
+    { id: 'socmint', label: 'SOCMINT Threat Scanner', icon: <FiEye size={15} /> },
+    { id: 'dynasty', label: 'Criminal Dynasty History', icon: <FiCompass size={15} /> },
+    { id: 'quantum_mole', label: 'Internal-Leak Analyzer', icon: <FiLock size={15} /> }
+  ];
 
   return (
     <div className="fixed inset-0 bg-black/85 backdrop-blur-md z-[100] flex items-center justify-center p-4">
@@ -258,52 +236,27 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes, activ
           </button>
         </div>
 
-        {/* 4 Category Level Switcher (Dock) */}
-        <div className="relative h-28 bg-[#050512] border-b border-[var(--border)] w-full flex items-end pb-4 justify-center">
-          <Dock
-            items={[
-              {
-                icon: <FiTarget size={22} />,
-                label: categories['tactical'].name,
-                onClick: () => { setActiveCategory('tactical'); setActiveTab(categories['tactical'].tabs[0].id); }
-              },
-              {
-                icon: <FiActivity size={22} />,
-                label: categories['cognitive'].name,
-                onClick: () => { setActiveCategory('cognitive'); setActiveTab(categories['cognitive'].tabs[0].id); }
-              },
-              {
-                icon: <FiCompass size={22} />,
-                label: categories['wargaming'].name,
-                onClick: () => { setActiveCategory('wargaming'); setActiveTab(categories['wargaming'].tabs[0].id); }
-              },
-              {
-                icon: <FiLock size={22} />,
-                label: categories['counterintel'].name,
-                onClick: () => { setActiveCategory('counterintel'); setActiveTab(categories['counterintel'].tabs[0].id); }
-              }
-            ]}
-            panelHeight={60}
-            baseItemSize={46}
-            magnification={65}
-          />
-        </div>
-
-        {/* Sub-Tabs under Active Category */}
-        <div className="flex overflow-x-auto border-b border-[var(--border)] bg-[var(--bg-card)] px-4 py-2 gap-2">
-          {categories[activeCategory].tabs.map(tab => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`px-3 py-1.5 text-xs font-semibold whitespace-nowrap rounded-md transition-all ${
-                activeTab === tab.id
-                  ? 'bg-[var(--text-accent)] text-[#0a0a1a] shadow-[0_0_10px_rgba(100,255,218,0.4)]'
-                  : 'text-[var(--text-secondary)] hover:bg-[var(--bg-primary)] hover:text-white'
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
+        {/* Direct 7 Features Navigation Bar */}
+        <div className="flex overflow-x-auto border-b border-[var(--border)] bg-[#050512] px-4 py-2.5 gap-2 scrollbar-thin shrink-0">
+          {features.map(feat => {
+            const isActive = activeTab === feat.id;
+            return (
+              <button
+                key={feat.id}
+                onClick={() => setActiveTab(feat.id)}
+                className={`flex items-center gap-2 px-3.5 py-2 text-xs font-semibold whitespace-nowrap rounded-lg border transition-all ${
+                  isActive
+                    ? 'bg-[var(--text-accent)] text-[#0a0a1a] border-[var(--text-accent)] shadow-[0_0_12px_rgba(100,255,218,0.35)] font-bold'
+                    : 'bg-[var(--bg-card)] border-[var(--border)] text-[var(--text-secondary)] hover:border-gray-500 hover:text-white hover:bg-[var(--bg-card-hover)]'
+                }`}
+              >
+                <span className={isActive ? 'text-[#0a0a1a]' : 'text-[var(--text-accent)]'}>
+                  {feat.icon}
+                </span>
+                <span>{feat.label}</span>
+              </button>
+            );
+          })}
         </div>
 
         {/* Main Body */}
