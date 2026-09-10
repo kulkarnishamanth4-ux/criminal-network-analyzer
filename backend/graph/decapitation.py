@@ -34,7 +34,7 @@ def compute_decapitation_strategy(db: Session, max_targets: int = 3, case_id: st
     # Filter candidates to PERSON, BANK_ACCOUNT, and ORGANIZATION entities primarily
     candidate_scores = {}
     for node_id in undirected.nodes:
-        node_type = G.nodes[node_id].get('type', 'UNKNOWN')
+        node_type = G.nodes[node_id].get('type') or G.nodes[node_id].get('entity_type', 'UNKNOWN')
         name = G.nodes[node_id].get('name', str(node_id))
         
         # Priority weights: Persons & Key Accounts have higher actionable target value

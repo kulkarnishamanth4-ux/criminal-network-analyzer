@@ -45,8 +45,14 @@ def interrogate(req: InterrogationRequest, db: Session = Depends(get_db)):
 
 @router.get("/experimental/suspects")
 def list_suspects(case_id: str = "dawood", db: Session = Depends(get_db)):
-    """Returns list of suspect entities available for interrogation and stylometric profiling."""
-    suspects = [s for s in db.query(Entity).filter(Entity.entity_type == "PERSON").all() if (s.properties or {}).get("case_id", "dawood") == case_id]
+    """Returns list of suspect entities available for interrogation and profiling."""
+    def matches_case(s, cid):
+        c = s.case_id or (s.properties or {}).get("case_id")
+        if not c and cid == "dawood":
+            return True
+        return c == cid
+
+    suspects = [s for s in db.query(Entity).filter(Entity.entity_type == "PERSON").all() if matches_case(s, case_id)]
     return {
         "suspects": [
             {"id": s.id, "name": s.name, "risk_score": s.risk_score, "pagerank": s.pagerank}

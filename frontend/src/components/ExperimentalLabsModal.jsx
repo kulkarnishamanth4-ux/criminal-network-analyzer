@@ -13,6 +13,7 @@ import {
   getDynastyPedigree, getPlateCloningResolver,
   analyzeSocmint
 } from '../api/client';
+import Dock from './Dock';
 
 export default function ExperimentalLabsModal({ onClose, onHighlightNodes, activeCase }) {
   const [activeCategory, setActiveCategory] = useState('tactical');
@@ -66,6 +67,16 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes, activ
   const [selectedSocmintStream, setSelectedSocmintStream] = useState('all');
   const [showWarrantModal, setShowWarrantModal] = useState(false);
 
+  const handleRunSocmint = async (customTxt) => {
+    const txt = customTxt || socmintInput;
+    setSocmintLoading(true);
+    try {
+      const res = await analyzeSocmint([txt], activeCase);
+      setSocmintData(res);
+    } catch (err) { console.error(err); }
+    setSocmintLoading(false);
+  };
+
   // Timeline playback loop for 4D spatiotemporal meetings
   useEffect(() => {
     let interval;
@@ -103,8 +114,6 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes, activ
     } else if (activeTab === 'ghost' && !ghostData) {
       setGhostLoading(true);
       getGhostRendezvous(48, activeCase).then(res => { setGhostData(res); setGhostLoading(false); }).catch(() => setGhostLoading(false));
-    } else if (activeTab === 'acoustic' && !acousticResult) {
-      handleRunAcoustics('intercept_call_001');
     } else if (activeTab === 'quantum_mole' && !moleResult) {
       setMoleLoading(true);
       getQuantumMole(activeCase).then(res => { setMoleResult(res); setMoleLoading(false); }).catch(() => setMoleLoading(false));
@@ -186,16 +195,6 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes, activ
       q = "INTERCEPTED TELEMETRY: In your private Telegram broadcast you stated '50 peti package will drop in Dongri tonight'. Who instructed that shipment?";
     }
     handleSendQuestion(q);
-  };
-
-  const handleRunSocmint = async (customTxt) => {
-    const txt = customTxt || socmintInput;
-    setSocmintLoading(true);
-    try {
-      const res = await analyzeSocmint([txt], activeCase);
-      setSocmintData(res);
-    } catch (err) { console.error(err); }
-    setSocmintLoading(false);
   };
 
   // 7 Modules Categorized into 4 Command Tiers

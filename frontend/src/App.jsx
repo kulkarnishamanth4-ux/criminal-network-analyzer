@@ -515,10 +515,12 @@ function App() {
       )}
 
       {showExperimentalModal && canAccess('experimental') && (
-        <ExperimentalLabsModal 
-          onClose={() => setShowExperimentalModal(false)}
-          onHighlightNodes={handleHighlightNodes} activeCase={activeCase}
-        />
+        <ErrorBoundary>
+          <ExperimentalLabsModal 
+            onClose={() => setShowExperimentalModal(false)}
+            onHighlightNodes={handleHighlightNodes} activeCase={activeCase}
+          />
+        </ErrorBoundary>
       )}
 
       {showBlockchainModal && canAccess('blockchain') && (
