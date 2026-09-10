@@ -11,7 +11,6 @@ export default function LandingPage({ onEnter }) {
     { name: "Optical Plate-Cloning Paradox", desc: "Detects impossible kinematic highway velocities to flag cloned decoy vehicles." },
     { name: "SOCMINT Threat Scanner", desc: "Extracts threat levels, handles, and EXIF coordinates from intercepted broadcasts." },
     { name: "Accused Interrogation Simulator", desc: "AI persona mimicking suspect linguistics for mock interrogations." },
-    { name: "Criminal Dynasty History", desc: "Hypergraph kinship mapping predicting next-gen cartel successors and lineages." },
     { name: "Internal-Leak Analyzer", desc: "Detects corrupt insider leaks and compromised access points via honeytoken beacon traps." }
   ];
 

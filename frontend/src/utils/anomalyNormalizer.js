@@ -26,10 +26,6 @@ const CANONICAL_MAPPINGS = [
   // Internal-Leak Analyzer
   { pattern: /Quantum Mole/gi, replacement: 'Internal-Leak Detection' },
   
-  
-  // Criminal Dynasty
-  { pattern: /Dynasty Pedigree/gi, replacement: 'Criminal Dynasty History' },
-  
   // Coded Intercepts
   { pattern: /Criminal-Slang Analysis/gi, replacement: 'Coded Intelligence Translation' },
   { pattern: /Cryptolalia/gi, replacement: 'Coded Intelligence' }

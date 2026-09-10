@@ -10,7 +10,7 @@ import {
   getDecapitation, getGhostRendezvous, 
   interrogateSuspect, getSuspectsList,
   getQuantumMole,
-  getDynastyPedigree, getPlateCloningResolver,
+  getPlateCloningResolver,
   analyzeSocmint
 } from '../api/client';
 
@@ -43,9 +43,6 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes, activ
 
   const [moleResult, setMoleResult] = useState(null);
   const [moleLoading, setMoleLoading] = useState(false);
-
-  const [dynastyResult, setDynastyResult] = useState(null);
-  const [dynastyLoading, setDynastyLoading] = useState(false);
 
   const [plateResult, setPlateResult] = useState(null);
   const [plateLoading, setPlateLoading] = useState(false);
@@ -115,9 +112,6 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes, activ
     } else if (activeTab === 'quantum_mole' && !moleResult) {
       setMoleLoading(true);
       getQuantumMole(activeCase).then(res => { setMoleResult(res); setMoleLoading(false); }).catch(() => setMoleLoading(false));
-    } else if (activeTab === 'dynasty' && !dynastyResult) {
-      setDynastyLoading(true);
-      getDynastyPedigree(activeCase).then(res => { setDynastyResult(res); setDynastyLoading(false); }).catch(() => setDynastyLoading(false));
     } else if (activeTab === 'plate_cloning') {
       setPlateLoading(true);
       getPlateCloningResolver(activeCase).then(res => { setPlateResult(res); setPlateLoading(false); }).catch(() => setPlateLoading(false));
@@ -195,14 +189,13 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes, activ
     handleSendQuestion(q);
   };
 
-  // 7 Standalone Experimental Modules
+  // 6 Standalone Experimental Modules
   const features = [
     { id: 'decapitation', label: 'Decapitation Strike', icon: <FiTarget size={15} /> },
     { id: 'ghost', label: 'Physical-Exclusive Meetings', icon: <FiRadio size={15} /> },
     { id: 'interrogate', label: 'Accused Interrogation Simulator', icon: <FiActivity size={15} /> },
     { id: 'plate_cloning', label: 'Optical Plate-Cloning', icon: <FiTruck size={15} /> },
     { id: 'socmint', label: 'SOCMINT Threat Scanner', icon: <FiEye size={15} /> },
-    { id: 'dynasty', label: 'Criminal Dynasty History', icon: <FiCompass size={15} /> },
     { id: 'quantum_mole', label: 'Internal-Leak Analyzer', icon: <FiLock size={15} /> }
   ];
 
@@ -1015,64 +1008,6 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes, activ
               )}
             </div>
           )}
-
-
-          {/* ══════════════════════════════════════════════════════════════════
-              CRIMINAL DYNASTY HISTORY
-             ══════════════════════════════════════════════════════════════════ */}
-          {activeTab === 'dynasty' && (
-            <div className="space-y-6">
-              <div className="bg-[var(--bg-primary)] p-4 rounded-lg border border-[var(--border)] flex justify-between items-start">
-                <div>
-                  <h3 className="text-sm font-bold text-[var(--neon-gold)] uppercase flex items-center gap-2"><FiShare2 /> Criminal Dynasty History & Lineage Pedigree</h3>
-                  <p className="text-xs text-[var(--text-secondary)] mt-1 max-w-2xl">
-                    Hypergraph kinship & corporate proxy mapping predicting clean-record next-generation cartel successors before they register their first police offence.
-                  </p>
-                </div>
-                <div className="text-right">
-                  <div className="text-2xl font-mono font-bold text-[var(--neon-gold)]">{dynastyResult?.average_generation_3_succession_risk_pct}%</div>
-                  <div className="text-[10px] text-[var(--text-secondary)] uppercase">Gen-3 Succession Risk</div>
-                </div>
-              </div>
-
-              {dynastyResult && (
-                <div className="space-y-4 animate-in fade-in duration-300">
-                  <div className="space-y-3">
-                    {dynastyResult.lineage_breakdown.map((gen, idx) => (
-                      <div key={idx} className="bg-[var(--bg-card)] border border-[var(--border)] rounded-lg p-4 space-y-2">
-                        <div className="text-xs font-bold uppercase tracking-wider text-[var(--text-accent)] pb-1 border-b border-[var(--border)]">
-                          {gen.generation_tier}
-                        </div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-2">
-                          {gen.members.map((m, mIdx) => (
-                            <div key={mIdx} className="p-3 bg-[var(--bg-primary)] rounded border border-[var(--border)] space-y-1 text-xs">
-                              <div className="font-bold text-sm text-white flex justify-between items-center">
-                                <span>{m.name}</span>
-                                {m.succession_probability_pct && (
-                                  <span className="text-[10px] font-mono text-[var(--neon-gold)]">{m.succession_probability_pct}% RISK</span>
-                                )}
-                              </div>
-                              <div className="text-[var(--text-secondary)]">{m.relation || m.role}</div>
-                              {m.tactical_threat && (
-                                <div className="text-[10px] text-green-400 mt-1 italic">"{m.tactical_threat}"</div>
-                              )}
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className="p-3 bg-[var(--bg-card)] border border-[var(--border)] rounded text-xs text-white">
-                    <span className="text-[var(--neon-gold)] font-bold uppercase">Succession Threat Assessment: </span>
-                    {dynastyResult.tactical_succession_assessment}
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
-
-
 
           {/* ══════════════════════════════════════════════════════════════════
               INTERNAL-LEAK ANALYZER

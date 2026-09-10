@@ -91,10 +91,6 @@ export const getQuantumMole = (caseId = "dawood") => {
   return client.get('/api/experimental/quantum-mole', { params: { case_id: caseId } }).then(res => res.data);
 };
 
-export const getDynastyPedigree = (caseId = "dawood") => {
-  return client.get('/api/experimental/dynasty-pedigree', { params: { case_id: caseId } }).then(res => res.data);
-};
-
 export const getPlateCloningResolver = (caseId = "dawood") => {
   return client.get('/api/experimental/plate-cloning-resolver', { params: { case_id: caseId } }).then(res => res.data);
 };
