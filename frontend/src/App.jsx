@@ -535,7 +535,7 @@ function App() {
       <AuditLogViewer isOpen={showAuditModal} onClose={() => setShowAuditModal(false)} />
 
       {/* Floating AI Assistant */}
-      {canAccess('chat') && <ChatBot activeCase={activeCase} />}
+      {canAccess('chat') && <ChatBot activeCase={activeCase} selectedEntity={selectedEntity} />}
 
       {/* Toast Notification */}
       {toast && (

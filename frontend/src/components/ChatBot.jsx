@@ -14,7 +14,7 @@ import {
 } from 'react-icons/fi';
 import { chatWithAgent, checkAliasMatch, getSuggestedSuspects } from '../api/client';
 
-export default function ChatBot({ activeCase }) {
+export default function ChatBot({ activeCase, selectedEntity }) {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([
     { role: 'ai', content: 'CrimeNet AI Copilot online. How can I assist with this network?' }
@@ -63,7 +63,7 @@ export default function ChatBot({ activeCase }) {
     setIsLoading(true);
 
     try {
-      const response = await chatWithAgent(userMsg, activeCase);
+      const response = await chatWithAgent(userMsg, activeCase, selectedEntity);
       setMessages(prev => [...prev, { role: 'ai', content: response.response }]);
     } catch (err) {
       setMessages(prev => [...prev, { role: 'ai', content: '[NETWORK ERROR] Failed to reach CrimeNet AI.' }]);
@@ -336,8 +336,9 @@ export default function ChatBot({ activeCase }) {
                 </div>
 
                 {formError && (
-                  <div className="text-[10px] text-rose-400 font-mono">
-                    ⚠️ {formError}
+                  <div className="text-[10px] text-rose-400 font-mono flex items-center gap-1">
+                    <FiAlertCircle size={12} className="shrink-0" />
+                    <span>{formError}</span>
                   </div>
                 )}
 
@@ -349,6 +350,23 @@ export default function ChatBot({ activeCase }) {
                   <FiZap size={13} /> Run Multi-Axis Probability Analysis
                 </button>
               </form>
+            </div>
+          )}
+
+          {/* Target in focus banner */}
+          {selectedEntity && (
+            <div className="px-3 py-1.5 bg-[#081326] border-t border-[#1e3a5f] flex items-center justify-between text-[11px] text-[#64ffda]">
+              <div className="flex items-center gap-1.5 truncate">
+                <FiTarget size={12} className="text-[#64ffda] shrink-0" />
+                <span className="truncate">Focus: <strong className="text-white">{selectedEntity.name || selectedEntity.label}</strong> ({selectedEntity.type || selectedEntity.entity_type})</span>
+              </div>
+              <button 
+                type="button"
+                onClick={() => setInput(`What is the actual reason ${selectedEntity.name || selectedEntity.label} is mentioned?`)}
+                className="text-[10px] font-mono text-[#f9ca24] hover:underline shrink-0 ml-2 font-semibold"
+              >
+                Inquire
+              </button>
             </div>
           )}
 

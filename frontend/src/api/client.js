@@ -106,11 +106,16 @@ export const analyzeSocmint = (posts, caseId = "dawood") => {
 
 
 // AI Chatbot
-export const chatWithAgent = async (message, caseId = 'dawood') => {
+export const chatWithAgent = async (message, caseId = 'dawood', selectedEntity = null) => {
+  const payload = { message, case_id: caseId };
+  if (selectedEntity) {
+    payload.selected_entity_id = selectedEntity.id;
+    payload.selected_entity_name = selectedEntity.name || selectedEntity.label;
+  }
   const response = await fetch(`${API_URL}/api/chat`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ message, case_id: caseId })
+    body: JSON.stringify(payload)
   });
   if (!response.ok) throw new Error('Chat API failed');
   return response.json();
