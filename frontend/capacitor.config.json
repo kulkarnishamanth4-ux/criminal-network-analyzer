@@ -1,0 +1,15 @@
+{
+  "appId": "in.gov.sih.crimenet",
+  "appName": "CrimeNet",
+  "webDir": "dist",
+  "bundledWebRuntime": false,
+  "server": {
+    "cleartext": true,
+    "androidScheme": "http"
+  },
+  "android": {
+    "allowMixedContent": true,
+    "captureInput": true,
+    "webContentsDebuggingEnabled": true
+  }
+}

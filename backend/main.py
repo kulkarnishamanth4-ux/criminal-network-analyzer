@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from backend.config import CORS_ORIGINS
 from backend.database.schema import init_db, get_db, SessionLocal
 from backend.database.models import Base, Entity
-from backend.api import routes_upload, routes_network, routes_analytics, routes_search, routes_report, routes_experimental, routes_chat, routes_blockchain, routes_files, routes_alias, routes_audit
+from backend.api import routes_upload, routes_network, routes_analytics, routes_search, routes_report, routes_experimental, routes_chat, routes_blockchain, routes_files, routes_alias, routes_audit, routes_voice, routes_auth
 from scripts.seed_d_company import seed_dawood_case
 from scripts.seed_other_cases import seed_additional_cases
 from backend.graph.algorithms import update_entity_metrics
@@ -36,6 +36,8 @@ app.include_router(routes_blockchain.router, prefix="/api", tags=["Blockchain"])
 app.include_router(routes_files.router, prefix="/api", tags=["Files"])
 app.include_router(routes_alias.router, prefix="/api", tags=["Alias"])
 app.include_router(routes_audit.router, prefix="/api", tags=["Audit"])
+app.include_router(routes_voice.router, prefix="/api", tags=["Voice"])
+app.include_router(routes_auth.router, prefix="/api", tags=["Auth"])
 
 import threading
 

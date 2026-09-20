@@ -14,6 +14,9 @@ import ChatBot from './components/ChatBot';
 import LoginScreen from './components/LoginScreen';
 import AuditLogViewer from './components/AuditLogViewer';
 import ErrorBoundary from './components/ErrorBoundary';
+import VoiceControlHUD from './components/VoiceControlHUD';
+import HODAuthModal from './components/HODAuthModal';
+import WatchCompanion from './components/WatchCompanion';
 import { FiShare2, FiMap } from 'react-icons/fi';
 import { getFullGraph, getDashboardStats, getPredictedLinks, getShortestPath, logAuditEvent } from './api/client';
 
@@ -47,6 +50,16 @@ function App() {
   const [currentUser, setCurrentUser] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showAuditModal, setShowAuditModal] = useState(false);
+  const [showVoiceHUD, setShowVoiceHUD] = useState(false);
+  const [showHODModal, setShowHODModal] = useState(false);
+  const [hodActionPending, setHodActionPending] = useState(null);
+  const [isWatchMode, setIsWatchMode] = useState(false);
+
+  useEffect(() => {
+    if (window.location.search.includes('watch') || window.location.search.includes('mode=watch')) {
+      setIsWatchMode(true);
+    }
+  }, []);
 
   // Panel Collapse & Layout States
   const [isLeftPanelCollapsed, setIsLeftPanelCollapsed] = useState(false);
@@ -391,6 +404,12 @@ function App() {
         onCaseChange={handleCaseChange}
         currentUser={currentUser}
         onAuditClick={() => setShowAuditModal(true)}
+        onVoiceClick={() => setShowVoiceHUD(prev => !prev)}
+        onWatchClick={() => setIsWatchMode(prev => !prev)}
+        onHODClick={() => {
+          setHodActionPending({ action: 'SUPERVISORY_ACCESS' });
+          setShowHODModal(true);
+        }}
         onLogout={() => {
           logAuditEvent({
             action: 'OFFICER_SESSION_LOGOUT',
@@ -533,6 +552,67 @@ function App() {
       )}
 
       <AuditLogViewer isOpen={showAuditModal} onClose={() => setShowAuditModal(false)} />
+
+      {/* Voice Control Tactical Copilot HUD */}
+      <VoiceControlHUD
+        isOpen={showVoiceHUD}
+        onClose={() => setShowVoiceHUD(false)}
+        activeCase={activeCase}
+        onNavigate={(dest) => {
+          if (dest === 'experimental') setShowExperimentalModal(true);
+          else if (dest === 'upload') setShowUploadModal(true);
+          else if (dest === 'blockchain') setShowBlockchainModal(true);
+          else if (dest === 'audit') setShowAuditModal(true);
+          else if (dest === 'map') setViewMode('map');
+          else if (dest === 'network') setViewMode('network');
+        }}
+        onSwitchCase={(newCase) => setActiveCase(newCase)}
+        onSelectEntity={(entityName) => {
+          const found = graphData.nodes.find(n => 
+            n.data?.name?.toLowerCase().includes(entityName.toLowerCase()) || 
+            n.data?.label?.toLowerCase().includes(entityName.toLowerCase())
+          );
+          if (found) {
+            setSelectedEntity({ id: found.data.id, name: found.data.name || found.data.label, type: found.data.type });
+            setToast({ message: `Voice Focus: ${found.data.name || found.data.label}`, type: 'success' });
+          } else {
+            setToast({ message: `Entity '${entityName}' not found in active graph`, type: 'info' });
+          }
+        }}
+        onFilterRisk={(threshold) => {
+          setToast({ message: `High-risk filter applied: >= ${(threshold * 100).toFixed(0)}%`, type: 'info' });
+        }}
+        onResetCanvas={() => {
+          setFitTrigger(prev => prev + 1);
+          setToast({ message: 'Canvas centered & reset', type: 'info' });
+        }}
+        onQueryAI={(msg) => {
+          setToast({ message: `AI Copilot Query: "${msg.slice(0, 32)}..."`, type: 'info' });
+        }}
+      />
+
+      {/* HOD Two-Factor Authorization Modal */}
+      <HODAuthModal
+        isOpen={showHODModal}
+        onClose={() => setShowHODModal(false)}
+        actionName={hodActionPending?.action || 'SUPERVISORY_ACCESS'}
+        caseId={activeCase}
+        onAuthorized={(token) => {
+          setToast({ message: 'HOD Clearance Token Verified', type: 'success' });
+          if (hodActionPending?.callback) hodActionPending.callback(token);
+          setHodActionPending(null);
+        }}
+      />
+
+      {/* Smartwatch Tactical Companion Overlay HUD */}
+      {isWatchMode && (
+        <WatchCompanion
+          activeCase={activeCase}
+          onSwitchCase={(newCase) => setActiveCase(newCase)}
+          onExitWatchMode={() => setIsWatchMode(false)}
+          onOpenVoice={() => setShowVoiceHUD(true)}
+        />
+      )}
 
       {/* Floating AI Assistant */}
       {canAccess('chat') && <ChatBot activeCase={activeCase} selectedEntity={selectedEntity} />}

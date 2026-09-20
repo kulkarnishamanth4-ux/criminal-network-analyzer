@@ -35,7 +35,7 @@ export default function UploadModal({ onClose, onSuccess, activeCase }) {
   const isProtectedCase = CANONICAL_CASES.includes(activeCase);
   const targetCase = isProtectedCase ? 'custom_investigation' : activeCase;
 
-  const [activeTab, setActiveTab] = useState('fir');
+  const [activeTab, setActiveTab] = useState('auto');
   const [isUploading, setIsUploading] = useState(false);
   const [isActionLoading, setIsActionLoading] = useState(false);
   const [deletingFileId, setDeletingFileId] = useState(null);
@@ -50,10 +50,11 @@ export default function UploadModal({ onClose, onSuccess, activeCase }) {
   const [previewError, setPreviewError] = useState(null);
 
   const tabs = [
-    { id: 'fir', label: 'FIR Docs (.txt)' },
-    { id: 'cdr', label: 'CDR Logs (.csv)' },
-    { id: 'financial', label: 'Financial (.csv)' },
-    { id: 'vehicle', label: 'Vehicle DB (.csv)' }
+    { id: 'auto', label: 'Universal Ingestion (Auto-Detect Any Format)' },
+    { id: 'fir', label: 'FIR Docs (.txt, .pdf, .docx, .md)' },
+    { id: 'cdr', label: 'CDR Logs (.csv, .xlsx)' },
+    { id: 'financial', label: 'Financial (.csv, .xlsx)' },
+    { id: 'vehicle', label: 'Vehicle DB (.csv, .xlsx)' }
   ];
 
   const loadUploadedFiles = useCallback(async () => {
@@ -478,10 +479,10 @@ export default function UploadModal({ onClose, onSuccess, activeCase }) {
                           <FiUploadCloud size={24} />
                         </div>
                         <p className="text-sm font-semibold text-white mb-1">
-                          Drop your {activeTab.toUpperCase()} file here, or <span className="text-[#64ffda] underline">browse files</span>
+                          Drop any evidence file here ({activeTab.toUpperCase()}), or <span className="text-[#64ffda] underline">browse files</span>
                         </p>
                         <p className="text-xs text-[#8892b0]">
-                          Supports .txt reports and .csv datasets up to 10MB
+                          Universal Ingestion Engine: Supports <span className="text-white font-mono">.pdf, .docx, .xlsx, .md, .txt, .csv</span> up to 10MB
                         </p>
                       </>
                     )}

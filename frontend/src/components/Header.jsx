@@ -8,7 +8,10 @@ import {
   FiLogOut, 
   FiLink, 
   FiChevronDown,
-  FiLayers
+  FiLayers,
+  FiMic,
+  FiWatch,
+  FiKey
 } from 'react-icons/fi';
 import SpecularButton from './SpecularButton';
 
@@ -20,7 +23,10 @@ export default function Header({
   onCaseChange, 
   currentUser, 
   onAuditClick, 
-  onLogout 
+  onLogout,
+  onVoiceClick,
+  onWatchClick,
+  onHODClick
 }) {
   const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
   const level = currentUser?.level || 0;
@@ -156,11 +162,44 @@ export default function Header({
                       <div className="text-[10px] text-[#8892b0]">7 AI Topology & Strike Algorithms</div>
                     </div>
                   </button>
+
+                  <button
+                    onClick={() => { if (onHODClick) onHODClick(); setSuiteMenuOpen(false); }}
+                    className="w-full flex items-start gap-3 p-2 rounded-lg hover:bg-[#13233a] text-left transition-colors group cursor-pointer"
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-red-500/10 border border-red-500/30 flex items-center justify-center text-red-400 group-hover:border-red-400 shrink-0 mt-0.5">
+                      <FiKey size={15} />
+                    </div>
+                    <div>
+                      <div className="text-xs font-semibold text-white group-hover:text-red-400">HOD 2FA Clearance</div>
+                      <div className="text-[10px] text-[#8892b0]">RFC 6238 TOTP Supervisory Portal</div>
+                    </div>
+                  </button>
                 </div>
               </div>
             )}
           </div>
         )}
+
+        {/* Voice Copilot Trigger */}
+        <button
+          onClick={onVoiceClick}
+          className="flex items-center gap-1.5 px-2.5 py-2 rounded-lg text-xs font-semibold border border-[#1e3a5f] bg-[#0d1829] text-[#64ffda] hover:border-[#64ffda] hover:bg-[#162a45] hover:shadow-[0_0_12px_rgba(100,255,218,0.25)] transition-all cursor-pointer"
+          title="Voice Control Copilot (Press Alt+V or Ctrl+Space)"
+        >
+          <FiMic size={14} className="text-[#64ffda]" />
+          <span className="hidden xl:inline">Voice Copilot</span>
+        </button>
+
+        {/* Smartwatch Tactical HUD Trigger */}
+        <button
+          onClick={onWatchClick}
+          className="flex items-center gap-1.5 px-2.5 py-2 rounded-lg text-xs font-semibold border border-[#1e3a5f] bg-[#0d1829] text-amber-300 hover:border-amber-400 hover:bg-[#162a45] hover:shadow-[0_0_12px_rgba(245,158,11,0.25)] transition-all cursor-pointer"
+          title="Smartwatch Tactical Companion HUD (/watch)"
+        >
+          <FiWatch size={14} className="text-amber-400" />
+          <span className="hidden xl:inline">Watch HUD</span>
+        </button>
 
         {/* Standalone Generate Report Button */}
         {level >= 2 && (

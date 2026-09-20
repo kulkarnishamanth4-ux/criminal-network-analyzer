@@ -214,33 +214,46 @@ async def chat_with_agent(req: ChatRequest, db: Session = Depends(get_db)):
         context_str = "Error loading database context."
         matched_entities = []
 
+    from backend.ai.local_llm import check_ollama_available, query_ollama, synthesize_offline_graph_reasoning
+
     api_key = os.environ.get("GEMINI_API_KEY")
+    system_instruction = f"""
+    You are CrimeNet AI Copilot, an advanced intelligence operative assisting law enforcement analysts.
+    You are analyzing an active criminal syndicate case.
+    
+    CASE INTELLIGENCE DATABASE CONTEXT:
+    {context_str}
+    
+    INSTRUCTIONS:
+    1. Base your answer directly on the provided case intelligence database.
+    2. When asked about a specific entity (location, person, phone, vehicle, account, social handle):
+       - Explicitly identify its entity type.
+       - Explain the specific intelligence reason it appears in the network by citing links, telemetry, and provenance.
+       - Trace the operational chain linking it to key syndicate operatives.
+    3. Never state an entity is not found if it or its connections appear anywhere in the database context.
+    4. Keep your responses tactical, direct, authoritative, and professional.
+    5. Limit responses to 2-4 sentences. Do not use emojis.
+    """
+
+    # 2. Air-Gapped / Offline Check
+    stats = get_dashboard_stats(db, req.case_id)
+    anomalies = get_all_anomalies(db, req.case_id)
+
     if not api_key:
-        # Resilient local copilot fallback based on database topology
-        local_resp = generate_local_response(cleaned_message, matched_entities, req.case_id, db)
-        return {"response": local_resp}
+        # Check if local Ollama daemon is running offline
+        if check_ollama_available(timeout=0.3):
+            ollama_ans = query_ollama(cleaned_message, system_instruction, timeout=10.0)
+            if ollama_ans:
+                return {"response": ollama_ans}
+        
+        # Local Deterministic Graph RAG Reasoning
+        offline_resp = synthesize_offline_graph_reasoning(
+            cleaned_message, context_str, matched_entities, req.case_id, stats, anomalies
+        )
+        return {"response": offline_resp}
 
     try:
         client = genai.Client()
-        
-        system_instruction = f"""
-        You are CrimeNet AI Copilot, an advanced intelligence operative assisting law enforcement analysts.
-        You are analyzing an active criminal syndicate case.
-        
-        CASE INTELLIGENCE DATABASE CONTEXT:
-        {context_str}
-        
-        INSTRUCTIONS:
-        1. Base your answer directly on the provided case intelligence database.
-        2. When asked about a specific entity (location, person, phone, vehicle, account, social handle):
-           - Explicitly identify its entity type.
-           - Explain the specific intelligence reason it appears in the network by citing the links, telemetry (e.g. geo-accuracy, platform, transaction details), and provenance.
-           - Trace the operational chain linking it to key syndicate operatives.
-        3. Never state an entity is not found if it or its connections appear anywhere in the database context.
-        4. Keep your responses tactical, direct, authoritative, and professional.
-        5. Limit responses to 2-4 sentences. Do not use emojis.
-        """
-        
         interaction = await client.aio.interactions.create(
             model="gemini-3.5-flash-lite",
             input=cleaned_message,
@@ -249,6 +262,14 @@ async def chat_with_agent(req: ChatRequest, db: Session = Depends(get_db)):
         )
         return {"response": interaction.output_text}
     except Exception as e:
-        # If Gemini call fails or times out, fall back cleanly to local graph intelligence
-        local_resp = generate_local_response(cleaned_message, matched_entities, req.case_id, db)
-        return {"response": local_resp}
+        # If Gemini call fails or times out, fall back cleanly to local offline intelligence
+        if check_ollama_available(timeout=0.3):
+            ollama_ans = query_ollama(cleaned_message, system_instruction, timeout=10.0)
+            if ollama_ans:
+                return {"response": ollama_ans}
+                
+        offline_resp = synthesize_offline_graph_reasoning(
+            cleaned_message, context_str, matched_entities, req.case_id, stats, anomalies
+        )
+        return {"response": offline_resp}
+

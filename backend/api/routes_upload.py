@@ -9,6 +9,7 @@ from backend.nlp.pipeline import extract_entities_from_text, classify_crime
 from backend.nlp.parsers import parse_cdr_csv, parse_financial_csv, parse_vehicle_csv
 from backend.main_helpers import compute_all_analytics
 from backend.limiter import limiter
+from backend.nlp.universal_converter import universal_ingest_file
 import traceback
 import re
 import os
@@ -88,13 +89,11 @@ async def upload_fir(
         target_case_id, was_redirected, notice = resolve_safe_case_id(case_id, client_ip)
 
         content = await read_and_validate_upload(file)
-        try:
-            text = content.decode("utf-8")
-        except UnicodeDecodeError:
-            text = content.decode("latin-1")
+        converted = universal_ingest_file(file.filename or "fir_document.txt", content)
+        text = converted["clean_content"]
         
         if not text.strip():
-            return JSONResponse(status_code=400, content={"status": "error", "message": "Empty file uploaded"})
+            return JSONResponse(status_code=400, content={"status": "error", "message": f"Empty or unparseable file uploaded ({file.filename})"})
         
         # Optionally wipe old dirty data for this investigation if user requested a fresh import
         if clear_existing:
@@ -315,10 +314,11 @@ async def upload_cdr(
         target_case_id, was_redirected, notice = resolve_safe_case_id(case_id, client_ip)
 
         content = await read_and_validate_upload(file)
-        records = parse_cdr_csv(content)
+        converted = universal_ingest_file(file.filename or "cdr_records.csv", content)
+        records = parse_cdr_csv(converted["clean_bytes"])
         
         if not records:
-            return JSONResponse(status_code=400, content={"status": "error", "message": "No valid CDR records found in file"})
+            return JSONResponse(status_code=400, content={"status": "error", "message": f"No valid CDR records found in {file.filename}. Expected caller/receiver headers."})
         
         new_relationships = []
         for r in records:
@@ -383,10 +383,11 @@ async def upload_financial(
         target_case_id, was_redirected, notice = resolve_safe_case_id(case_id, client_ip)
 
         content = await read_and_validate_upload(file)
-        records = parse_financial_csv(content)
+        converted = universal_ingest_file(file.filename or "financial_ledger.csv", content)
+        records = parse_financial_csv(converted["clean_bytes"])
         
         if not records:
-            return JSONResponse(status_code=400, content={"status": "error", "message": "No valid financial records found in file"})
+            return JSONResponse(status_code=400, content={"status": "error", "message": f"No valid financial records found in {file.filename}. Expected sender/receiver/amount headers."})
         
         new_relationships = []
         for r in records:
@@ -456,10 +457,11 @@ async def upload_vehicle(
         target_case_id, was_redirected, notice = resolve_safe_case_id(case_id, client_ip)
 
         content = await read_and_validate_upload(file)
-        records = parse_vehicle_csv(content)
+        converted = universal_ingest_file(file.filename or "vehicle_logs.csv", content)
+        records = parse_vehicle_csv(converted["clean_bytes"])
         
         if not records:
-            return JSONResponse(status_code=400, content={"status": "error", "message": "No valid vehicle records found in file"})
+            return JSONResponse(status_code=400, content={"status": "error", "message": f"No valid vehicle records found in {file.filename}. Expected plate_number/location headers."})
         
         new_relationships = []
         for r in records:
@@ -797,5 +799,128 @@ def restore_canonical_case(case_id: str = Query("dawood"), db: Session = Depends
     except Exception as e:
         traceback.print_exc()
         return JSONResponse(status_code=500, content={"status": "error", "message": str(e)})
+
+
+@router.post("/upload/auto")
+@limiter.limit("30/minute")
+async def upload_auto(
+    request: Request,
+    file: UploadFile = File(...),
+    case_id: str = Query("custom_investigation"),
+    clear_existing: bool = Query(False),
+    db: Session = Depends(get_db)
+):
+    """
+    Universal Ingestion Endpoint.
+    Accepts ANY file format (.pdf, .docx, .xlsx, .xls, .md, .txt, .csv),
+    automatically parses and classifies content into FIR, CDR, Banking, or Vehicle intel,
+    and constructs corresponding network entities and relationships.
+    """
+    try:
+        client_ip = request.client.host if request.client else "0.0.0.0"
+        target_case_id, was_redirected, notice = resolve_safe_case_id(case_id, client_ip)
+
+        content = await read_and_validate_upload(file)
+        converted = universal_ingest_file(file.filename or "uploaded_evidence", content)
+        dtype = converted["detected_type"]
+
+        # Delegate to appropriate ingestion flow
+        if dtype == "cdr":
+            records = parse_cdr_csv(converted["clean_bytes"])
+            if not records:
+                return JSONResponse(status_code=400, content={"status": "error", "message": f"Could not parse valid CDR records from {file.filename}"})
+            for r in records:
+                caller = crud.get_or_create_entity(db, "PHONE", r["caller"], case_id=target_case_id)
+                receiver = crud.get_or_create_entity(db, "PHONE", r["receiver"], case_id=target_case_id)
+                ts = parse_iso_datetime(r.get("timestamp"))
+                db.add(crud.Relationship(source_id=caller.id, target_id=receiver.id, rel_type="CALLED", properties=r, timestamp=ts, case_id=target_case_id))
+            db.commit()
+            count = len(records)
+        elif dtype == "financial":
+            records = parse_financial_csv(converted["clean_bytes"])
+            if not records:
+                return JSONResponse(status_code=400, content={"status": "error", "message": f"Could not parse valid financial transactions from {file.filename}"})
+            for r in records:
+                s_acc = crud.get_or_create_entity(db, "BANK_ACCOUNT", r["sender_account"], case_id=target_case_id)
+                r_acc = crud.get_or_create_entity(db, "BANK_ACCOUNT", r["receiver_account"], case_id=target_case_id)
+                sender = crud.get_or_create_entity(db, "PERSON", r.get("sender_name", "Unknown"), case_id=target_case_id)
+                receiver = crud.get_or_create_entity(db, "PERSON", r.get("receiver_name", "Unknown"), case_id=target_case_id)
+                ts = parse_iso_datetime(r.get("timestamp"))
+                db.add(crud.Relationship(source_id=sender.id, target_id=s_acc.id, rel_type="OWNS_ACCOUNT", timestamp=ts, case_id=target_case_id))
+                db.add(crud.Relationship(source_id=receiver.id, target_id=r_acc.id, rel_type="OWNS_ACCOUNT", timestamp=ts, case_id=target_case_id))
+                db.add(crud.Relationship(source_id=s_acc.id, target_id=r_acc.id, rel_type="TRANSFERRED_MONEY_TO", weight=r.get("amount", 1.0), properties=r, timestamp=ts, case_id=target_case_id))
+            db.commit()
+            count = len(records)
+        elif dtype == "vehicle":
+            records = parse_vehicle_csv(converted["clean_bytes"])
+            if not records:
+                return JSONResponse(status_code=400, content={"status": "error", "message": f"Could not parse valid vehicle sighting logs from {file.filename}"})
+            for r in records:
+                v = crud.get_or_create_entity(db, "VEHICLE", r["plate_number"], case_id=target_case_id)
+                loc = crud.get_or_create_entity(db, "LOCATION", r["location"], case_id=target_case_id)
+                ts = parse_iso_datetime(r.get("timestamp"))
+                db.add(crud.Relationship(source_id=v.id, target_id=loc.id, rel_type="SPOTTED_AT", properties=r, timestamp=ts, case_id=target_case_id))
+            db.commit()
+            count = len(records)
+        else: # Default: FIR narrative NLP extraction
+            text = converted["clean_content"]
+            if clear_existing:
+                db.query(crud.Relationship).filter(crud.Relationship.case_id == target_case_id).delete()
+                db.query(crud.Entity).filter(crud.Entity.case_id == target_case_id).delete()
+                db.query(crud.FIR).filter(crud.FIR.case_id == target_case_id).delete()
+                db.query(UploadedFile).filter(UploadedFile.case_id == target_case_id).delete()
+                db.query(crud.Anomaly).filter(crud.Anomaly.case_id == target_case_id).delete()
+                db.commit()
+            existing_ents = {e.name for e in db.query(crud.Entity).filter(crud.Entity.case_id == target_case_id).all()}
+            extracted = extract_entities_from_text(text, known_entities=existing_ents)
+            classification = classify_crime(text)
+            crud.create_fir(
+                db=db,
+                raw_text=text,
+                crime_type=classification.get('crime_type'),
+                crime_confidence=classification.get('confidence'),
+                extracted_entities=extracted,
+                case_id=target_case_id
+            )
+            for p in extracted.get("persons", []):
+                crud.get_or_create_entity(db, "PERSON", p["name"], properties={"aliases": p.get("aliases", [])}, case_id=target_case_id)
+            for l in extracted.get("locations", []):
+                crud.get_or_create_entity(db, "LOCATION", l["name"], case_id=target_case_id)
+            for ph in extracted.get("phones", []):
+                crud.get_or_create_entity(db, "PHONE", ph["name"], case_id=target_case_id)
+            for v in extracted.get("vehicles", []):
+                crud.get_or_create_entity(db, "VEHICLE", v["name"], case_id=target_case_id)
+            for o in extracted.get("organizations", []):
+                crud.get_or_create_entity(db, "ORGANIZATION", o["name"], case_id=target_case_id)
+            db.commit()
+            count = sum(len(v) for v in extracted.values())
+
+        compute_all_analytics(db, case_id=target_case_id)
+
+        # Record upload in audit ledger
+        audit_logger.log_event(
+            action="UNIVERSAL_FILE_INGESTED",
+            user="operator",
+            resource=f"{dtype}/{file.filename}",
+            details=f"Format: {converted['converted_format'].upper()} -> Classified: {dtype.upper()} | {count} records/entities",
+            severity="INFO"
+        )
+
+        return {
+            "status": "success",
+            "message": notice or f"Successfully ingested {file.filename} as {dtype.upper()} ({count} records processed).",
+            "detected_type": dtype,
+            "original_filename": file.filename,
+            "converted_format": converted["converted_format"],
+            "target_case": target_case_id,
+            "was_redirected": was_redirected,
+            "records_processed": count
+        }
+    except ValueError as val_err:
+        return JSONResponse(status_code=413, content={"status": "error", "message": str(val_err)})
+    except Exception as e:
+        traceback.print_exc()
+        return JSONResponse(status_code=500, content={"status": "error", "message": f"Universal ingestion failed: {str(e)}"})
+
 
 
