@@ -17,6 +17,7 @@ import ErrorBoundary from './components/ErrorBoundary';
 import VoiceControlHUD from './components/VoiceControlHUD';
 import HODAuthModal from './components/HODAuthModal';
 import WatchCompanion from './components/WatchCompanion';
+import APKDownloadModal from './components/APKDownloadModal';
 import { FiShare2, FiMap } from 'react-icons/fi';
 import { getFullGraph, getDashboardStats, getPredictedLinks, getShortestPath, logAuditEvent } from './api/client';
 
@@ -54,6 +55,7 @@ function App() {
   const [showHODModal, setShowHODModal] = useState(false);
   const [hodActionPending, setHodActionPending] = useState(null);
   const [isWatchMode, setIsWatchMode] = useState(false);
+  const [showAPKModal, setShowAPKModal] = useState(false);
 
   useEffect(() => {
     if (window.location.search.includes('watch') || window.location.search.includes('mode=watch')) {
@@ -379,19 +381,26 @@ function App() {
 
   if (!showApp) return <LandingPage onEnter={() => setShowApp(true)} />;
   if (!isLoggedIn) return (
-    <LoginScreen 
-      onLogin={(user) => { 
-        setCurrentUser(user); 
-        setIsLoggedIn(true);
-        logAuditEvent({
-          action: 'OFFICER_SESSION_AUTHENTICATED',
-          resource: `USER:${user.badge || user.id || 'OFFICER'}`,
-          details: `Authorized login: ${user.name} (${user.role || 'Forensic Examiner'}, Level ${user.level || 1})`,
-          severity: 'INFO',
-          user: user.name || user.badge || 'OFFICER-ATS-402'
-        });
-      }} 
-    />
+    <>
+      <LoginScreen 
+        onLogin={(user) => { 
+          setCurrentUser(user); 
+          setIsLoggedIn(true);
+          logAuditEvent({
+            action: 'OFFICER_SESSION_AUTHENTICATED',
+            resource: `USER:${user.badge || user.id || 'OFFICER'}`,
+            details: `Authorized login: ${user.name || user.displayName} (${user.role || 'Forensic Examiner'}, Level ${user.level || 1})`,
+            severity: 'INFO',
+            user: user.name || user.displayName || user.badge || 'OFFICER-ATS-402'
+          });
+        }}
+        onDownloadApkClick={() => setShowAPKModal(true)}
+      />
+      <APKDownloadModal
+        isOpen={showAPKModal}
+        onClose={() => setShowAPKModal(false)}
+      />
+    </>
   );
 
   return (
@@ -410,6 +419,7 @@ function App() {
           setHodActionPending({ action: 'SUPERVISORY_ACCESS' });
           setShowHODModal(true);
         }}
+        onAPKClick={() => setShowAPKModal(true)}
         onLogout={() => {
           logAuditEvent({
             action: 'OFFICER_SESSION_LOGOUT',
@@ -613,6 +623,12 @@ function App() {
           onOpenVoice={() => setShowVoiceHUD(true)}
         />
       )}
+
+      {/* Android APK & Offline Field App Download Modal */}
+      <APKDownloadModal
+        isOpen={showAPKModal}
+        onClose={() => setShowAPKModal(false)}
+      />
 
       {/* Floating AI Assistant */}
       {canAccess('chat') && <ChatBot activeCase={activeCase} selectedEntity={selectedEntity} />}

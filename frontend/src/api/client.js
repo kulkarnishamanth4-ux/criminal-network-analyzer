@@ -186,3 +186,19 @@ export const verifyAuditIntegrity = () =>
 export const exportAuditReport = () => 
   client.get('/api/audit/export').then(res => res.data);
 
+// === HOD & SMS AUTHENTICATION ===
+export const getHodSetup = () =>
+  client.get('/api/auth/hod/setup').then(res => res.data);
+
+export const verifyHodOtp = (otp, action = 'SENSITIVE_OPERATION', caseId = 'dawood', operator = 'OFFICER-ATS-402') =>
+  client.post('/api/auth/hod/verify', { otp, action, case_id: caseId, operator }).then(res => res.data);
+
+export const sendSmsOtp = (phone, rank = 'INVESTIGATOR', officerName = 'Officer') =>
+  client.post('/api/auth/sms/send-otp', { phone, rank, officer_name: officerName }).then(res => res.data);
+
+export const verifySmsOtp = (phone, otp, rank = 'INVESTIGATOR', officerName = 'Officer') =>
+  client.post('/api/auth/sms/verify-otp', { phone, otp, rank, officer_name: officerName }).then(res => res.data);
+
+export { client, API_URL };
+
+

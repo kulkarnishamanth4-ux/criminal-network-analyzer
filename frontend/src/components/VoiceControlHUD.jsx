@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { FiMic, FiMicOff, FiVolume2, FiVolumeX, FiRadio, FiTerminal, FiX } from 'react-icons/fi';
-import axios from 'axios';
+import { client } from '../api/client';
 
 export default function VoiceControlHUD({
   activeCase,
@@ -115,7 +115,7 @@ export default function VoiceControlHUD({
 
     setIsProcessing(true);
     try {
-      const res = await axios.post('/api/voice/command', {
+      const res = await client.post('/api/voice/command', {
         transcript: cmd,
         case_id: activeCase
       });

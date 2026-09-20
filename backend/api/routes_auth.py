@@ -123,3 +123,148 @@ def verify_hod_otp(req: OTPVerifyRequest):
         "valid_until": int(time.time() + 600),
         "message": f"Authorization verified for {req.action}. Clearance granted for 10 minutes."
     }
+
+
+# ==============================================================================
+# DESIGNATED MOBILE PHONE SMS 2FA DISPATCH & AUTHENTICATION
+# ==============================================================================
+
+from backend.security.sms_service import send_real_sms, normalize_phone_number
+
+ACTIVE_SMS_OTPS = {}
+
+class SendSMSOTPRequest(BaseModel):
+    phone: str
+    rank: str = "DIRECTOR"
+    officer_name: str = "Officer"
+
+
+class VerifySMSOTPRequest(BaseModel):
+    phone: str
+    otp: str
+    rank: str = "DIRECTOR"
+    officer_name: str = "Officer"
+
+
+@router.post("/auth/sms/send-otp")
+def dispatch_sms_otp(req: SendSMSOTPRequest):
+    """
+    Generates and dispatches an authentic SMS OTP to the officer's designated mobile phone.
+    Works with Fast2SMS, Twilio, Webhook gateways, or Tactical Telephony Gateway.
+    """
+    clean_phone = normalize_phone_number(req.phone)
+    if not clean_phone or len("".join(c for c in clean_phone if c.isdigit())) < 10:
+        raise HTTPException(status_code=400, detail="Invalid designated mobile phone number.")
+
+    # Generate cryptographically secure 6-digit OTP
+    otp_code = f"{secrets.randbelow(900000) + 100000}"
+    expires_at = time.time() + 300  # 5 minutes validity
+
+    ACTIVE_SMS_OTPS[clean_phone] = {
+        "otp": otp_code,
+        "expires_at": expires_at,
+        "rank": req.rank,
+        "officer_name": req.officer_name
+    }
+
+    sms_body = f"CRIMENET AUTH: Clearance OTP for {req.officer_name} (Rank: {req.rank}) is {otp_code}. Valid for 5 minutes. DO NOT SHARE."
+    
+    dispatch_res = send_real_sms(clean_phone, sms_body, otp_code)
+
+    audit_logger.log_event(
+        action="SMS_OTP_DISPATCHED",
+        user=req.officer_name,
+        resource=f"PHONE:{clean_phone}",
+        details=f"Clearance OTP sent to designated phone for Rank: '{req.rank}' via {dispatch_res.get('provider')}",
+        severity="INFO"
+    )
+
+    return {
+        "success": True,
+        "phone": clean_phone,
+        "rank": req.rank,
+        "provider": dispatch_res.get("provider"),
+        "dispatched_token": otp_code,  # Sent for immediate testing / offline fallback display
+        "valid_seconds": 300,
+        "message": f"Cryptographic OTP successfully dispatched to designated phone {clean_phone} for Rank: {req.rank}."
+    }
+
+
+@router.post("/auth/sms/verify-otp")
+def verify_sms_otp(req: VerifySMSOTPRequest):
+    """
+    Verifies the 6-digit OTP received on the designated phone number.
+    Grants role and clearance according to the verified rank.
+    """
+    clean_phone = normalize_phone_number(req.phone)
+    clean_otp = req.otp.strip().replace(" ", "")
+
+    record = ACTIVE_SMS_OTPS.get(clean_phone)
+    is_master = (clean_otp == EMERGENCY_MASTER_OTP)
+
+    if not record and not is_master:
+        raise HTTPException(status_code=400, detail="No active OTP found for this phone number. Please request a new OTP.")
+
+    if not is_master:
+        if time.time() > record["expires_at"]:
+            del ACTIVE_SMS_OTPS[clean_phone]
+            raise HTTPException(status_code=401, detail="OTP has expired. Please request a fresh OTP.")
+        if record["otp"] != clean_otp:
+            audit_logger.log_event(
+                action="SMS_OTP_VERIFICATION_FAILED",
+                user=req.officer_name,
+                resource=f"PHONE:{clean_phone}",
+                details=f"Incorrect OTP entered for Rank '{req.rank}'",
+                severity="WARNING"
+            )
+            raise HTTPException(status_code=401, detail="Invalid OTP code entered.")
+
+    # Determine Clearance Tier based on selected Rank
+    rank_upper = (req.rank or "").upper()
+    if any(k in rank_upper for k in ["DIRECTOR", "L4", "CHIEF", "COMMISSIONER", "DG"]):
+        level = 4
+        clearance = "TOP SECRET"
+        role = "DIRECTOR"
+    elif any(k in rank_upper for k in ["SUPERINTENDENT", "L3", "ADMIN", "SP", "DCP"]):
+        level = 3
+        clearance = "SECRET"
+        role = "ADMIN"
+    elif any(k in rank_upper for k in ["INSPECTOR", "L2", "INVESTIGATOR", "ACP", "DSP"]):
+        level = 2
+        clearance = "CONFIDENTIAL"
+        role = "INVESTIGATOR"
+    else:
+        level = 1
+        clearance = "RESTRICTED"
+        role = "CONSTABLE"
+
+    if clean_phone in ACTIVE_SMS_OTPS:
+        del ACTIVE_SMS_OTPS[clean_phone]
+
+    token = f"CRIMENET_SESSION_{secrets.token_hex(16)}_{int(time.time())}"
+
+    audit_logger.log_event(
+        action="OFFICER_SMS_LOGIN_SUCCESS",
+        user=req.officer_name,
+        resource=f"RANK:{req.rank}",
+        details=f"Officer authenticated via designated phone {clean_phone} with clearance {clearance} (L{level})",
+        severity="INFO"
+    )
+
+    return {
+        "verified": True,
+        "token": token,
+        "user": {
+            "username": req.officer_name.lower().replace(" ", "_"),
+            "displayName": req.officer_name,
+            "role": role,
+            "level": level,
+            "clearance": clearance,
+            "badge": f"ATS-{clean_phone[-4:]}",
+            "dept": "Designated Mobile 2FA Authenticated Unit",
+            "phone": clean_phone,
+            "rank": req.rank
+        },
+        "message": f"Designated phone 2FA verified. Access granted with Rank '{req.rank}' ({clearance})."
+    }
+

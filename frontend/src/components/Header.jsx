@@ -11,7 +11,8 @@ import {
   FiLayers,
   FiMic,
   FiWatch,
-  FiKey
+  FiKey,
+  FiDownloadCloud
 } from 'react-icons/fi';
 import SpecularButton from './SpecularButton';
 
@@ -26,7 +27,8 @@ export default function Header({
   onLogout,
   onVoiceClick,
   onWatchClick,
-  onHODClick
+  onHODClick,
+  onAPKClick
 }) {
   const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
   const level = currentUser?.level || 0;
@@ -199,6 +201,16 @@ export default function Header({
         >
           <FiWatch size={14} className="text-amber-400" />
           <span className="hidden xl:inline">Watch HUD</span>
+        </button>
+
+        {/* Download APK / Offline Field App */}
+        <button
+          onClick={onAPKClick}
+          className="flex items-center gap-1.5 px-2.5 py-2 rounded-lg text-xs font-semibold border border-[#1e3a5f] bg-[#0d1829] text-blue-300 hover:border-blue-400 hover:bg-[#162a45] hover:shadow-[0_0_12px_rgba(96,165,250,0.25)] transition-all cursor-pointer"
+          title="Download Android APK / Install Offline Field App"
+        >
+          <FiDownloadCloud size={14} className="text-blue-400" />
+          <span className="hidden xl:inline">Download APK</span>
         </button>
 
         {/* Standalone Generate Report Button */}

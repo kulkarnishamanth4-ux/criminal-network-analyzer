@@ -84,3 +84,29 @@ async def clear_all_uploaded_files(request: Request, case_id: str, db: Session =
         pass
         
     return {"status": "success", "message": f"Cleared {deleted_count} files from case '{case_id}'", "count": deleted_count}
+
+
+from fastapi.responses import FileResponse
+import os
+
+@router.get("/download/apk")
+def download_android_apk():
+    """
+    Serves the compiled offline Android APK package directly to users or field operatives.
+    """
+    possible_paths = [
+        os.path.join(os.path.dirname(__file__), "..", "data", "apk", "CrimeNet-Field-Command-v2.6.apk"),
+        os.path.join(os.path.dirname(__file__), "..", "..", "frontend", "dist", "CrimeNet-Field-Command-v2.6.apk"),
+        os.path.join(os.path.dirname(__file__), "..", "..", "frontend", "public", "CrimeNet-Field-Command-v2.6.apk")
+    ]
+    
+    for p in possible_paths:
+        if os.path.exists(p):
+            return FileResponse(
+                path=os.path.abspath(p),
+                filename="CrimeNet-Field-Command-v2.6.apk",
+                media_type="application/vnd.android.package-archive"
+            )
+            
+    raise HTTPException(status_code=404, detail="APK distribution file not found on server.")
+
