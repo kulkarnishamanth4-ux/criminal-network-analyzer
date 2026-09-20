@@ -569,10 +569,16 @@ function App() {
         onClose={() => setShowVoiceHUD(false)}
         activeCase={activeCase}
         onNavigate={(dest) => {
-          if (dest === 'experimental') setShowExperimentalModal(true);
-          else if (dest === 'upload') setShowUploadModal(true);
-          else if (dest === 'blockchain') setShowBlockchainModal(true);
-          else if (dest === 'audit') setShowAuditModal(true);
+          if (dest === 'experimental' || dest === 'experimental_labs') setShowExperimentalModal(true);
+          else if (dest === 'upload' || dest === 'data_ingestion') setShowUploadModal(true);
+          else if (dest === 'blockchain' || dest === 'blockchain_ledger') setShowBlockchainModal(true);
+          else if (dest === 'audit' || dest === 'audit_logs') setShowAuditModal(true);
+          else if (dest === 'hod' || dest === 'hod_auth') {
+            setHodActionPending({ action: 'SUPERVISORY_ACCESS' });
+            setShowHODModal(true);
+          }
+          else if (dest === 'apk' || dest === 'download_apk') setShowAPKModal(true);
+          else if (dest === 'watch' || dest === 'watch_hud') setIsWatchMode(true);
           else if (dest === 'map') setViewMode('map');
           else if (dest === 'network') setViewMode('network');
         }}
