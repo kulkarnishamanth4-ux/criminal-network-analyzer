@@ -75,9 +75,6 @@ export default function VoiceControlHUD({
     if (t.includes('apk') || t.includes('download') || t.includes('android')) {
       return { action: 'NAVIGATE', payload: { modal: 'apk' }, spoken_reply: 'Opening Standalone Android APK Package Manager.' };
     }
-    if (t.includes('watch') || t.includes('hud')) {
-      return { action: 'NAVIGATE', payload: { modal: 'watch' }, spoken_reply: 'Launching Smartwatch Tactical Companion HUD.' };
-    }
     if (t.includes('map') || t.includes('geospatial')) {
       return { action: 'NAVIGATE', payload: { view: 'map' }, spoken_reply: 'Switching to Geospatial Threat Map.' };
     }

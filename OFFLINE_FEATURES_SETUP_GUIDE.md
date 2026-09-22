@@ -85,29 +85,7 @@ This document details the configuration, architecture, and step-by-step demonstr
 
 ---
 
-## 5. Smartwatch Tactical Companion HUD (/watch)
-
-### Architecture
-- **Tactical Micro-HUD**: Located at [`frontend/src/components/WatchCompanion.jsx`](file:///c:/Users/girig/OneDrive/Desktop/SIH/frontend/src/components/WatchCompanion.jsx). Designed for ultra-compact 360x360 to 454x454 viewports (Wear OS, Apple Watch, Samsung Galaxy Watch, Garmin Tactix).
-- **Bezel Simulation**: Features an interactive circular and square hardware bezel simulator right in the browser for testing and demonstration.
-- **Features Included**:
-  - Live military time and air-gapped status indicator.
-  - Case quick switcher.
-  - Live Threat Ticker (pulsing CRITICAL anomalies).
-  - Target Suspect Quick Bios (centrality scores and roles).
-  - 1-Tap Field HOD Authorization trigger.
-  - Voice Command trigger button.
-
-### How to Access & Test
-- **Method A (Header Button)**: Click the **Watch HUD** button in the top navigation bar.
-- **Method B (URL Parameter)**: Open `http://localhost:5173/?mode=watch` in any browser.
-- Toggle between **Circular Bezel** (Wear OS) and **Square Bezel** using the button at the top of the watch display.
-- Tap **ALERTS**, **TARGETS**, or **HOD KEY** tabs on the watch screen.
-- Click **Exit Watch HUD** to return to the full desktop command canvas.
-
----
-
-## 6. PWA & Android APK Packaging
+## 5. PWA & Android APK Packaging
 
 ### Architecture
 - **Web App Manifest**: Configured at [`frontend/public/manifest.json`](file:///c:/Users/girig/OneDrive/Desktop/SIH/frontend/public/manifest.json) with standalone display mode, theme colors, and icons.

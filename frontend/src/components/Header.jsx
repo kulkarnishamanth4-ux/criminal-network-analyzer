@@ -10,7 +10,6 @@ import {
   FiChevronDown,
   FiLayers,
   FiMic,
-  FiWatch,
   FiKey,
   FiDownloadCloud
 } from 'react-icons/fi';
@@ -26,7 +25,6 @@ export default function Header({
   onAuditClick, 
   onLogout,
   onVoiceClick,
-  onWatchClick,
   onHODClick,
   onAPKClick
 }) {
@@ -191,16 +189,6 @@ export default function Header({
         >
           <FiMic size={14} className="text-[#64ffda]" />
           <span className="hidden xl:inline">Voice Copilot</span>
-        </button>
-
-        {/* Smartwatch Tactical HUD Trigger */}
-        <button
-          onClick={onWatchClick}
-          className="flex items-center gap-1.5 px-2.5 py-2 rounded-lg text-xs font-semibold border border-[#1e3a5f] bg-[#0d1829] text-amber-300 hover:border-amber-400 hover:bg-[#162a45] hover:shadow-[0_0_12px_rgba(245,158,11,0.25)] transition-all cursor-pointer"
-          title="Smartwatch Tactical Companion HUD (/watch)"
-        >
-          <FiWatch size={14} className="text-amber-400" />
-          <span className="hidden xl:inline">Watch HUD</span>
         </button>
 
         {/* Download APK / Offline Field App */}

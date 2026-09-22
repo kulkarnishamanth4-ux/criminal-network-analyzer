@@ -16,7 +16,6 @@ import AuditLogViewer from './components/AuditLogViewer';
 import ErrorBoundary from './components/ErrorBoundary';
 import VoiceControlHUD from './components/VoiceControlHUD';
 import HODAuthModal from './components/HODAuthModal';
-import WatchCompanion from './components/WatchCompanion';
 import APKDownloadModal from './components/APKDownloadModal';
 import { FiShare2, FiMap } from 'react-icons/fi';
 import { getFullGraph, getDashboardStats, getPredictedLinks, getShortestPath, logAuditEvent } from './api/client';
@@ -46,6 +45,7 @@ function App() {
   const [highlightPath, setHighlightPath] = useState(null);
   const [toast, setToast] = useState(null);
 
+  const activeCaseRef = useRef('dawood');
   const [activeCase, setActiveCase] = useState('dawood');
   const [dataVersion, setDataVersion] = useState(0);
   const [currentUser, setCurrentUser] = useState(null);
@@ -54,14 +54,7 @@ function App() {
   const [showVoiceHUD, setShowVoiceHUD] = useState(false);
   const [showHODModal, setShowHODModal] = useState(false);
   const [hodActionPending, setHodActionPending] = useState(null);
-  const [isWatchMode, setIsWatchMode] = useState(false);
   const [showAPKModal, setShowAPKModal] = useState(false);
-
-  useEffect(() => {
-    if (window.location.search.includes('watch') || window.location.search.includes('mode=watch')) {
-      setIsWatchMode(true);
-    }
-  }, []);
 
   // Panel Collapse & Layout States
   const [isLeftPanelCollapsed, setIsLeftPanelCollapsed] = useState(false);
@@ -414,7 +407,6 @@ function App() {
         currentUser={currentUser}
         onAuditClick={() => setShowAuditModal(true)}
         onVoiceClick={() => setShowVoiceHUD(prev => !prev)}
-        onWatchClick={() => setIsWatchMode(prev => !prev)}
         onHODClick={() => {
           setHodActionPending({ action: 'SUPERVISORY_ACCESS' });
           setShowHODModal(true);
@@ -578,7 +570,6 @@ function App() {
             setShowHODModal(true);
           }
           else if (dest === 'apk' || dest === 'download_apk') setShowAPKModal(true);
-          else if (dest === 'watch' || dest === 'watch_hud') setIsWatchMode(true);
           else if (dest === 'map') setViewMode('map');
           else if (dest === 'network') setViewMode('network');
         }}
@@ -619,16 +610,6 @@ function App() {
           setHodActionPending(null);
         }}
       />
-
-      {/* Smartwatch Tactical Companion Overlay HUD */}
-      {isWatchMode && (
-        <WatchCompanion
-          activeCase={activeCase}
-          onSwitchCase={(newCase) => setActiveCase(newCase)}
-          onExitWatchMode={() => setIsWatchMode(false)}
-          onOpenVoice={() => setShowVoiceHUD(true)}
-        />
-      )}
 
       {/* Android APK & Offline Field App Download Modal */}
       <APKDownloadModal

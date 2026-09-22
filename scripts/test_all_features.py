@@ -91,27 +91,15 @@ def test_universal_converter():
     print("PASS: Universal file converter successfully converted and classified documents.")
 
 
-def test_smartwatch_hud_endpoints():
-    print("[TEST 6/6] Testing Smartwatch HUD compatibility...")
-    from backend.database.crud import get_dashboard_stats, get_all_anomalies
-    db = SessionLocal()
-    stats = get_dashboard_stats(db, "dawood")
-    anoms = get_all_anomalies(db, "dawood")
-    assert "total_entities" in stats
-    print(f"PASS: Smartwatch data feeds operational ({stats['total_entities']} nodes, {len(anoms)} alerts).")
-    db.close()
-
-
 if __name__ == "__main__":
     print("==================================================================")
-    print("Starting Comprehensive Verification of All 6 Implementations")
+    print("Starting Comprehensive Verification of All Tactical Implementations")
     print("==================================================================")
     test_offline_database()
     test_offline_llm_rag()
     test_voice_commands()
     test_hod_totp_authorization()
     test_universal_converter()
-    test_smartwatch_hud_endpoints()
     print("==================================================================")
-    print("ALL 6 FEATURES PASSED FULL VERIFICATION SUCCESSFULLY")
+    print("ALL CORE FEATURES PASSED FULL VERIFICATION SUCCESSFULLY")
     print("==================================================================")
