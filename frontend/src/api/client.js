@@ -244,56 +244,128 @@ export const restoreCanonicalCase = (caseId = 'dawood') => {
   return client.post(`/api/investigation/restore-canonical?case_id=${caseId}`).then(res => res.data);
 };
 
+export const computeOfflineShortestPath = (sourceId, targetId, caseId = 'dawood') => {
+  const targetCase = offlineData[caseId] ? caseId : 'dawood';
+  const graph = offlineData[targetCase]?.graph || { nodes: [], edges: [] };
+  const nodes = graph.nodes || [];
+  const edges = graph.edges || [];
+
+  const sStr = String(sourceId).toLowerCase();
+  const tStr = String(targetId).toLowerCase();
+
+  const srcNode = nodes.find(n => 
+    String(n.id).toLowerCase() === sStr ||
+    (n.name && n.name.toLowerCase() === sStr) ||
+    (n.label && n.label.toLowerCase() === sStr)
+  );
+
+  const tgtNode = nodes.find(n => 
+    String(n.id).toLowerCase() === tStr ||
+    (n.name && n.name.toLowerCase() === tStr) ||
+    (n.label && n.label.toLowerCase() === tStr)
+  );
+
+  if (!srcNode || !tgtNode) {
+    return {
+      found: false,
+      message: 'One or both entities not found in graph',
+      path: [],
+      steps: []
+    };
+  }
+
+  const sId = String(srcNode.id);
+  const tId = String(tgtNode.id);
+
+  if (sId === tId) {
+    return {
+      found: true,
+      length: 0,
+      path: [sId],
+      steps: []
+    };
+  }
+
+  const adj = {};
+  edges.forEach(e => {
+    const u = String(e.source);
+    const v = String(e.target);
+    const rel = e.type || e.label || 'CONNECTED_TO';
+    if (!adj[u]) adj[u] = [];
+    if (!adj[v]) adj[v] = [];
+    adj[u].push({ neighbor: v, relType: rel });
+    adj[v].push({ neighbor: u, relType: rel });
+  });
+
+  const queue = [{ path: [sId], edgeTypes: [] }];
+  const visited = new Set([sId]);
+  let foundObj = null;
+
+  while (queue.length > 0) {
+    const { path, edgeTypes } = queue.shift();
+    const curr = path[path.length - 1];
+
+    if (curr === tId) {
+      foundObj = { path, edgeTypes };
+      break;
+    }
+
+    for (const { neighbor, relType } of (adj[curr] || [])) {
+      if (!visited.has(neighbor)) {
+        visited.add(neighbor);
+        queue.push({
+          path: [...path, neighbor],
+          edgeTypes: [...edgeTypes, relType]
+        });
+      }
+    }
+  }
+
+  if (foundObj) {
+    const nodeMap = new Map(nodes.map(n => [String(n.id), n]));
+    const steps = [];
+    for (let i = 0; i < foundObj.path.length - 1; i++) {
+      const uId = foundObj.path[i];
+      const vId = foundObj.path[i + 1];
+      const fromNode = nodeMap.get(uId);
+      const toNode = nodeMap.get(vId);
+      const rel = foundObj.edgeTypes[i] || 'CONNECTED_TO';
+
+      steps.push({
+        from_id: uId,
+        from_name: fromNode?.name || fromNode?.label || `Entity #${uId}`,
+        to_id: vId,
+        to_name: toNode?.name || toNode?.label || `Entity #${vId}`,
+        relationship: rel
+      });
+    }
+
+    return {
+      found: true,
+      length: foundObj.path.length - 1,
+      path: foundObj.path,
+      steps
+    };
+  }
+
+  return {
+    found: false,
+    message: 'No direct connection found between selected entities',
+    path: [],
+    steps: []
+  };
+};
+
 export const getShortestPath = (sourceId, targetId, caseId = 'dawood') => {
   return client.get('/api/graph/shortest-path', { params: { source_id: sourceId, target_id: targetId, case_id: caseId } })
-    .then(res => res.data)
+    .then(res => {
+      if (res.data && res.data.found && res.data.path && res.data.path.length > 0) {
+        return res.data;
+      }
+      return computeOfflineShortestPath(sourceId, targetId, caseId);
+    })
     .catch(() => {
-      const graph = offlineData[caseId]?.graph || { nodes: [], edges: [] };
-      const sId = String(sourceId);
-      const tId = String(targetId);
-      const adj = {};
-      (graph.edges || []).forEach(e => {
-        const u = String(e.source), v = String(e.target);
-        if (!adj[u]) adj[u] = [];
-        if (!adj[v]) adj[v] = [];
-        adj[u].push({ neighbor: v, edge: e });
-        adj[v].push({ neighbor: u, edge: e });
-      });
-
-      const queue = [[sId]];
-      const visited = new Set([sId]);
-      let foundPath = null;
-
-      while (queue.length > 0) {
-        const path = queue.shift();
-        const curr = path[path.length - 1];
-        if (curr === tId) {
-          foundPath = path;
-          break;
-        }
-        for (const { neighbor } of (adj[curr] || [])) {
-          if (!visited.has(neighbor)) {
-            visited.add(neighbor);
-            queue.push([...path, neighbor]);
-          }
-        }
-      }
-
-      if (foundPath) {
-        const nodeMap = new Map(graph.nodes.map(n => [String(n.id), n]));
-        const steps = [];
-        for (let i = 0; i < foundPath.length - 1; i++) {
-          const fromNode = nodeMap.get(foundPath[i]);
-          const toNode = nodeMap.get(foundPath[i+1]);
-          steps.push({
-            from: fromNode?.name || fromNode?.label || `Entity #${foundPath[i]}`,
-            to: toNode?.name || toNode?.label || `Entity #${foundPath[i+1]}`,
-            relationship: 'CONNECTED_TO'
-          });
-        }
-        return { found: true, path: foundPath, steps };
-      }
-      return { found: false, message: 'No syndicate link found between entities' };
+      return computeOfflineShortestPath(sourceId, targetId, caseId);
     });
 };
 

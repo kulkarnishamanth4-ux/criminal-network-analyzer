@@ -53,11 +53,19 @@ def shortest_path(request: Request, source_id: int, target_id: int, case_id: str
     G = build_graph_from_db(db, case_id=case_id)
     undirected = G.to_undirected()
     
+    # Invalidate stale cache if node not found
     if source_id not in undirected or target_id not in undirected:
+        G = build_graph_from_db(db, force_rebuild=True, case_id=case_id)
+        undirected = G.to_undirected()
+
+    s_node = source_id if source_id in undirected else (str(source_id) if str(source_id) in undirected else None)
+    t_node = target_id if target_id in undirected else (str(target_id) if str(target_id) in undirected else None)
+
+    if s_node is None or t_node is None:
         return {"found": False, "message": "One or both entities not found in graph", "path": [], "steps": []}
     
     try:
-        path = nx.shortest_path(undirected, source=source_id, target=target_id)
+        path = nx.shortest_path(undirected, source=s_node, target=t_node)
         steps = []
         for i in range(len(path) - 1):
             u, v = path[i], path[i+1]
