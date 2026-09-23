@@ -53,6 +53,7 @@ export default function RightPanel({
             entityData={selectedEntity} 
             onEntitySelect={onEntitySelect}
             onExpandNetwork={onExpandNetwork}
+            activeCase={activeCase}
           />
         </div>
       ) : (

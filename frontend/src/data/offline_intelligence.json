@@ -15,7 +15,10 @@
             "pagerank": 0.022944293528451645,
             "betweenness": 0.0,
             "community_id": 0
-          }
+          },
+          "name": "Dawood Ibrahim",
+          "entity_type": "PERSON",
+          "risk_score": 0.34
         },
         {
           "id": 3746,
@@ -30,7 +33,10 @@
             "pagerank": 0.02794501184433222,
             "betweenness": 0.03333333333333334,
             "community_id": 0
-          }
+          },
+          "name": "Chhota Shakeel",
+          "entity_type": "PERSON",
+          "risk_score": 0.42
         },
         {
           "id": 3747,
@@ -44,7 +50,10 @@
             "pagerank": 0.027444940012744164,
             "betweenness": 0.0071428571428571435,
             "community_id": 3
-          }
+          },
+          "name": "Tiger Memon",
+          "entity_type": "PERSON",
+          "risk_score": 0.41
         },
         {
           "id": 3748,
@@ -59,7 +68,10 @@
             "pagerank": 0.03419583022744875,
             "betweenness": 0.05952380952380953,
             "community_id": 1
-          }
+          },
+          "name": "Abu Salem",
+          "entity_type": "PERSON",
+          "risk_score": 0.51
         },
         {
           "id": 3749,
@@ -73,7 +85,10 @@
             "pagerank": 0.02778866131043041,
             "betweenness": 0.028571428571428574,
             "community_id": 2
-          }
+          },
+          "name": "Firoz Khan",
+          "entity_type": "PERSON",
+          "risk_score": 0.42
         },
         {
           "id": 3750,
@@ -87,7 +102,10 @@
             "pagerank": 0.035269144365101014,
             "betweenness": 0.0,
             "community_id": 1
-          }
+          },
+          "name": "Rajesh Roshan (Bollywood)",
+          "entity_type": "PERSON",
+          "risk_score": 0.53
         },
         {
           "id": 3751,
@@ -101,7 +119,10 @@
             "pagerank": 0.03460839346409561,
             "betweenness": 0.011904761904761906,
             "community_id": 3
-          }
+          },
+          "name": "D-International Trading LLC",
+          "entity_type": "ORGANIZATION",
+          "risk_score": 0.52
         },
         {
           "id": 3752,
@@ -112,7 +133,10 @@
             "pagerank": 0.06854953564603442,
             "betweenness": 0.0,
             "community_id": 0
-          }
+          },
+          "name": "+92-300-1234567",
+          "entity_type": "PHONE",
+          "risk_score": 1.0
         },
         {
           "id": 3753,
@@ -123,7 +147,10 @@
             "pagerank": 0.04777085180843114,
             "betweenness": 0.0071428571428571435,
             "community_id": 0
-          }
+          },
+          "name": "+92-300-9876543",
+          "entity_type": "PHONE",
+          "risk_score": 0.72
         },
         {
           "id": 3754,
@@ -134,7 +161,10 @@
             "pagerank": 0.03460839346409561,
             "betweenness": 0.0,
             "community_id": 3
-          }
+          },
+          "name": "+971-50-1112222",
+          "entity_type": "PHONE",
+          "risk_score": 0.52
         },
         {
           "id": 3755,
@@ -145,7 +175,10 @@
             "pagerank": 0.0289997532559251,
             "betweenness": 0.011904761904761906,
             "community_id": 1
-          }
+          },
+          "name": "+91-9898989898",
+          "entity_type": "PHONE",
+          "risk_score": 0.43
         },
         {
           "id": 3756,
@@ -156,7 +189,10 @@
             "pagerank": 0.05236116628585395,
             "betweenness": 0.014285714285714287,
             "community_id": 3
-          }
+          },
+          "name": "ENBD-DUB-999",
+          "entity_type": "BANK_ACCOUNT",
+          "risk_score": 0.79
         },
         {
           "id": 3757,
@@ -167,7 +203,10 @@
             "pagerank": 0.07350572960109551,
             "betweenness": 0.02142857142857143,
             "community_id": 3
-          }
+          },
+          "name": "HDFC-MUM-111",
+          "entity_type": "BANK_ACCOUNT",
+          "risk_score": 1.0
         },
         {
           "id": 3758,
@@ -178,7 +217,10 @@
             "pagerank": 0.08542259932377622,
             "betweenness": 0.009523809523809525,
             "community_id": 3
-          }
+          },
+          "name": "ICICI-MUM-222",
+          "entity_type": "BANK_ACCOUNT",
+          "risk_score": 1.0
         },
         {
           "id": 3759,
@@ -189,7 +231,10 @@
             "pagerank": 0.10342778826188967,
             "betweenness": 0.0,
             "community_id": 2
-          }
+          },
+          "name": "SBI-MUM-333",
+          "entity_type": "BANK_ACCOUNT",
+          "risk_score": 1.0
         },
         {
           "id": 3760,
@@ -200,7 +245,10 @@
             "pagerank": 0.07378896055192923,
             "betweenness": 0.0,
             "community_id": 2
-          }
+          },
+          "name": "Taj Lands End, Bandra",
+          "entity_type": "LOCATION",
+          "risk_score": 1.0
         },
         {
           "id": 3761,
@@ -211,7 +259,10 @@
             "pagerank": 0.04913925887863048,
             "betweenness": 0.0,
             "community_id": 2
-          }
+          },
+          "name": "Dongri Safehouse A",
+          "entity_type": "LOCATION",
+          "risk_score": 0.74
         },
         {
           "id": 3762,
@@ -225,7 +276,10 @@
             "pagerank": 0.0289997532559251,
             "betweenness": 0.0071428571428571435,
             "community_id": 2
-          }
+          },
+          "name": "MH-01-AB-1234",
+          "entity_type": "VEHICLE",
+          "risk_score": 0.43
         },
         {
           "id": 3763,
@@ -239,7 +293,10 @@
             "pagerank": 0.030817734070126928,
             "betweenness": 0.002380952380952381,
             "community_id": 2
-          }
+          },
+          "name": "MH-02-CD-5678",
+          "entity_type": "VEHICLE",
+          "risk_score": 0.46
         },
         {
           "id": 3764,
@@ -253,7 +310,10 @@
             "pagerank": 0.052594713517630974,
             "betweenness": 0.0,
             "community_id": 0
-          }
+          },
+          "name": "@sheikh_dawood_dxb",
+          "entity_type": "SOCIAL_HANDLE",
+          "risk_score": 0.79
         },
         {
           "id": 3765,
@@ -267,7 +327,10 @@
             "pagerank": 0.0289997532559251,
             "betweenness": 0.004761904761904762,
             "community_id": 1
-          }
+          },
+          "name": "@captain_salem",
+          "entity_type": "SOCIAL_HANDLE",
+          "risk_score": 0.43
         },
         {
           "id": 3766,
@@ -281,7 +344,10 @@
             "pagerank": 0.030817734070126928,
             "betweenness": 0.009523809523809525,
             "community_id": 2
-          }
+          },
+          "name": "Firoz_Bhai_Don",
+          "entity_type": "SOCIAL_HANDLE",
+          "risk_score": 0.46
         }
       ],
       "edges": [
@@ -625,6 +691,135 @@
       "critical_anomalies_count": 8,
       "top_communities": []
     },
+    "communities": [
+      {
+        "community_id": 0,
+        "member_count": 5,
+        "members": [
+          {
+            "id": 3745,
+            "name": "Dawood Ibrahim",
+            "type": "PERSON"
+          },
+          {
+            "id": 3746,
+            "name": "Chhota Shakeel",
+            "type": "PERSON"
+          },
+          {
+            "id": 3752,
+            "name": "+92-300-1234567",
+            "type": "PHONE"
+          },
+          {
+            "id": 3753,
+            "name": "+92-300-9876543",
+            "type": "PHONE"
+          },
+          {
+            "id": 3764,
+            "name": "@sheikh_dawood_dxb",
+            "type": "SOCIAL_HANDLE"
+          }
+        ],
+        "alias": "D-Company Global Command",
+        "dominant_crime_type": "Cross-Border Strategic Command & Elite Coordination"
+      },
+      {
+        "community_id": 3,
+        "member_count": 6,
+        "members": [
+          {
+            "id": 3747,
+            "name": "Tiger Memon",
+            "type": "PERSON"
+          },
+          {
+            "id": 3751,
+            "name": "D-International Trading LLC",
+            "type": "ORGANIZATION"
+          },
+          {
+            "id": 3754,
+            "name": "+971-50-1112222",
+            "type": "PHONE"
+          },
+          {
+            "id": 3756,
+            "name": "ENBD-DUB-999",
+            "type": "BANK_ACCOUNT"
+          },
+          {
+            "id": 3757,
+            "name": "HDFC-MUM-111",
+            "type": "BANK_ACCOUNT"
+          }
+        ],
+        "alias": "Tiger Memon Financial Ring",
+        "dominant_crime_type": "Cross-Border Hawala, Smurfing & Shell Operations"
+      },
+      {
+        "community_id": 1,
+        "member_count": 4,
+        "members": [
+          {
+            "id": 3748,
+            "name": "Abu Salem",
+            "type": "PERSON"
+          },
+          {
+            "id": 3750,
+            "name": "Rajesh Roshan (Bollywood)",
+            "type": "PERSON"
+          },
+          {
+            "id": 3755,
+            "name": "+91-9898989898",
+            "type": "PHONE"
+          },
+          {
+            "id": 3765,
+            "name": "@captain_salem",
+            "type": "SOCIAL_HANDLE"
+          }
+        ],
+        "alias": "Abu Salem Extortion Cadre",
+        "dominant_crime_type": "Extortion, Bollywood Threat Ops & Contract Hits"
+      },
+      {
+        "community_id": 2,
+        "member_count": 7,
+        "members": [
+          {
+            "id": 3749,
+            "name": "Firoz Khan",
+            "type": "PERSON"
+          },
+          {
+            "id": 3759,
+            "name": "SBI-MUM-333",
+            "type": "BANK_ACCOUNT"
+          },
+          {
+            "id": 3760,
+            "name": "Taj Lands End, Bandra",
+            "type": "LOCATION"
+          },
+          {
+            "id": 3761,
+            "name": "Dongri Safehouse A",
+            "type": "LOCATION"
+          },
+          {
+            "id": 3762,
+            "name": "MH-01-AB-1234",
+            "type": "VEHICLE"
+          }
+        ],
+        "alias": "Tiger Memon Financial Ring (Cluster 2)",
+        "dominant_crime_type": "Cross-Border Hawala, Smurfing & Shell Operations"
+      }
+    ],
     "anomalies": [
       {
         "id": 321,
@@ -808,7 +1003,8 @@
       {
         "id": 3759,
         "name": "SBI-MUM-333",
-        "entity_type": null,
+        "entity_type": "BANK_ACCOUNT",
+        "type": "BANK_ACCOUNT",
         "pagerank": 0.10342778826188967,
         "betweenness": 0.0,
         "risk_score": 0.0
@@ -816,7 +1012,8 @@
       {
         "id": 3758,
         "name": "ICICI-MUM-222",
-        "entity_type": null,
+        "entity_type": "BANK_ACCOUNT",
+        "type": "BANK_ACCOUNT",
         "pagerank": 0.08542259932377622,
         "betweenness": 0.009523809523809525,
         "risk_score": 0.0
@@ -824,7 +1021,8 @@
       {
         "id": 3760,
         "name": "Taj Lands End, Bandra",
-        "entity_type": null,
+        "entity_type": "LOCATION",
+        "type": "LOCATION",
         "pagerank": 0.07378896055192923,
         "betweenness": 0.0,
         "risk_score": 0.0
@@ -832,7 +1030,8 @@
       {
         "id": 3757,
         "name": "HDFC-MUM-111",
-        "entity_type": null,
+        "entity_type": "BANK_ACCOUNT",
+        "type": "BANK_ACCOUNT",
         "pagerank": 0.07350572960109551,
         "betweenness": 0.02142857142857143,
         "risk_score": 0.0
@@ -840,7 +1039,8 @@
       {
         "id": 3752,
         "name": "+92-300-1234567",
-        "entity_type": null,
+        "entity_type": "PHONE",
+        "type": "PHONE",
         "pagerank": 0.06854953564603442,
         "betweenness": 0.0,
         "risk_score": 0.0
@@ -848,7 +1048,8 @@
       {
         "id": 3764,
         "name": "@sheikh_dawood_dxb",
-        "entity_type": null,
+        "entity_type": "SOCIAL_HANDLE",
+        "type": "SOCIAL_HANDLE",
         "pagerank": 0.052594713517630974,
         "betweenness": 0.0,
         "risk_score": 0.0
@@ -856,7 +1057,8 @@
       {
         "id": 3756,
         "name": "ENBD-DUB-999",
-        "entity_type": null,
+        "entity_type": "BANK_ACCOUNT",
+        "type": "BANK_ACCOUNT",
         "pagerank": 0.05236116628585395,
         "betweenness": 0.014285714285714287,
         "risk_score": 0.0
@@ -864,7 +1066,8 @@
       {
         "id": 3761,
         "name": "Dongri Safehouse A",
-        "entity_type": null,
+        "entity_type": "LOCATION",
+        "type": "LOCATION",
         "pagerank": 0.04913925887863048,
         "betweenness": 0.0,
         "risk_score": 0.0
@@ -872,7 +1075,8 @@
       {
         "id": 3753,
         "name": "+92-300-9876543",
-        "entity_type": null,
+        "entity_type": "PHONE",
+        "type": "PHONE",
         "pagerank": 0.04777085180843114,
         "betweenness": 0.0071428571428571435,
         "risk_score": 0.0
@@ -880,10 +1084,52 @@
       {
         "id": 3750,
         "name": "Rajesh Roshan (Bollywood)",
-        "entity_type": null,
+        "entity_type": "PERSON",
+        "type": "PERSON",
         "pagerank": 0.035269144365101014,
         "betweenness": 0.0,
         "risk_score": 0.0
+      }
+    ],
+    "firs": [
+      {
+        "id": 15,
+        "fir_number": "FIR_MUM_EXT_2026_9981",
+        "date": "2026-09-06T13:23:42.144564",
+        "police_station": "Bandra Police Station",
+        "district": null,
+        "crime_type": "Extortion & Organized Crime",
+        "crime_confidence": 0.98,
+        "raw_text": "Complainant Rajesh Roshan reported receiving extortion threats demanding 50 Crore INR from an individual identifying as Abu Salem, operating on behalf of Dawood Ibrahim and Chhota Shakeel. Threat calls traced to burner number +91-9898989898. Suspect was reportedly seen in a silver Honda City MH-01-AB-1234 near Taj Lands End.",
+        "extracted_entities": [
+          "Rajesh Roshan",
+          "Abu Salem",
+          "Dawood Ibrahim",
+          "Chhota Shakeel",
+          "+91-9898989898",
+          "MH-01-AB-1234",
+          "Taj Lands End"
+        ],
+        "case_id": "dawood"
+      },
+      {
+        "id": 16,
+        "fir_number": "FIR_ED_HAWALA_2026_001",
+        "date": "2026-09-07T13:23:42.144564",
+        "police_station": "Enforcement Directorate (ED) Mumbai",
+        "district": null,
+        "crime_type": "Money Laundering & Terror Financing",
+        "crime_confidence": 0.99,
+        "raw_text": "Intelligence reveals massive hawala routing from Dubai via Tiger Memon's front company D-International Trading LLC. Funds entering HDFC-MUM-111 and layered into ICICI-MUM-222 to fund local shooters including Firoz Khan.",
+        "extracted_entities": [
+          "Tiger Memon",
+          "D-International Trading LLC",
+          "HDFC-MUM-111",
+          "ICICI-MUM-222",
+          "Firoz Khan",
+          "Dubai"
+        ],
+        "case_id": "dawood"
       }
     ]
   },
@@ -902,7 +1148,10 @@
             "pagerank": 0.013015104370874529,
             "betweenness": 0.0,
             "community_id": 0
-          }
+          },
+          "name": "Balwinder 'Billa' Singh",
+          "entity_type": "PERSON",
+          "risk_score": 0.2
         },
         {
           "id": 3163,
@@ -916,7 +1165,10 @@
             "pagerank": 0.014858878456155487,
             "betweenness": 0.010571300044984256,
             "community_id": 0
-          }
+          },
+          "name": "Gurpreet 'Garry' Sandhu",
+          "entity_type": "PERSON",
+          "risk_score": 0.22
         },
         {
           "id": 3164,
@@ -930,7 +1182,10 @@
             "pagerank": 0.014858878456155487,
             "betweenness": 0.008659469185784974,
             "community_id": 1
-          }
+          },
+          "name": "Vikram 'Vicky' Brar",
+          "entity_type": "PERSON",
+          "risk_score": 0.22
         },
         {
           "id": 3165,
@@ -944,7 +1199,10 @@
             "pagerank": 0.01431636707411784,
             "betweenness": 0.0024741340530814214,
             "community_id": 3
-          }
+          },
+          "name": "Raju",
+          "entity_type": "PERSON",
+          "risk_score": 0.21
         },
         {
           "id": 3166,
@@ -958,7 +1216,10 @@
             "pagerank": 0.01431636707411784,
             "betweenness": 0.0016869095816464236,
             "community_id": 4
-          }
+          },
+          "name": "Kala",
+          "entity_type": "PERSON",
+          "risk_score": 0.21
         },
         {
           "id": 3167,
@@ -972,7 +1233,10 @@
             "pagerank": 0.01431636707411784,
             "betweenness": 0.0017993702204228519,
             "community_id": 2
-          }
+          },
+          "name": "Deepa",
+          "entity_type": "PERSON",
+          "risk_score": 0.21
         },
         {
           "id": 3168,
@@ -986,7 +1250,10 @@
             "pagerank": 0.01431636707411784,
             "betweenness": 0.002699055330634278,
             "community_id": 5
-          }
+          },
+          "name": "Sonu",
+          "entity_type": "PERSON",
+          "risk_score": 0.21
         },
         {
           "id": 3169,
@@ -1000,7 +1267,10 @@
             "pagerank": 0.01431636707411784,
             "betweenness": 0.003992352676563203,
             "community_id": 5
-          }
+          },
+          "name": "Sunny",
+          "entity_type": "PERSON",
+          "risk_score": 0.21
         },
         {
           "id": 3170,
@@ -1014,7 +1284,10 @@
             "pagerank": 0.014495851584910024,
             "betweenness": 0.0020242914979757085,
             "community_id": 1
-          }
+          },
+          "name": "Happy",
+          "entity_type": "PERSON",
+          "risk_score": 0.22
         },
         {
           "id": 3171,
@@ -1028,7 +1301,10 @@
             "pagerank": 0.014495851584910024,
             "betweenness": 0.0038236617183985606,
             "community_id": 3
-          }
+          },
+          "name": "Goldy",
+          "entity_type": "PERSON",
+          "risk_score": 0.22
         },
         {
           "id": 3172,
@@ -1042,7 +1318,10 @@
             "pagerank": 0.014495851584910024,
             "betweenness": 0.001855600539811066,
             "community_id": 2
-          }
+          },
+          "name": "Jaggi",
+          "entity_type": "PERSON",
+          "risk_score": 0.22
         },
         {
           "id": 3173,
@@ -1056,7 +1335,10 @@
             "pagerank": 0.014495851584910024,
             "betweenness": 0.0038236617183985606,
             "community_id": 4
-          }
+          },
+          "name": "Pargat",
+          "entity_type": "PERSON",
+          "risk_score": 0.22
         },
         {
           "id": 3174,
@@ -1070,7 +1352,10 @@
             "pagerank": 0.014495851584910024,
             "betweenness": 0.00286774628879892,
             "community_id": 5
-          }
+          },
+          "name": "Makhhan",
+          "entity_type": "PERSON",
+          "risk_score": 0.22
         },
         {
           "id": 3175,
@@ -1085,7 +1370,10 @@
             "pagerank": 0.04519734645697936,
             "betweenness": 0.0,
             "community_id": 1
-          }
+          },
+          "name": "Amritsar Border Safehouse Alpha",
+          "entity_type": "LOCATION",
+          "risk_score": 0.68
         },
         {
           "id": 3176,
@@ -1100,7 +1388,10 @@
             "pagerank": 0.02833263150171489,
             "betweenness": 0.0,
             "community_id": 4
-          }
+          },
+          "name": "Amritsar Border Warehouse",
+          "entity_type": "LOCATION",
+          "risk_score": 0.42
         },
         {
           "id": 3177,
@@ -1115,7 +1406,10 @@
             "pagerank": 0.02308713983056768,
             "betweenness": 0.0,
             "community_id": 2
-          }
+          },
+          "name": "Amritsar Border Drop Point",
+          "entity_type": "LOCATION",
+          "risk_score": 0.35
         },
         {
           "id": 3178,
@@ -1130,7 +1424,10 @@
             "pagerank": 0.0395657940008771,
             "betweenness": 0.0,
             "community_id": 4
-          }
+          },
+          "name": "Amritsar Border Front Business",
+          "entity_type": "LOCATION",
+          "risk_score": 0.59
         },
         {
           "id": 3179,
@@ -1145,7 +1442,10 @@
             "pagerank": 0.03938422460988278,
             "betweenness": 0.0,
             "community_id": 5
-          }
+          },
+          "name": "Amritsar Border Transit Hub",
+          "entity_type": "LOCATION",
+          "risk_score": 0.59
         },
         {
           "id": 3180,
@@ -1159,7 +1459,10 @@
             "pagerank": 0.014858878456155487,
             "betweenness": 0.0006747638326585695,
             "community_id": 0
-          }
+          },
+          "name": "+91-999053493",
+          "entity_type": "PHONE",
+          "risk_score": 0.22
         },
         {
           "id": 3181,
@@ -1173,7 +1476,10 @@
             "pagerank": 0.027175904376757636,
             "betweenness": 0.002699055330634278,
             "community_id": 0
-          }
+          },
+          "name": "+91-999094534",
+          "entity_type": "PHONE",
+          "risk_score": 0.41
         },
         {
           "id": 3182,
@@ -1187,7 +1493,10 @@
             "pagerank": 0.028487453425350747,
             "betweenness": 0.0,
             "community_id": 1
-          }
+          },
+          "name": "+91-999083137",
+          "entity_type": "PHONE",
+          "risk_score": 0.43
         },
         {
           "id": 3183,
@@ -1201,7 +1510,10 @@
             "pagerank": 0.03393221349510665,
             "betweenness": 0.0,
             "community_id": 2
-          }
+          },
+          "name": "+91-999011424",
+          "entity_type": "PHONE",
+          "risk_score": 0.51
         },
         {
           "id": 3184,
@@ -1215,7 +1527,10 @@
             "pagerank": 0.023059896035761678,
             "betweenness": 0.0067476383265856945,
             "community_id": 4
-          }
+          },
+          "name": "+91-999077006",
+          "entity_type": "PHONE",
+          "risk_score": 0.35
         },
         {
           "id": 3185,
@@ -1229,7 +1544,10 @@
             "pagerank": 0.032112115779506005,
             "betweenness": 0.0,
             "community_id": 2
-          }
+          },
+          "name": "+91-999088930",
+          "entity_type": "PHONE",
+          "risk_score": 0.48
         },
         {
           "id": 3186,
@@ -1243,7 +1561,10 @@
             "pagerank": 0.02414661449307335,
             "betweenness": 0.0,
             "community_id": 5
-          }
+          },
+          "name": "+91-999068444",
+          "entity_type": "PHONE",
+          "risk_score": 0.36
         },
         {
           "id": 3187,
@@ -1257,7 +1578,10 @@
             "pagerank": 0.036527427033076196,
             "betweenness": 0.010121457489878543,
             "community_id": 5
-          }
+          },
+          "name": "+91-999033590",
+          "entity_type": "PHONE",
+          "risk_score": 0.55
         },
         {
           "id": 3188,
@@ -1271,7 +1595,10 @@
             "pagerank": 0.019175758286736067,
             "betweenness": 0.0,
             "community_id": 1
-          }
+          },
+          "name": "+91-999065856",
+          "entity_type": "PHONE",
+          "risk_score": 0.29
         },
         {
           "id": 3189,
@@ -1285,7 +1612,10 @@
             "pagerank": 0.026031137090783026,
             "betweenness": 0.0,
             "community_id": 3
-          }
+          },
+          "name": "+91-999096013",
+          "entity_type": "PHONE",
+          "risk_score": 0.39
         },
         {
           "id": 3190,
@@ -1298,7 +1628,10 @@
             "pagerank": 0.014858878456155487,
             "betweenness": 0.00033738191632928474,
             "community_id": 0
-          }
+          },
+          "name": "HDFC-ASR-29633",
+          "entity_type": "BANK_ACCOUNT",
+          "risk_score": 0.22
         },
         {
           "id": 3191,
@@ -1311,7 +1644,10 @@
             "pagerank": 0.014546001668807838,
             "betweenness": 0.002305443094916779,
             "community_id": 3
-          }
+          },
+          "name": "HDFC-ASR-92122",
+          "entity_type": "BANK_ACCOUNT",
+          "risk_score": 0.22
         },
         {
           "id": 3192,
@@ -1324,7 +1660,10 @@
             "pagerank": 0.06232818366097407,
             "betweenness": 0.0,
             "community_id": 1
-          }
+          },
+          "name": "HDFC-ASR-28272",
+          "entity_type": "BANK_ACCOUNT",
+          "risk_score": 0.93
         },
         {
           "id": 3193,
@@ -1337,7 +1676,10 @@
             "pagerank": 0.07266097728738692,
             "betweenness": 0.007422402159244264,
             "community_id": 3
-          }
+          },
+          "name": "HDFC-ASR-91807",
+          "entity_type": "BANK_ACCOUNT",
+          "risk_score": 1.0
         },
         {
           "id": 3194,
@@ -1350,7 +1692,10 @@
             "pagerank": 0.08058520752536874,
             "betweenness": 0.005398110661268556,
             "community_id": 3
-          }
+          },
+          "name": "HDFC-ASR-85256",
+          "entity_type": "BANK_ACCOUNT",
+          "risk_score": 1.0
         },
         {
           "id": 3195,
@@ -1364,7 +1709,10 @@
             "pagerank": 0.014858878456155487,
             "betweenness": 0.001349527665317139,
             "community_id": 4
-          }
+          },
+          "name": "IND-15-9520",
+          "entity_type": "VEHICLE",
+          "risk_score": 0.22
         },
         {
           "id": 3196,
@@ -1378,7 +1726,10 @@
             "pagerank": 0.014546001668807838,
             "betweenness": 0.00033738191632928474,
             "community_id": 4
-          }
+          },
+          "name": "IND-35-1150",
+          "entity_type": "VEHICLE",
+          "risk_score": 0.22
         },
         {
           "id": 3197,
@@ -1392,7 +1743,10 @@
             "pagerank": 0.019459854479435722,
             "betweenness": 0.0,
             "community_id": 3
-          }
+          },
+          "name": "IND-88-2199",
+          "entity_type": "VEHICLE",
+          "risk_score": 0.29
         },
         {
           "id": 3198,
@@ -1406,7 +1760,10 @@
             "pagerank": 0.021761550946779007,
             "betweenness": 0.0006747638326585695,
             "community_id": 5
-          }
+          },
+          "name": "IND-63-3652",
+          "entity_type": "VEHICLE",
+          "risk_score": 0.33
         },
         {
           "id": 3421,
@@ -1422,7 +1779,10 @@
             "pagerank": 0.02722281481386913,
             "betweenness": 0.001349527665317139,
             "community_id": 0
-          }
+          },
+          "name": "@billa_majha_punjab",
+          "entity_type": "SOCIAL_HANDLE",
+          "risk_score": 0.41
         },
         {
           "id": 3422,
@@ -1438,7 +1798,10 @@
             "pagerank": 0.014546001668807838,
             "betweenness": 0.0006747638326585695,
             "community_id": 0
-          }
+          },
+          "name": "@garry_sandhu_amritsar",
+          "entity_type": "SOCIAL_HANDLE",
+          "risk_score": 0.22
         },
         {
           "id": 3423,
@@ -1454,7 +1817,10 @@
             "pagerank": 0.01475715991679864,
             "betweenness": 0.0,
             "community_id": 1
-          }
+          },
+          "name": "@vicky_border_rider",
+          "entity_type": "SOCIAL_HANDLE",
+          "risk_score": 0.22
         }
       ],
       "edges": [
@@ -2343,6 +2709,206 @@
       "critical_anomalies_count": 1,
       "top_communities": []
     },
+    "communities": [
+      {
+        "community_id": 0,
+        "member_count": 7,
+        "members": [
+          {
+            "id": 3162,
+            "name": "Balwinder 'Billa' Singh",
+            "type": "PERSON"
+          },
+          {
+            "id": 3163,
+            "name": "Gurpreet 'Garry' Sandhu",
+            "type": "PERSON"
+          },
+          {
+            "id": 3180,
+            "name": "+91-999053493",
+            "type": "PHONE"
+          },
+          {
+            "id": 3181,
+            "name": "+91-999094534",
+            "type": "PHONE"
+          },
+          {
+            "id": 3190,
+            "name": "HDFC-ASR-29633",
+            "type": "BANK_ACCOUNT"
+          }
+        ],
+        "alias": "Majha Border Air-Drop Cartel (Cluster 0)",
+        "dominant_crime_type": "Cross-Border Afghan Heroin Smuggling & Drone Drops"
+      },
+      {
+        "community_id": 1,
+        "member_count": 7,
+        "members": [
+          {
+            "id": 3164,
+            "name": "Vikram 'Vicky' Brar",
+            "type": "PERSON"
+          },
+          {
+            "id": 3170,
+            "name": "Happy",
+            "type": "PERSON"
+          },
+          {
+            "id": 3175,
+            "name": "Amritsar Border Safehouse Alpha",
+            "type": "LOCATION"
+          },
+          {
+            "id": 3182,
+            "name": "+91-999083137",
+            "type": "PHONE"
+          },
+          {
+            "id": 3188,
+            "name": "+91-999065856",
+            "type": "PHONE"
+          }
+        ],
+        "alias": "Billa Sandhu Interstate Transit Ring (Cluster 1)",
+        "dominant_crime_type": "High-Speed Highway Corridor Supply & Bulk Peddling"
+      },
+      {
+        "community_id": 3,
+        "member_count": 7,
+        "members": [
+          {
+            "id": 3165,
+            "name": "Raju",
+            "type": "PERSON"
+          },
+          {
+            "id": 3171,
+            "name": "Goldy",
+            "type": "PERSON"
+          },
+          {
+            "id": 3189,
+            "name": "+91-999096013",
+            "type": "PHONE"
+          },
+          {
+            "id": 3191,
+            "name": "HDFC-ASR-92122",
+            "type": "BANK_ACCOUNT"
+          },
+          {
+            "id": 3193,
+            "name": "HDFC-ASR-91807",
+            "type": "BANK_ACCOUNT"
+          }
+        ],
+        "alias": "Border Belt Mule & Drop Unit (Cluster 3)",
+        "dominant_crime_type": "Concealed Agricultural Stashes & Rural Distribution"
+      },
+      {
+        "community_id": 4,
+        "member_count": 7,
+        "members": [
+          {
+            "id": 3166,
+            "name": "Kala",
+            "type": "PERSON"
+          },
+          {
+            "id": 3173,
+            "name": "Pargat",
+            "type": "PERSON"
+          },
+          {
+            "id": 3176,
+            "name": "Amritsar Border Warehouse",
+            "type": "LOCATION"
+          },
+          {
+            "id": 3178,
+            "name": "Amritsar Border Front Business",
+            "type": "LOCATION"
+          },
+          {
+            "id": 3184,
+            "name": "+91-999077006",
+            "type": "PHONE"
+          }
+        ],
+        "alias": "Majha Border Air-Drop Cartel (Cluster 4)",
+        "dominant_crime_type": "Cross-Border Afghan Heroin Smuggling & Drone Drops"
+      },
+      {
+        "community_id": 2,
+        "member_count": 5,
+        "members": [
+          {
+            "id": 3167,
+            "name": "Deepa",
+            "type": "PERSON"
+          },
+          {
+            "id": 3172,
+            "name": "Jaggi",
+            "type": "PERSON"
+          },
+          {
+            "id": 3177,
+            "name": "Amritsar Border Drop Point",
+            "type": "LOCATION"
+          },
+          {
+            "id": 3183,
+            "name": "+91-999011424",
+            "type": "PHONE"
+          },
+          {
+            "id": 3185,
+            "name": "+91-999088930",
+            "type": "PHONE"
+          }
+        ],
+        "alias": "Amritsar Hawala Liquidation Cell (Cluster 2)",
+        "dominant_crime_type": "Drug Cash Layering & Benami Account Smurfing"
+      },
+      {
+        "community_id": 5,
+        "member_count": 7,
+        "members": [
+          {
+            "id": 3168,
+            "name": "Sonu",
+            "type": "PERSON"
+          },
+          {
+            "id": 3169,
+            "name": "Sunny",
+            "type": "PERSON"
+          },
+          {
+            "id": 3174,
+            "name": "Makhhan",
+            "type": "PERSON"
+          },
+          {
+            "id": 3179,
+            "name": "Amritsar Border Transit Hub",
+            "type": "LOCATION"
+          },
+          {
+            "id": 3186,
+            "name": "+91-999068444",
+            "type": "PHONE"
+          }
+        ],
+        "alias": "Billa Sandhu Interstate Transit Ring (Cluster 5)",
+        "dominant_crime_type": "High-Speed Highway Corridor Supply & Bulk Peddling"
+      }
+    ],
     "anomalies": [
       {
         "id": 269,
@@ -2403,7 +2969,8 @@
       {
         "id": 3194,
         "name": "HDFC-ASR-85256",
-        "entity_type": null,
+        "entity_type": "BANK_ACCOUNT",
+        "type": "BANK_ACCOUNT",
         "pagerank": 0.08058520752536874,
         "betweenness": 0.005398110661268556,
         "risk_score": 0.0
@@ -2411,7 +2978,8 @@
       {
         "id": 3193,
         "name": "HDFC-ASR-91807",
-        "entity_type": null,
+        "entity_type": "BANK_ACCOUNT",
+        "type": "BANK_ACCOUNT",
         "pagerank": 0.07266097728738692,
         "betweenness": 0.007422402159244264,
         "risk_score": 0.0
@@ -2419,7 +2987,8 @@
       {
         "id": 3192,
         "name": "HDFC-ASR-28272",
-        "entity_type": null,
+        "entity_type": "BANK_ACCOUNT",
+        "type": "BANK_ACCOUNT",
         "pagerank": 0.06232818366097407,
         "betweenness": 0.0,
         "risk_score": 0.0
@@ -2427,7 +2996,8 @@
       {
         "id": 3175,
         "name": "Amritsar Border Safehouse Alpha",
-        "entity_type": null,
+        "entity_type": "LOCATION",
+        "type": "LOCATION",
         "pagerank": 0.04519734645697936,
         "betweenness": 0.0,
         "risk_score": 0.0
@@ -2435,7 +3005,8 @@
       {
         "id": 3178,
         "name": "Amritsar Border Front Business",
-        "entity_type": null,
+        "entity_type": "LOCATION",
+        "type": "LOCATION",
         "pagerank": 0.0395657940008771,
         "betweenness": 0.0,
         "risk_score": 0.0
@@ -2443,7 +3014,8 @@
       {
         "id": 3179,
         "name": "Amritsar Border Transit Hub",
-        "entity_type": null,
+        "entity_type": "LOCATION",
+        "type": "LOCATION",
         "pagerank": 0.03938422460988278,
         "betweenness": 0.0,
         "risk_score": 0.0
@@ -2451,7 +3023,8 @@
       {
         "id": 3187,
         "name": "+91-999033590",
-        "entity_type": null,
+        "entity_type": "PHONE",
+        "type": "PHONE",
         "pagerank": 0.036527427033076196,
         "betweenness": 0.010121457489878543,
         "risk_score": 0.0
@@ -2459,7 +3032,8 @@
       {
         "id": 3183,
         "name": "+91-999011424",
-        "entity_type": null,
+        "entity_type": "PHONE",
+        "type": "PHONE",
         "pagerank": 0.03393221349510665,
         "betweenness": 0.0,
         "risk_score": 0.0
@@ -2467,7 +3041,8 @@
       {
         "id": 3185,
         "name": "+91-999088930",
-        "entity_type": null,
+        "entity_type": "PHONE",
+        "type": "PHONE",
         "pagerank": 0.032112115779506005,
         "betweenness": 0.0,
         "risk_score": 0.0
@@ -2475,10 +3050,45 @@
       {
         "id": 3182,
         "name": "+91-999083137",
-        "entity_type": null,
+        "entity_type": "PHONE",
+        "type": "PHONE",
         "pagerank": 0.028487453425350747,
         "betweenness": 0.0,
         "risk_score": 0.0
+      }
+    ],
+    "firs": [
+      {
+        "id": 25,
+        "fir_number": "FIR_PB_NDPS_2026_402",
+        "date": "2026-04-12T14:30:00",
+        "police_station": "Amritsar Rural Police Station",
+        "district": "Amritsar, Punjab",
+        "crime_type": "Narcotics Trafficking & Border Smuggling",
+        "crime_confidence": 0.96,
+        "raw_text": "FIR registered under NDPS Act Sections 21/29 and Aircraft Act against Jaspal Singh (alias Billa Sandhu) and Gurpreet Singh regarding cross-border drone-dropped heroin consignment of 14.5 kg recovered near Attari border outpost.",
+        "extracted_entities": [
+          "Jaspal Singh",
+          "Billa Sandhu",
+          "Gurpreet Singh",
+          "Amritsar Rural PS"
+        ],
+        "case_id": "drug_punjab"
+      },
+      {
+        "id": 26,
+        "fir_number": "FIR_PB_HAWALA_2026_118",
+        "date": "2026-06-08T11:15:00",
+        "police_station": "STF State Crime Cell",
+        "district": "Ludhiana, Punjab",
+        "crime_type": "Drug Money Laundering & Narco-Terror",
+        "crime_confidence": 0.91,
+        "raw_text": "Special Task Force probe uncovered illicit layering of Rs 4.8 Crore drug proceeds routed through shell transport firms and benami accounts connected to Jaspal Singh network.",
+        "extracted_entities": [
+          "Jaspal Singh",
+          "STF"
+        ],
+        "case_id": "drug_punjab"
       }
     ]
   },
@@ -2497,7 +3107,10 @@
             "pagerank": 0.013090893730604913,
             "betweenness": 0.0,
             "community_id": 1
-          }
+          },
+          "name": "Anwar Ali",
+          "entity_type": "PERSON",
+          "risk_score": 0.2
         },
         {
           "id": 3200,
@@ -2511,7 +3124,10 @@
             "pagerank": 0.014945455760969971,
             "betweenness": 0.010638776428250113,
             "community_id": 1
-          }
+          },
+          "name": "Rofiqul Islam",
+          "entity_type": "PERSON",
+          "risk_score": 0.22
         },
         {
           "id": 3201,
@@ -2525,7 +3141,10 @@
             "pagerank": 0.014945455760969971,
             "betweenness": 0.009604138551506972,
             "community_id": 2
-          }
+          },
+          "name": "Babu Bhai",
+          "entity_type": "PERSON",
+          "risk_score": 0.22
         },
         {
           "id": 3202,
@@ -2539,7 +3158,10 @@
             "pagerank": 0.014399770896621464,
             "betweenness": 0.0029464687359424197,
             "community_id": 3
-          }
+          },
+          "name": "Munna",
+          "entity_type": "PERSON",
+          "risk_score": 0.22
         },
         {
           "id": 3203,
@@ -2553,7 +3175,10 @@
             "pagerank": 0.014399770896621464,
             "betweenness": 0.0015744489428699956,
             "community_id": 5
-          }
+          },
+          "name": "Sajid",
+          "entity_type": "PERSON",
+          "risk_score": 0.22
         },
         {
           "id": 3204,
@@ -2567,7 +3192,10 @@
             "pagerank": 0.014399770896621464,
             "betweenness": 0.0026090868196131352,
             "community_id": 4
-          }
+          },
+          "name": "Raju",
+          "entity_type": "PERSON",
+          "risk_score": 0.22
         },
         {
           "id": 3205,
@@ -2581,7 +3209,10 @@
             "pagerank": 0.014399770896621464,
             "betweenness": 0.0033738191632928472,
             "community_id": 5
-          }
+          },
+          "name": "Kamal",
+          "entity_type": "PERSON",
+          "risk_score": 0.22
         },
         {
           "id": 3206,
@@ -2595,7 +3226,10 @@
             "pagerank": 0.014399770896621464,
             "betweenness": 0.0022717049032838503,
             "community_id": 1
-          }
+          },
+          "name": "Zakir",
+          "entity_type": "PERSON",
+          "risk_score": 0.22
         },
         {
           "id": 3207,
@@ -2609,7 +3243,10 @@
             "pagerank": 0.01458030567814099,
             "betweenness": 0.0020242914979757085,
             "community_id": 2
-          }
+          },
+          "name": "Farooq",
+          "entity_type": "PERSON",
+          "risk_score": 0.22
         },
         {
           "id": 3208,
@@ -2623,7 +3260,10 @@
             "pagerank": 0.01458030567814099,
             "betweenness": 0.0035087719298245615,
             "community_id": 0
-          }
+          },
+          "name": "Imran",
+          "entity_type": "PERSON",
+          "risk_score": 0.22
         },
         {
           "id": 3209,
@@ -2637,7 +3277,10 @@
             "pagerank": 0.01458030567814099,
             "betweenness": 0.0020242914979757085,
             "community_id": 3
-          }
+          },
+          "name": "Salim",
+          "entity_type": "PERSON",
+          "risk_score": 0.22
         },
         {
           "id": 3210,
@@ -2651,7 +3294,10 @@
             "pagerank": 0.01458030567814099,
             "betweenness": 0.0037336932073774175,
             "community_id": 5
-          }
+          },
+          "name": "Tariq",
+          "entity_type": "PERSON",
+          "risk_score": 0.22
         },
         {
           "id": 3211,
@@ -2665,7 +3311,10 @@
             "pagerank": 0.01458030567814099,
             "betweenness": 0.002699055330634278,
             "community_id": 4
-          }
+          },
+          "name": "Kabir",
+          "entity_type": "PERSON",
+          "risk_score": 0.22
         },
         {
           "id": 3212,
@@ -2680,7 +3329,10 @@
             "pagerank": 0.06213230251068402,
             "betweenness": 0.0,
             "community_id": 1
-          }
+          },
+          "name": "Guwahati Hub Safehouse Alpha",
+          "entity_type": "LOCATION",
+          "risk_score": 0.93
         },
         {
           "id": 3213,
@@ -2695,7 +3347,10 @@
             "pagerank": 0.026380752095131143,
             "betweenness": 0.0,
             "community_id": 0
-          }
+          },
+          "name": "Guwahati Hub Warehouse",
+          "entity_type": "LOCATION",
+          "risk_score": 0.4
         },
         {
           "id": 3214,
@@ -2710,7 +3365,10 @@
             "pagerank": 0.023221867516463653,
             "betweenness": 0.0,
             "community_id": 3
-          }
+          },
+          "name": "Guwahati Hub Drop Point",
+          "entity_type": "LOCATION",
+          "risk_score": 0.35
         },
         {
           "id": 3215,
@@ -2725,7 +3383,10 @@
             "pagerank": 0.02100875884733339,
             "betweenness": 0.0,
             "community_id": 5
-          }
+          },
+          "name": "Guwahati Hub Front Business",
+          "entity_type": "LOCATION",
+          "risk_score": 0.32
         },
         {
           "id": 3216,
@@ -2740,7 +3401,10 @@
             "pagerank": 0.025243361443269288,
             "betweenness": 0.0,
             "community_id": 0
-          }
+          },
+          "name": "Guwahati Hub Transit Hub",
+          "entity_type": "LOCATION",
+          "risk_score": 0.38
         },
         {
           "id": 3217,
@@ -2754,7 +3418,10 @@
             "pagerank": 0.014945455760969971,
             "betweenness": 0.0,
             "community_id": 1
-          }
+          },
+          "name": "+91-999092416",
+          "entity_type": "PHONE",
+          "risk_score": 0.22
         },
         {
           "id": 3218,
@@ -2768,7 +3435,10 @@
             "pagerank": 0.04013849310861447,
             "betweenness": 0.01338281601439496,
             "community_id": 1
-          }
+          },
+          "name": "+91-999043191",
+          "entity_type": "PHONE",
+          "risk_score": 0.6
         },
         {
           "id": 3219,
@@ -2782,7 +3452,10 @@
             "pagerank": 0.0929657650647965,
             "betweenness": 0.0,
             "community_id": 2
-          }
+          },
+          "name": "+91-999037750",
+          "entity_type": "PHONE",
+          "risk_score": 1.0
         },
         {
           "id": 3220,
@@ -2796,7 +3469,10 @@
             "pagerank": 0.022186533434281022,
             "betweenness": 0.0067476383265856945,
             "community_id": 3
-          }
+          },
+          "name": "+91-999087775",
+          "entity_type": "PHONE",
+          "risk_score": 0.33
         },
         {
           "id": 3221,
@@ -2810,7 +3486,10 @@
             "pagerank": 0.07405394704082567,
             "betweenness": 0.021592442645074223,
             "community_id": 5
-          }
+          },
+          "name": "+91-999023011",
+          "entity_type": "PHONE",
+          "risk_score": 1.0
         },
         {
           "id": 3222,
@@ -2824,7 +3503,10 @@
             "pagerank": 0.02100875884733339,
             "betweenness": 0.0,
             "community_id": 4
-          }
+          },
+          "name": "+91-999083920",
+          "entity_type": "PHONE",
+          "risk_score": 0.32
         },
         {
           "id": 3223,
@@ -2838,7 +3520,10 @@
             "pagerank": 0.01702516324289891,
             "betweenness": 0.0033738191632928472,
             "community_id": 5
-          }
+          },
+          "name": "+91-999081496",
+          "entity_type": "PHONE",
+          "risk_score": 0.26
         },
         {
           "id": 3224,
@@ -2852,7 +3537,10 @@
             "pagerank": 0.03361517108661399,
             "betweenness": 0.008097165991902834,
             "community_id": 1
-          }
+          },
+          "name": "+91-999042249",
+          "entity_type": "PHONE",
+          "risk_score": 0.5
         },
         {
           "id": 3225,
@@ -2866,7 +3554,10 @@
             "pagerank": 0.04785819734073062,
             "betweenness": 0.0020242914979757085,
             "community_id": 2
-          }
+          },
+          "name": "+91-999038499",
+          "entity_type": "PHONE",
+          "risk_score": 0.72
         },
         {
           "id": 3226,
@@ -2880,7 +3571,10 @@
             "pagerank": 0.016026174702293478,
             "betweenness": 0.0,
             "community_id": 0
-          }
+          },
+          "name": "+91-999038860",
+          "entity_type": "PHONE",
+          "risk_score": 0.24
         },
         {
           "id": 3227,
@@ -2893,7 +3587,10 @@
             "pagerank": 0.047122965397352154,
             "betweenness": 0.0,
             "community_id": 6
-          }
+          },
+          "name": "SBI-GHY-46887",
+          "entity_type": "BANK_ACCOUNT",
+          "risk_score": 0.71
         },
         {
           "id": 3228,
@@ -2906,7 +3603,10 @@
             "pagerank": 0.018484919286304576,
             "betweenness": 0.0010121457489878543,
             "community_id": 6
-          }
+          },
+          "name": "SBI-GHY-42916",
+          "entity_type": "BANK_ACCOUNT",
+          "risk_score": 0.28
         },
         {
           "id": 3229,
@@ -2919,7 +3619,10 @@
             "pagerank": 0.014843143080647353,
             "betweenness": 0.002361673414304993,
             "community_id": 6
-          }
+          },
+          "name": "SBI-GHY-31739",
+          "entity_type": "BANK_ACCOUNT",
+          "risk_score": 0.22
         },
         {
           "id": 3230,
@@ -2932,7 +3635,10 @@
             "pagerank": 0.032742394875963136,
             "betweenness": 0.004048582995951417,
             "community_id": 5
-          }
+          },
+          "name": "SBI-GHY-82541",
+          "entity_type": "BANK_ACCOUNT",
+          "risk_score": 0.49
         },
         {
           "id": 3231,
@@ -2945,7 +3651,10 @@
             "pagerank": 0.03321996932703604,
             "betweenness": 0.0,
             "community_id": 6
-          }
+          },
+          "name": "SBI-GHY-44301",
+          "entity_type": "BANK_ACCOUNT",
+          "risk_score": 0.5
         },
         {
           "id": 3232,
@@ -2959,7 +3668,10 @@
             "pagerank": 0.014945455760969971,
             "betweenness": 0.0016869095816464236,
             "community_id": 0
-          }
+          },
+          "name": "IND-45-1801",
+          "entity_type": "VEHICLE",
+          "risk_score": 0.22
         },
         {
           "id": 3233,
@@ -2973,7 +3685,10 @@
             "pagerank": 0.014630749220036151,
             "betweenness": 0.00033738191632928474,
             "community_id": 1
-          }
+          },
+          "name": "IND-14-5621",
+          "entity_type": "VEHICLE",
+          "risk_score": 0.22
         },
         {
           "id": 3234,
@@ -2987,7 +3702,10 @@
             "pagerank": 0.019573356399271498,
             "betweenness": 0.0,
             "community_id": 3
-          }
+          },
+          "name": "IND-71-3882",
+          "entity_type": "VEHICLE",
+          "risk_score": 0.29
         },
         {
           "id": 3235,
@@ -3001,7 +3719,10 @@
             "pagerank": 0.021888521638080995,
             "betweenness": 0.0,
             "community_id": 4
-          }
+          },
+          "name": "IND-58-3905",
+          "entity_type": "VEHICLE",
+          "risk_score": 0.33
         },
         {
           "id": 3424,
@@ -3017,7 +3738,10 @@
             "pagerank": 0.027381742545058187,
             "betweenness": 0.0010121457489878543,
             "community_id": 1
-          }
+          },
+          "name": "@anwar_ali_guwahati",
+          "entity_type": "SOCIAL_HANDLE",
+          "risk_score": 0.41
         },
         {
           "id": 3425,
@@ -3033,7 +3757,10 @@
             "pagerank": 0.014630749220036151,
             "betweenness": 0.0006747638326585695,
             "community_id": 1
-          }
+          },
+          "name": "@rofiqul_express_transit",
+          "entity_type": "SOCIAL_HANDLE",
+          "risk_score": 0.22
         },
         {
           "id": 3426,
@@ -3049,7 +3776,10 @@
             "pagerank": 0.014843143080647353,
             "betweenness": 0.0,
             "community_id": 2
-          }
+          },
+          "name": "@babu_bhai_chittagong",
+          "entity_type": "SOCIAL_HANDLE",
+          "risk_score": 0.22
         }
       ],
       "edges": [
@@ -3938,6 +4668,229 @@
       "critical_anomalies_count": 1,
       "top_communities": []
     },
+    "communities": [
+      {
+        "community_id": 1,
+        "member_count": 10,
+        "members": [
+          {
+            "id": 3199,
+            "name": "Anwar Ali",
+            "type": "PERSON"
+          },
+          {
+            "id": 3200,
+            "name": "Rofiqul Islam",
+            "type": "PERSON"
+          },
+          {
+            "id": 3206,
+            "name": "Zakir",
+            "type": "PERSON"
+          },
+          {
+            "id": 3212,
+            "name": "Guwahati Hub Safehouse Alpha",
+            "type": "LOCATION"
+          },
+          {
+            "id": 3217,
+            "name": "+91-999092416",
+            "type": "PHONE"
+          }
+        ],
+        "alias": "Chakrashila Identity Forgery Ring (Cluster 1)",
+        "dominant_crime_type": "Fake Aadhaar & Paperwork Fabrication for Forced Migrants"
+      },
+      {
+        "community_id": 2,
+        "member_count": 5,
+        "members": [
+          {
+            "id": 3201,
+            "name": "Babu Bhai",
+            "type": "PERSON"
+          },
+          {
+            "id": 3207,
+            "name": "Farooq",
+            "type": "PERSON"
+          },
+          {
+            "id": 3219,
+            "name": "+91-999037750",
+            "type": "PHONE"
+          },
+          {
+            "id": 3225,
+            "name": "+91-999038499",
+            "type": "PHONE"
+          },
+          {
+            "id": 3426,
+            "name": "@babu_bhai_chittagong",
+            "type": "SOCIAL_HANDLE"
+          }
+        ],
+        "alias": "Guwahati Long-Haul Train Network (Cluster 2)",
+        "dominant_crime_type": "Interstate Safehouse Confinement & Railway Courier Ops"
+      },
+      {
+        "community_id": 3,
+        "member_count": 5,
+        "members": [
+          {
+            "id": 3202,
+            "name": "Munna",
+            "type": "PERSON"
+          },
+          {
+            "id": 3209,
+            "name": "Salim",
+            "type": "PERSON"
+          },
+          {
+            "id": 3214,
+            "name": "Guwahati Hub Drop Point",
+            "type": "LOCATION"
+          },
+          {
+            "id": 3220,
+            "name": "+91-999087775",
+            "type": "PHONE"
+          },
+          {
+            "id": 3234,
+            "name": "IND-71-3882",
+            "type": "VEHICLE"
+          }
+        ],
+        "alias": "Silchar Brokerage & Enforcer Cell (Cluster 3)",
+        "dominant_crime_type": "Exploitative Labor Placement & Local Intermediary Hub"
+      },
+      {
+        "community_id": 5,
+        "member_count": 7,
+        "members": [
+          {
+            "id": 3203,
+            "name": "Sajid",
+            "type": "PERSON"
+          },
+          {
+            "id": 3205,
+            "name": "Kamal",
+            "type": "PERSON"
+          },
+          {
+            "id": 3210,
+            "name": "Tariq",
+            "type": "PERSON"
+          },
+          {
+            "id": 3215,
+            "name": "Guwahati Hub Front Business",
+            "type": "LOCATION"
+          },
+          {
+            "id": 3221,
+            "name": "+91-999023011",
+            "type": "PHONE"
+          }
+        ],
+        "alias": "Chakrashila Identity Forgery Ring (Cluster 5)",
+        "dominant_crime_type": "Fake Aadhaar & Paperwork Fabrication for Forced Migrants"
+      },
+      {
+        "community_id": 4,
+        "member_count": 4,
+        "members": [
+          {
+            "id": 3204,
+            "name": "Raju",
+            "type": "PERSON"
+          },
+          {
+            "id": 3211,
+            "name": "Kabir",
+            "type": "PERSON"
+          },
+          {
+            "id": 3222,
+            "name": "+91-999083920",
+            "type": "PHONE"
+          },
+          {
+            "id": 3235,
+            "name": "IND-58-3905",
+            "type": "VEHICLE"
+          }
+        ],
+        "alias": "Brahmaputra Transit Smuggling Syndicate (Cluster 4)",
+        "dominant_crime_type": "Cross-Border Riverine Extraction & False Documentation"
+      },
+      {
+        "community_id": 0,
+        "member_count": 5,
+        "members": [
+          {
+            "id": 3208,
+            "name": "Imran",
+            "type": "PERSON"
+          },
+          {
+            "id": 3213,
+            "name": "Guwahati Hub Warehouse",
+            "type": "LOCATION"
+          },
+          {
+            "id": 3216,
+            "name": "Guwahati Hub Transit Hub",
+            "type": "LOCATION"
+          },
+          {
+            "id": 3226,
+            "name": "+91-999038860",
+            "type": "PHONE"
+          },
+          {
+            "id": 3232,
+            "name": "IND-45-1801",
+            "type": "VEHICLE"
+          }
+        ],
+        "alias": "Brahmaputra Transit Smuggling Syndicate (Cluster 0)",
+        "dominant_crime_type": "Cross-Border Riverine Extraction & False Documentation"
+      },
+      {
+        "community_id": 6,
+        "member_count": 4,
+        "members": [
+          {
+            "id": 3227,
+            "name": "SBI-GHY-46887",
+            "type": "BANK_ACCOUNT"
+          },
+          {
+            "id": 3228,
+            "name": "SBI-GHY-42916",
+            "type": "BANK_ACCOUNT"
+          },
+          {
+            "id": 3229,
+            "name": "SBI-GHY-31739",
+            "type": "BANK_ACCOUNT"
+          },
+          {
+            "id": 3231,
+            "name": "SBI-GHY-44301",
+            "type": "BANK_ACCOUNT"
+          }
+        ],
+        "alias": "Guwahati Long-Haul Train Network (Cluster 6)",
+        "dominant_crime_type": "Interstate Safehouse Confinement & Railway Courier Ops"
+      }
+    ],
     "anomalies": [
       {
         "id": 272,
@@ -3998,7 +4951,8 @@
       {
         "id": 3219,
         "name": "+91-999037750",
-        "entity_type": null,
+        "entity_type": "PHONE",
+        "type": "PHONE",
         "pagerank": 0.0929657650647965,
         "betweenness": 0.0,
         "risk_score": 0.0
@@ -4006,7 +4960,8 @@
       {
         "id": 3221,
         "name": "+91-999023011",
-        "entity_type": null,
+        "entity_type": "PHONE",
+        "type": "PHONE",
         "pagerank": 0.07405394704082567,
         "betweenness": 0.021592442645074223,
         "risk_score": 0.0
@@ -4014,7 +4969,8 @@
       {
         "id": 3212,
         "name": "Guwahati Hub Safehouse Alpha",
-        "entity_type": null,
+        "entity_type": "LOCATION",
+        "type": "LOCATION",
         "pagerank": 0.06213230251068402,
         "betweenness": 0.0,
         "risk_score": 0.0
@@ -4022,7 +4978,8 @@
       {
         "id": 3225,
         "name": "+91-999038499",
-        "entity_type": null,
+        "entity_type": "PHONE",
+        "type": "PHONE",
         "pagerank": 0.04785819734073062,
         "betweenness": 0.0020242914979757085,
         "risk_score": 0.0
@@ -4030,7 +4987,8 @@
       {
         "id": 3227,
         "name": "SBI-GHY-46887",
-        "entity_type": null,
+        "entity_type": "BANK_ACCOUNT",
+        "type": "BANK_ACCOUNT",
         "pagerank": 0.047122965397352154,
         "betweenness": 0.0,
         "risk_score": 0.0
@@ -4038,7 +4996,8 @@
       {
         "id": 3218,
         "name": "+91-999043191",
-        "entity_type": null,
+        "entity_type": "PHONE",
+        "type": "PHONE",
         "pagerank": 0.04013849310861447,
         "betweenness": 0.01338281601439496,
         "risk_score": 0.0
@@ -4046,7 +5005,8 @@
       {
         "id": 3224,
         "name": "+91-999042249",
-        "entity_type": null,
+        "entity_type": "PHONE",
+        "type": "PHONE",
         "pagerank": 0.03361517108661399,
         "betweenness": 0.008097165991902834,
         "risk_score": 0.0
@@ -4054,7 +5014,8 @@
       {
         "id": 3231,
         "name": "SBI-GHY-44301",
-        "entity_type": null,
+        "entity_type": "BANK_ACCOUNT",
+        "type": "BANK_ACCOUNT",
         "pagerank": 0.03321996932703604,
         "betweenness": 0.0,
         "risk_score": 0.0
@@ -4062,7 +5023,8 @@
       {
         "id": 3230,
         "name": "SBI-GHY-82541",
-        "entity_type": null,
+        "entity_type": "BANK_ACCOUNT",
+        "type": "BANK_ACCOUNT",
         "pagerank": 0.032742394875963136,
         "betweenness": 0.004048582995951417,
         "risk_score": 0.0
@@ -4070,10 +5032,44 @@
       {
         "id": 3424,
         "name": "@anwar_ali_guwahati",
-        "entity_type": null,
+        "entity_type": "SOCIAL_HANDLE",
+        "type": "SOCIAL_HANDLE",
         "pagerank": 0.027381742545058187,
         "betweenness": 0.0010121457489878543,
         "risk_score": 0.0
+      }
+    ],
+    "firs": [
+      {
+        "id": 27,
+        "fir_number": "FIR_AS_HT_2026_1109",
+        "date": "2026-03-22T18:45:00",
+        "police_station": "Paltan Bazaar Police Station",
+        "district": "Kamrup Metropolitan, Guwahati",
+        "crime_type": "Human Trafficking & Identity Forgery",
+        "crime_confidence": 0.94,
+        "raw_text": "Case registered under IPC Section 370, 420, 468 and Immoral Traffic (Prevention) Act against Manik Ali and Rehana Begum for operating interstate forged documentation and illegal human trafficking network from border transit corridors.",
+        "extracted_entities": [
+          "Manik Ali",
+          "Rehana Begum",
+          "Guwahati Railway Station"
+        ],
+        "case_id": "ht_assam"
+      },
+      {
+        "id": 28,
+        "fir_number": "FIR_AS_FORGERY_2026_304",
+        "date": "2026-05-14T09:30:00",
+        "police_station": "Dhubri Town Police Station",
+        "district": "Dhubri, Assam",
+        "crime_type": "Forged Citizenship Documents",
+        "crime_confidence": 0.89,
+        "raw_text": "Intelligence raid dismantled counterfeit Aadhaar and voter ID fabrication center in Chakrashila operated by syndicate members linked to Manik Ali.",
+        "extracted_entities": [
+          "Manik Ali",
+          "Dhubri"
+        ],
+        "case_id": "ht_assam"
       }
     ]
   },
@@ -4092,7 +5088,10 @@
             "pagerank": 0.010126878416493991,
             "betweenness": 0.0,
             "community_id": 1
-          }
+          },
+          "name": "Ramesh 'Phishing' Kumar",
+          "entity_type": "PERSON",
+          "risk_score": 0.15
         },
         {
           "id": 3237,
@@ -4106,7 +5105,10 @@
             "pagerank": 0.011561521748664996,
             "betweenness": 0.010008996851102113,
             "community_id": 1
-          }
+          },
+          "name": "Sunil 'Hacker' Shetty",
+          "entity_type": "PERSON",
+          "risk_score": 0.17
         },
         {
           "id": 3238,
@@ -4120,7 +5122,10 @@
             "pagerank": 0.011561521748664996,
             "betweenness": 0.009559154295996401,
             "community_id": 5
-          }
+          },
+          "name": "Priya 'Scam' Sharma",
+          "entity_type": "PERSON",
+          "risk_score": 0.17
         },
         {
           "id": 3239,
@@ -4134,7 +5139,10 @@
             "pagerank": 0.011139389066408163,
             "betweenness": 0.003711201079622132,
             "community_id": 2
-          }
+          },
+          "name": "Rahul",
+          "entity_type": "PERSON",
+          "risk_score": 0.17
         },
         {
           "id": 3240,
@@ -4148,7 +5156,10 @@
             "pagerank": 0.011139389066408163,
             "betweenness": 0.0035987404408457037,
             "community_id": 4
-          }
+          },
+          "name": "Amit",
+          "entity_type": "PERSON",
+          "risk_score": 0.17
         },
         {
           "id": 3241,
@@ -4162,7 +5173,10 @@
             "pagerank": 0.011139389066408163,
             "betweenness": 0.0026990553306342775,
             "community_id": 0
-          }
+          },
+          "name": "Neha",
+          "entity_type": "PERSON",
+          "risk_score": 0.17
         },
         {
           "id": 3242,
@@ -4176,7 +5190,10 @@
             "pagerank": 0.011139389066408163,
             "betweenness": 0.0019118308591992799,
             "community_id": 3
-          }
+          },
+          "name": "Vikas",
+          "entity_type": "PERSON",
+          "risk_score": 0.17
         },
         {
           "id": 3243,
@@ -4190,7 +5207,10 @@
             "pagerank": 0.011139389066408163,
             "betweenness": 0.0026990553306342775,
             "community_id": 2
-          }
+          },
+          "name": "Pooja",
+          "entity_type": "PERSON",
+          "risk_score": 0.17
         },
         {
           "id": 3244,
@@ -4204,7 +5224,10 @@
             "pagerank": 0.011279045707775633,
             "betweenness": 0.0016869095816464236,
             "community_id": 5
-          }
+          },
+          "name": "Arjun",
+          "entity_type": "PERSON",
+          "risk_score": 0.17
         },
         {
           "id": 3245,
@@ -4218,7 +5241,10 @@
             "pagerank": 0.011279045707775633,
             "betweenness": 0.0029239766081871343,
             "community_id": 2
-          }
+          },
+          "name": "Karan",
+          "entity_type": "PERSON",
+          "risk_score": 0.17
         },
         {
           "id": 3246,
@@ -4232,7 +5258,10 @@
             "pagerank": 0.011279045707775633,
             "betweenness": 0.0016869095816464236,
             "community_id": 0
-          }
+          },
+          "name": "Nitin",
+          "entity_type": "PERSON",
+          "risk_score": 0.17
         },
         {
           "id": 3247,
@@ -4246,7 +5275,10 @@
             "pagerank": 0.011279045707775633,
             "betweenness": 0.002249212775528565,
             "community_id": 2
-          }
+          },
+          "name": "Rohit",
+          "entity_type": "PERSON",
+          "risk_score": 0.17
         },
         {
           "id": 3248,
@@ -4260,7 +5292,10 @@
             "pagerank": 0.011279045707775633,
             "betweenness": 0.003036437246963563,
             "community_id": 3
-          }
+          },
+          "name": "Sneha",
+          "entity_type": "PERSON",
+          "risk_score": 0.17
         },
         {
           "id": 3249,
@@ -4275,7 +5310,10 @@
             "pagerank": 0.035167661882064945,
             "betweenness": 0.0,
             "community_id": 5
-          }
+          },
+          "name": "Whitefield Tech Park Safehouse Alpha",
+          "entity_type": "LOCATION",
+          "risk_score": 0.53
         },
         {
           "id": 3250,
@@ -4290,7 +5328,10 @@
             "pagerank": 0.02194196631513271,
             "betweenness": 0.0,
             "community_id": 4
-          }
+          },
+          "name": "Whitefield Tech Park Warehouse",
+          "entity_type": "LOCATION",
+          "risk_score": 0.33
         },
         {
           "id": 3251,
@@ -4305,7 +5346,10 @@
             "pagerank": 0.02779123485211649,
             "betweenness": 0.0,
             "community_id": 0
-          }
+          },
+          "name": "Whitefield Tech Park Drop Point",
+          "entity_type": "LOCATION",
+          "risk_score": 0.42
         },
         {
           "id": 3252,
@@ -4320,7 +5364,10 @@
             "pagerank": 0.02106211121498098,
             "betweenness": 0.0,
             "community_id": 4
-          }
+          },
+          "name": "Whitefield Tech Park Front Business",
+          "entity_type": "LOCATION",
+          "risk_score": 0.32
         },
         {
           "id": 3253,
@@ -4335,7 +5382,10 @@
             "pagerank": 0.02912225280049657,
             "betweenness": 0.0,
             "community_id": 2
-          }
+          },
+          "name": "Whitefield Tech Park Transit Hub",
+          "entity_type": "LOCATION",
+          "risk_score": 0.44
         },
         {
           "id": 3254,
@@ -4349,7 +5399,10 @@
             "pagerank": 0.011561521748664996,
             "betweenness": 0.0006747638326585695,
             "community_id": 1
-          }
+          },
+          "name": "+91-999034561",
+          "entity_type": "PHONE",
+          "risk_score": 0.17
         },
         {
           "id": 3255,
@@ -4363,7 +5416,10 @@
             "pagerank": 0.011318067416393015,
             "betweenness": 0.0010121457489878543,
             "community_id": 1
-          }
+          },
+          "name": "+91-999072479",
+          "entity_type": "PHONE",
+          "risk_score": 0.17
         },
         {
           "id": 3256,
@@ -4377,7 +5433,10 @@
             "pagerank": 0.026733714828366596,
             "betweenness": 0.009109311740890687,
             "community_id": 5
-          }
+          },
+          "name": "+91-999052710",
+          "entity_type": "PHONE",
+          "risk_score": 0.4
         },
         {
           "id": 3257,
@@ -4391,7 +5450,10 @@
             "pagerank": 0.017163019001967025,
             "betweenness": 0.0,
             "community_id": 0
-          }
+          },
+          "name": "+91-999086794",
+          "entity_type": "PHONE",
+          "risk_score": 0.26
         },
         {
           "id": 3258,
@@ -4405,7 +5467,10 @@
             "pagerank": 0.01794272767627383,
             "betweenness": 0.007422402159244264,
             "community_id": 4
-          }
+          },
+          "name": "+91-999058481",
+          "entity_type": "PHONE",
+          "risk_score": 0.27
         },
         {
           "id": 3259,
@@ -4419,7 +5484,10 @@
             "pagerank": 0.016251924851977406,
             "betweenness": 0.0,
             "community_id": 0
-          }
+          },
+          "name": "+91-999030819",
+          "entity_type": "PHONE",
+          "risk_score": 0.24
         },
         {
           "id": 3260,
@@ -4433,7 +5501,10 @@
             "pagerank": 0.05209908221298714,
             "betweenness": 0.0,
             "community_id": 1
-          }
+          },
+          "name": "+91-999070289",
+          "entity_type": "PHONE",
+          "risk_score": 0.78
         },
         {
           "id": 3261,
@@ -4447,7 +5518,10 @@
             "pagerank": 0.01621635590619813,
             "betweenness": 0.0,
             "community_id": 2
-          }
+          },
+          "name": "+91-999066716",
+          "entity_type": "PHONE",
+          "risk_score": 0.24
         },
         {
           "id": 3262,
@@ -4461,7 +5535,10 @@
             "pagerank": 0.026502426323077873,
             "betweenness": 0.004048582995951417,
             "community_id": 5
-          }
+          },
+          "name": "+91-999046431",
+          "entity_type": "PHONE",
+          "risk_score": 0.4
         },
         {
           "id": 3263,
@@ -4475,7 +5552,10 @@
             "pagerank": 0.02353928894249382,
             "betweenness": 0.0,
             "community_id": 2
-          }
+          },
+          "name": "+91-999043883",
+          "entity_type": "PHONE",
+          "risk_score": 0.35
         },
         {
           "id": 3264,
@@ -4488,7 +5568,10 @@
             "pagerank": 0.14169178647820946,
             "betweenness": 0.0006747638326585695,
             "community_id": 1
-          }
+          },
+          "name": "CRYPTO-WALLET-BTC-56339",
+          "entity_type": "BANK_ACCOUNT",
+          "risk_score": 1.0
         },
         {
           "id": 3265,
@@ -4501,7 +5584,10 @@
             "pagerank": 0.011318067416393015,
             "betweenness": 0.0,
             "community_id": 1
-          }
+          },
+          "name": "CRYPTO-WALLET-BTC-62260",
+          "entity_type": "BANK_ACCOUNT",
+          "risk_score": 0.17
         },
         {
           "id": 3266,
@@ -4514,7 +5600,10 @@
             "pagerank": 0.04994049415624454,
             "betweenness": 0.011133603238866396,
             "community_id": 5
-          }
+          },
+          "name": "CRYPTO-WALLET-BTC-37020",
+          "entity_type": "BANK_ACCOUNT",
+          "risk_score": 0.75
         },
         {
           "id": 3267,
@@ -4527,7 +5616,10 @@
             "pagerank": 0.045244725426301,
             "betweenness": 0.012145748987854251,
             "community_id": 2
-          }
+          },
+          "name": "CRYPTO-WALLET-BTC-88928",
+          "entity_type": "BANK_ACCOUNT",
+          "risk_score": 0.68
         },
         {
           "id": 3268,
@@ -4540,7 +5632,10 @@
             "pagerank": 0.1531135324774599,
             "betweenness": 0.006072874493927126,
             "community_id": 5
-          }
+          },
+          "name": "CRYPTO-WALLET-BTC-15558",
+          "entity_type": "BANK_ACCOUNT",
+          "risk_score": 1.0
         },
         {
           "id": 3269,
@@ -4554,7 +5649,10 @@
             "pagerank": 0.011561521748664996,
             "betweenness": 0.0006747638326585695,
             "community_id": 0
-          }
+          },
+          "name": "IND-53-1510",
+          "entity_type": "VEHICLE",
+          "risk_score": 0.17
         },
         {
           "id": 3270,
@@ -4568,7 +5666,10 @@
             "pagerank": 0.011318067416393015,
             "betweenness": 0.0011246063877642823,
             "community_id": 4
-          }
+          },
+          "name": "IND-20-3946",
+          "entity_type": "VEHICLE",
+          "risk_score": 0.17
         },
         {
           "id": 3271,
@@ -4582,7 +5683,10 @@
             "pagerank": 0.015141536316889768,
             "betweenness": 0.001349527665317139,
             "community_id": 2
-          }
+          },
+          "name": "IND-17-4855",
+          "entity_type": "VEHICLE",
+          "risk_score": 0.23
         },
         {
           "id": 3272,
@@ -4596,7 +5700,10 @@
             "pagerank": 0.016932485567031117,
             "betweenness": 0.0,
             "community_id": 3
-          }
+          },
+          "name": "IND-59-6430",
+          "entity_type": "VEHICLE",
+          "risk_score": 0.25
         },
         {
           "id": 3427,
@@ -4612,7 +5719,10 @@
             "pagerank": 0.021181894474672145,
             "betweenness": 0.001349527665317139,
             "community_id": 1
-          }
+          },
+          "name": "@0xRamesh_DarkSec",
+          "entity_type": "SOCIAL_HANDLE",
+          "risk_score": 0.32
         },
         {
           "id": 3428,
@@ -4628,7 +5738,10 @@
             "pagerank": 0.011318067416393015,
             "betweenness": 0.0006747638326585695,
             "community_id": 1
-          }
+          },
+          "name": "@sunil_root_hacker",
+          "entity_type": "SOCIAL_HANDLE",
+          "risk_score": 0.17
         },
         {
           "id": 3429,
@@ -4644,7 +5757,10 @@
             "pagerank": 0.01148236934741357,
             "betweenness": 0.0,
             "community_id": 5
-          }
+          },
+          "name": "@priya_scam_queen",
+          "entity_type": "SOCIAL_HANDLE",
+          "risk_score": 0.17
         }
       ],
       "edges": [
@@ -5520,6 +6636,196 @@
       "critical_anomalies_count": 2,
       "top_communities": []
     },
+    "communities": [
+      {
+        "community_id": 1,
+        "member_count": 9,
+        "members": [
+          {
+            "id": 3236,
+            "name": "Ramesh 'Phishing' Kumar",
+            "type": "PERSON"
+          },
+          {
+            "id": 3237,
+            "name": "Sunil 'Hacker' Shetty",
+            "type": "PERSON"
+          },
+          {
+            "id": 3254,
+            "name": "+91-999034561",
+            "type": "PHONE"
+          },
+          {
+            "id": 3255,
+            "name": "+91-999072479",
+            "type": "PHONE"
+          },
+          {
+            "id": 3260,
+            "name": "+91-999070289",
+            "type": "PHONE"
+          }
+        ],
+        "alias": "Zero-Day Monero Ransomware Ring (Cluster 1)",
+        "dominant_crime_type": "Critical Infrastructure Lockout & Decentralized Tumblers"
+      },
+      {
+        "community_id": 5,
+        "member_count": 8,
+        "members": [
+          {
+            "id": 3238,
+            "name": "Priya 'Scam' Sharma",
+            "type": "PERSON"
+          },
+          {
+            "id": 3244,
+            "name": "Arjun",
+            "type": "PERSON"
+          },
+          {
+            "id": 3249,
+            "name": "Whitefield Tech Park Safehouse Alpha",
+            "type": "LOCATION"
+          },
+          {
+            "id": 3256,
+            "name": "+91-999052710",
+            "type": "PHONE"
+          },
+          {
+            "id": 3262,
+            "name": "+91-999046431",
+            "type": "PHONE"
+          }
+        ],
+        "alias": "Zero-Day Monero Ransomware Ring (Cluster 5)",
+        "dominant_crime_type": "Critical Infrastructure Lockout & Decentralized Tumblers"
+      },
+      {
+        "community_id": 2,
+        "member_count": 9,
+        "members": [
+          {
+            "id": 3239,
+            "name": "Rahul",
+            "type": "PERSON"
+          },
+          {
+            "id": 3243,
+            "name": "Pooja",
+            "type": "PERSON"
+          },
+          {
+            "id": 3245,
+            "name": "Karan",
+            "type": "PERSON"
+          },
+          {
+            "id": 3247,
+            "name": "Rohit",
+            "type": "PERSON"
+          },
+          {
+            "id": 3253,
+            "name": "Whitefield Tech Park Transit Hub",
+            "type": "LOCATION"
+          }
+        ],
+        "alias": "DarkWeb Fast-Cash Extraction Squad (Cluster 2)",
+        "dominant_crime_type": "ATM Cloning, Mule Account Liquidation & P2P Escrow"
+      },
+      {
+        "community_id": 4,
+        "member_count": 5,
+        "members": [
+          {
+            "id": 3240,
+            "name": "Amit",
+            "type": "PERSON"
+          },
+          {
+            "id": 3250,
+            "name": "Whitefield Tech Park Warehouse",
+            "type": "LOCATION"
+          },
+          {
+            "id": 3252,
+            "name": "Whitefield Tech Park Front Business",
+            "type": "LOCATION"
+          },
+          {
+            "id": 3258,
+            "name": "+91-999058481",
+            "type": "PHONE"
+          },
+          {
+            "id": 3270,
+            "name": "IND-20-3946",
+            "type": "VEHICLE"
+          }
+        ],
+        "alias": "Apex ShadowMesh Phishing Consortium (Cluster 4)",
+        "dominant_crime_type": "Spear-Phishing Executives & Reverse-Proxy Infiltration"
+      },
+      {
+        "community_id": 0,
+        "member_count": 6,
+        "members": [
+          {
+            "id": 3241,
+            "name": "Neha",
+            "type": "PERSON"
+          },
+          {
+            "id": 3246,
+            "name": "Nitin",
+            "type": "PERSON"
+          },
+          {
+            "id": 3251,
+            "name": "Whitefield Tech Park Drop Point",
+            "type": "LOCATION"
+          },
+          {
+            "id": 3257,
+            "name": "+91-999086794",
+            "type": "PHONE"
+          },
+          {
+            "id": 3259,
+            "name": "+91-999030819",
+            "type": "PHONE"
+          }
+        ],
+        "alias": "Apex ShadowMesh Phishing Consortium (Cluster 0)",
+        "dominant_crime_type": "Spear-Phishing Executives & Reverse-Proxy Infiltration"
+      },
+      {
+        "community_id": 3,
+        "member_count": 3,
+        "members": [
+          {
+            "id": 3242,
+            "name": "Vikas",
+            "type": "PERSON"
+          },
+          {
+            "id": 3248,
+            "name": "Sneha",
+            "type": "PERSON"
+          },
+          {
+            "id": 3272,
+            "name": "IND-59-6430",
+            "type": "VEHICLE"
+          }
+        ],
+        "alias": "Whitefield Cyber Infrastructure Cell (Cluster 3)",
+        "dominant_crime_type": "Bulletproof Server Hosting & Botnet Command Nodes"
+      }
+    ],
     "anomalies": [
       {
         "id": 275,
@@ -5580,7 +6886,8 @@
       {
         "id": 3268,
         "name": "CRYPTO-WALLET-BTC-15558",
-        "entity_type": null,
+        "entity_type": "BANK_ACCOUNT",
+        "type": "BANK_ACCOUNT",
         "pagerank": 0.1531135324774599,
         "betweenness": 0.006072874493927126,
         "risk_score": 0.0
@@ -5588,7 +6895,8 @@
       {
         "id": 3264,
         "name": "CRYPTO-WALLET-BTC-56339",
-        "entity_type": null,
+        "entity_type": "BANK_ACCOUNT",
+        "type": "BANK_ACCOUNT",
         "pagerank": 0.14169178647820946,
         "betweenness": 0.0006747638326585695,
         "risk_score": 0.0
@@ -5596,7 +6904,8 @@
       {
         "id": 3260,
         "name": "+91-999070289",
-        "entity_type": null,
+        "entity_type": "PHONE",
+        "type": "PHONE",
         "pagerank": 0.05209908221298714,
         "betweenness": 0.0,
         "risk_score": 0.0
@@ -5604,7 +6913,8 @@
       {
         "id": 3266,
         "name": "CRYPTO-WALLET-BTC-37020",
-        "entity_type": null,
+        "entity_type": "BANK_ACCOUNT",
+        "type": "BANK_ACCOUNT",
         "pagerank": 0.04994049415624454,
         "betweenness": 0.011133603238866396,
         "risk_score": 0.0
@@ -5612,7 +6922,8 @@
       {
         "id": 3267,
         "name": "CRYPTO-WALLET-BTC-88928",
-        "entity_type": null,
+        "entity_type": "BANK_ACCOUNT",
+        "type": "BANK_ACCOUNT",
         "pagerank": 0.045244725426301,
         "betweenness": 0.012145748987854251,
         "risk_score": 0.0
@@ -5620,7 +6931,8 @@
       {
         "id": 3249,
         "name": "Whitefield Tech Park Safehouse Alpha",
-        "entity_type": null,
+        "entity_type": "LOCATION",
+        "type": "LOCATION",
         "pagerank": 0.035167661882064945,
         "betweenness": 0.0,
         "risk_score": 0.0
@@ -5628,7 +6940,8 @@
       {
         "id": 3253,
         "name": "Whitefield Tech Park Transit Hub",
-        "entity_type": null,
+        "entity_type": "LOCATION",
+        "type": "LOCATION",
         "pagerank": 0.02912225280049657,
         "betweenness": 0.0,
         "risk_score": 0.0
@@ -5636,7 +6949,8 @@
       {
         "id": 3251,
         "name": "Whitefield Tech Park Drop Point",
-        "entity_type": null,
+        "entity_type": "LOCATION",
+        "type": "LOCATION",
         "pagerank": 0.02779123485211649,
         "betweenness": 0.0,
         "risk_score": 0.0
@@ -5644,7 +6958,8 @@
       {
         "id": 3256,
         "name": "+91-999052710",
-        "entity_type": null,
+        "entity_type": "PHONE",
+        "type": "PHONE",
         "pagerank": 0.026733714828366596,
         "betweenness": 0.009109311740890687,
         "risk_score": 0.0
@@ -5652,10 +6967,44 @@
       {
         "id": 3262,
         "name": "+91-999046431",
-        "entity_type": null,
+        "entity_type": "PHONE",
+        "type": "PHONE",
         "pagerank": 0.026502426323077873,
         "betweenness": 0.004048582995951417,
         "risk_score": 0.0
+      }
+    ],
+    "firs": [
+      {
+        "id": 29,
+        "fir_number": "FIR_KA_CYBER_2026_883",
+        "date": "2026-02-19T16:20:00",
+        "police_station": "Cyber Crime Police Station CID",
+        "district": "Bengaluru City, Karnataka",
+        "crime_type": "Corporate Ransomware & DarkWeb Laundering",
+        "crime_confidence": 0.97,
+        "raw_text": "Crime registered under IT Act Section 66C, 66D, 43 and IPC 420/384 against Ramesh 'Phishing' Kumar and Sunil 'Hacker' Shetty for deploying Zero-Day Monero ransomware against healthcare servers and laundering 15 BTC via decentralized tumblers.",
+        "extracted_entities": [
+          "Ramesh 'Phishing' Kumar",
+          "Sunil 'Hacker' Shetty",
+          "Apex ShadowMesh"
+        ],
+        "case_id": "cyber_bengaluru"
+      },
+      {
+        "id": 30,
+        "fir_number": "FIR_KA_MULE_2026_214",
+        "date": "2026-07-05T13:10:00",
+        "police_station": "Whitefield Police Station",
+        "district": "Bengaluru, Karnataka",
+        "crime_type": "Mule Account Fraud Ring",
+        "crime_confidence": 0.88,
+        "raw_text": "Investigation revealed 42 synchronized ATM cash extractions and corporate spoofing operations coordinated by Priya 'Scam' Sharma through Whitefield Tech Park safehouse.",
+        "extracted_entities": [
+          "Priya 'Scam' Sharma",
+          "Whitefield"
+        ],
+        "case_id": "cyber_bengaluru"
       }
     ]
   },
@@ -5674,7 +7023,10 @@
             "pagerank": 0.01166314855443552,
             "betweenness": 0.0,
             "community_id": 2
-          }
+          },
+          "name": "Mansukh Bhai",
+          "entity_type": "PERSON",
+          "risk_score": 0.17
         },
         {
           "id": 3274,
@@ -5688,7 +7040,10 @@
             "pagerank": 0.013315446169980118,
             "betweenness": 0.009896536212325686,
             "community_id": 4
-          }
+          },
+          "name": "Ketan Patel",
+          "entity_type": "PERSON",
+          "risk_score": 0.2
         },
         {
           "id": 3275,
@@ -5702,7 +7057,10 @@
             "pagerank": 0.013315446169980118,
             "betweenness": 0.00899685110211426,
             "community_id": 0
-          }
+          },
+          "name": "Jignesh Shah",
+          "entity_type": "PERSON",
+          "risk_score": 0.2
         },
         {
           "id": 3276,
@@ -5716,7 +7074,10 @@
             "pagerank": 0.012829272065743719,
             "betweenness": 0.003036437246963563,
             "community_id": 3
-          }
+          },
+          "name": "Ramesh",
+          "entity_type": "PERSON",
+          "risk_score": 0.19
         },
         {
           "id": 3277,
@@ -5730,7 +7091,10 @@
             "pagerank": 0.012829272065743719,
             "betweenness": 0.0029239766081871343,
             "community_id": 4
-          }
+          },
+          "name": "Suresh",
+          "entity_type": "PERSON",
+          "risk_score": 0.19
         },
         {
           "id": 3278,
@@ -5744,7 +7108,10 @@
             "pagerank": 0.012829272065743719,
             "betweenness": 0.002361673414304993,
             "community_id": 1
-          }
+          },
+          "name": "Mahesh",
+          "entity_type": "PERSON",
+          "risk_score": 0.19
         },
         {
           "id": 3279,
@@ -5758,7 +7125,10 @@
             "pagerank": 0.012829272065743719,
             "betweenness": 0.0033738191632928472,
             "community_id": 0
-          }
+          },
+          "name": "Dinesh",
+          "entity_type": "PERSON",
+          "risk_score": 0.19
         },
         {
           "id": 3280,
@@ -5772,7 +7142,10 @@
             "pagerank": 0.012829272065743719,
             "betweenness": 0.002699055330634278,
             "community_id": 3
-          }
+          },
+          "name": "Bhavesh",
+          "entity_type": "PERSON",
+          "risk_score": 0.19
         },
         {
           "id": 3281,
@@ -5786,7 +7159,10 @@
             "pagerank": 0.012990116687993124,
             "betweenness": 0.001349527665317139,
             "community_id": 0
-          }
+          },
+          "name": "Hardik",
+          "entity_type": "PERSON",
+          "risk_score": 0.19
         },
         {
           "id": 3282,
@@ -5800,7 +7176,10 @@
             "pagerank": 0.012990116687993124,
             "betweenness": 0.003261358524516419,
             "community_id": 3
-          }
+          },
+          "name": "Viral",
+          "entity_type": "PERSON",
+          "risk_score": 0.19
         },
         {
           "id": 3283,
@@ -5814,7 +7193,10 @@
             "pagerank": 0.012990116687993124,
             "betweenness": 0.002699055330634278,
             "community_id": 1
-          }
+          },
+          "name": "Chirag",
+          "entity_type": "PERSON",
+          "risk_score": 0.19
         },
         {
           "id": 3284,
@@ -5828,7 +7210,10 @@
             "pagerank": 0.012990116687993124,
             "betweenness": 0.003036437246963563,
             "community_id": 3
-          }
+          },
+          "name": "Dipesh",
+          "entity_type": "PERSON",
+          "risk_score": 0.19
         },
         {
           "id": 3285,
@@ -5842,7 +7227,10 @@
             "pagerank": 0.012990116687993124,
             "betweenness": 0.002699055330634278,
             "community_id": 0
-          }
+          },
+          "name": "Mehul",
+          "entity_type": "PERSON",
+          "risk_score": 0.19
         },
         {
           "id": 3286,
@@ -5857,7 +7245,10 @@
             "pagerank": 0.057079377041325284,
             "betweenness": 0.0,
             "community_id": 0
-          }
+          },
+          "name": "Surat Diamond Market Safehouse Alpha",
+          "entity_type": "LOCATION",
+          "risk_score": 0.86
         },
         {
           "id": 3287,
@@ -5872,7 +7263,10 @@
             "pagerank": 0.03081072134339465,
             "betweenness": 0.0,
             "community_id": 4
-          }
+          },
+          "name": "Surat Diamond Market Warehouse",
+          "entity_type": "LOCATION",
+          "risk_score": 0.46
         },
         {
           "id": 3288,
@@ -5887,7 +7281,10 @@
             "pagerank": 0.020689190664836123,
             "betweenness": 0.0,
             "community_id": 1
-          }
+          },
+          "name": "Surat Diamond Market Drop Point",
+          "entity_type": "LOCATION",
+          "risk_score": 0.31
         },
         {
           "id": 3289,
@@ -5902,7 +7299,10 @@
             "pagerank": 0.026128949301171732,
             "betweenness": 0.0,
             "community_id": 3
-          }
+          },
+          "name": "Surat Diamond Market Front Business",
+          "entity_type": "LOCATION",
+          "risk_score": 0.39
         },
         {
           "id": 3290,
@@ -5917,7 +7317,10 @@
             "pagerank": 0.026128949301171732,
             "betweenness": 0.0,
             "community_id": 3
-          }
+          },
+          "name": "Surat Diamond Market Transit Hub",
+          "entity_type": "LOCATION",
+          "risk_score": 0.39
         },
         {
           "id": 3291,
@@ -5931,7 +7334,10 @@
             "pagerank": 0.03088072125848341,
             "betweenness": 0.008434547908232119,
             "community_id": 2
-          }
+          },
+          "name": "+91-999035739",
+          "entity_type": "PHONE",
+          "risk_score": 0.46
         },
         {
           "id": 3292,
@@ -5945,7 +7351,10 @@
             "pagerank": 0.013035058567739281,
             "betweenness": 0.0,
             "community_id": 4
-          }
+          },
+          "name": "+91-999030587",
+          "entity_type": "PHONE",
+          "risk_score": 0.2
         },
         {
           "id": 3293,
@@ -5959,7 +7368,10 @@
             "pagerank": 0.013224287535091524,
             "betweenness": 0.0010121457489878543,
             "community_id": 0
-          }
+          },
+          "name": "+91-999033088",
+          "entity_type": "PHONE",
+          "risk_score": 0.2
         },
         {
           "id": 3294,
@@ -5973,7 +7385,10 @@
             "pagerank": 0.019766774877803518,
             "betweenness": 0.0020242914979757085,
             "community_id": 1
-          }
+          },
+          "name": "+91-999033484",
+          "entity_type": "PHONE",
+          "risk_score": 0.3
         },
         {
           "id": 3295,
@@ -5987,7 +7402,10 @@
             "pagerank": 0.020664776410591838,
             "betweenness": 0.007422402159244264,
             "community_id": 3
-          }
+          },
+          "name": "+91-999015025",
+          "entity_type": "PHONE",
+          "risk_score": 0.31
         },
         {
           "id": 3296,
@@ -6001,7 +7419,10 @@
             "pagerank": 0.03262513442223536,
             "betweenness": 0.004723346828609986,
             "community_id": 1
-          }
+          },
+          "name": "+91-999060953",
+          "entity_type": "PHONE",
+          "risk_score": 0.49
         },
         {
           "id": 3297,
@@ -6015,7 +7436,10 @@
             "pagerank": 0.02640910076323386,
             "betweenness": 0.0016869095816464236,
             "community_id": 0
-          }
+          },
+          "name": "+91-999076131",
+          "entity_type": "PHONE",
+          "risk_score": 0.4
         },
         {
           "id": 3298,
@@ -6029,7 +7453,10 @@
             "pagerank": 0.031970291861169085,
             "betweenness": 0.0,
             "community_id": 3
-          }
+          },
+          "name": "+91-999072590",
+          "entity_type": "PHONE",
+          "risk_score": 0.48
         },
         {
           "id": 3299,
@@ -6043,7 +7470,10 @@
             "pagerank": 0.029525295351729357,
             "betweenness": 0.0,
             "community_id": 0
-          }
+          },
+          "name": "+91-999053414",
+          "entity_type": "PHONE",
+          "risk_score": 0.44
         },
         {
           "id": 3300,
@@ -6057,7 +7487,10 @@
             "pagerank": 0.06445806291256069,
             "betweenness": 0.0,
             "community_id": 3
-          }
+          },
+          "name": "+91-999053159",
+          "entity_type": "PHONE",
+          "risk_score": 0.97
         },
         {
           "id": 3301,
@@ -6070,7 +7503,10 @@
             "pagerank": 0.1064468834003832,
             "betweenness": 0.00033738191632928474,
             "community_id": 2
-          }
+          },
+          "name": "HAWALA-SURAT-25181",
+          "entity_type": "BANK_ACCOUNT",
+          "risk_score": 1.0
         },
         {
           "id": 3302,
@@ -6083,7 +7519,10 @@
             "pagerank": 0.10958318696838751,
             "betweenness": 0.0020242914979757085,
             "community_id": 4
-          }
+          },
+          "name": "HAWALA-SURAT-31915",
+          "entity_type": "BANK_ACCOUNT",
+          "risk_score": 1.0
         },
         {
           "id": 3303,
@@ -6096,7 +7535,10 @@
             "pagerank": 0.013224287535091524,
             "betweenness": 0.0016869095816464236,
             "community_id": 4
-          }
+          },
+          "name": "HAWALA-SURAT-23358",
+          "entity_type": "BANK_ACCOUNT",
+          "risk_score": 0.2
         },
         {
           "id": 3304,
@@ -6109,7 +7551,10 @@
             "pagerank": 0.03434972549414253,
             "betweenness": 0.0,
             "community_id": 3
-          }
+          },
+          "name": "HAWALA-SURAT-86764",
+          "entity_type": "BANK_ACCOUNT",
+          "risk_score": 0.52
         },
         {
           "id": 3305,
@@ -6122,7 +7567,10 @@
             "pagerank": 0.01166314855443552,
             "betweenness": 0.0,
             "community_id": 5
-          }
+          },
+          "name": "HAWALA-SURAT-31332",
+          "entity_type": "BANK_ACCOUNT",
+          "risk_score": 0.17
         },
         {
           "id": 3306,
@@ -6136,7 +7584,10 @@
             "pagerank": 0.013315446169980118,
             "betweenness": 0.0,
             "community_id": 2
-          }
+          },
+          "name": "IND-89-6258",
+          "entity_type": "VEHICLE",
+          "risk_score": 0.2
         },
         {
           "id": 3307,
@@ -6150,7 +7601,10 @@
             "pagerank": 0.013035058567739281,
             "betweenness": 0.0005623031938821411,
             "community_id": 4
-          }
+          },
+          "name": "IND-97-4886",
+          "entity_type": "VEHICLE",
+          "risk_score": 0.2
         },
         {
           "id": 3308,
@@ -6164,7 +7618,10 @@
             "pagerank": 0.017438603463629954,
             "betweenness": 0.002699055330634278,
             "community_id": 3
-          }
+          },
+          "name": "IND-94-3588",
+          "entity_type": "VEHICLE",
+          "risk_score": 0.26
         },
         {
           "id": 3309,
@@ -6178,7 +7635,10 @@
             "pagerank": 0.0195012659311994,
             "betweenness": 0.001349527665317139,
             "community_id": 0
-          }
+          },
+          "name": "IND-21-6743",
+          "entity_type": "VEHICLE",
+          "risk_score": 0.29
         },
         {
           "id": 3430,
@@ -6194,7 +7654,10 @@
             "pagerank": 0.024395371536562824,
             "betweenness": 0.001349527665317139,
             "community_id": 2
-          }
+          },
+          "name": "@mansukh_angadia_surat",
+          "entity_type": "SOCIAL_HANDLE",
+          "risk_score": 0.37
         },
         {
           "id": 3431,
@@ -6210,7 +7673,10 @@
             "pagerank": 0.013035058567739281,
             "betweenness": 0.0006747638326585695,
             "community_id": 4
-          }
+          },
+          "name": "@ketan_patel_bourse",
+          "entity_type": "SOCIAL_HANDLE",
+          "risk_score": 0.2
         },
         {
           "id": 3432,
@@ -6226,7 +7692,10 @@
             "pagerank": 0.013224287535091524,
             "betweenness": 0.0,
             "community_id": 0
-          }
+          },
+          "name": "@jignesh_hawala_dubai",
+          "entity_type": "SOCIAL_HANDLE",
+          "risk_score": 0.2
         }
       ],
       "edges": [
@@ -7089,6 +8558,186 @@
       "critical_anomalies_count": 1,
       "top_communities": []
     },
+    "communities": [
+      {
+        "community_id": 2,
+        "member_count": 5,
+        "members": [
+          {
+            "id": 3273,
+            "name": "Mansukh Bhai",
+            "type": "PERSON"
+          },
+          {
+            "id": 3291,
+            "name": "+91-999035739",
+            "type": "PHONE"
+          },
+          {
+            "id": 3301,
+            "name": "HAWALA-SURAT-25181",
+            "type": "BANK_ACCOUNT"
+          },
+          {
+            "id": 3306,
+            "name": "IND-89-6258",
+            "type": "VEHICLE"
+          },
+          {
+            "id": 3430,
+            "name": "@mansukh_angadia_surat",
+            "type": "SOCIAL_HANDLE"
+          }
+        ],
+        "alias": "Intercity Angadia Cash Mule Corridor (Cluster 2)",
+        "dominant_crime_type": "Nightly Armored Vehicle Cash Transfers & Benami Vaults"
+      },
+      {
+        "community_id": 4,
+        "member_count": 8,
+        "members": [
+          {
+            "id": 3274,
+            "name": "Ketan Patel",
+            "type": "PERSON"
+          },
+          {
+            "id": 3277,
+            "name": "Suresh",
+            "type": "PERSON"
+          },
+          {
+            "id": 3287,
+            "name": "Surat Diamond Market Warehouse",
+            "type": "LOCATION"
+          },
+          {
+            "id": 3292,
+            "name": "+91-999030587",
+            "type": "PHONE"
+          },
+          {
+            "id": 3302,
+            "name": "HAWALA-SURAT-31915",
+            "type": "BANK_ACCOUNT"
+          }
+        ],
+        "alias": "Surat Diamond Bourse Shadow Vault (Cluster 4)",
+        "dominant_crime_type": "Under-Invoicing Conflict Gems & Token-Based Angadias"
+      },
+      {
+        "community_id": 0,
+        "member_count": 10,
+        "members": [
+          {
+            "id": 3275,
+            "name": "Jignesh Shah",
+            "type": "PERSON"
+          },
+          {
+            "id": 3279,
+            "name": "Dinesh",
+            "type": "PERSON"
+          },
+          {
+            "id": 3281,
+            "name": "Hardik",
+            "type": "PERSON"
+          },
+          {
+            "id": 3285,
+            "name": "Mehul",
+            "type": "PERSON"
+          },
+          {
+            "id": 3286,
+            "name": "Surat Diamond Market Safehouse Alpha",
+            "type": "LOCATION"
+          }
+        ],
+        "alias": "Surat Diamond Bourse Shadow Vault (Cluster 0)",
+        "dominant_crime_type": "Under-Invoicing Conflict Gems & Token-Based Angadias"
+      },
+      {
+        "community_id": 3,
+        "member_count": 11,
+        "members": [
+          {
+            "id": 3276,
+            "name": "Ramesh",
+            "type": "PERSON"
+          },
+          {
+            "id": 3280,
+            "name": "Bhavesh",
+            "type": "PERSON"
+          },
+          {
+            "id": 3282,
+            "name": "Viral",
+            "type": "PERSON"
+          },
+          {
+            "id": 3284,
+            "name": "Dipesh",
+            "type": "PERSON"
+          },
+          {
+            "id": 3289,
+            "name": "Surat Diamond Market Front Business",
+            "type": "LOCATION"
+          }
+        ],
+        "alias": "Surat Tactical Ledger Hub (Cluster 3)",
+        "dominant_crime_type": "Double-Entry Offline Bookkeeping & Token Verification"
+      },
+      {
+        "community_id": 1,
+        "member_count": 5,
+        "members": [
+          {
+            "id": 3278,
+            "name": "Mahesh",
+            "type": "PERSON"
+          },
+          {
+            "id": 3283,
+            "name": "Chirag",
+            "type": "PERSON"
+          },
+          {
+            "id": 3288,
+            "name": "Surat Diamond Market Drop Point",
+            "type": "LOCATION"
+          },
+          {
+            "id": 3294,
+            "name": "+91-999033484",
+            "type": "PHONE"
+          },
+          {
+            "id": 3296,
+            "name": "+91-999060953",
+            "type": "PHONE"
+          }
+        ],
+        "alias": "Navsari-Dubai Smurfing Consortium (Cluster 1)",
+        "dominant_crime_type": "Trade-Based Money Laundering & Shell Import Fronts"
+      },
+      {
+        "community_id": 5,
+        "member_count": 1,
+        "members": [
+          {
+            "id": 3305,
+            "name": "HAWALA-SURAT-31332",
+            "type": "BANK_ACCOUNT"
+          }
+        ],
+        "alias": "Navsari-Dubai Smurfing Consortium (Cluster 5)",
+        "dominant_crime_type": "Trade-Based Money Laundering & Shell Import Fronts"
+      }
+    ],
     "anomalies": [
       {
         "id": 278,
@@ -7149,7 +8798,8 @@
       {
         "id": 3302,
         "name": "HAWALA-SURAT-31915",
-        "entity_type": null,
+        "entity_type": "BANK_ACCOUNT",
+        "type": "BANK_ACCOUNT",
         "pagerank": 0.10958318696838751,
         "betweenness": 0.0020242914979757085,
         "risk_score": 0.0
@@ -7157,7 +8807,8 @@
       {
         "id": 3301,
         "name": "HAWALA-SURAT-25181",
-        "entity_type": null,
+        "entity_type": "BANK_ACCOUNT",
+        "type": "BANK_ACCOUNT",
         "pagerank": 0.1064468834003832,
         "betweenness": 0.00033738191632928474,
         "risk_score": 0.0
@@ -7165,7 +8816,8 @@
       {
         "id": 3300,
         "name": "+91-999053159",
-        "entity_type": null,
+        "entity_type": "PHONE",
+        "type": "PHONE",
         "pagerank": 0.06445806291256069,
         "betweenness": 0.0,
         "risk_score": 0.0
@@ -7173,7 +8825,8 @@
       {
         "id": 3286,
         "name": "Surat Diamond Market Safehouse Alpha",
-        "entity_type": null,
+        "entity_type": "LOCATION",
+        "type": "LOCATION",
         "pagerank": 0.057079377041325284,
         "betweenness": 0.0,
         "risk_score": 0.0
@@ -7181,7 +8834,8 @@
       {
         "id": 3304,
         "name": "HAWALA-SURAT-86764",
-        "entity_type": null,
+        "entity_type": "BANK_ACCOUNT",
+        "type": "BANK_ACCOUNT",
         "pagerank": 0.03434972549414253,
         "betweenness": 0.0,
         "risk_score": 0.0
@@ -7189,7 +8843,8 @@
       {
         "id": 3296,
         "name": "+91-999060953",
-        "entity_type": null,
+        "entity_type": "PHONE",
+        "type": "PHONE",
         "pagerank": 0.03262513442223536,
         "betweenness": 0.004723346828609986,
         "risk_score": 0.0
@@ -7197,7 +8852,8 @@
       {
         "id": 3298,
         "name": "+91-999072590",
-        "entity_type": null,
+        "entity_type": "PHONE",
+        "type": "PHONE",
         "pagerank": 0.031970291861169085,
         "betweenness": 0.0,
         "risk_score": 0.0
@@ -7205,7 +8861,8 @@
       {
         "id": 3291,
         "name": "+91-999035739",
-        "entity_type": null,
+        "entity_type": "PHONE",
+        "type": "PHONE",
         "pagerank": 0.03088072125848341,
         "betweenness": 0.008434547908232119,
         "risk_score": 0.0
@@ -7213,7 +8870,8 @@
       {
         "id": 3287,
         "name": "Surat Diamond Market Warehouse",
-        "entity_type": null,
+        "entity_type": "LOCATION",
+        "type": "LOCATION",
         "pagerank": 0.03081072134339465,
         "betweenness": 0.0,
         "risk_score": 0.0
@@ -7221,10 +8879,29 @@
       {
         "id": 3299,
         "name": "+91-999053414",
-        "entity_type": null,
+        "entity_type": "PHONE",
+        "type": "PHONE",
         "pagerank": 0.029525295351729357,
         "betweenness": 0.0,
         "risk_score": 0.0
+      }
+    ],
+    "firs": [
+      {
+        "id": 31,
+        "fir_number": "FIR_GJ_AML_2026_774",
+        "date": "2026-01-30T10:00:00",
+        "police_station": "CID Crime Surat Zone",
+        "district": "Surat, Gujarat",
+        "crime_type": "Hawala & Trade-Based Money Laundering",
+        "crime_confidence": 0.95,
+        "raw_text": "Enforcement Directorate and CID joint complaint under PMLA Act against Harshad Patel and Jayesh Shah for circular trading, under-invoicing rough diamond imports, and running token-based Angadia cash mule corridors.",
+        "extracted_entities": [
+          "Harshad Patel",
+          "Jayesh Shah",
+          "Surat Diamond Bourse"
+        ],
+        "case_id": "money_gujarat"
       }
     ]
   },
@@ -7243,7 +8920,10 @@
             "pagerank": 0.0072297466188924,
             "betweenness": 0.0,
             "community_id": 2
-          }
+          },
+          "name": "Naxal Commander 'Rao'",
+          "entity_type": "PERSON",
+          "risk_score": 0.11
         },
         {
           "id": 3916,
@@ -7257,7 +8937,10 @@
             "pagerank": 0.008458812477318386,
             "betweenness": 0.011640211640211642,
             "community_id": 4
-          }
+          },
+          "name": "Suraj 'Katta' Singh",
+          "entity_type": "PERSON",
+          "risk_score": 0.13
         },
         {
           "id": 3917,
@@ -7271,7 +8954,10 @@
             "pagerank": 0.008458812477318386,
             "betweenness": 0.010185185185185184,
             "community_id": 2
-          }
+          },
+          "name": "Bhima",
+          "entity_type": "PERSON",
+          "risk_score": 0.13
         },
         {
           "id": 3918,
@@ -7285,7 +8971,10 @@
             "pagerank": 0.008051465996326435,
             "betweenness": 0.0050264550264550265,
             "community_id": 3
-          }
+          },
+          "name": "Somu",
+          "entity_type": "PERSON",
+          "risk_score": 0.12
         },
         {
           "id": 3919,
@@ -7299,7 +8988,10 @@
             "pagerank": 0.009116056666962016,
             "betweenness": 0.006216931216931217,
             "community_id": 5
-          }
+          },
+          "name": "Mangal",
+          "entity_type": "PERSON",
+          "risk_score": 0.14
         },
         {
           "id": 3920,
@@ -7313,7 +9005,10 @@
             "pagerank": 0.008051465996326435,
             "betweenness": 0.003835978835978836,
             "community_id": 4
-          }
+          },
+          "name": "Budhram",
+          "entity_type": "PERSON",
+          "risk_score": 0.12
         },
         {
           "id": 3921,
@@ -7327,7 +9022,10 @@
             "pagerank": 0.008051465996326435,
             "betweenness": 0.0031746031746031746,
             "community_id": 1
-          }
+          },
+          "name": "Sukku",
+          "entity_type": "PERSON",
+          "risk_score": 0.12
         },
         {
           "id": 3922,
@@ -7341,7 +9039,10 @@
             "pagerank": 0.008051465996326435,
             "betweenness": 0.003835978835978836,
             "community_id": 4
-          }
+          },
+          "name": "Laxman",
+          "entity_type": "PERSON",
+          "risk_score": 0.12
         },
         {
           "id": 3923,
@@ -7355,7 +9056,10 @@
             "pagerank": 0.008188419225898774,
             "betweenness": 0.002777777777777778,
             "community_id": 3
-          }
+          },
+          "name": "Ramu",
+          "entity_type": "PERSON",
+          "risk_score": 0.12
         },
         {
           "id": 3924,
@@ -7369,7 +9073,10 @@
             "pagerank": 0.010137277600600764,
             "betweenness": 0.012103174603174604,
             "community_id": 3
-          }
+          },
+          "name": "Shyam",
+          "entity_type": "PERSON",
+          "risk_score": 0.15
         },
         {
           "id": 3925,
@@ -7383,7 +9090,10 @@
             "pagerank": 0.008188419225898774,
             "betweenness": 0.002380952380952381,
             "community_id": 3
-          }
+          },
+          "name": "Hari",
+          "entity_type": "PERSON",
+          "risk_score": 0.12
         },
         {
           "id": 3926,
@@ -7397,7 +9107,10 @@
             "pagerank": 0.008188419225898774,
             "betweenness": 0.0031084656084656086,
             "community_id": 5
-          }
+          },
+          "name": "Golu",
+          "entity_type": "PERSON",
+          "risk_score": 0.12
         },
         {
           "id": 3927,
@@ -7411,7 +9124,10 @@
             "pagerank": 0.008188419225898774,
             "betweenness": 0.005158730158730159,
             "community_id": 1
-          }
+          },
+          "name": "Monu",
+          "entity_type": "PERSON",
+          "risk_score": 0.12
         },
         {
           "id": 3928,
@@ -7426,7 +9142,10 @@
             "pagerank": 0.011104181105754991,
             "betweenness": 0.0,
             "community_id": 3
-          }
+          },
+          "name": "Bastar Forest Safehouse Alpha",
+          "entity_type": "LOCATION",
+          "risk_score": 0.17
         },
         {
           "id": 3929,
@@ -7441,7 +9160,10 @@
             "pagerank": 0.03001401332872922,
             "betweenness": 0.0,
             "community_id": 3
-          }
+          },
+          "name": "Bastar Forest Warehouse",
+          "entity_type": "LOCATION",
+          "risk_score": 0.45
         },
         {
           "id": 3930,
@@ -7456,7 +9178,10 @@
             "pagerank": 0.01759239699677932,
             "betweenness": 0.0,
             "community_id": 3
-          }
+          },
+          "name": "Bastar Forest Drop Point",
+          "entity_type": "LOCATION",
+          "risk_score": 0.26
         },
         {
           "id": 3931,
@@ -7471,7 +9196,10 @@
             "pagerank": 0.011666748434787082,
             "betweenness": 0.0,
             "community_id": 5
-          }
+          },
+          "name": "Bastar Forest Front Business",
+          "entity_type": "LOCATION",
+          "risk_score": 0.18
         },
         {
           "id": 3932,
@@ -7486,7 +9214,10 @@
             "pagerank": 0.01683468308644336,
             "betweenness": 0.0,
             "community_id": 1
-          }
+          },
+          "name": "Bastar Forest Transit Hub",
+          "entity_type": "LOCATION",
+          "risk_score": 0.25
         },
         {
           "id": 3933,
@@ -7500,7 +9231,10 @@
             "pagerank": 0.10731701458490378,
             "betweenness": 0.011904761904761904,
             "community_id": 2
-          }
+          },
+          "name": "+91-999084070",
+          "entity_type": "PHONE",
+          "risk_score": 1.0
         },
         {
           "id": 3934,
@@ -7514,7 +9248,10 @@
             "pagerank": 0.015534694641803203,
             "betweenness": 0.008333333333333333,
             "community_id": 0
-          }
+          },
+          "name": "+91-999054000",
+          "entity_type": "PHONE",
+          "risk_score": 0.23
         },
         {
           "id": 3935,
@@ -7528,7 +9265,10 @@
             "pagerank": 0.008428087377650368,
             "betweenness": 0.0,
             "community_id": 2
-          }
+          },
+          "name": "+91-999045223",
+          "entity_type": "PHONE",
+          "risk_score": 0.13
         },
         {
           "id": 3936,
@@ -7542,7 +9282,10 @@
             "pagerank": 0.04682197907410097,
             "betweenness": 0.005952380952380952,
             "community_id": 3
-          }
+          },
+          "name": "+91-999020842",
+          "entity_type": "PHONE",
+          "risk_score": 0.7
         },
         {
           "id": 3937,
@@ -7556,7 +9299,10 @@
             "pagerank": 0.018980042914405786,
             "betweenness": 0.015873015873015872,
             "community_id": 5
-          }
+          },
+          "name": "+91-999062219",
+          "entity_type": "PHONE",
+          "risk_score": 0.28
         },
         {
           "id": 3938,
@@ -7570,7 +9316,10 @@
             "pagerank": 0.02779993652491639,
             "betweenness": 0.03373015873015873,
             "community_id": 0
-          }
+          },
+          "name": "+91-999088307",
+          "entity_type": "PHONE",
+          "risk_score": 0.42
         },
         {
           "id": 3939,
@@ -7584,7 +9333,10 @@
             "pagerank": 0.014202425092917272,
             "betweenness": 0.0,
             "community_id": 1
-          }
+          },
+          "name": "+91-999063138",
+          "entity_type": "PHONE",
+          "risk_score": 0.21
         },
         {
           "id": 3940,
@@ -7598,7 +9350,10 @@
             "pagerank": 0.0692171495901185,
             "betweenness": 0.013095238095238096,
             "community_id": 0
-          }
+          },
+          "name": "+91-999061357",
+          "entity_type": "PHONE",
+          "risk_score": 1.0
         },
         {
           "id": 3941,
@@ -7612,7 +9367,10 @@
             "pagerank": 0.11436808127545581,
             "betweenness": 0.025,
             "community_id": 0
-          }
+          },
+          "name": "+91-999097510",
+          "entity_type": "PHONE",
+          "risk_score": 1.0
         },
         {
           "id": 3942,
@@ -7626,7 +9384,10 @@
             "pagerank": 0.1163077602022547,
             "betweenness": 0.02142857142857143,
             "community_id": 0
-          }
+          },
+          "name": "+91-999070350",
+          "entity_type": "PHONE",
+          "risk_score": 1.0
         },
         {
           "id": 3943,
@@ -7639,7 +9400,10 @@
             "pagerank": 0.040525540593609743,
             "betweenness": 0.001984126984126984,
             "community_id": 2
-          }
+          },
+          "name": "CASH-STASH-89590",
+          "entity_type": "BANK_ACCOUNT",
+          "risk_score": 0.61
         },
         {
           "id": 3944,
@@ -7652,7 +9416,10 @@
             "pagerank": 0.019932809665501414,
             "betweenness": 0.0,
             "community_id": 4
-          }
+          },
+          "name": "CASH-STASH-21251",
+          "entity_type": "BANK_ACCOUNT",
+          "risk_score": 0.3
         },
         {
           "id": 3945,
@@ -7665,7 +9432,10 @@
             "pagerank": 0.048702870129536564,
             "betweenness": 0.00291005291005291,
             "community_id": 2
-          }
+          },
+          "name": "CASH-STASH-24857",
+          "entity_type": "BANK_ACCOUNT",
+          "risk_score": 0.73
         },
         {
           "id": 3946,
@@ -7678,7 +9448,10 @@
             "pagerank": 0.07030408957968103,
             "betweenness": 0.02757936507936508,
             "community_id": 4
-          }
+          },
+          "name": "CASH-STASH-83070",
+          "entity_type": "BANK_ACCOUNT",
+          "risk_score": 1.0
         },
         {
           "id": 3947,
@@ -7691,7 +9464,10 @@
             "pagerank": 0.04609163503280871,
             "betweenness": 0.0005952380952380953,
             "community_id": 2
-          }
+          },
+          "name": "CASH-STASH-51402",
+          "entity_type": "BANK_ACCOUNT",
+          "risk_score": 0.69
         },
         {
           "id": 3948,
@@ -7705,7 +9481,10 @@
             "pagerank": 0.008458812477318386,
             "betweenness": 0.0,
             "community_id": 2
-          }
+          },
+          "name": "IND-85-2414",
+          "entity_type": "VEHICLE",
+          "risk_score": 0.13
         },
         {
           "id": 3949,
@@ -7719,7 +9498,10 @@
             "pagerank": 0.008256895840684945,
             "betweenness": 0.0006613756613756613,
             "community_id": 4
-          }
+          },
+          "name": "IND-78-2289",
+          "entity_type": "VEHICLE",
+          "risk_score": 0.12
         },
         {
           "id": 3950,
@@ -7733,7 +9515,10 @@
             "pagerank": 0.01101815708329269,
             "betweenness": 0.002777777777777778,
             "community_id": 3
-          }
+          },
+          "name": "IND-46-4350",
+          "entity_type": "VEHICLE",
+          "risk_score": 0.17
         },
         {
           "id": 3951,
@@ -7747,7 +9532,10 @@
             "pagerank": 0.012159748636553159,
             "betweenness": 0.002380952380952381,
             "community_id": 1
-          }
+          },
+          "name": "IND-81-2419",
+          "entity_type": "VEHICLE",
+          "risk_score": 0.18
         }
       ],
       "edges": [
@@ -8739,6 +10527,201 @@
       "critical_anomalies_count": 1,
       "top_communities": []
     },
+    "communities": [
+      {
+        "community_id": 2,
+        "member_count": 8,
+        "members": [
+          {
+            "id": 3915,
+            "name": "Naxal Commander 'Rao'",
+            "type": "PERSON"
+          },
+          {
+            "id": 3917,
+            "name": "Bhima",
+            "type": "PERSON"
+          },
+          {
+            "id": 3933,
+            "name": "+91-999084070",
+            "type": "PHONE"
+          },
+          {
+            "id": 3935,
+            "name": "+91-999045223",
+            "type": "PHONE"
+          },
+          {
+            "id": 3943,
+            "name": "CASH-STASH-89590",
+            "type": "BANK_ACCOUNT"
+          }
+        ],
+        "alias": "Bastar Dense-Forest Courier Unit (Cluster 2)",
+        "dominant_crime_type": "Unmarked Trail Weapon Caches & Camouflaged Bunkers"
+      },
+      {
+        "community_id": 4,
+        "member_count": 6,
+        "members": [
+          {
+            "id": 3916,
+            "name": "Suraj 'Katta' Singh",
+            "type": "PERSON"
+          },
+          {
+            "id": 3920,
+            "name": "Budhram",
+            "type": "PERSON"
+          },
+          {
+            "id": 3922,
+            "name": "Laxman",
+            "type": "PERSON"
+          },
+          {
+            "id": 3944,
+            "name": "CASH-STASH-21251",
+            "type": "BANK_ACCOUNT"
+          },
+          {
+            "id": 3946,
+            "name": "CASH-STASH-83070",
+            "type": "BANK_ACCOUNT"
+          }
+        ],
+        "alias": "Dandakaranya Heavy Ordnance Arsenal (Cluster 4)",
+        "dominant_crime_type": "Procuring Military-Grade IEDs & Assault Weaponry"
+      },
+      {
+        "community_id": 3,
+        "member_count": 9,
+        "members": [
+          {
+            "id": 3918,
+            "name": "Somu",
+            "type": "PERSON"
+          },
+          {
+            "id": 3923,
+            "name": "Ramu",
+            "type": "PERSON"
+          },
+          {
+            "id": 3924,
+            "name": "Shyam",
+            "type": "PERSON"
+          },
+          {
+            "id": 3925,
+            "name": "Hari",
+            "type": "PERSON"
+          },
+          {
+            "id": 3928,
+            "name": "Bastar Forest Safehouse Alpha",
+            "type": "LOCATION"
+          }
+        ],
+        "alias": "Border Pipeline Arms Brokerage (Cluster 3)",
+        "dominant_crime_type": "Interstate Illicit Firearms Acquisition & Distribution"
+      },
+      {
+        "community_id": 5,
+        "member_count": 4,
+        "members": [
+          {
+            "id": 3919,
+            "name": "Mangal",
+            "type": "PERSON"
+          },
+          {
+            "id": 3926,
+            "name": "Golu",
+            "type": "PERSON"
+          },
+          {
+            "id": 3931,
+            "name": "Bastar Forest Front Business",
+            "type": "LOCATION"
+          },
+          {
+            "id": 3937,
+            "name": "+91-999062219",
+            "type": "PHONE"
+          }
+        ],
+        "alias": "Bailadila Iron-Ore Transport Smugglers (Cluster 5)",
+        "dominant_crime_type": "Covert Weapon Transit via Mineral Logistics Trucks"
+      },
+      {
+        "community_id": 1,
+        "member_count": 5,
+        "members": [
+          {
+            "id": 3921,
+            "name": "Sukku",
+            "type": "PERSON"
+          },
+          {
+            "id": 3927,
+            "name": "Monu",
+            "type": "PERSON"
+          },
+          {
+            "id": 3932,
+            "name": "Bastar Forest Transit Hub",
+            "type": "LOCATION"
+          },
+          {
+            "id": 3939,
+            "name": "+91-999063138",
+            "type": "PHONE"
+          },
+          {
+            "id": 3951,
+            "name": "IND-81-2419",
+            "type": "VEHICLE"
+          }
+        ],
+        "alias": "Bailadila Iron-Ore Transport Smugglers (Cluster 1)",
+        "dominant_crime_type": "Covert Weapon Transit via Mineral Logistics Trucks"
+      },
+      {
+        "community_id": 0,
+        "member_count": 5,
+        "members": [
+          {
+            "id": 3934,
+            "name": "+91-999054000",
+            "type": "PHONE"
+          },
+          {
+            "id": 3938,
+            "name": "+91-999088307",
+            "type": "PHONE"
+          },
+          {
+            "id": 3940,
+            "name": "+91-999061357",
+            "type": "PHONE"
+          },
+          {
+            "id": 3941,
+            "name": "+91-999097510",
+            "type": "PHONE"
+          },
+          {
+            "id": 3942,
+            "name": "+91-999070350",
+            "type": "PHONE"
+          }
+        ],
+        "alias": "Dandakaranya Heavy Ordnance Arsenal (Cluster 0)",
+        "dominant_crime_type": "Procuring Military-Grade IEDs & Assault Weaponry"
+      }
+    ],
     "anomalies": [
       {
         "id": 335,
@@ -8802,7 +10785,8 @@
       {
         "id": 3942,
         "name": "+91-999070350",
-        "entity_type": null,
+        "entity_type": "PHONE",
+        "type": "PHONE",
         "pagerank": 0.1163077602022547,
         "betweenness": 0.02142857142857143,
         "risk_score": 0.0
@@ -8810,7 +10794,8 @@
       {
         "id": 3941,
         "name": "+91-999097510",
-        "entity_type": null,
+        "entity_type": "PHONE",
+        "type": "PHONE",
         "pagerank": 0.11436808127545581,
         "betweenness": 0.025,
         "risk_score": 0.0
@@ -8818,7 +10803,8 @@
       {
         "id": 3933,
         "name": "+91-999084070",
-        "entity_type": null,
+        "entity_type": "PHONE",
+        "type": "PHONE",
         "pagerank": 0.10731701458490378,
         "betweenness": 0.011904761904761904,
         "risk_score": 0.0
@@ -8826,7 +10812,8 @@
       {
         "id": 3946,
         "name": "CASH-STASH-83070",
-        "entity_type": null,
+        "entity_type": "BANK_ACCOUNT",
+        "type": "BANK_ACCOUNT",
         "pagerank": 0.07030408957968103,
         "betweenness": 0.02757936507936508,
         "risk_score": 0.0
@@ -8834,7 +10821,8 @@
       {
         "id": 3940,
         "name": "+91-999061357",
-        "entity_type": null,
+        "entity_type": "PHONE",
+        "type": "PHONE",
         "pagerank": 0.0692171495901185,
         "betweenness": 0.013095238095238096,
         "risk_score": 0.0
@@ -8842,7 +10830,8 @@
       {
         "id": 3945,
         "name": "CASH-STASH-24857",
-        "entity_type": null,
+        "entity_type": "BANK_ACCOUNT",
+        "type": "BANK_ACCOUNT",
         "pagerank": 0.048702870129536564,
         "betweenness": 0.00291005291005291,
         "risk_score": 0.0
@@ -8850,7 +10839,8 @@
       {
         "id": 3936,
         "name": "+91-999020842",
-        "entity_type": null,
+        "entity_type": "PHONE",
+        "type": "PHONE",
         "pagerank": 0.04682197907410097,
         "betweenness": 0.005952380952380952,
         "risk_score": 0.0
@@ -8858,7 +10848,8 @@
       {
         "id": 3947,
         "name": "CASH-STASH-51402",
-        "entity_type": null,
+        "entity_type": "BANK_ACCOUNT",
+        "type": "BANK_ACCOUNT",
         "pagerank": 0.04609163503280871,
         "betweenness": 0.0005952380952380953,
         "risk_score": 0.0
@@ -8866,7 +10857,8 @@
       {
         "id": 3943,
         "name": "CASH-STASH-89590",
-        "entity_type": null,
+        "entity_type": "BANK_ACCOUNT",
+        "type": "BANK_ACCOUNT",
         "pagerank": 0.040525540593609743,
         "betweenness": 0.001984126984126984,
         "risk_score": 0.0
@@ -8874,10 +10866,29 @@
       {
         "id": 3929,
         "name": "Bastar Forest Warehouse",
-        "entity_type": null,
+        "entity_type": "LOCATION",
+        "type": "LOCATION",
         "pagerank": 0.03001401332872922,
         "betweenness": 0.0,
         "risk_score": 0.0
+      }
+    ],
+    "firs": [
+      {
+        "id": 32,
+        "fir_number": "FIR_CG_ARMS_2026_521",
+        "date": "2026-04-28T20:15:00",
+        "police_station": "Bastar Rural Police Station",
+        "district": "Bastar, Chhattisgarh",
+        "crime_type": "Illicit Arms & Heavy Ordnance Trafficking",
+        "crime_confidence": 0.96,
+        "raw_text": "FIR under Arms Act Sections 25/27 and UAPA against Sukru Korram and Manglu Ram after interception of mineral transport truck carrying 28 assault rifles, detonator assemblies, and radio transmitters in Dandakaranya forest corridor.",
+        "extracted_entities": [
+          "Sukru Korram",
+          "Manglu Ram",
+          "Bailadila Iron-Ore Transport"
+        ],
+        "case_id": "arms_chhattisgarh"
       }
     ]
   },
@@ -8896,7 +10907,10 @@
             "pagerank": 0.01175545445001806,
             "betweenness": 0.0,
             "community_id": 2
-          }
+          },
+          "name": "Jose 'Tusk' Thomas",
+          "entity_type": "PERSON",
+          "risk_score": 0.18
         },
         {
           "id": 3348,
@@ -8910,7 +10924,10 @@
             "pagerank": 0.013420778545558041,
             "betweenness": 0.0103463787674314,
             "community_id": 1
-          }
+          },
+          "name": "Rajan Nair",
+          "entity_type": "PERSON",
+          "risk_score": 0.2
         },
         {
           "id": 3349,
@@ -8924,7 +10941,10 @@
             "pagerank": 0.013420778545558041,
             "betweenness": 0.009559154295996401,
             "community_id": 2
-          }
+          },
+          "name": "Kumar",
+          "entity_type": "PERSON",
+          "risk_score": 0.2
         },
         {
           "id": 3350,
@@ -8938,7 +10958,10 @@
             "pagerank": 0.012930771981564119,
             "betweenness": 0.0029239766081871343,
             "community_id": 3
-          }
+          },
+          "name": "Biju",
+          "entity_type": "PERSON",
+          "risk_score": 0.19
         },
         {
           "id": 3351,
@@ -8952,7 +10975,10 @@
             "pagerank": 0.012930771981564119,
             "betweenness": 0.0020242914979757085,
             "community_id": 4
-          }
+          },
+          "name": "Sabu",
+          "entity_type": "PERSON",
+          "risk_score": 0.19
         },
         {
           "id": 3352,
@@ -8966,7 +10992,10 @@
             "pagerank": 0.012930771981564119,
             "betweenness": 0.0031488978857399904,
             "community_id": 5
-          }
+          },
+          "name": "Vinu",
+          "entity_type": "PERSON",
+          "risk_score": 0.19
         },
         {
           "id": 3353,
@@ -8980,7 +11009,10 @@
             "pagerank": 0.012930771981564119,
             "betweenness": 0.004048582995951417,
             "community_id": 0
-          }
+          },
+          "name": "Mani",
+          "entity_type": "PERSON",
+          "risk_score": 0.19
         },
         {
           "id": 3354,
@@ -8994,7 +11026,10 @@
             "pagerank": 0.012930771981564119,
             "betweenness": 0.0029239766081871343,
             "community_id": 0
-          }
+          },
+          "name": "Sreejith",
+          "entity_type": "PERSON",
+          "risk_score": 0.19
         },
         {
           "id": 3355,
@@ -9008,7 +11043,10 @@
             "pagerank": 0.013092884744535987,
             "betweenness": 0.0033738191632928472,
             "community_id": 2
-          }
+          },
+          "name": "Pradeep",
+          "entity_type": "PERSON",
+          "risk_score": 0.2
         },
         {
           "id": 3356,
@@ -9022,7 +11060,10 @@
             "pagerank": 0.013092884744535987,
             "betweenness": 0.004835807467386414,
             "community_id": 3
-          }
+          },
+          "name": "Ajith",
+          "entity_type": "PERSON",
+          "risk_score": 0.2
         },
         {
           "id": 3357,
@@ -9036,7 +11077,10 @@
             "pagerank": 0.013092884744535987,
             "betweenness": 0.0016869095816464236,
             "community_id": 5
-          }
+          },
+          "name": "Unni",
+          "entity_type": "PERSON",
+          "risk_score": 0.2
         },
         {
           "id": 3358,
@@ -9050,7 +11094,10 @@
             "pagerank": 0.013092884744535987,
             "betweenness": 0.0034862798020692757,
             "community_id": 4
-          }
+          },
+          "name": "Gopi",
+          "entity_type": "PERSON",
+          "risk_score": 0.2
         },
         {
           "id": 3359,
@@ -9064,7 +11111,10 @@
             "pagerank": 0.013092884744535987,
             "betweenness": 0.0029239766081871343,
             "community_id": 0
-          }
+          },
+          "name": "Ravi",
+          "entity_type": "PERSON",
+          "risk_score": 0.2
         },
         {
           "id": 3360,
@@ -9079,7 +11129,10 @@
             "pagerank": 0.04082283042679672,
             "betweenness": 0.0,
             "community_id": 2
-          }
+          },
+          "name": "Wayanad Reserve Safehouse Alpha",
+          "entity_type": "LOCATION",
+          "risk_score": 0.61
         },
         {
           "id": 3361,
@@ -9094,7 +11147,10 @@
             "pagerank": 0.027356648690447512,
             "betweenness": 0.0,
             "community_id": 3
-          }
+          },
+          "name": "Wayanad Reserve Warehouse",
+          "entity_type": "LOCATION",
+          "risk_score": 0.41
         },
         {
           "id": 3362,
@@ -9109,7 +11165,10 @@
             "pagerank": 0.045029593751886046,
             "betweenness": 0.0,
             "community_id": 5
-          }
+          },
+          "name": "Wayanad Reserve Drop Point",
+          "entity_type": "LOCATION",
+          "risk_score": 0.68
         },
         {
           "id": 3363,
@@ -9124,7 +11183,10 @@
             "pagerank": 0.018865379567481095,
             "betweenness": 0.0,
             "community_id": 4
-          }
+          },
+          "name": "Wayanad Reserve Front Business",
+          "entity_type": "LOCATION",
+          "risk_score": 0.28
         },
         {
           "id": 3364,
@@ -9139,7 +11201,10 @@
             "pagerank": 0.018865379567481095,
             "betweenness": 0.0,
             "community_id": 0
-          }
+          },
+          "name": "Wayanad Reserve Transit Hub",
+          "entity_type": "LOCATION",
+          "risk_score": 0.28
         },
         {
           "id": 3365,
@@ -9153,7 +11218,10 @@
             "pagerank": 0.013420778545558041,
             "betweenness": 0.0008996851102114259,
             "community_id": 2
-          }
+          },
+          "name": "+91-999091628",
+          "entity_type": "PHONE",
+          "risk_score": 0.2
         },
         {
           "id": 3366,
@@ -9167,7 +11235,10 @@
             "pagerank": 0.05057587735608814,
             "betweenness": 0.0,
             "community_id": 0
-          }
+          },
+          "name": "+91-999057142",
+          "entity_type": "PHONE",
+          "risk_score": 0.76
         },
         {
           "id": 3367,
@@ -9181,7 +11252,10 @@
             "pagerank": 0.03223435942899861,
             "betweenness": 0.0,
             "community_id": 2
-          }
+          },
+          "name": "+91-999084374",
+          "entity_type": "PHONE",
+          "risk_score": 0.48
         },
         {
           "id": 3368,
@@ -9195,7 +11269,10 @@
             "pagerank": 0.0313304673837068,
             "betweenness": 0.0062977957714799825,
             "community_id": 5
-          }
+          },
+          "name": "+91-999080762",
+          "entity_type": "PHONE",
+          "risk_score": 0.47
         },
         {
           "id": 3369,
@@ -9209,7 +11286,10 @@
             "pagerank": 0.040595027605278604,
             "betweenness": 0.0,
             "community_id": 4
-          }
+          },
+          "name": "+91-999083341",
+          "entity_type": "PHONE",
+          "risk_score": 0.61
         },
         {
           "id": 3370,
@@ -9223,7 +11303,10 @@
             "pagerank": 0.045496401009799,
             "betweenness": 0.008771929824561403,
             "community_id": 5
-          }
+          },
+          "name": "+91-999097390",
+          "entity_type": "PHONE",
+          "risk_score": 0.68
         },
         {
           "id": 3371,
@@ -9237,7 +11320,10 @@
             "pagerank": 0.01528827080947464,
             "betweenness": 0.002699055330634278,
             "community_id": 0
-          }
+          },
+          "name": "+91-999058322",
+          "entity_type": "PHONE",
+          "risk_score": 0.23
         },
         {
           "id": 3372,
@@ -9251,7 +11337,10 @@
             "pagerank": 0.02412162456173251,
             "betweenness": 0.0006747638326585695,
             "community_id": 0
-          }
+          },
+          "name": "+91-999077962",
+          "entity_type": "PHONE",
+          "risk_score": 0.36
         },
         {
           "id": 3373,
@@ -9265,7 +11354,10 @@
             "pagerank": 0.030314737750084548,
             "betweenness": 0.005398110661268556,
             "community_id": 0
-          }
+          },
+          "name": "+91-999083912",
+          "entity_type": "PHONE",
+          "risk_score": 0.45
         },
         {
           "id": 3374,
@@ -9279,7 +11371,10 @@
             "pagerank": 0.014391218798022819,
             "betweenness": 0.0,
             "community_id": 3
-          }
+          },
+          "name": "+91-999028150",
+          "entity_type": "PHONE",
+          "risk_score": 0.22
         },
         {
           "id": 3375,
@@ -9292,7 +11387,10 @@
             "pagerank": 0.03747069356257897,
             "betweenness": 0.0051731893837157,
             "community_id": 2
-          }
+          },
+          "name": "FEDERAL-KRL-89215",
+          "entity_type": "BANK_ACCOUNT",
+          "risk_score": 0.56
         },
         {
           "id": 3376,
@@ -9305,7 +11403,10 @@
             "pagerank": 0.041545760516395046,
             "betweenness": 0.00573549257759784,
             "community_id": 1
-          }
+          },
+          "name": "FEDERAL-KRL-83944",
+          "entity_type": "BANK_ACCOUNT",
+          "risk_score": 0.62
         },
         {
           "id": 3377,
@@ -9318,7 +11419,10 @@
             "pagerank": 0.048096478447647625,
             "betweenness": 0.0,
             "community_id": 2
-          }
+          },
+          "name": "FEDERAL-KRL-36922",
+          "entity_type": "BANK_ACCOUNT",
+          "risk_score": 0.72
         },
         {
           "id": 3378,
@@ -9331,7 +11435,10 @@
             "pagerank": 0.06170851898346158,
             "betweenness": 0.018893387314439944,
             "community_id": 3
-          }
+          },
+          "name": "FEDERAL-KRL-87540",
+          "entity_type": "BANK_ACCOUNT",
+          "risk_score": 0.93
         },
         {
           "id": 3379,
@@ -9344,7 +11451,10 @@
             "pagerank": 0.07890873483688524,
             "betweenness": 0.008884390463337832,
             "community_id": 2
-          }
+          },
+          "name": "FEDERAL-KRL-97407",
+          "entity_type": "BANK_ACCOUNT",
+          "risk_score": 1.0
         },
         {
           "id": 3380,
@@ -9358,7 +11468,10 @@
             "pagerank": 0.013420778545558041,
             "betweenness": 0.0,
             "community_id": 2
-          }
+          },
+          "name": "IND-13-7015",
+          "entity_type": "VEHICLE",
+          "risk_score": 0.2
         },
         {
           "id": 3381,
@@ -9372,7 +11485,10 @@
             "pagerank": 0.013138180957719302,
             "betweenness": 0.0,
             "community_id": 1
-          }
+          },
+          "name": "IND-20-2779",
+          "entity_type": "VEHICLE",
+          "risk_score": 0.2
         },
         {
           "id": 3382,
@@ -9386,7 +11502,10 @@
             "pagerank": 0.017576445774256804,
             "betweenness": 0.0020242914979757085,
             "community_id": 3
-          }
+          },
+          "name": "IND-48-9162",
+          "entity_type": "VEHICLE",
+          "risk_score": 0.26
         },
         {
           "id": 3383,
@@ -9400,7 +11519,10 @@
             "pagerank": 0.019655371247199214,
             "betweenness": 0.001349527665317139,
             "community_id": 0
-          }
+          },
+          "name": "IND-66-4751",
+          "entity_type": "VEHICLE",
+          "risk_score": 0.29
         },
         {
           "id": 3436,
@@ -9416,7 +11538,10 @@
             "pagerank": 0.024588063890775082,
             "betweenness": 0.001349527665317139,
             "community_id": 2
-          }
+          },
+          "name": "@jose_tusk_wayanad",
+          "entity_type": "SOCIAL_HANDLE",
+          "risk_score": 0.37
         },
         {
           "id": 3437,
@@ -9432,7 +11557,10 @@
             "pagerank": 0.013138180957719302,
             "betweenness": 0.0006747638326585695,
             "community_id": 1
-          }
+          },
+          "name": "@rajan_nair_trapper",
+          "entity_type": "SOCIAL_HANDLE",
+          "risk_score": 0.2
         },
         {
           "id": 3438,
@@ -9448,7 +11576,10 @@
             "pagerank": 0.013328901855333267,
             "betweenness": 0.0,
             "community_id": 2
-          }
+          },
+          "name": "@kumar_poacher_silentvalley",
+          "entity_type": "SOCIAL_HANDLE",
+          "risk_score": 0.2
         }
       ],
       "edges": [
@@ -10338,6 +12469,196 @@
       "critical_anomalies_count": 1,
       "top_communities": []
     },
+    "communities": [
+      {
+        "community_id": 2,
+        "member_count": 12,
+        "members": [
+          {
+            "id": 3347,
+            "name": "Jose 'Tusk' Thomas",
+            "type": "PERSON"
+          },
+          {
+            "id": 3349,
+            "name": "Kumar",
+            "type": "PERSON"
+          },
+          {
+            "id": 3355,
+            "name": "Pradeep",
+            "type": "PERSON"
+          },
+          {
+            "id": 3360,
+            "name": "Wayanad Reserve Safehouse Alpha",
+            "type": "LOCATION"
+          },
+          {
+            "id": 3365,
+            "name": "+91-999091628",
+            "type": "PHONE"
+          }
+        ],
+        "alias": "Wayanad Forest Transit Brokers (Cluster 2)",
+        "dominant_crime_type": "Covert Safehouse Storage & Counterfeit Forest Clearances"
+      },
+      {
+        "community_id": 1,
+        "member_count": 4,
+        "members": [
+          {
+            "id": 3348,
+            "name": "Rajan Nair",
+            "type": "PERSON"
+          },
+          {
+            "id": 3376,
+            "name": "FEDERAL-KRL-83944",
+            "type": "BANK_ACCOUNT"
+          },
+          {
+            "id": 3381,
+            "name": "IND-20-2779",
+            "type": "VEHICLE"
+          },
+          {
+            "id": 3437,
+            "name": "@rajan_nair_trapper",
+            "type": "SOCIAL_HANDLE"
+          }
+        ],
+        "alias": "Malabar Coast Maritime Smugglers (Cluster 1)",
+        "dominant_crime_type": "Overseas Sea-Route Export of Endangered Rare Fauna"
+      },
+      {
+        "community_id": 3,
+        "member_count": 6,
+        "members": [
+          {
+            "id": 3350,
+            "name": "Biju",
+            "type": "PERSON"
+          },
+          {
+            "id": 3356,
+            "name": "Ajith",
+            "type": "PERSON"
+          },
+          {
+            "id": 3361,
+            "name": "Wayanad Reserve Warehouse",
+            "type": "LOCATION"
+          },
+          {
+            "id": 3374,
+            "name": "+91-999028150",
+            "type": "PHONE"
+          },
+          {
+            "id": 3378,
+            "name": "FEDERAL-KRL-87540",
+            "type": "BANK_ACCOUNT"
+          }
+        ],
+        "alias": "Nilgiri Local Tracker & Trapper Ring (Cluster 3)",
+        "dominant_crime_type": "Deep Jungle Animal Tracking & Poacher Encampments"
+      },
+      {
+        "community_id": 4,
+        "member_count": 4,
+        "members": [
+          {
+            "id": 3351,
+            "name": "Sabu",
+            "type": "PERSON"
+          },
+          {
+            "id": 3358,
+            "name": "Gopi",
+            "type": "PERSON"
+          },
+          {
+            "id": 3363,
+            "name": "Wayanad Reserve Front Business",
+            "type": "LOCATION"
+          },
+          {
+            "id": 3369,
+            "name": "+91-999083341",
+            "type": "PHONE"
+          }
+        ],
+        "alias": "Silent Valley Ivory Poaching Consortium (Cluster 4)",
+        "dominant_crime_type": "Illegal Elephant Tusk Extraction & Rainforest Traps"
+      },
+      {
+        "community_id": 5,
+        "member_count": 5,
+        "members": [
+          {
+            "id": 3352,
+            "name": "Vinu",
+            "type": "PERSON"
+          },
+          {
+            "id": 3357,
+            "name": "Unni",
+            "type": "PERSON"
+          },
+          {
+            "id": 3362,
+            "name": "Wayanad Reserve Drop Point",
+            "type": "LOCATION"
+          },
+          {
+            "id": 3368,
+            "name": "+91-999080762",
+            "type": "PHONE"
+          },
+          {
+            "id": 3370,
+            "name": "+91-999097390",
+            "type": "PHONE"
+          }
+        ],
+        "alias": "Malabar Coast Maritime Smugglers (Cluster 5)",
+        "dominant_crime_type": "Overseas Sea-Route Export of Endangered Rare Fauna"
+      },
+      {
+        "community_id": 0,
+        "member_count": 9,
+        "members": [
+          {
+            "id": 3353,
+            "name": "Mani",
+            "type": "PERSON"
+          },
+          {
+            "id": 3354,
+            "name": "Sreejith",
+            "type": "PERSON"
+          },
+          {
+            "id": 3359,
+            "name": "Ravi",
+            "type": "PERSON"
+          },
+          {
+            "id": 3364,
+            "name": "Wayanad Reserve Transit Hub",
+            "type": "LOCATION"
+          },
+          {
+            "id": 3366,
+            "name": "+91-999057142",
+            "type": "PHONE"
+          }
+        ],
+        "alias": "Silent Valley Ivory Poaching Consortium (Cluster 0)",
+        "dominant_crime_type": "Illegal Elephant Tusk Extraction & Rainforest Traps"
+      }
+    ],
     "anomalies": [
       {
         "id": 284,
@@ -10398,7 +12719,8 @@
       {
         "id": 3379,
         "name": "FEDERAL-KRL-97407",
-        "entity_type": null,
+        "entity_type": "BANK_ACCOUNT",
+        "type": "BANK_ACCOUNT",
         "pagerank": 0.07890873483688524,
         "betweenness": 0.008884390463337832,
         "risk_score": 0.0
@@ -10406,7 +12728,8 @@
       {
         "id": 3378,
         "name": "FEDERAL-KRL-87540",
-        "entity_type": null,
+        "entity_type": "BANK_ACCOUNT",
+        "type": "BANK_ACCOUNT",
         "pagerank": 0.06170851898346158,
         "betweenness": 0.018893387314439944,
         "risk_score": 0.0
@@ -10414,7 +12737,8 @@
       {
         "id": 3366,
         "name": "+91-999057142",
-        "entity_type": null,
+        "entity_type": "PHONE",
+        "type": "PHONE",
         "pagerank": 0.05057587735608814,
         "betweenness": 0.0,
         "risk_score": 0.0
@@ -10422,7 +12746,8 @@
       {
         "id": 3377,
         "name": "FEDERAL-KRL-36922",
-        "entity_type": null,
+        "entity_type": "BANK_ACCOUNT",
+        "type": "BANK_ACCOUNT",
         "pagerank": 0.048096478447647625,
         "betweenness": 0.0,
         "risk_score": 0.0
@@ -10430,7 +12755,8 @@
       {
         "id": 3370,
         "name": "+91-999097390",
-        "entity_type": null,
+        "entity_type": "PHONE",
+        "type": "PHONE",
         "pagerank": 0.045496401009799,
         "betweenness": 0.008771929824561403,
         "risk_score": 0.0
@@ -10438,7 +12764,8 @@
       {
         "id": 3362,
         "name": "Wayanad Reserve Drop Point",
-        "entity_type": null,
+        "entity_type": "LOCATION",
+        "type": "LOCATION",
         "pagerank": 0.045029593751886046,
         "betweenness": 0.0,
         "risk_score": 0.0
@@ -10446,7 +12773,8 @@
       {
         "id": 3376,
         "name": "FEDERAL-KRL-83944",
-        "entity_type": null,
+        "entity_type": "BANK_ACCOUNT",
+        "type": "BANK_ACCOUNT",
         "pagerank": 0.041545760516395046,
         "betweenness": 0.00573549257759784,
         "risk_score": 0.0
@@ -10454,7 +12782,8 @@
       {
         "id": 3360,
         "name": "Wayanad Reserve Safehouse Alpha",
-        "entity_type": null,
+        "entity_type": "LOCATION",
+        "type": "LOCATION",
         "pagerank": 0.04082283042679672,
         "betweenness": 0.0,
         "risk_score": 0.0
@@ -10462,7 +12791,8 @@
       {
         "id": 3369,
         "name": "+91-999083341",
-        "entity_type": null,
+        "entity_type": "PHONE",
+        "type": "PHONE",
         "pagerank": 0.040595027605278604,
         "betweenness": 0.0,
         "risk_score": 0.0
@@ -10470,10 +12800,29 @@
       {
         "id": 3375,
         "name": "FEDERAL-KRL-89215",
-        "entity_type": null,
+        "entity_type": "BANK_ACCOUNT",
+        "type": "BANK_ACCOUNT",
         "pagerank": 0.03747069356257897,
         "betweenness": 0.0051731893837157,
         "risk_score": 0.0
+      }
+    ],
+    "firs": [
+      {
+        "id": 33,
+        "fir_number": "FIR_KL_WILD_2026_339",
+        "date": "2026-03-11T08:45:00",
+        "police_station": "Nilambur Forest Range Office",
+        "district": "Malappuram, Kerala",
+        "crime_type": "Elephant Ivory Poaching & Wildlife Trafficking",
+        "crime_confidence": 0.95,
+        "raw_text": "Forest Department registered case under Wildlife Protection Act 1972 Sections 9, 39, 51 against Ravi 'Tracker' and Kunjumon following recovery of 4 raw elephant tusks and seizure of illegal jaw traps in Silent Valley perimeter.",
+        "extracted_entities": [
+          "Ravi 'Tracker'",
+          "Kunjumon",
+          "Silent Valley"
+        ],
+        "case_id": "wildlife_kerala"
       }
     ]
   },
@@ -10492,7 +12841,10 @@
             "pagerank": 0.014077126347409256,
             "betweenness": 0.0,
             "community_id": 1
-          }
+          },
+          "name": "Vikas 'Dada' Singh",
+          "entity_type": "PERSON",
+          "risk_score": 0.21
         },
         {
           "id": 3385,
@@ -10506,7 +12858,10 @@
             "pagerank": 0.01607135654240858,
             "betweenness": 0.010008996851102115,
             "community_id": 1
-          }
+          },
+          "name": "Munna Bajrangi",
+          "entity_type": "PERSON",
+          "risk_score": 0.24
         },
         {
           "id": 3386,
@@ -10520,7 +12875,10 @@
             "pagerank": 0.01607135654240858,
             "betweenness": 0.009221772379667115,
             "community_id": 2
-          }
+          },
+          "name": "Chhotu",
+          "entity_type": "PERSON",
+          "risk_score": 0.24
         },
         {
           "id": 3387,
@@ -10534,7 +12892,10 @@
             "pagerank": 0.015484588323806274,
             "betweenness": 0.003261358524516419,
             "community_id": 1
-          }
+          },
+          "name": "Ramu",
+          "entity_type": "PERSON",
+          "risk_score": 0.23
         },
         {
           "id": 3388,
@@ -10548,7 +12909,10 @@
             "pagerank": 0.015484588323806274,
             "betweenness": 0.0016869095816464236,
             "community_id": 4
-          }
+          },
+          "name": "Shyam",
+          "entity_type": "PERSON",
+          "risk_score": 0.23
         },
         {
           "id": 3389,
@@ -10562,7 +12926,10 @@
             "pagerank": 0.015484588323806274,
             "betweenness": 0.002136752136752137,
             "community_id": 5
-          }
+          },
+          "name": "Kallu",
+          "entity_type": "PERSON",
+          "risk_score": 0.23
         },
         {
           "id": 3390,
@@ -10576,7 +12943,10 @@
             "pagerank": 0.015484588323806274,
             "betweenness": 0.0033738191632928472,
             "community_id": 0
-          }
+          },
+          "name": "Pintu",
+          "entity_type": "PERSON",
+          "risk_score": 0.23
         },
         {
           "id": 3391,
@@ -10590,7 +12960,10 @@
             "pagerank": 0.015484588323806274,
             "betweenness": 0.00258659469185785,
             "community_id": 0
-          }
+          },
+          "name": "Raju",
+          "entity_type": "PERSON",
+          "risk_score": 0.23
         },
         {
           "id": 3392,
@@ -10604,7 +12977,10 @@
             "pagerank": 0.015678721010205864,
             "betweenness": 0.0033738191632928472,
             "community_id": 2
-          }
+          },
+          "name": "Sanju",
+          "entity_type": "PERSON",
+          "risk_score": 0.24
         },
         {
           "id": 3393,
@@ -10618,7 +12994,10 @@
             "pagerank": 0.015678721010205864,
             "betweenness": 0.003936122357174989,
             "community_id": 3
-          }
+          },
+          "name": "Dabloo",
+          "entity_type": "PERSON",
+          "risk_score": 0.24
         },
         {
           "id": 3394,
@@ -10632,7 +13011,10 @@
             "pagerank": 0.015678721010205864,
             "betweenness": 0.0020242914979757085,
             "community_id": 5
-          }
+          },
+          "name": "Guddu",
+          "entity_type": "PERSON",
+          "risk_score": 0.24
         },
         {
           "id": 3395,
@@ -10646,7 +13028,10 @@
             "pagerank": 0.015678721010205864,
             "betweenness": 0.002249212775528565,
             "community_id": 4
-          }
+          },
+          "name": "Bablu",
+          "entity_type": "PERSON",
+          "risk_score": 0.24
         },
         {
           "id": 3396,
@@ -10660,7 +13045,10 @@
             "pagerank": 0.015678721010205864,
             "betweenness": 0.0025865946918578494,
             "community_id": 0
-          }
+          },
+          "name": "Ravi",
+          "entity_type": "PERSON",
+          "risk_score": 0.24
         },
         {
           "id": 3397,
@@ -10675,7 +13063,10 @@
             "pagerank": 0.06225915372237941,
             "betweenness": 0.0,
             "community_id": 1
-          }
+          },
+          "name": "Gorakhpur Safehouse Alpha",
+          "entity_type": "LOCATION",
+          "risk_score": 0.93
         },
         {
           "id": 3398,
@@ -10690,7 +13081,10 @@
             "pagerank": 0.037475025976474,
             "betweenness": 0.0,
             "community_id": 3
-          }
+          },
+          "name": "Gorakhpur Warehouse",
+          "entity_type": "LOCATION",
+          "risk_score": 0.56
         },
         {
           "id": 3399,
@@ -10705,7 +13099,10 @@
             "pagerank": 0.04286200261138391,
             "betweenness": 0.0,
             "community_id": 5
-          }
+          },
+          "name": "Gorakhpur Drop Point",
+          "entity_type": "LOCATION",
+          "risk_score": 0.64
         },
         {
           "id": 3400,
@@ -10720,7 +13117,10 @@
             "pagerank": 0.022591314532134914,
             "betweenness": 0.0,
             "community_id": 4
-          }
+          },
+          "name": "Gorakhpur Front Business",
+          "entity_type": "LOCATION",
+          "risk_score": 0.34
         },
         {
           "id": 3401,
@@ -10735,7 +13135,10 @@
             "pagerank": 0.022591314532134914,
             "betweenness": 0.0,
             "community_id": 0
-          }
+          },
+          "name": "Gorakhpur Transit Hub",
+          "entity_type": "LOCATION",
+          "risk_score": 0.34
         },
         {
           "id": 3402,
@@ -10749,7 +13152,10 @@
             "pagerank": 0.025803886583495847,
             "betweenness": 0.0,
             "community_id": 1
-          }
+          },
+          "name": "+91-999040024",
+          "entity_type": "PHONE",
+          "risk_score": 0.39
         },
         {
           "id": 3403,
@@ -10763,7 +13169,10 @@
             "pagerank": 0.015732963966699865,
             "betweenness": 0.0,
             "community_id": 1
-          }
+          },
+          "name": "+91-999091850",
+          "entity_type": "PHONE",
+          "risk_score": 0.24
         },
         {
           "id": 3404,
@@ -10777,7 +13186,10 @@
             "pagerank": 0.022779725599824305,
             "betweenness": 0.0005623031938821411,
             "community_id": 5
-          }
+          },
+          "name": "+91-999063721",
+          "entity_type": "PHONE",
+          "risk_score": 0.34
         },
         {
           "id": 3405,
@@ -10791,7 +13203,10 @@
             "pagerank": 0.023857792155927475,
             "betweenness": 0.004723346828609986,
             "community_id": 5
-          }
+          },
+          "name": "+91-999091586",
+          "entity_type": "PHONE",
+          "risk_score": 0.36
         },
         {
           "id": 3406,
@@ -10805,7 +13220,10 @@
             "pagerank": 0.030470226396430843,
             "betweenness": 0.0,
             "community_id": 4
-          }
+          },
+          "name": "+91-999022048",
+          "entity_type": "PHONE",
+          "risk_score": 0.46
         },
         {
           "id": 3407,
@@ -10819,7 +13237,10 @@
             "pagerank": 0.04988626955737468,
             "betweenness": 0.0,
             "community_id": 5
-          }
+          },
+          "name": "+91-999065154",
+          "entity_type": "PHONE",
+          "risk_score": 0.75
         },
         {
           "id": 3408,
@@ -10833,7 +13254,10 @@
             "pagerank": 0.03295617135299131,
             "betweenness": 0.0,
             "community_id": 0
-          }
+          },
+          "name": "+91-999047008",
+          "entity_type": "PHONE",
+          "risk_score": 0.49
         },
         {
           "id": 3409,
@@ -10847,7 +13271,10 @@
             "pagerank": 0.026204853479377406,
             "betweenness": 0.0,
             "community_id": 0
-          }
+          },
+          "name": "+91-999029998",
+          "entity_type": "PHONE",
+          "risk_score": 0.39
         },
         {
           "id": 3410,
@@ -10861,7 +13288,10 @@
             "pagerank": 0.020740527924977947,
             "betweenness": 0.002699055330634278,
             "community_id": 2
-          }
+          },
+          "name": "+91-999050397",
+          "entity_type": "PHONE",
+          "risk_score": 0.31
         },
         {
           "id": 3411,
@@ -10875,7 +13305,10 @@
             "pagerank": 0.017233474463099686,
             "betweenness": 0.001349527665317139,
             "community_id": 3
-          }
+          },
+          "name": "+91-999053737",
+          "entity_type": "PHONE",
+          "risk_score": 0.26
         },
         {
           "id": 3412,
@@ -10888,7 +13321,10 @@
             "pagerank": 0.028036737712404523,
             "betweenness": 0.003036437246963563,
             "community_id": 6
-          }
+          },
+          "name": "PNB-GKP-24977",
+          "entity_type": "BANK_ACCOUNT",
+          "risk_score": 0.42
         },
         {
           "id": 3413,
@@ -10901,7 +13337,10 @@
             "pagerank": 0.07765091662975884,
             "betweenness": 0.0,
             "community_id": 6
-          }
+          },
+          "name": "PNB-GKP-15489",
+          "entity_type": "BANK_ACCOUNT",
+          "risk_score": 1.0
         },
         {
           "id": 3414,
@@ -10914,7 +13353,10 @@
             "pagerank": 0.027935033745518284,
             "betweenness": 0.0015744489428699952,
             "community_id": 6
-          }
+          },
+          "name": "PNB-GKP-12470",
+          "entity_type": "BANK_ACCOUNT",
+          "risk_score": 0.42
         },
         {
           "id": 3415,
@@ -10927,7 +13369,10 @@
             "pagerank": 0.05929104613199857,
             "betweenness": 0.004048582995951417,
             "community_id": 6
-          }
+          },
+          "name": "PNB-GKP-70074",
+          "entity_type": "BANK_ACCOUNT",
+          "risk_score": 0.89
         },
         {
           "id": 3416,
@@ -10940,7 +13385,10 @@
             "pagerank": 0.014077126347409256,
             "betweenness": 0.0,
             "community_id": 6
-          }
+          },
+          "name": "PNB-GKP-33423",
+          "entity_type": "BANK_ACCOUNT",
+          "risk_score": 0.21
         },
         {
           "id": 3417,
@@ -10954,7 +13402,10 @@
             "pagerank": 0.01607135654240858,
             "betweenness": 0.0006747638326585695,
             "community_id": 3
-          }
+          },
+          "name": "IND-75-1669",
+          "entity_type": "VEHICLE",
+          "risk_score": 0.24
         },
         {
           "id": 3418,
@@ -10968,7 +13419,10 @@
             "pagerank": 0.015732963966699865,
             "betweenness": 0.00033738191632928474,
             "community_id": 1
-          }
+          },
+          "name": "IND-65-6031",
+          "entity_type": "VEHICLE",
+          "risk_score": 0.24
         },
         {
           "id": 3419,
@@ -10982,7 +13436,10 @@
             "pagerank": 0.021047806732564765,
             "betweenness": 0.001349527665317139,
             "community_id": 3
-          }
+          },
+          "name": "IND-80-6394",
+          "entity_type": "VEHICLE",
+          "risk_score": 0.32
         },
         {
           "id": 3420,
@@ -10996,7 +13453,10 @@
             "pagerank": 0.02353733544154888,
             "betweenness": 0.0,
             "community_id": 0
-          }
+          },
+          "name": "IND-35-7967",
+          "entity_type": "VEHICLE",
+          "risk_score": 0.35
         },
         {
           "id": 3439,
@@ -11012,7 +13472,10 @@
             "pagerank": 0.02944426846353114,
             "betweenness": 0.001349527665317139,
             "community_id": 1
-          }
+          },
+          "name": "@vikas_dada_gorakhpur",
+          "entity_type": "SOCIAL_HANDLE",
+          "risk_score": 0.44
         },
         {
           "id": 3440,
@@ -11028,7 +13491,10 @@
             "pagerank": 0.015732963966699865,
             "betweenness": 0.0006747638326585695,
             "community_id": 1
-          }
+          },
+          "name": "@munna_bajrangi_shooter",
+          "entity_type": "SOCIAL_HANDLE",
+          "risk_score": 0.24
         },
         {
           "id": 3441,
@@ -11044,7 +13510,10 @@
             "pagerank": 0.015961355362464087,
             "betweenness": 0.0,
             "community_id": 2
-          }
+          },
+          "name": "@chhotu_enforcer_up",
+          "entity_type": "SOCIAL_HANDLE",
+          "risk_score": 0.24
         }
       ],
       "edges": [
@@ -11921,6 +14390,229 @@
       "critical_anomalies_count": 1,
       "top_communities": []
     },
+    "communities": [
+      {
+        "community_id": 1,
+        "member_count": 9,
+        "members": [
+          {
+            "id": 3384,
+            "name": "Vikas 'Dada' Singh",
+            "type": "PERSON"
+          },
+          {
+            "id": 3385,
+            "name": "Munna Bajrangi",
+            "type": "PERSON"
+          },
+          {
+            "id": 3387,
+            "name": "Ramu",
+            "type": "PERSON"
+          },
+          {
+            "id": 3397,
+            "name": "Gorakhpur Safehouse Alpha",
+            "type": "LOCATION"
+          },
+          {
+            "id": 3402,
+            "name": "+91-999040024",
+            "type": "PHONE"
+          }
+        ],
+        "alias": "Gorakhpur Tender-Rigging Syndicate (Cluster 1)",
+        "dominant_crime_type": "Coercive Armed Takeover of Public Contracts & Mining"
+      },
+      {
+        "community_id": 2,
+        "member_count": 4,
+        "members": [
+          {
+            "id": 3386,
+            "name": "Chhotu",
+            "type": "PERSON"
+          },
+          {
+            "id": 3392,
+            "name": "Sanju",
+            "type": "PERSON"
+          },
+          {
+            "id": 3410,
+            "name": "+91-999050397",
+            "type": "PHONE"
+          },
+          {
+            "id": 3441,
+            "name": "@chhotu_enforcer_up",
+            "type": "SOCIAL_HANDLE"
+          }
+        ],
+        "alias": "Bhojpur Hawala Protection Network (Cluster 2)",
+        "dominant_crime_type": "Extortion Collection & Real Estate Strong-Arming"
+      },
+      {
+        "community_id": 4,
+        "member_count": 4,
+        "members": [
+          {
+            "id": 3388,
+            "name": "Shyam",
+            "type": "PERSON"
+          },
+          {
+            "id": 3395,
+            "name": "Bablu",
+            "type": "PERSON"
+          },
+          {
+            "id": 3400,
+            "name": "Gorakhpur Front Business",
+            "type": "LOCATION"
+          },
+          {
+            "id": 3406,
+            "name": "+91-999022048",
+            "type": "PHONE"
+          }
+        ],
+        "alias": "Purvanchal Bahubali Hit Squad (Cluster 4)",
+        "dominant_crime_type": "Targeted Political Intimidation, Toll Hafta & Enforcers"
+      },
+      {
+        "community_id": 5,
+        "member_count": 6,
+        "members": [
+          {
+            "id": 3389,
+            "name": "Kallu",
+            "type": "PERSON"
+          },
+          {
+            "id": 3394,
+            "name": "Guddu",
+            "type": "PERSON"
+          },
+          {
+            "id": 3399,
+            "name": "Gorakhpur Drop Point",
+            "type": "LOCATION"
+          },
+          {
+            "id": 3404,
+            "name": "+91-999063721",
+            "type": "PHONE"
+          },
+          {
+            "id": 3405,
+            "name": "+91-999091586",
+            "type": "PHONE"
+          }
+        ],
+        "alias": "Gorakhpur Tender-Rigging Syndicate (Cluster 5)",
+        "dominant_crime_type": "Coercive Armed Takeover of Public Contracts & Mining"
+      },
+      {
+        "community_id": 0,
+        "member_count": 7,
+        "members": [
+          {
+            "id": 3390,
+            "name": "Pintu",
+            "type": "PERSON"
+          },
+          {
+            "id": 3391,
+            "name": "Raju",
+            "type": "PERSON"
+          },
+          {
+            "id": 3396,
+            "name": "Ravi",
+            "type": "PERSON"
+          },
+          {
+            "id": 3401,
+            "name": "Gorakhpur Transit Hub",
+            "type": "LOCATION"
+          },
+          {
+            "id": 3408,
+            "name": "+91-999047008",
+            "type": "PHONE"
+          }
+        ],
+        "alias": "Purvanchal Bahubali Hit Squad (Cluster 0)",
+        "dominant_crime_type": "Targeted Political Intimidation, Toll Hafta & Enforcers"
+      },
+      {
+        "community_id": 3,
+        "member_count": 5,
+        "members": [
+          {
+            "id": 3393,
+            "name": "Dabloo",
+            "type": "PERSON"
+          },
+          {
+            "id": 3398,
+            "name": "Gorakhpur Warehouse",
+            "type": "LOCATION"
+          },
+          {
+            "id": 3411,
+            "name": "+91-999053737",
+            "type": "PHONE"
+          },
+          {
+            "id": 3417,
+            "name": "IND-75-1669",
+            "type": "VEHICLE"
+          },
+          {
+            "id": 3419,
+            "name": "IND-80-6394",
+            "type": "VEHICLE"
+          }
+        ],
+        "alias": "Eastern UP Safehouse Logistics Ring (Cluster 3)",
+        "dominant_crime_type": "Fugitive Harboring & Untraceable Vehicle Routing"
+      },
+      {
+        "community_id": 6,
+        "member_count": 5,
+        "members": [
+          {
+            "id": 3412,
+            "name": "PNB-GKP-24977",
+            "type": "BANK_ACCOUNT"
+          },
+          {
+            "id": 3413,
+            "name": "PNB-GKP-15489",
+            "type": "BANK_ACCOUNT"
+          },
+          {
+            "id": 3414,
+            "name": "PNB-GKP-12470",
+            "type": "BANK_ACCOUNT"
+          },
+          {
+            "id": 3415,
+            "name": "PNB-GKP-70074",
+            "type": "BANK_ACCOUNT"
+          },
+          {
+            "id": 3416,
+            "name": "PNB-GKP-33423",
+            "type": "BANK_ACCOUNT"
+          }
+        ],
+        "alias": "Bhojpur Hawala Protection Network (Cluster 6)",
+        "dominant_crime_type": "Extortion Collection & Real Estate Strong-Arming"
+      }
+    ],
     "anomalies": [
       {
         "id": 287,
@@ -11981,7 +14673,8 @@
       {
         "id": 3413,
         "name": "PNB-GKP-15489",
-        "entity_type": null,
+        "entity_type": "BANK_ACCOUNT",
+        "type": "BANK_ACCOUNT",
         "pagerank": 0.07765091662975884,
         "betweenness": 0.0,
         "risk_score": 0.0
@@ -11989,7 +14682,8 @@
       {
         "id": 3397,
         "name": "Gorakhpur Safehouse Alpha",
-        "entity_type": null,
+        "entity_type": "LOCATION",
+        "type": "LOCATION",
         "pagerank": 0.06225915372237941,
         "betweenness": 0.0,
         "risk_score": 0.0
@@ -11997,7 +14691,8 @@
       {
         "id": 3415,
         "name": "PNB-GKP-70074",
-        "entity_type": null,
+        "entity_type": "BANK_ACCOUNT",
+        "type": "BANK_ACCOUNT",
         "pagerank": 0.05929104613199857,
         "betweenness": 0.004048582995951417,
         "risk_score": 0.0
@@ -12005,7 +14700,8 @@
       {
         "id": 3407,
         "name": "+91-999065154",
-        "entity_type": null,
+        "entity_type": "PHONE",
+        "type": "PHONE",
         "pagerank": 0.04988626955737468,
         "betweenness": 0.0,
         "risk_score": 0.0
@@ -12013,7 +14709,8 @@
       {
         "id": 3399,
         "name": "Gorakhpur Drop Point",
-        "entity_type": null,
+        "entity_type": "LOCATION",
+        "type": "LOCATION",
         "pagerank": 0.04286200261138391,
         "betweenness": 0.0,
         "risk_score": 0.0
@@ -12021,7 +14718,8 @@
       {
         "id": 3398,
         "name": "Gorakhpur Warehouse",
-        "entity_type": null,
+        "entity_type": "LOCATION",
+        "type": "LOCATION",
         "pagerank": 0.037475025976474,
         "betweenness": 0.0,
         "risk_score": 0.0
@@ -12029,7 +14727,8 @@
       {
         "id": 3408,
         "name": "+91-999047008",
-        "entity_type": null,
+        "entity_type": "PHONE",
+        "type": "PHONE",
         "pagerank": 0.03295617135299131,
         "betweenness": 0.0,
         "risk_score": 0.0
@@ -12037,7 +14736,8 @@
       {
         "id": 3406,
         "name": "+91-999022048",
-        "entity_type": null,
+        "entity_type": "PHONE",
+        "type": "PHONE",
         "pagerank": 0.030470226396430843,
         "betweenness": 0.0,
         "risk_score": 0.0
@@ -12045,7 +14745,8 @@
       {
         "id": 3439,
         "name": "@vikas_dada_gorakhpur",
-        "entity_type": null,
+        "entity_type": "SOCIAL_HANDLE",
+        "type": "SOCIAL_HANDLE",
         "pagerank": 0.02944426846353114,
         "betweenness": 0.001349527665317139,
         "risk_score": 0.0
@@ -12053,10 +14754,29 @@
       {
         "id": 3412,
         "name": "PNB-GKP-24977",
-        "entity_type": null,
+        "entity_type": "BANK_ACCOUNT",
+        "type": "BANK_ACCOUNT",
         "pagerank": 0.028036737712404523,
         "betweenness": 0.003036437246963563,
         "risk_score": 0.0
+      }
+    ],
+    "firs": [
+      {
+        "id": 34,
+        "fir_number": "FIR_UP_EXT_2026_662",
+        "date": "2026-05-02T17:30:00",
+        "police_station": "Anti-Extortion Cell STF Gorakhpur",
+        "district": "Gorakhpur, Uttar Pradesh",
+        "crime_type": "Tender Coercion & Purvanchal Gangster Syndicate",
+        "crime_confidence": 0.97,
+        "raw_text": "STF registered FIR under IPC Section 384/386, 506 and UP Gangsters Act against Virendra Pratap and Rakesh Tiwari for armed intimidation of infrastructure contractors, highway toll hafta collection, and benami tender allocation.",
+        "extracted_entities": [
+          "Virendra Pratap",
+          "Rakesh Tiwari",
+          "Purvanchal"
+        ],
+        "case_id": "extortion_up"
       }
     ]
   }

@@ -575,13 +575,20 @@ function App() {
         }}
         onSwitchCase={(newCase) => setActiveCase(newCase)}
         onSelectEntity={(entityName) => {
-          const found = graphData.nodes.find(n => 
-            n.data?.name?.toLowerCase().includes(entityName.toLowerCase()) || 
-            n.data?.label?.toLowerCase().includes(entityName.toLowerCase())
-          );
+          const found = graphData.nodes.find(n => {
+            const nName = n.name || n.label || n.data?.name || n.data?.label || '';
+            return nName.toLowerCase().includes(entityName.toLowerCase());
+          });
           if (found) {
-            setSelectedEntity({ id: found.data.id, name: found.data.name || found.data.label, type: found.data.type });
-            setToast({ message: `Voice Focus: ${found.data.name || found.data.label}`, type: 'success' });
+            const nodeData = found.data || found;
+            setSelectedEntity({
+              ...nodeData,
+              id: nodeData.id,
+              name: nodeData.name || nodeData.label,
+              label: nodeData.name || nodeData.label,
+              type: nodeData.type || nodeData.entity_type
+            });
+            setToast({ message: `Voice Focus: ${nodeData.name || nodeData.label}`, type: 'success' });
           } else {
             setToast({ message: `Entity '${entityName}' not found in active graph`, type: 'info' });
           }

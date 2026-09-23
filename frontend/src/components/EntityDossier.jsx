@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FiUser, FiPhone, FiMapPin, FiBriefcase, FiDollarSign, FiActivity, FiChevronDown, FiChevronUp, FiAlertTriangle, FiTrendingUp, FiUsers, FiClock, FiArrowRight } from 'react-icons/fi';
-import { getEntityDossier } from '../api/client';
+import { getEntityDossier, buildOfflineEntityDossier } from '../api/client';
 import { normalizeAnomalyText } from '../utils/anomalyNormalizer';
 
 const getIcon = (type) => {
@@ -43,24 +43,32 @@ function Section({ title, icon, count, children, defaultOpen = true }) {
   );
 }
 
-export default function EntityDossier({ entityData, onEntitySelect, onExpandNetwork }) {
+export default function EntityDossier({ entityData, onEntitySelect, onExpandNetwork, activeCase = 'dawood' }) {
   const [dossier, setDossier] = useState(null);
   const [loading, setLoading] = useState(true);
   const [expandedRelId, setExpandedRelId] = useState(null);
 
   useEffect(() => {
-    if (!entityData?.id) return;
+    if (!entityData) return;
+    const targetId = entityData.id || entityData.name || entityData.label;
+    if (!targetId) return;
+
     setLoading(true);
-    getEntityDossier(entityData.id)
+    getEntityDossier(targetId, activeCase)
       .then(res => {
-        setDossier(res);
+        if (res && res.entity && !res.error) {
+          const mergedEntity = { ...entityData, ...res.entity };
+          setDossier({ ...res, entity: mergedEntity });
+        } else {
+          setDossier(buildOfflineEntityDossier(targetId, activeCase));
+        }
         setLoading(false);
       })
       .catch(() => {
-        setDossier({ entity: entityData, relationships: [], firs: [], anomalies: [] });
+        setDossier(buildOfflineEntityDossier(targetId, activeCase));
         setLoading(false);
       });
-  }, [entityData?.id]);
+  }, [entityData?.id, entityData?.name, entityData?.label, activeCase]);
 
   if (loading) {
     return (
@@ -72,19 +80,20 @@ export default function EntityDossier({ entityData, onEntitySelect, onExpandNetw
   }
 
   const { entity, relationships, firs, anomalies } = dossier || {};
-  const type = entity?.entity_type || entity?.type || 'UNKNOWN';
-  const name = entity?.name || entity?.label || entity?.id || 'Unknown';
-  const pr = entity?.pagerank || entity?.metrics?.pagerank || 0;
-  const bt = entity?.betweenness || entity?.metrics?.betweenness || 0;
-  const communityId = entity?.community_id ?? entity?.metrics?.community_id ?? null;
-  
+  const type = entity?.entity_type || entity?.type || entityData?.type || entityData?.entity_type || 'UNKNOWN';
+  const name = entity?.name || entity?.label || entityData?.name || entityData?.label || (entity?.id ? `Entity #${entity.id}` : 'Unknown');
+  const pr = entity?.pagerank || entity?.metrics?.pagerank || entityData?.pagerank || entityData?.metrics?.pagerank || 0;
+  const bt = entity?.betweenness || entity?.metrics?.betweenness || entityData?.betweenness || entityData?.metrics?.betweenness || 0;
+  const communityId = entity?.community_id ?? entity?.metrics?.community_id ?? entityData?.community_id ?? entityData?.metrics?.community_id ?? null;
+  const riskScore = entity?.risk_score ?? entityData?.risk_score ?? (pr > 0 ? Math.min(1.0, pr * 15) : 0.35);
+
   // Composite Threat Score heuristic
   const threatScore = 
     (pr * 10) + 
     (bt * 5) + 
-    ((dossier.anomalies?.length || 0) * 0.4) + 
-    ((dossier.firs?.length || 0) * 0.3) + 
-    (entity?.risk_score || 0);
+    ((anomalies?.length || 0) * 0.4) + 
+    ((firs?.length || 0) * 0.3) + 
+    riskScore;
 
   const risk = getRiskLabel(threatScore);
   const gaugePercent = Math.min(100, threatScore * 100);

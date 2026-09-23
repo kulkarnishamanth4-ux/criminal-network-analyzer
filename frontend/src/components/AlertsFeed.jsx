@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { FiBell, FiAlertCircle } from 'react-icons/fi';
 import { getAnomalies } from '../api/client';
 import { normalizeAnomalyText } from '../utils/anomalyNormalizer';
+import offlineData from '../data/offline_intelligence.json';
 
 export default function AlertsFeed({ onEntitySelect, activeCase, dataVersion = 0, threatCount }) {
   const [anomalies, setAnomalies] = useState([]);
@@ -81,15 +82,20 @@ export default function AlertsFeed({ onEntitySelect, activeCase, dataVersion = 0
               </p>
               {anomaly.entity_ids && anomaly.entity_ids.length > 0 && (
                 <div className="flex flex-wrap gap-1 mt-2">
-                  {anomaly.entity_ids.map(id => (
-                    <button 
-                      key={id}
-                      className="text-[9px] px-1.5 py-0.5 rounded border border-current opacity-80 hover:opacity-100"
-                      onClick={() => onEntitySelect({ id })}
-                    >
-                      ID: {id}
-                    </button>
-                  ))}
+                  {anomaly.entity_ids.map(id => {
+                    const node = (offlineData[activeCase]?.graph?.nodes || []).find(n => String(n.id) === String(id));
+                    const label = node?.name || node?.label || `ID: ${id}`;
+                    return (
+                      <button 
+                        key={id}
+                        className="text-[9px] px-2 py-0.5 rounded border border-current opacity-80 hover:opacity-100 font-medium tracking-tight bg-black/20 hover:bg-black/40 transition-colors"
+                        onClick={() => onEntitySelect(node ? { ...node, id, name: label, label } : { id })}
+                        title={`Inspect dossier for ${label}`}
+                      >
+                        {label}
+                      </button>
+                    );
+                  })}
                 </div>
               )}
             </div>

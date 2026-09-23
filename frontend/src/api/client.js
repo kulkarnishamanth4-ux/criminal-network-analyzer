@@ -14,11 +14,21 @@ export const searchEntities = (query, type, caseId = 'dawood') => {
     .then(res => res.data)
     .catch(() => {
       const g = offlineData[caseId]?.graph;
-      if (!g || !query) return [];
+      if (!g || !query) return { results: [] };
       const qLower = query.toLowerCase();
-      return (g.nodes || [])
-        .filter(n => (n.data?.name || n.data?.label || '').toLowerCase().includes(qLower))
-        .map(n => ({ id: n.data.id, name: n.data.name || n.data.label, type: n.data.type, risk_score: n.data.risk_score }));
+      const results = (g.nodes || [])
+        .filter(n => (n.name || n.label || '').toLowerCase().includes(qLower))
+        .map(n => ({
+          id: n.id,
+          name: n.name || n.label,
+          label: n.name || n.label,
+          type: n.type || n.entity_type,
+          entity_type: n.type || n.entity_type,
+          risk_score: n.risk_score || n.metrics?.pagerank || 0,
+          properties: n.properties || {},
+          metrics: n.metrics || {}
+        }));
+      return { results };
     });
 };
 
@@ -50,8 +60,13 @@ export const getTopInfluencers = (limit = 10, caseId = 'dawood') => {
 
 export const getCommunities = (caseId = 'dawood') => {
   return client.get('/api/analytics/communities', { params: { case_id: caseId } })
-    .then(res => res.data)
-    .catch(() => ({ communities: [] }));
+    .then(res => {
+      if (res.data && (Array.isArray(res.data) ? res.data.length > 0 : res.data.communities?.length > 0)) {
+        return res.data;
+      }
+      return offlineData[caseId]?.communities || [];
+    })
+    .catch(() => offlineData[caseId]?.communities || []);
 };
 
 export const getAnomalies = (caseId = 'dawood') => {
@@ -99,8 +114,114 @@ export const getDashboardStats = (caseId = 'dawood') => {
     });
 };
 
-export const getEntityDossier = (entityId) => {
-  return client.get(`/api/entity/${entityId}/dossier`).then(res => res.data);
+export const buildOfflineEntityDossier = (entityId, caseId = 'dawood') => {
+  const targetCase = offlineData[caseId] ? caseId : 'dawood';
+  let caseData = offlineData[targetCase] || {};
+  let graph = caseData.graph || { nodes: [], edges: [] };
+
+  // 1. Try finding in active case
+  let node = (graph.nodes || []).find(n => 
+    String(n.id) === String(entityId) ||
+    (n.name && String(n.name).toLowerCase() === String(entityId).toLowerCase()) ||
+    (n.label && String(n.label).toLowerCase() === String(entityId).toLowerCase())
+  );
+
+  // 2. If not found, search all other cases in offline data
+  if (!node) {
+    for (const [cid, cData] of Object.entries(offlineData)) {
+      const found = (cData.graph?.nodes || []).find(n => 
+        String(n.id) === String(entityId) ||
+        (n.name && String(n.name).toLowerCase() === String(entityId).toLowerCase()) ||
+        (n.label && String(n.label).toLowerCase() === String(entityId).toLowerCase())
+      );
+      if (found) {
+        node = found;
+        caseData = cData;
+        break;
+      }
+    }
+  }
+
+  const rawLabel = node?.name || node?.label || (entityId ? `Entity #${entityId}` : 'Unknown Entity');
+  const type = node?.type || node?.entity_type || 'PERSON';
+  const pr = node?.metrics?.pagerank || node?.pagerank || 0;
+  const bt = node?.metrics?.betweenness || node?.betweenness || 0;
+  const cid = node?.metrics?.community_id ?? node?.community_id ?? null;
+  const risk = node?.risk_score || (pr > 0 ? Math.min(1.0, pr * 15) : 0.35);
+
+  const entity = {
+    id: node?.id || entityId,
+    name: rawLabel,
+    label: rawLabel,
+    type: type,
+    entity_type: type,
+    properties: node?.properties || {},
+    metrics: node?.metrics || { pagerank: pr, betweenness: bt, community_id: cid },
+    pagerank: pr,
+    betweenness: bt,
+    community_id: cid,
+    risk_score: risk
+  };
+
+  // Find connected relationships
+  const relationships = [];
+  const gEdges = caseData.graph?.edges || [];
+  const gNodes = caseData.graph?.nodes || [];
+  const nodeMap = new Map(gNodes.map(n => [String(n.id), n]));
+
+  if (node) {
+    gEdges.forEach(e => {
+      const isOut = String(e.source) === String(node.id);
+      const isIn = String(e.target) === String(node.id);
+      if (isOut || isIn) {
+        const otherId = isOut ? e.target : e.source;
+        const otherNode = nodeMap.get(String(otherId));
+        const otherName = otherNode ? (otherNode.name || otherNode.label) : `Entity #${otherId}`;
+        relationships.push({
+          id: e.id,
+          type: e.type || e.label || 'ASSOCIATED_WITH',
+          target_id: otherId,
+          target_name: otherName,
+          direction: isOut ? 'outgoing' : 'incoming',
+          properties: e.properties || {},
+          timestamp: e.timestamp || null
+        });
+      }
+    });
+  }
+
+  // Linked anomalies
+  const nodeIdStr = String(node?.id || entityId);
+  const anomalies = (caseData.anomalies || []).filter(a =>
+    a.entity_ids && a.entity_ids.some(eid => String(eid) === nodeIdStr)
+  );
+
+  // Linked FIRs
+  const nameLower = rawLabel.toLowerCase();
+  const firs = (caseData.firs || []).filter(f =>
+    (f.raw_text && f.raw_text.toLowerCase().includes(nameLower)) ||
+    (f.extracted_entities && f.extracted_entities.some(ee => String(ee).toLowerCase().includes(nameLower)))
+  );
+
+  return {
+    entity,
+    relationships,
+    anomalies,
+    firs
+  };
+};
+
+export const getEntityDossier = (entityId, caseId = 'dawood') => {
+  return client.get(`/api/entity/${entityId}/dossier`)
+    .then(res => {
+      if (res.data && res.data.entity && !res.data.error) {
+        return res.data;
+      }
+      return buildOfflineEntityDossier(entityId, caseId);
+    })
+    .catch(() => {
+      return buildOfflineEntityDossier(entityId, caseId);
+    });
 };
 
 export const uploadFile = (type, file, caseId, clearExisting = false) => {
@@ -124,7 +245,56 @@ export const restoreCanonicalCase = (caseId = 'dawood') => {
 };
 
 export const getShortestPath = (sourceId, targetId, caseId = 'dawood') => {
-  return client.get('/api/graph/shortest-path', { params: { source_id: sourceId, target_id: targetId, case_id: caseId } }).then(res => res.data);
+  return client.get('/api/graph/shortest-path', { params: { source_id: sourceId, target_id: targetId, case_id: caseId } })
+    .then(res => res.data)
+    .catch(() => {
+      const graph = offlineData[caseId]?.graph || { nodes: [], edges: [] };
+      const sId = String(sourceId);
+      const tId = String(targetId);
+      const adj = {};
+      (graph.edges || []).forEach(e => {
+        const u = String(e.source), v = String(e.target);
+        if (!adj[u]) adj[u] = [];
+        if (!adj[v]) adj[v] = [];
+        adj[u].push({ neighbor: v, edge: e });
+        adj[v].push({ neighbor: u, edge: e });
+      });
+
+      const queue = [[sId]];
+      const visited = new Set([sId]);
+      let foundPath = null;
+
+      while (queue.length > 0) {
+        const path = queue.shift();
+        const curr = path[path.length - 1];
+        if (curr === tId) {
+          foundPath = path;
+          break;
+        }
+        for (const { neighbor } of (adj[curr] || [])) {
+          if (!visited.has(neighbor)) {
+            visited.add(neighbor);
+            queue.push([...path, neighbor]);
+          }
+        }
+      }
+
+      if (foundPath) {
+        const nodeMap = new Map(graph.nodes.map(n => [String(n.id), n]));
+        const steps = [];
+        for (let i = 0; i < foundPath.length - 1; i++) {
+          const fromNode = nodeMap.get(foundPath[i]);
+          const toNode = nodeMap.get(foundPath[i+1]);
+          steps.push({
+            from: fromNode?.name || fromNode?.label || `Entity #${foundPath[i]}`,
+            to: toNode?.name || toNode?.label || `Entity #${foundPath[i+1]}`,
+            relationship: 'CONNECTED_TO'
+          });
+        }
+        return { found: true, path: foundPath, steps };
+      }
+      return { found: false, message: 'No syndicate link found between entities' };
+    });
 };
 
 export const getDecapitation = (maxTargets = 3, caseId = "dawood") => {

@@ -531,9 +531,11 @@ export default function GraphCanvas({
         data: {
           ...n,
           id: String(n.id),
+          name: rawLabel,
           label: rawLabel,
           shortLabel: truncateLabel(rawLabel, type),
           type: type,
+          entity_type: type,
           pagerank: pr,
           threatLevel: threatLevel,
           nodeSize: nodeSize,
