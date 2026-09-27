@@ -98,7 +98,7 @@ export default function APKDownloadModal({ isOpen, onClose }) {
 
             <p className="text-xs text-[var(--text-secondary)] leading-relaxed">
               Standalone mobile build pre-bundled with local SQLite database schema, 
-              deterministic offline Graph RAG Copilot, and full voice command suite.
+              deterministic offline Graph RAG Copilot, and tactical intelligence suite.
             </p>
 
             <button

@@ -9,7 +9,6 @@ import {
   FiLink, 
   FiChevronDown,
   FiLayers,
-  FiMic,
   FiDownloadCloud,
   FiMoreVertical
 } from 'react-icons/fi';
@@ -24,7 +23,6 @@ export default function Header({
   currentUser, 
   onAuditClick, 
   onLogout,
-  onVoiceClick,
   onAPKClick
 }) {
   const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
@@ -176,7 +174,7 @@ export default function Header({
 
       {/* Right Control Group: 3-Dots Dropdown Menu + Full Logged-in User Profile */}
       <div className="flex items-center gap-3 shrink-0 ml-4">
-        {/* 3-Dots Dropdown Menu containing Voice Copilot, Download APK, Generate Report */}
+        {/* 3-Dots Dropdown Menu containing Download APK, Generate Report */}
         <div className="relative shrink-0" ref={moreMenuRef}>
           <button
             onClick={() => setMoreMenuOpen(!moreMenuOpen)}
@@ -185,7 +183,7 @@ export default function Header({
                 ? 'bg-[#162a45] border-[#64ffda] text-[#64ffda] shadow-[0_0_12px_rgba(100,255,218,0.25)]'
                 : 'bg-[#0d1829] border-[#1e3a5f] text-[#c8d6e5] hover:border-[#64ffda]/50 hover:text-white hover:bg-[#13233a]'
             }`}
-            title="More Options (Voice Copilot, Download APK, Generate Report)"
+            title="More Options (Download APK, Generate Report)"
           >
             <FiMoreVertical size={16} />
           </button>
@@ -199,24 +197,7 @@ export default function Header({
               </div>
 
               <div className="space-y-1">
-                {/* 1. Voice Copilot */}
-                <button
-                  onClick={() => {
-                    onVoiceClick();
-                    setMoreMenuOpen(false);
-                  }}
-                  className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-[#13233a] text-left transition-colors group cursor-pointer"
-                >
-                  <div className="w-8 h-8 rounded-lg bg-[#64ffda]/10 border border-[#64ffda]/30 flex items-center justify-center text-[#64ffda] group-hover:border-[#64ffda] shrink-0">
-                    <FiMic size={14} />
-                  </div>
-                  <div>
-                    <div className="text-xs font-semibold text-white group-hover:text-[#64ffda]">Voice Copilot</div>
-                    <div className="text-[10px] text-[#8892b0]">Voice Command HUD (Alt+V)</div>
-                  </div>
-                </button>
-
-                {/* 2. Download APK */}
+                {/* 1. Download APK */}
                 <button
                   onClick={() => {
                     onAPKClick();
