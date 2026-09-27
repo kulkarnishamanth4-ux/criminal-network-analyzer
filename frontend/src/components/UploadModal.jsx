@@ -49,6 +49,11 @@ export default function UploadModal({ onClose, onSuccess, activeCase }) {
   const [isPreviewLoading, setIsPreviewLoading] = useState(false);
   const [previewError, setPreviewError] = useState(null);
 
+  // Batch upload state
+  const [batchResults, setBatchResults] = useState([]);
+  const [batchTotal, setBatchTotal] = useState(0);
+  const [batchCurrent, setBatchCurrent] = useState(0);
+
   const tabs = [
     { id: 'auto', label: 'Universal Ingestion (Auto-Detect Any Format)' },
     { id: 'fir', label: 'FIR Docs (.txt, .pdf, .docx, .md)' },
@@ -71,32 +76,135 @@ export default function UploadModal({ onClose, onSuccess, activeCase }) {
     loadUploadedFiles();
   }, [loadUploadedFiles]);
 
-  const onDrop = useCallback(async (acceptedFiles) => {
-    if (!acceptedFiles || acceptedFiles.length === 0) return;
+  const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
+  const ALLOWED_EXTENSIONS = ['.txt', '.pdf', '.docx', '.xlsx', '.xls', '.csv', '.md'];
+
+  const validateFile = (file) => {
+    const errors = [];
+    if (!file || file.size === 0) {
+      errors.push('File is empty (0 bytes)');
+    }
+    if (file.size > MAX_FILE_SIZE) {
+      errors.push(`File exceeds 10MB limit (${(file.size / (1024 * 1024)).toFixed(1)}MB)`);
+    }
+    const ext = '.' + (file.name?.split('.').pop()?.toLowerCase() || '');
+    if (!ALLOWED_EXTENSIONS.includes(ext)) {
+      errors.push(`Unsupported file type "${ext}". Allowed: ${ALLOWED_EXTENSIONS.join(', ')}`);
+    }
+    return errors;
+  };
+
+  const onDrop = useCallback(async (acceptedFiles, fileRejections) => {
+    if ((!acceptedFiles || acceptedFiles.length === 0) && (!fileRejections || fileRejections.length === 0)) return;
+
+    const allFiles = [...(acceptedFiles || [])];
+    // Include rejected files too so we can show their errors
+    (fileRejections || []).forEach(rej => {
+      allFiles.push(rej.file);
+    });
+
+    if (allFiles.length === 0) return;
     
     setIsUploading(true);
     setResult(null);
-    
-    try {
-      const res = await uploadFile(activeTab, acceptedFiles[0], targetCase, clearExisting);
-      const destinationCase = res.target_case || targetCase;
-      setResult({ 
-        success: true, 
-        data: res, 
-        notice: res.notice,
-        destinationCase 
+    setBatchTotal(allFiles.length);
+    setBatchCurrent(0);
+
+    // Initialize batch results
+    const initialResults = allFiles.map(f => ({
+      filename: f.name,
+      size: f.size,
+      status: 'pending', // pending | uploading | success | error | skipped
+      detectedType: null,
+      error: null,
+      recordsProcessed: 0
+    }));
+    setBatchResults([...initialResults]);
+
+    let successCount = 0;
+    let errorCount = 0;
+    let lastSuccessCase = targetCase;
+
+    for (let i = 0; i < allFiles.length; i++) {
+      const file = allFiles[i];
+      setBatchCurrent(i + 1);
+
+      // Client-side validation
+      const validationErrors = validateFile(file);
+      if (validationErrors.length > 0) {
+        initialResults[i] = {
+          ...initialResults[i],
+          status: 'error',
+          error: validationErrors.join('; ')
+        };
+        setBatchResults([...initialResults]);
+        errorCount++;
+        continue;
+      }
+
+      // Mark as uploading
+      initialResults[i] = { ...initialResults[i], status: 'uploading' };
+      setBatchResults([...initialResults]);
+
+      try {
+        // Only clear existing on the first file (if checkbox is checked)
+        const shouldClear = clearExisting && i === 0;
+        const res = await uploadFile(activeTab, file, targetCase, shouldClear);
+        const destCase = res.target_case || targetCase;
+        lastSuccessCase = destCase;
+        
+        initialResults[i] = {
+          ...initialResults[i],
+          status: 'success',
+          detectedType: res.detected_type || activeTab,
+          recordsProcessed: res.records_processed || res.entities_extracted || 0,
+          notice: res.notice
+        };
+        successCount++;
+      } catch (err) {
+        console.error(`Upload failed for ${file.name}:`, err);
+        const msg = err.response?.data?.message || err.response?.data?.detail || 'Upload failed';
+        initialResults[i] = {
+          ...initialResults[i],
+          status: 'error',
+          error: msg
+        };
+        errorCount++;
+      }
+      setBatchResults([...initialResults]);
+    }
+
+    await loadUploadedFiles();
+    setIsUploading(false);
+
+    // Set summary result
+    if (allFiles.length === 1) {
+      // Single file — use original simple feedback
+      if (successCount === 1) {
+        setResult({ success: true, data: initialResults[0], notice: initialResults[0].notice, destinationCase: lastSuccessCase });
+        setTimeout(() => {
+          setResult(null);
+          setBatchResults([]);
+          if (onSuccess) onSuccess(lastSuccessCase);
+        }, 1500);
+      } else {
+        setResult({ success: false, error: initialResults[0].error });
+      }
+    } else {
+      // Multi-file — show batch summary (auto-dismiss after longer delay)
+      setResult({
+        success: errorCount === 0,
+        batch: true,
+        data: { message: `Batch complete: ${successCount} succeeded, ${errorCount} failed out of ${allFiles.length} files.` },
+        destinationCase: lastSuccessCase
       });
-      await loadUploadedFiles();
-      setTimeout(() => {
-        setResult(null);
-        if (onSuccess) onSuccess(destinationCase);
-      }, 1500);
-    } catch (err) {
-      console.error(err);
-      const msg = err.response?.data?.message || 'Upload failed. Please check server logs.';
-      setResult({ success: false, error: msg });
-    } finally {
-      setIsUploading(false);
+      if (successCount > 0) {
+        setTimeout(() => {
+          setResult(null);
+          setBatchResults([]);
+          if (onSuccess) onSuccess(lastSuccessCase);
+        }, 4000);
+      }
     }
   }, [activeTab, targetCase, clearExisting, onSuccess, loadUploadedFiles]);
 
@@ -158,7 +266,7 @@ export default function UploadModal({ onClose, onSuccess, activeCase }) {
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ 
     onDrop,
-    multiple: false 
+    multiple: true 
   });
 
   const handlePreview = async (file) => {
@@ -450,7 +558,112 @@ export default function UploadModal({ onClose, onSuccess, activeCase }) {
               </div>
 
               <div className="p-6">
-                {result?.success ? (
+                {/* Batch Progress & File Status Tracker */}
+                {batchResults.length > 0 && (
+                  <div className="mb-4 p-4 rounded-xl bg-[#070e1a] border border-[#1e3a5f] animate-in fade-in duration-200">
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-2">
+                        <FiDatabase className="text-[#64ffda]" />
+                        <span className="text-xs font-bold text-white font-mono uppercase tracking-wider">
+                          Universal Ingestion Batch: {batchCurrent} of {batchTotal} Processed
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <span className="text-[11px] font-mono text-emerald-400">
+                          {batchResults.filter(r => r.status === 'success').length} Passed
+                        </span>
+                        {batchResults.some(r => r.status === 'error') && (
+                          <span className="text-[11px] font-mono text-red-400">
+                            {batchResults.filter(r => r.status === 'error').length} Failed
+                          </span>
+                        )}
+                        {!isUploading && (
+                          <button 
+                            onClick={() => setBatchResults([])}
+                            className="text-[10px] text-gray-400 hover:text-white underline cursor-pointer"
+                          >
+                            Dismiss
+                          </button>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Progress Bar */}
+                    <div className="w-full h-1.5 bg-[#0a1526] rounded-full overflow-hidden mb-3 border border-[#1e3a5f]/40">
+                      <div 
+                        className="h-full bg-gradient-to-r from-cyan-500 to-[#64ffda] transition-all duration-300"
+                        style={{ width: `${(batchCurrent / (batchTotal || 1)) * 100}%` }}
+                      ></div>
+                    </div>
+
+                    {/* Per-File Batch Item Cards */}
+                    <div className="space-y-2 max-h-56 overflow-y-auto pr-1">
+                      {batchResults.map((item, idx) => (
+                        <div 
+                          key={idx}
+                          className={`p-2.5 rounded-lg border text-xs flex items-center justify-between gap-3 transition-colors ${
+                            item.status === 'success' 
+                              ? 'bg-emerald-950/20 border-emerald-500/30' 
+                              : item.status === 'error'
+                              ? 'bg-red-950/20 border-red-500/30'
+                              : item.status === 'uploading'
+                              ? 'bg-cyan-950/20 border-[#64ffda]/40 animate-pulse'
+                              : 'bg-[#0a1526]/40 border-[#1e3a5f]/40 text-gray-400'
+                          }`}
+                        >
+                          <div className="flex items-center gap-2.5 min-w-0">
+                            <FiFileText className={
+                              item.status === 'success' ? 'text-emerald-400 shrink-0' :
+                              item.status === 'error' ? 'text-red-400 shrink-0' :
+                              item.status === 'uploading' ? 'text-[#64ffda] shrink-0' :
+                              'text-gray-500 shrink-0'
+                            } />
+                            <div className="truncate">
+                              <div className="font-mono text-white text-xs truncate">{item.filename}</div>
+                              <div className="text-[10px] text-gray-400 font-mono">
+                                {formatFileSize(item.size)}
+                                {item.error && (
+                                  <span className="text-red-400 ml-2 font-sans font-medium">
+                                    • {item.error}
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center gap-2 shrink-0">
+                            {item.status === 'success' && item.detectedType && (
+                              <span className={`px-2 py-0.5 rounded text-[10px] font-mono uppercase font-bold ${
+                                typeColors[item.detectedType] || 'bg-[#10223a] text-[#64ffda] border border-[#1e3a5f]'
+                              }`}>
+                                Auto: {item.detectedType} ({item.recordsProcessed} rec)
+                              </span>
+                            )}
+                            {item.status === 'uploading' && (
+                              <span className="flex items-center gap-1.5 px-2 py-0.5 rounded text-[10px] font-mono text-[#64ffda] bg-cyan-950/40 border border-cyan-500/30">
+                                <span className="animate-spin rounded-full h-2 w-2 border-t-2 border-[#64ffda]"></span>
+                                Ingesting...
+                              </span>
+                            )}
+                            {item.status === 'pending' && (
+                              <span className="px-2 py-0.5 rounded text-[10px] font-mono text-gray-400 bg-gray-900 border border-gray-700">
+                                Queued
+                              </span>
+                            )}
+                            {item.status === 'error' && (
+                              <span className="px-2 py-0.5 rounded text-[10px] font-mono text-red-400 bg-red-950/40 border border-red-500/40">
+                                Failed
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Dropzone Area */}
+                {result?.success && !result?.batch ? (
                   <div className="py-6 flex flex-col items-center justify-center text-center animate-in zoom-in duration-200">
                     <FiCheckCircle className="text-4xl text-emerald-400 mb-3 animate-bounce" />
                     <h3 className="text-base font-bold text-white mb-1">Evidence Ingested Successfully</h3>
@@ -471,7 +684,9 @@ export default function UploadModal({ onClose, onSuccess, activeCase }) {
                     {isUploading ? (
                       <div className="flex flex-col items-center gap-3">
                         <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#64ffda]"></div>
-                        <span className="text-xs text-[#64ffda] font-mono">Ingesting & computing graph metrics...</span>
+                        <span className="text-xs text-[#64ffda] font-mono">
+                          Bulk Ingestion in Progress: Processing file {batchCurrent} of {batchTotal}...
+                        </span>
                       </div>
                     ) : (
                       <>
@@ -479,10 +694,13 @@ export default function UploadModal({ onClose, onSuccess, activeCase }) {
                           <FiUploadCloud size={24} />
                         </div>
                         <p className="text-sm font-semibold text-white mb-1">
-                          Drop any evidence file here ({activeTab.toUpperCase()}), or <span className="text-[#64ffda] underline">browse files</span>
+                          Drop one or more evidence files here ({activeTab.toUpperCase()}), or <span className="text-[#64ffda] underline">browse files</span>
                         </p>
                         <p className="text-xs text-[#8892b0]">
-                          Universal Ingestion Engine: Supports <span className="text-white font-mono">.pdf, .docx, .xlsx, .md, .txt, .csv</span> up to 10MB
+                          Universal Ingestion Engine: Bulk dump <span className="text-white font-mono">.pdf, .docx, .xlsx, .md, .txt, .csv</span> up to 10MB each
+                        </p>
+                        <p className="text-[11px] text-cyan-400/80 font-mono mt-1">
+                          ⚡ Files are auto-classified into FIR Narratives, CDR Logs, Banking Ledgers, or Vehicle Sightings
                         </p>
                       </>
                     )}

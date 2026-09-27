@@ -69,8 +69,10 @@ def resolve_safe_case_id(case_id: str, client_ip: str = "0.0.0.0") -> tuple[str,
     return (case_id, False, None)
 
 async def read_and_validate_upload(file: UploadFile, max_size: int = MAX_UPLOAD_SIZE) -> bytes:
-    """Reads file content up to max_size + 1 and enforces file size ceiling."""
+    """Reads file content up to max_size + 1 and enforces non-empty content and file size ceiling."""
     content = await file.read(max_size + 1)
+    if not content or len(content.strip()) == 0:
+        raise ValueError(f"Uploaded file '{file.filename}' is empty (0 bytes). Cannot ingest empty evidence.")
     if len(content) > max_size:
         raise ValueError(f"File size exceeds maximum allowed limit of {max_size // (1024 * 1024)}MB")
     return content
@@ -296,7 +298,9 @@ async def upload_fir(
             "crime_confidence": fir.crime_confidence
         }
     except ValueError as val_err:
-        return JSONResponse(status_code=413, content={"status": "error", "message": str(val_err)})
+        err_msg = str(val_err)
+        status_code = 413 if "exceeds maximum allowed limit" in err_msg.lower() else 400
+        return JSONResponse(status_code=status_code, content={"status": "error", "message": err_msg})
     except Exception as e:
         traceback.print_exc()
         return JSONResponse(status_code=500, content={"status": "error", "message": f"Failed to process FIR: {str(e)}"})
@@ -365,7 +369,9 @@ async def upload_cdr(
             "records_processed": len(records)
         }
     except ValueError as val_err:
-        return JSONResponse(status_code=413, content={"status": "error", "message": str(val_err)})
+        err_msg = str(val_err)
+        status_code = 413 if "exceeds maximum allowed limit" in err_msg.lower() else 400
+        return JSONResponse(status_code=status_code, content={"status": "error", "message": err_msg})
     except Exception as e:
         traceback.print_exc()
         return JSONResponse(status_code=500, content={"status": "error", "message": f"Failed to process CDR: {str(e)}"})
@@ -439,7 +445,9 @@ async def upload_financial(
             "records_processed": len(records)
         }
     except ValueError as val_err:
-        return JSONResponse(status_code=413, content={"status": "error", "message": str(val_err)})
+        err_msg = str(val_err)
+        status_code = 413 if "exceeds maximum allowed limit" in err_msg.lower() else 400
+        return JSONResponse(status_code=status_code, content={"status": "error", "message": err_msg})
     except Exception as e:
         traceback.print_exc()
         return JSONResponse(status_code=500, content={"status": "error", "message": f"Failed to process financial data: {str(e)}"})
@@ -508,7 +516,9 @@ async def upload_vehicle(
             "records_processed": len(records)
         }
     except ValueError as val_err:
-        return JSONResponse(status_code=413, content={"status": "error", "message": str(val_err)})
+        err_msg = str(val_err)
+        status_code = 413 if "exceeds maximum allowed limit" in err_msg.lower() else 400
+        return JSONResponse(status_code=status_code, content={"status": "error", "message": err_msg})
     except Exception as e:
         traceback.print_exc()
         return JSONResponse(status_code=500, content={"status": "error", "message": f"Failed to process vehicle data: {str(e)}"})
@@ -821,14 +831,30 @@ async def upload_auto(
         target_case_id, was_redirected, notice = resolve_safe_case_id(case_id, client_ip)
 
         content = await read_and_validate_upload(file)
-        converted = universal_ingest_file(file.filename or "uploaded_evidence", content)
-        dtype = converted["detected_type"]
+        try:
+            converted = universal_ingest_file(file.filename or "uploaded_evidence", content)
+        except Exception as conv_err:
+            return JSONResponse(
+                status_code=400, 
+                content={"status": "error", "message": f"File '{file.filename}' is corrupted or unreadable: {str(conv_err)}"}
+            )
+        dtype = converted.get("detected_type")
+
+        # Check for empty content
+        if not converted.get("clean_content", "").strip() and not converted.get("tables_data"):
+            return JSONResponse(
+                status_code=400,
+                content={"status": "error", "message": f"File '{file.filename}' contains no readable text, records, or tables."}
+            )
+
+        preview_records = []
 
         # Delegate to appropriate ingestion flow
         if dtype == "cdr":
             records = parse_cdr_csv(converted["clean_bytes"])
             if not records:
-                return JSONResponse(status_code=400, content={"status": "error", "message": f"Could not parse valid CDR records from {file.filename}"})
+                return JSONResponse(status_code=400, content={"status": "error", "message": f"Could not parse valid CDR records from {file.filename}. Check column headers (caller, receiver, duration, etc.)."})
+            preview_records = records[:10]
             for r in records:
                 caller = crud.get_or_create_entity(db, "PHONE", r["caller"], case_id=target_case_id)
                 receiver = crud.get_or_create_entity(db, "PHONE", r["receiver"], case_id=target_case_id)
@@ -839,7 +865,8 @@ async def upload_auto(
         elif dtype == "financial":
             records = parse_financial_csv(converted["clean_bytes"])
             if not records:
-                return JSONResponse(status_code=400, content={"status": "error", "message": f"Could not parse valid financial transactions from {file.filename}"})
+                return JSONResponse(status_code=400, content={"status": "error", "message": f"Could not parse valid financial transactions from {file.filename}. Check column headers (sender_account, receiver_account, amount, etc.)."})
+            preview_records = records[:10]
             for r in records:
                 s_acc = crud.get_or_create_entity(db, "BANK_ACCOUNT", r["sender_account"], case_id=target_case_id)
                 r_acc = crud.get_or_create_entity(db, "BANK_ACCOUNT", r["receiver_account"], case_id=target_case_id)
@@ -854,7 +881,8 @@ async def upload_auto(
         elif dtype == "vehicle":
             records = parse_vehicle_csv(converted["clean_bytes"])
             if not records:
-                return JSONResponse(status_code=400, content={"status": "error", "message": f"Could not parse valid vehicle sighting logs from {file.filename}"})
+                return JSONResponse(status_code=400, content={"status": "error", "message": f"Could not parse valid vehicle sighting logs from {file.filename}. Check column headers (plate_number, location, etc.)."})
+            preview_records = records[:10]
             for r in records:
                 v = crud.get_or_create_entity(db, "VEHICLE", r["plate_number"], case_id=target_case_id)
                 loc = crud.get_or_create_entity(db, "LOCATION", r["location"], case_id=target_case_id)
@@ -864,6 +892,8 @@ async def upload_auto(
             count = len(records)
         else: # Default: FIR narrative NLP extraction
             text = converted["clean_content"]
+            if not text.strip():
+                return JSONResponse(status_code=400, content={"status": "error", "message": f"No readable text extracted from narrative document {file.filename}"})
             if clear_existing:
                 db.query(crud.Relationship).filter(crud.Relationship.case_id == target_case_id).delete()
                 db.query(crud.Entity).filter(crud.Entity.case_id == target_case_id).delete()
@@ -895,6 +925,22 @@ async def upload_auto(
             db.commit()
             count = sum(len(v) for v in extracted.values())
 
+        # Save to Evidence Vault (UploadedFile)
+        try:
+            vault_entry = UploadedFile(
+                filename=file.filename or "uploaded_evidence",
+                file_type=dtype,
+                file_size=len(content),
+                raw_content=converted.get("clean_content", "")[:20000],
+                parsed_preview=preview_records if preview_records else {"records_count": count},
+                case_id=target_case_id
+            )
+            db.add(vault_entry)
+            db.commit()
+        except Exception as vault_err:
+            db.rollback()
+            print(f"[Upload Vault Notice] Could not save vault record: {vault_err}")
+
         compute_all_analytics(db, case_id=target_case_id)
 
         # Record upload in audit ledger
@@ -917,7 +963,9 @@ async def upload_auto(
             "records_processed": count
         }
     except ValueError as val_err:
-        return JSONResponse(status_code=413, content={"status": "error", "message": str(val_err)})
+        err_msg = str(val_err)
+        status_code = 413 if "exceeds maximum allowed limit" in err_msg.lower() else 400
+        return JSONResponse(status_code=status_code, content={"status": "error", "message": err_msg})
     except Exception as e:
         traceback.print_exc()
         return JSONResponse(status_code=500, content={"status": "error", "message": f"Universal ingestion failed: {str(e)}"})

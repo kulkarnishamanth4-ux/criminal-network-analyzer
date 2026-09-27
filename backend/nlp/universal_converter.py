@@ -15,50 +15,70 @@ import pandas as pd
 
 def convert_pdf_to_text_and_tables(content: bytes) -> Tuple[str, List[Dict[str, Any]]]:
     """Extracts text and any tabular data from PDF bytes using pypdf."""
-    from pypdf import PdfReader
-    
-    reader = PdfReader(io.BytesIO(content))
-    extracted_text = []
-    
-    for i, page in enumerate(reader.pages):
-        page_text = page.extract_text()
-        if page_text:
-            extracted_text.append(page_text)
-            
-    full_text = "\n\n".join(extracted_text).strip()
-    return full_text, []
+    try:
+        from pypdf import PdfReader
+        reader = PdfReader(io.BytesIO(content))
+        if len(reader.pages) == 0:
+            raise ValueError("PDF document has 0 pages or contains no readable content.")
+        extracted_text = []
+        for i, page in enumerate(reader.pages):
+            page_text = page.extract_text()
+            if page_text:
+                extracted_text.append(page_text)
+                
+        full_text = "\n\n".join(extracted_text).strip()
+        if not full_text:
+            raise ValueError("PDF document contains no extractable text (may be a blank scan or encrypted).")
+        return full_text, []
+    except Exception as e:
+        if isinstance(e, ValueError):
+            raise e
+        raise ValueError(f"Corrupt or invalid PDF file: {str(e)}")
 
 
 def convert_docx_to_text_and_tables(content: bytes) -> Tuple[str, List[Dict[str, Any]]]:
     """Extracts paragraphs and tables from Word (.docx) documents."""
-    import docx
-    
-    doc = docx.Document(io.BytesIO(content))
-    text_parts = [p.text for p in doc.paragraphs if p.text.strip()]
-    
-    tables_data = []
-    for table in doc.tables:
-        rows = []
-        for row in table.rows:
-            rows.append([cell.text.strip() for cell in row.cells])
-        if len(rows) > 1:
-            headers = [h.lower() for h in rows[0]]
-            for r in rows[1:]:
-                if len(r) == len(headers):
-                    tables_data.append(dict(zip(headers, r)))
-                    
-    full_text = "\n".join(text_parts).strip()
-    return full_text, tables_data
+    try:
+        import docx
+        doc = docx.Document(io.BytesIO(content))
+        text_parts = [p.text for p in doc.paragraphs if p.text.strip()]
+        
+        tables_data = []
+        for table in doc.tables:
+            rows = []
+            for row in table.rows:
+                rows.append([cell.text.strip() for cell in row.cells])
+            if len(rows) > 1:
+                headers = [h.lower() for h in rows[0]]
+                for r in rows[1:]:
+                    if len(r) == len(headers):
+                        tables_data.append(dict(zip(headers, r)))
+                        
+        full_text = "\n".join(text_parts).strip()
+        if not full_text and not tables_data:
+            raise ValueError("Word document (.docx) contains no readable text or tables.")
+        return full_text, tables_data
+    except Exception as e:
+        if isinstance(e, ValueError):
+            raise e
+        raise ValueError(f"Corrupt or invalid Word (.docx) document: {str(e)}")
 
 
 def convert_excel_to_csv_text(content: bytes) -> Tuple[str, List[Dict[str, Any]]]:
     """Converts Excel workbook (.xlsx, .xls) into CSV text and row dicts."""
-    df = pd.read_excel(io.BytesIO(content))
-    csv_buf = io.StringIO()
-    df.to_csv(csv_buf, index=False)
-    csv_text = csv_buf.getvalue()
-    records = df.fillna("").to_dict(orient="records")
-    return csv_text, records
+    try:
+        df = pd.read_excel(io.BytesIO(content))
+        if df.empty:
+            raise ValueError("Excel spreadsheet is empty (0 data rows).")
+        csv_buf = io.StringIO()
+        df.to_csv(csv_buf, index=False)
+        csv_text = csv_buf.getvalue()
+        records = df.fillna("").to_dict(orient="records")
+        return csv_text, records
+    except Exception as e:
+        if isinstance(e, ValueError):
+            raise e
+        raise ValueError(f"Corrupt or unreadable Excel spreadsheet: {str(e)}")
 
 
 def convert_markdown_to_text(content: bytes) -> str:
