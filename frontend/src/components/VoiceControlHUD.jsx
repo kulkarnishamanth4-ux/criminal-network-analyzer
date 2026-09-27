@@ -11,7 +11,8 @@ import {
   FiAlertCircle,
   FiZap,
   FiCompass,
-  FiLayers
+  FiLayers,
+  FiActivity
 } from 'react-icons/fi';
 
 export default function VoiceControlHUD({
@@ -34,9 +35,51 @@ export default function VoiceControlHUD({
   const [isProcessing, setIsProcessing] = useState(false);
   const [manualInput, setManualInput] = useState('');
   const [permissionError, setPermissionError] = useState('');
+  const [networkFallbackNotice, setNetworkFallbackNotice] = useState(false);
+  const [audioVolume, setAudioVolume] = useState(0);
+  const [isBrave, setIsBrave] = useState(false);
 
   const recognitionRef = useRef(null);
   const transcriptRef = useRef('');
+  const audioContextRef = useRef(null);
+  const mediaStreamRef = useRef(null);
+  const analyserRef = useRef(null);
+  const animFrameRef = useRef(null);
+
+  // Check if browser is Brave
+  useEffect(() => {
+    if (window.navigator.brave && typeof window.navigator.brave.isBrave === 'function') {
+      window.navigator.brave.isBrave().then(val => setIsBrave(Boolean(val)));
+    }
+  }, []);
+
+  // Quick Spoken Directives Array with Hotkeys 1-8
+  const QUICK_DIRECTIVES = [
+    { key: '1', label: '⚡ Open Labs', cmd: 'Open experimental labs' },
+    { key: '2', label: '🏙️ Bangalore Case', cmd: 'Switch to Bangalore' },
+    { key: '3', label: '🍁 Punjab Case', cmd: 'Switch to Punjab' },
+    { key: '4', label: '🕶️ Dawood Case', cmd: 'Switch to Dawood' },
+    { key: '5', label: '🔗 Trace Path', cmd: 'Trace connection path' },
+    { key: '6', label: '🗺️ Threat Map', cmd: 'Switch to map view' },
+    { key: '7', label: '⚠️ Filter High Risk', cmd: 'Filter high risk threats' },
+    { key: '8', label: '🔄 Reset Canvas', cmd: 'Reset network canvas' }
+  ];
+
+  // Hotkey listener for keys 1-8 while HUD is open
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleNumKeys = (e) => {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+      const found = QUICK_DIRECTIVES.find(d => d.key === e.key);
+      if (found) {
+        e.preventDefault();
+        setTranscript(found.cmd);
+        executeCommand(found.cmd);
+      }
+    };
+    window.addEventListener('keydown', handleNumKeys);
+    return () => window.removeEventListener('keydown', handleNumKeys);
+  }, [isOpen]);
 
   // Client-Side Deterministic Intent Parser (Instant Execution <5ms)
   const parseIntentClientSide = (cmd) => {
@@ -149,7 +192,7 @@ export default function VoiceControlHUD({
       return { action: 'QUERY_AI', payload: { message: 'Identify the primary kingpin and command hierarchy.' }, spoken_reply: 'Synthesized topological hierarchy. Primary command apex identified.' };
     }
 
-    // 5. Focus on specific suspect name if phrased as "focus on [Name]" or "select [Name]"
+    // 5. Focus on specific suspect name
     const focusMatch = t.match(/(?:focus on|select|find|show me|inspect)\s+([a-z\s]+)/i);
     if (focusMatch && focusMatch[1]) {
       const name = focusMatch[1].trim();
@@ -159,16 +202,81 @@ export default function VoiceControlHUD({
     return { action: 'QUERY_AI', payload: { message: cmd }, spoken_reply: `Processed tactical voice query: ${cmd}` };
   };
 
-  // Robust Speech Recognition Initializer (Direct synchronous user gesture)
+  // Real-time Local Microphone Audio Waveform Visualizer
+  const startAudioVisualizer = async () => {
+    try {
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return;
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      mediaStreamRef.current = stream;
+
+      const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+      if (AudioContextClass) {
+        const audioCtx = new AudioContextClass();
+        audioContextRef.current = audioCtx;
+        const source = audioCtx.createMediaStreamSource(stream);
+        const analyser = audioCtx.createAnalyser();
+        analyser.fftSize = 64;
+        source.connect(analyser);
+        analyserRef.current = analyser;
+
+        const dataArray = new Uint8Array(analyser.frequencyBinCount);
+        const checkVolume = () => {
+          if (!analyserRef.current) return;
+          analyserRef.current.getByteFrequencyData(dataArray);
+          let sum = 0;
+          for (let i = 0; i < dataArray.length; i++) {
+            sum += dataArray[i];
+          }
+          const avg = sum / dataArray.length;
+          setAudioVolume(Math.min(100, Math.round(avg * 2.4)));
+          animFrameRef.current = requestAnimationFrame(checkVolume);
+        };
+        checkVolume();
+      }
+    } catch (err) {
+      console.warn('Microphone audio stream notice:', err);
+    }
+  };
+
+  const stopAudioVisualizer = () => {
+    if (animFrameRef.current) {
+      cancelAnimationFrame(animFrameRef.current);
+      animFrameRef.current = null;
+    }
+    analyserRef.current = null;
+    if (audioContextRef.current) {
+      try {
+        audioContextRef.current.close();
+      } catch (_) {}
+      audioContextRef.current = null;
+    }
+    if (mediaStreamRef.current) {
+      try {
+        mediaStreamRef.current.getTracks().forEach(t => t.stop());
+      } catch (_) {}
+      mediaStreamRef.current = null;
+    }
+    setAudioVolume(0);
+  };
+
+  // Speech Recognition Initializer
   const startListening = () => {
+    setPermissionError('');
+    setNetworkFallbackNotice(false);
+    setTranscript('');
+    transcriptRef.current = '';
+
+    // Start local audio waveform to prove hardware microphone activity
+    startAudioVisualizer();
+    setIsListening(true);
+
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) {
       setIsSupported(false);
-      setPermissionError('Web Speech API is not supported in this browser. Please use Google Chrome, Microsoft Edge, or click the directive chips below.');
+      setNetworkFallbackNotice(true);
       return;
     }
 
-    // Safely abort previous session if active
     if (recognitionRef.current) {
       try {
         recognitionRef.current.abort();
@@ -176,16 +284,11 @@ export default function VoiceControlHUD({
       recognitionRef.current = null;
     }
 
-    setTranscript('');
-    transcriptRef.current = '';
-    setPermissionError('');
-
     try {
       const recognition = new SpeechRecognition();
       recognition.continuous = false;
-      recognition.interimResults = true;
-      // Match Indian English or fallback to user default / en-US
-      recognition.lang = navigator.language && navigator.language.startsWith('en') ? navigator.language : 'en-IN';
+      recognition.interimResults = false;
+      recognition.lang = 'en-US';
       recognition.maxAlternatives = 1;
 
       recognition.onstart = () => {
@@ -200,37 +303,40 @@ export default function VoiceControlHUD({
         }
         setTranscript(currentText);
         transcriptRef.current = currentText;
+        if (currentText.trim()) {
+          executeCommand(currentText);
+        }
       };
 
       recognition.onerror = (event) => {
-        console.warn('Speech recognition error event:', event.error);
-        setIsListening(false);
+        console.warn('Speech recognition status notice:', event.error);
         if (event.error === 'not-allowed') {
-          setPermissionError('Microphone permission blocked. Click the lock/tune icon in your address bar to allow mic access.');
+          setPermissionError('Microphone permission blocked. Please grant microphone access in browser settings.');
+          setIsListening(false);
+          stopAudioVisualizer();
         } else if (event.error === 'no-speech') {
-          setPermissionError('No speech detected. Tap mic to speak or click any quick directive chip below.');
+          // Keep visualizer open for continuous interaction
         } else if (event.error === 'network') {
-          setPermissionError('Voice service network connection issue. Click the mic to retry, or use the 1-click directive buttons below.');
-        } else if (event.error !== 'aborted') {
-          setPermissionError(`Speech recognition status: ${event.error}`);
+          // Cloud endpoint unreachable (e.g. Brave shields, university firewall, or offline)
+          // Keep mic active and present clear 1-click fallback
+          setNetworkFallbackNotice(true);
         }
       };
 
       recognition.onend = () => {
-        setIsListening(false);
         const finalText = transcriptRef.current?.trim();
         if (finalText) {
           executeCommand(finalText);
+          setIsListening(false);
+          stopAudioVisualizer();
         }
       };
 
       recognitionRef.current = recognition;
       recognition.start();
-      setIsListening(true);
     } catch (err) {
-      console.warn('Failed to start speech recognition:', err);
-      setIsListening(false);
-      setPermissionError('Could not start microphone. Please tap the mic button to grant permissions.');
+      console.warn('Speech engine start notice:', err);
+      setNetworkFallbackNotice(true);
     }
   };
 
@@ -240,6 +346,7 @@ export default function VoiceControlHUD({
         recognitionRef.current.stop();
       } catch (_) {}
     }
+    stopAudioVisualizer();
     setIsListening(false);
   };
 
@@ -251,23 +358,19 @@ export default function VoiceControlHUD({
     }
   };
 
-  // When HUD closes, stop listening and clear transient errors
+  // Close cleanup
   useEffect(() => {
     if (!isOpen) {
       stopListening();
       setTranscript('');
       setPermissionError('');
+      setNetworkFallbackNotice(false);
     }
   }, [isOpen]);
 
-  // Cleanup on unmount
   useEffect(() => {
     return () => {
-      if (recognitionRef.current) {
-        try {
-          recognitionRef.current.abort();
-        } catch (_) {}
-      }
+      stopListening();
     };
   }, []);
 
@@ -342,7 +445,7 @@ export default function VoiceControlHUD({
       {/* HUD Header */}
       <div className="px-4 py-3 bg-[#060a14]/90 border-b border-[#1e3a5f] flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <div className={`w-2.5 h-2.5 rounded-full ${isListening ? 'bg-red-500 animate-ping' : 'bg-[#64ffda]'}`}></div>
+          <div className={`w-2.5 h-2.5 rounded-full ${isListening ? 'bg-[#64ffda] animate-ping' : 'bg-[#64ffda]'}`}></div>
           <span className="text-xs font-mono font-bold tracking-wider text-white uppercase flex items-center gap-1.5">
             <FiRadio className="text-[#64ffda]" /> Voice Tactical Copilot
           </span>
@@ -366,7 +469,7 @@ export default function VoiceControlHUD({
 
       {/* Main Body */}
       <div className="p-4 space-y-3.5">
-        {/* Permission Warning / Browser Support Warning */}
+        {/* Permission Error */}
         {permissionError && (
           <div className="p-2.5 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 text-xs font-mono flex items-start gap-2">
             <FiAlertCircle size={15} className="shrink-0 mt-0.5" />
@@ -374,10 +477,15 @@ export default function VoiceControlHUD({
           </div>
         )}
 
-        {!isSupported && !permissionError && (
-          <div className="p-2.5 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-mono flex items-start gap-2">
-            <FiAlertCircle size={15} className="shrink-0 mt-0.5" />
-            <span>Web Speech API is optimized for Google Chrome, Microsoft Edge, or Safari. Use the quick buttons below or manual input.</span>
+        {/* Network / Browser Speech Service Status Notice (Informative, non-blocking) */}
+        {networkFallbackNotice && !permissionError && (
+          <div className="p-2.5 rounded-lg bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 text-xs font-mono flex items-start gap-2 animate-in fade-in duration-200">
+            <FiActivity size={15} className="shrink-0 mt-0.5 text-[#64ffda]" />
+            <span className="leading-relaxed">
+              {isBrave 
+                ? 'Brave restricts Google Speech cloud by default. Mic is active: tap any directive or press keys 1-8 below!' 
+                : 'Cloud speech server restricted by network/firewall. Mic is active: tap directive chips or press keys 1-8 below!'}
+            </span>
           </div>
         )}
 
@@ -387,86 +495,96 @@ export default function VoiceControlHUD({
             onClick={toggleListening}
             className={`relative p-5 rounded-full transition-all duration-300 cursor-pointer ${
               isListening
-                ? 'bg-red-500/20 text-red-400 border-2 border-red-500 shadow-[0_0_30px_rgba(239,68,68,0.6)] scale-105'
+                ? 'bg-[#64ffda]/20 text-[#64ffda] border-2 border-[#64ffda] shadow-[0_0_30px_rgba(100,255,218,0.5)] scale-105'
                 : 'bg-[#0a1424] text-[#64ffda] border border-[#1e3a5f] hover:border-[#64ffda] shadow-lg hover:scale-105'
             }`}
-            title={isListening ? 'Click to stop listening' : 'Click to start microphone listening'}
+            title={isListening ? 'Click to stop microphone' : 'Click to start microphone listening'}
           >
-            {isListening ? <FiMicOff size={28} className="animate-pulse" /> : <FiMic size={28} />}
+            {isListening ? <FiMic size={28} className="text-[#64ffda]" /> : <FiMic size={28} />}
             {isListening && (
               <span className="absolute -top-1 -right-1 flex h-4 w-4">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-4 w-4 bg-red-500"></span>
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#64ffda] opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-4 w-4 bg-[#64ffda]"></span>
               </span>
             )}
           </button>
-          <div className="mt-2.5 text-[11px] font-mono font-semibold tracking-wide">
-            {isListening ? (
-              <span className="text-red-400 animate-pulse flex items-center gap-1.5">
-                ● LISTENING... SPEAK NOW
+
+          {/* Real-time Live Audio Spectrum Waveform Bars */}
+          {isListening ? (
+            <div className="flex flex-col items-center mt-2.5">
+              <div className="flex items-center gap-1.5 h-6">
+                {[0.4, 0.7, 1.2, 1.6, 1.1, 0.8, 0.5].map((multiplier, idx) => {
+                  const h = Math.max(4, Math.min(22, Math.round(audioVolume * multiplier * 0.45)));
+                  return (
+                    <span
+                      key={idx}
+                      className="w-1 bg-[#64ffda] rounded-full transition-all duration-75 shadow-[0_0_8px_rgba(100,255,218,0.6)]"
+                      style={{ height: `${h}px` }}
+                    />
+                  );
+                })}
+              </div>
+              <span className="text-[10px] font-mono text-[#64ffda] tracking-wide animate-pulse mt-0.5">
+                {audioVolume > 10 ? 'MIC HEARING AUDIO • SPEAK DIRECTIVE' : 'LISTENING... (SPEAK OR PRESS 1-8)'}
               </span>
-            ) : (
-              <span className="text-[#8892b0]">TAP MIC TO SPEAK OR PRESS ALT+V</span>
-            )}
-          </div>
+            </div>
+          ) : (
+            <div className="mt-2.5 text-[11px] font-mono font-semibold tracking-wide text-[#8892b0]">
+              TAP MIC TO LISTEN OR PRESS ALT+V
+            </div>
+          )}
         </div>
 
         {/* Live Transcript Display */}
-        <div className="bg-[#060a14] p-3 rounded-lg border border-[#1e3a5f] min-h-[50px] flex items-center shadow-inner">
+        <div className="bg-[#060a14] p-3 rounded-lg border border-[#1e3a5f] min-h-[46px] flex items-center shadow-inner">
           <div className="text-xs font-mono text-white break-words w-full">
             {transcript ? (
               <span className="text-[#64ffda] font-semibold">"{transcript}"</span>
             ) : (
               <span className="text-[#8892b0]/70 italic text-[11px]">
-                Speak naturally: "Switch to Bangalore", "Open experimental labs", "Trace path", "Filter high risk", "Who is kingpin"...
+                Speak directive or press hotkeys [1-8]: "Switch to Bangalore", "Open labs", "Trace path"...
               </span>
             )}
           </div>
         </div>
 
-        {/* Quick Voice Command Chips */}
+        {/* Quick Voice Command Chips with Hotkeys */}
         <div className="space-y-1.5">
           <div className="text-[10px] font-mono uppercase text-[#8892b0] flex items-center justify-between">
-            <span>Quick Spoken Directives:</span>
-            <span className="text-[9px] text-[#64ffda]">1-CLICK EXECUTE</span>
+            <span>Instant Directives (Keys 1-8):</span>
+            <span className="text-[9px] text-[#64ffda] font-mono">1-TAP EXECUTE</span>
           </div>
           <div className="grid grid-cols-2 gap-1.5">
-            {[
-              { label: '⚡ Open Labs', cmd: 'Open experimental labs' },
-              { label: '🏙️ Bangalore Case', cmd: 'Switch to Bangalore' },
-              { label: '🍁 Punjab Case', cmd: 'Switch to Punjab' },
-              { label: '🕶️ Dawood Case', cmd: 'Switch to Dawood' },
-              { label: '🔗 Trace Path', cmd: 'Trace connection path' },
-              { label: '🗺️ Threat Map', cmd: 'Switch to map view' },
-              { label: '⚠️ Filter High Risk', cmd: 'Filter high risk threats' },
-              { label: '🔄 Reset Canvas', cmd: 'Reset network canvas' }
-            ].map((item) => (
+            {QUICK_DIRECTIVES.map((item) => (
               <button
-                key={item.label}
+                key={item.key}
                 type="button"
                 onClick={() => {
                   setTranscript(item.cmd);
                   executeCommand(item.cmd);
                 }}
-                className="px-2 py-1.5 rounded-lg bg-[#0a1424] hover:bg-[#162a45] border border-[#1e3a5f] hover:border-[#64ffda]/50 text-[11px] font-mono text-[#c8d6e5] hover:text-white transition-all text-left flex items-center gap-1.5 cursor-pointer truncate"
+                className="px-2 py-1.5 rounded-lg bg-[#0a1424] hover:bg-[#162a45] border border-[#1e3a5f] hover:border-[#64ffda]/50 text-[11px] font-mono text-[#c8d6e5] hover:text-white transition-all text-left flex items-center justify-between cursor-pointer truncate group"
               >
                 <span className="truncate">{item.label}</span>
+                <span className="text-[9px] px-1.5 py-0.5 rounded bg-[#060a14] text-[#64ffda] border border-[#1e3a5f] group-hover:border-[#64ffda]/50 shrink-0 ml-1">
+                  [{item.key}]
+                </span>
               </button>
             ))}
           </div>
         </div>
 
-        {/* Feedback Response */}
+        {/* Spoken Feedback Response */}
         {spokenReply && (
           <div className="p-2.5 rounded-lg bg-[#060a14] border border-[#64ffda]/30 text-xs font-mono animate-in fade-in duration-150">
             <div className="text-[10px] text-[#64ffda] font-bold uppercase tracking-wider mb-1 flex items-center gap-1">
-              <FiTerminal size={10} /> Copilot Action Response
+              <FiTerminal size={10} /> Copilot Spoken Response
             </div>
             <div className="text-white leading-relaxed">{spokenReply}</div>
           </div>
         )}
 
-        {/* Fallback Text Input */}
+        {/* Direct Text Command Override */}
         <form
           onSubmit={(e) => {
             e.preventDefault();
