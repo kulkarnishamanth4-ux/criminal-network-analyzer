@@ -1,21 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { 
   FiLock, 
   FiUser, 
-  FiShield, 
   FiAlertTriangle, 
   FiEye, 
   FiEyeOff, 
   FiCheckCircle, 
-  FiActivity, 
-  FiCpu, 
-  FiServer, 
   FiKey, 
-  FiRadio,
-  FiClock,
-  FiTerminal,
-  FiChevronRight,
-  FiPhone,
+  FiTerminal, 
+  FiChevronRight, 
+  FiPhone, 
   FiSend
 } from 'react-icons/fi';
 import { sendSmsOtp, verifySmsOtp } from '../api/client';
@@ -103,13 +97,6 @@ export default function LoginScreen({ onLogin, onDownloadApkClick }) {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  // Real-time telemetry clocks & network latency
-  const [telemetryTime, setTelemetryTime] = useState({
-    utc: '',
-    ist: '',
-    ping: 18
-  });
-
   // SMS OTP Login Mode
   const [loginMode, setLoginMode] = useState('credentials'); // 'credentials' or 'sms'
   const [smsPhone, setSmsPhone] = useState('');
@@ -122,30 +109,6 @@ export default function LoginScreen({ onLogin, onDownloadApkClick }) {
   const [smsError, setSmsError] = useState('');
   const [smsSuccess, setSmsSuccess] = useState('');
   const [smsDispatchedToken, setSmsDispatchedToken] = useState('');
-
-  useEffect(() => {
-    const updateTime = () => {
-      const now = new Date();
-      const utcString = now.toISOString().replace('T', ' ').slice(0, 19) + ' UTC';
-      const istString = now.toLocaleTimeString('en-IN', { 
-        timeZone: 'Asia/Kolkata', 
-        hour12: false, 
-        hour: '2-digit', 
-        minute: '2-digit', 
-        second: '2-digit' 
-      }) + ' IST';
-      
-      setTelemetryTime(prev => ({
-        utc: utcString,
-        ist: istString,
-        ping: Math.floor(16 + Math.random() * 5)
-      }));
-    };
-
-    updateTime();
-    const timer = setInterval(updateTime, 1000);
-    return () => clearInterval(timer);
-  }, []);
 
   const selectOperative = (user) => {
     setSelectedUser(user);
@@ -259,115 +222,20 @@ export default function LoginScreen({ onLogin, onDownloadApkClick }) {
       <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[#00ff41]/5 rounded-full blur-[120px] pointer-events-none" />
       <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-[#1e3a5f]/25 rounded-full blur-[120px] pointer-events-none" />
 
-      {/* Main Dual-Pane Terminal Card */}
-      <div className="relative z-10 w-full max-w-5xl bg-[#080d1a]/95 border border-[#1e3a5f] rounded-2xl shadow-[0_0_50px_rgba(0,18,40,0.8),0_0_20px_rgba(78,205,196,0.12)] overflow-hidden grid grid-cols-1 lg:grid-cols-12 backdrop-blur-2xl">
-
-        {/* =========================================================================
-            LEFT PANE: Sovereign Threat & Enclave Telemetry (5 Cols)
-           ========================================================================= */}
-        <div className="lg:col-span-5 p-6 sm:p-8 border-b lg:border-b-0 lg:border-r border-[#1e3a5f]/70 bg-gradient-to-b from-[#091325]/90 via-[#060e1d]/85 to-[#040813]/95 flex flex-col justify-between relative overflow-hidden">
-          
-          {/* Subtle Cyber scan effect overlay */}
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#64ffda]/[0.02] to-transparent pointer-events-none animate-pulse" />
-
-          {/* Top Enclave Header */}
-          <div className="relative z-10">
-            <div className="flex items-center gap-3.5 mb-5">
-              {/* Emblem / Shield Badge */}
-              <div className="relative w-14 h-14 rounded-xl bg-gradient-to-br from-[#0c1e36] to-[#060f1c] border border-[#64ffda]/40 flex items-center justify-center text-[#64ffda] shadow-[0_0_18px_rgba(100,255,218,0.25)] shrink-0">
-                <FiShield size={28} className="text-[#64ffda]" />
-                <span className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-[#040711] flex items-center justify-center">
-                  <span className="w-2.5 h-2.5 rounded-full bg-[#00ff41] animate-ping" />
-                </span>
-              </div>
-              <div>
-                <div className="text-[10px] font-mono tracking-widest text-[#64ffda] uppercase font-bold flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#00ff41]" />
-                  GOVT OF INDIA • MHA
-                </div>
-                <h1 className="text-xl sm:text-2xl font-black text-white tracking-wider uppercase leading-tight font-sans">
-                  CRIME<span className="text-[#f9ca24]">NET</span>
-                </h1>
-                <p className="text-[11px] text-[#8892b0] font-mono leading-none mt-0.5">
-                  National Cyber Command • Enclave Tier-1
-                </p>
-              </div>
-            </div>
-
-            {/* Sovereign Classification Banner */}
-            <div className="bg-[#051224]/80 border border-[#1e3a5f] rounded-lg p-3 mb-5">
-              <div className="flex items-center justify-between text-[11px] font-mono mb-1.5">
-                <span className="text-gray-400 uppercase tracking-wider flex items-center gap-1.5">
-                  <FiActivity className="text-[#f9ca24]" /> Threat Status
-                </span>
-                <span className="px-2 py-0.5 rounded bg-amber-500/20 text-[#f9ca24] border border-amber-500/30 font-bold text-[10px] tracking-wide">
-                  DEFCON 2 // ELEVATED
-                </span>
-              </div>
-              <div className="text-[11px] text-gray-300 leading-snug">
-                National Crime & Intelligence Analysis Grid active. Monitored syndicates across 9 cross-border sectors.
-              </div>
-            </div>
-
-            {/* Real-Time Live Clock & Network Telemetry */}
-            <div className="space-y-2 mb-5">
-              <div className="bg-[#040a17]/90 border border-[#1e3a5f]/60 rounded-lg p-2.5 flex items-center justify-between text-xs font-mono">
-                <span className="text-gray-400 flex items-center gap-1.5 text-[11px]">
-                  <FiClock className="text-[#64ffda]" /> Node UTC
-                </span>
-                <span className="text-white font-semibold text-[11px] tracking-wide">
-                  {telemetryTime.utc || 'SYNCING...'}
-                </span>
-              </div>
-
-              <div className="bg-[#040a17]/90 border border-[#1e3a5f]/60 rounded-lg p-2.5 flex items-center justify-between text-xs font-mono">
-                <span className="text-gray-400 flex items-center gap-1.5 text-[11px]">
-                  <FiRadio className="text-[#4ecdc4]" /> Gateway Latency
-                </span>
-                <span className="text-[#00ff41] font-semibold text-[11px] flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#00ff41] inline-block" />
-                  {telemetryTime.ping}ms (Mumbai-04)
-                </span>
-              </div>
-            </div>
-
-            {/* Telemetry Checkpoints */}
-            <div className="border-t border-[#1e3a5f]/50 pt-4 space-y-2 font-mono text-[11px]">
-              <div className="flex items-center justify-between text-gray-300">
-                <span className="flex items-center gap-1.5 text-gray-400">
-                  <FiCpu className="text-[#4ecdc4]" size={12} /> Crypto Handshake
-                </span>
-                <span className="text-[#64ffda] font-semibold">TLS 1.3 / AES-256-GCM</span>
-              </div>
-              <div className="flex items-center justify-between text-gray-300">
-                <span className="flex items-center gap-1.5 text-gray-400">
-                  <FiServer className="text-[#a29bfe]" size={12} /> Compliance Standard
-                </span>
-                <span className="text-white">CERT-In Rule 11 Active</span>
-              </div>
-              <div className="flex items-center justify-between text-gray-300">
-                <span className="flex items-center gap-1.5 text-gray-400">
-                  <FiKey className="text-[#f9ca24]" size={12} /> SIEM Ledger Audit
-                </span>
-                <span className="text-[#00ff41]">SHA-256 Chained ✓</span>
-              </div>
-            </div>
+      {/* Main Centered Access Terminal Card */}
+      <div className="relative z-10 w-full max-w-2xl bg-[#080d1a]/95 border border-[#1e3a5f] rounded-2xl shadow-[0_0_50px_rgba(0,18,40,0.8),0_0_20px_rgba(78,205,196,0.12)] overflow-hidden backdrop-blur-2xl p-6 sm:p-8 flex flex-col justify-between">
+        
+        <div>
+          {/* Clean Platform Header */}
+          <div className="text-center mb-6 pb-4 border-b border-[#1e3a5f]/60">
+            <h1 className="text-2xl sm:text-3xl font-black text-white tracking-wider uppercase font-sans">
+              CRIME<span className="text-[#64ffda]">NET</span>
+            </h1>
+            <p className="text-xs text-[#8892b0] font-mono mt-1">
+              Criminal Network & Intelligence Analysis Platform
+            </p>
           </div>
 
-          {/* Institutional Statutory Warning */}
-          <div className="relative z-10 mt-6 pt-4 border-t border-[#1e3a5f]/50 text-[10px] text-gray-500 font-mono leading-relaxed">
-            <span className="text-gray-400 font-semibold uppercase tracking-wider block mb-0.5">
-              Statutory Security Warning:
-            </span>
-            Unauthorized access or attempted extraction is strictly punishable under Section 69B of the IT Act 2000 & Official Secrets Act 1923.
-          </div>
-        </div>
-
-        {/* =========================================================================
-            RIGHT PANE: Classified Access Terminal (7 Cols)
-           ========================================================================= */}
-        <div className="lg:col-span-7 p-6 sm:p-8 flex flex-col justify-between bg-[#070b16]">
-          
           <div>
             {/* Terminal Title & Subtitle */}
             <div className="flex items-center justify-between border-b border-[#1e3a5f]/60 pb-3.5 mb-5">

@@ -87,9 +87,6 @@ export default function VoiceControlHUD({
     } else if (t.includes('blockchain') || t.includes('ledger') || t.includes('tamper')) {
       targetModal = 'blockchain';
       modalLabel = 'Forensic Blockchain Ledger';
-    } else if (t.includes('hod') || t.includes('otp') || t.includes('clearance') || t.includes('supervis') || t.includes('two factor')) {
-      targetModal = 'hod';
-      modalLabel = 'HOD 2FA Supervisory Clearance';
     } else if (t.includes('audit') || t.includes('siem') || t.includes('log')) {
       targetModal = 'audit';
       modalLabel = 'SIEM Audit Log Viewer';

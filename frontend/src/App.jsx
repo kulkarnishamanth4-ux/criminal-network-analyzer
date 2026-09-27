@@ -15,7 +15,6 @@ import LoginScreen from './components/LoginScreen';
 import AuditLogViewer from './components/AuditLogViewer';
 import ErrorBoundary from './components/ErrorBoundary';
 import VoiceControlHUD from './components/VoiceControlHUD';
-import HODAuthModal from './components/HODAuthModal';
 import APKDownloadModal from './components/APKDownloadModal';
 import { FiShare2, FiMap, FiMic } from 'react-icons/fi';
 import { getFullGraph, getDashboardStats, getPredictedLinks, getShortestPath, logAuditEvent } from './api/client';
@@ -52,8 +51,6 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showAuditModal, setShowAuditModal] = useState(false);
   const [showVoiceHUD, setShowVoiceHUD] = useState(false);
-  const [showHODModal, setShowHODModal] = useState(false);
-  const [hodActionPending, setHodActionPending] = useState(null);
   const [showAPKModal, setShowAPKModal] = useState(false);
 
   // Panel Collapse & Layout States
@@ -419,10 +416,6 @@ function App() {
         currentUser={currentUser}
         onAuditClick={() => setShowAuditModal(true)}
         onVoiceClick={() => setShowVoiceHUD(prev => !prev)}
-        onHODClick={() => {
-          setHodActionPending({ action: 'SUPERVISORY_ACCESS' });
-          setShowHODModal(true);
-        }}
         onAPKClick={() => setShowAPKModal(true)}
         onLogout={() => {
           logAuditEvent({
@@ -577,10 +570,6 @@ function App() {
           else if (dest === 'upload' || dest === 'data_ingestion') setShowUploadModal(true);
           else if (dest === 'blockchain' || dest === 'blockchain_ledger') setShowBlockchainModal(true);
           else if (dest === 'audit' || dest === 'audit_logs') setShowAuditModal(true);
-          else if (dest === 'hod' || dest === 'hod_auth') {
-            setHodActionPending({ action: 'SUPERVISORY_ACCESS' });
-            setShowHODModal(true);
-          }
           else if (dest === 'apk' || dest === 'download_apk') setShowAPKModal(true);
           else if (dest === 'trace_path') handleStartConnectionMode();
           else if (dest === 'map') setViewMode('map');
@@ -640,19 +629,6 @@ function App() {
           </span>
         </button>
       )}
-
-      {/* HOD Two-Factor Authorization Modal */}
-      <HODAuthModal
-        isOpen={showHODModal}
-        onClose={() => setShowHODModal(false)}
-        actionName={hodActionPending?.action || 'SUPERVISORY_ACCESS'}
-        caseId={activeCase}
-        onAuthorized={(token) => {
-          setToast({ message: 'HOD Clearance Token Verified', type: 'success' });
-          if (hodActionPending?.callback) hodActionPending.callback(token);
-          setHodActionPending(null);
-        }}
-      />
 
       {/* Android APK & Offline Field App Download Modal */}
       <APKDownloadModal
