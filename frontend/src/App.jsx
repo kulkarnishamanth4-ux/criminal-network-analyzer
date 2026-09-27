@@ -17,7 +17,7 @@ import ErrorBoundary from './components/ErrorBoundary';
 import VoiceControlHUD from './components/VoiceControlHUD';
 import HODAuthModal from './components/HODAuthModal';
 import APKDownloadModal from './components/APKDownloadModal';
-import { FiShare2, FiMap } from 'react-icons/fi';
+import { FiShare2, FiMap, FiMic } from 'react-icons/fi';
 import { getFullGraph, getDashboardStats, getPredictedLinks, getShortestPath, logAuditEvent } from './api/client';
 
 const CASE_NAMES = {
@@ -290,6 +290,18 @@ function App() {
       loadData(activeCase);
     }
   }, [showApp, activeCase]);
+
+  // Global hotkey listener for Voice Tactical Copilot (Alt+V)
+  useEffect(() => {
+    const handleGlobalKeyDown = (e) => {
+      if (e.altKey && e.key.toLowerCase() === 'v') {
+        e.preventDefault();
+        setShowVoiceHUD(prev => !prev);
+      }
+    };
+    window.addEventListener('keydown', handleGlobalKeyDown);
+    return () => window.removeEventListener('keydown', handleGlobalKeyDown);
+  }, []);
 
   const handleNodeSelect = (node) => {
     setSelectedEntity(node);
@@ -570,6 +582,7 @@ function App() {
             setShowHODModal(true);
           }
           else if (dest === 'apk' || dest === 'download_apk') setShowAPKModal(true);
+          else if (dest === 'trace_path') handleStartConnectionMode();
           else if (dest === 'map') setViewMode('map');
           else if (dest === 'network') setViewMode('network');
         }}
@@ -604,6 +617,29 @@ function App() {
           setToast({ message: `AI Copilot Query: "${msg.slice(0, 32)}..."`, type: 'info' });
         }}
       />
+
+      {/* Floating Tactical Voice Copilot Trigger */}
+      {!showVoiceHUD && (
+        <button
+          onClick={() => setShowVoiceHUD(true)}
+          className="fixed bottom-6 right-6 z-40 flex items-center gap-2 px-3.5 py-2.5 bg-[#0a1424]/95 hover:bg-[#11223b] text-[#64ffda] border border-[#1e3a5f] hover:border-[#64ffda] rounded-full shadow-[0_0_20px_rgba(100,255,218,0.25)] transition-all duration-200 cursor-pointer backdrop-blur-md group hover:scale-105"
+          title="Open Tactical Voice Copilot (Alt+V)"
+        >
+          <div className="relative flex items-center justify-center">
+            <FiMic size={17} className="text-[#64ffda] group-hover:scale-110 transition-transform" />
+            <span className="absolute -top-0.5 -right-0.5 flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#64ffda] opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-[#64ffda]"></span>
+            </span>
+          </div>
+          <span className="text-xs font-mono font-bold tracking-wider text-white group-hover:text-[#64ffda]">
+            VOICE COPILOT
+          </span>
+          <span className="text-[10px] font-mono text-[#8892b0] px-1.5 py-0.5 rounded bg-[#060a14] border border-[#1e3a5f]">
+            Alt+V
+          </span>
+        </button>
+      )}
 
       {/* HOD Two-Factor Authorization Modal */}
       <HODAuthModal

@@ -1,6 +1,18 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { FiMic, FiMicOff, FiVolume2, FiVolumeX, FiRadio, FiTerminal, FiX, FiCheckCircle, FiAlertCircle } from 'react-icons/fi';
-import { client } from '../api/client';
+import { 
+  FiMic, 
+  FiMicOff, 
+  FiVolume2, 
+  FiVolumeX, 
+  FiRadio, 
+  FiTerminal, 
+  FiX, 
+  FiCheckCircle, 
+  FiAlertCircle,
+  FiZap,
+  FiCompass,
+  FiLayers
+} from 'react-icons/fi';
 
 export default function VoiceControlHUD({
   activeCase,
@@ -26,96 +38,176 @@ export default function VoiceControlHUD({
   const recognitionRef = useRef(null);
   const transcriptRef = useRef('');
 
-  // Client-Side Deterministic Intent Parser (Instant Air-Gapped / Vercel Fallback)
+  // Client-Side Deterministic Intent Parser (Instant Execution <5ms)
   const parseIntentClientSide = (cmd) => {
     const t = cmd.toLowerCase().trim();
 
-    // 1. Case Switching
+    // 1. Identify Target Case
+    let targetCase = null;
+    let caseLabel = '';
     if (t.includes('dawood') || t.includes('mumbai') || t.includes('d-company') || t.includes('syndicate')) {
-      return { action: 'SWITCH_CASE', payload: { case_id: 'dawood' }, spoken_reply: 'Switching active workspace to Operation Syndicate (Dawood D-Company).' };
-    }
-    if (t.includes('punjab') || t.includes('drug') || t.includes('narcotic') || t.includes('falcon')) {
-      return { action: 'SWITCH_CASE', payload: { case_id: 'drug_punjab' }, spoken_reply: 'Switching active workspace to Operation Falcon (Punjab Narcotics).' };
-    }
-    if (t.includes('assam') || t.includes('traffick') || t.includes('rescue')) {
-      return { action: 'SWITCH_CASE', payload: { case_id: 'ht_assam' }, spoken_reply: 'Switching active workspace to Operation Rescue (Cross-Border Trafficking).' };
-    }
-    if (t.includes('bengaluru') || t.includes('bangalore') || t.includes('crypto') || t.includes('darkweb')) {
-      return { action: 'SWITCH_CASE', payload: { case_id: 'cyber_bengaluru' }, spoken_reply: 'Switching active workspace to Project DarkWeb (Bengaluru Crypto Extortion).' };
-    }
-    if (t.includes('gujarat') || t.includes('surat') || t.includes('hawala') || t.includes('swarn')) {
-      return { action: 'SWITCH_CASE', payload: { case_id: 'money_gujarat' }, spoken_reply: 'Switching active workspace to Operation Swarn (Surat Hawala).' };
-    }
-    if (t.includes('chhattisgarh') || t.includes('bastar') || t.includes('arms') || t.includes('jungle')) {
-      return { action: 'SWITCH_CASE', payload: { case_id: 'arms_chhattisgarh' }, spoken_reply: 'Switching active workspace to Operation Red Corridor (Chhattisgarh Arms).' };
-    }
-    if (t.includes('kerala') || t.includes('wildlife') || t.includes('ivory') || t.includes('tusk')) {
-      return { action: 'SWITCH_CASE', payload: { case_id: 'wildlife_kerala' }, spoken_reply: 'Switching active workspace to Operation WildTusk (Kerala Wildlife).' };
-    }
-    if (t.includes('up') || t.includes('gorakhpur') || t.includes('extortion') || t.includes('purvanchal') || t.includes('bahubali')) {
-      return { action: 'SWITCH_CASE', payload: { case_id: 'extortion_up' }, spoken_reply: 'Switching active workspace to Operation Bahubali (Purvanchal Mafia).' };
-    }
-
-    // 2. Navigation
-    if (t.includes('experimental') || t.includes('lab') || t.includes('decapitation')) {
-      return { action: 'NAVIGATE', payload: { modal: 'experimental' }, spoken_reply: 'Opening Experimental Intelligence Labs.' };
-    }
-    if (t.includes('ingest') || t.includes('upload') || t.includes('evidence') || t.includes('file')) {
-      return { action: 'NAVIGATE', payload: { modal: 'upload' }, spoken_reply: 'Opening Universal Evidence Ingestion Hub.' };
-    }
-    if (t.includes('blockchain') || t.includes('ledger') || t.includes('tamper')) {
-      return { action: 'NAVIGATE', payload: { modal: 'blockchain' }, spoken_reply: 'Opening Forensic Blockchain Ledger.' };
-    }
-    if (t.includes('hod') || t.includes('otp') || t.includes('clearance') || t.includes('supervis')) {
-      return { action: 'NAVIGATE', payload: { modal: 'hod' }, spoken_reply: 'Opening Head of Department 2FA Clearance.' };
-    }
-    if (t.includes('audit') || t.includes('siem') || t.includes('log')) {
-      return { action: 'NAVIGATE', payload: { modal: 'audit' }, spoken_reply: 'Opening SIEM Audit Log Viewer.' };
-    }
-    if (t.includes('apk') || t.includes('download') || t.includes('android')) {
-      return { action: 'NAVIGATE', payload: { modal: 'apk' }, spoken_reply: 'Opening Standalone Android APK Package Manager.' };
-    }
-    if (t.includes('map') || t.includes('geospatial')) {
-      return { action: 'NAVIGATE', payload: { view: 'map' }, spoken_reply: 'Switching to Geospatial Threat Map.' };
-    }
-    if (t.includes('network') || t.includes('graph')) {
-      return { action: 'NAVIGATE', payload: { view: 'network' }, spoken_reply: 'Switching to Network Graph Canvas.' };
+      targetCase = 'dawood';
+      caseLabel = 'Operation Syndicate (Dawood D-Company)';
+    } else if (t.includes('punjab') || t.includes('drug') || t.includes('narcotic') || t.includes('falcon') || t.includes('crescent')) {
+      targetCase = 'drug_punjab';
+      caseLabel = 'Operation Falcon (Punjab Narcotics)';
+    } else if (t.includes('assam') || t.includes('traffick') || t.includes('rescue')) {
+      targetCase = 'ht_assam';
+      caseLabel = 'Operation Rescue (Cross-Border Trafficking)';
+    } else if (t.includes('bengaluru') || t.includes('bangalore') || t.includes('crypto') || t.includes('darkweb') || t.includes('apex')) {
+      targetCase = 'cyber_bengaluru';
+      caseLabel = 'Project DarkWeb (Bengaluru Crypto Extortion)';
+    } else if (t.includes('gujarat') || t.includes('surat') || t.includes('hawala') || t.includes('swarn') || t.includes('diamond')) {
+      targetCase = 'money_gujarat';
+      caseLabel = 'Operation Swarn (Surat Hawala)';
+    } else if (t.includes('chhattisgarh') || t.includes('bastar') || t.includes('arms') || t.includes('jungle') || t.includes('corridor')) {
+      targetCase = 'arms_chhattisgarh';
+      caseLabel = 'Operation Red Corridor (Chhattisgarh Arms)';
+    } else if (t.includes('kerala') || t.includes('wildlife') || t.includes('ivory') || t.includes('tusk') || t.includes('poaching')) {
+      targetCase = 'wildlife_kerala';
+      caseLabel = 'Operation WildTusk (Kerala Wildlife)';
+    } else if (t.includes('up') || t.includes('gorakhpur') || t.includes('extortion') || t.includes('purvanchal') || t.includes('bahubali')) {
+      targetCase = 'extortion_up';
+      caseLabel = 'Operation Bahubali (Purvanchal Mafia)';
+    } else if (t.includes('custom') || t.includes('new investigation') || t.includes('upload custom')) {
+      targetCase = 'custom_investigation';
+      caseLabel = 'New Investigation (Custom Data Upload)';
     }
 
-    // 3. Canvas & Filters
-    if (t.includes('reset') || t.includes('center') || t.includes('fit')) {
+    // 2. Identify Navigation Target
+    let targetModal = null;
+    let targetView = null;
+    let modalLabel = '';
+    if (t.includes('experimental') || t.includes('lab') || t.includes('decapitation') || t.includes('topology')) {
+      targetModal = 'experimental';
+      modalLabel = 'Experimental Intelligence Labs';
+    } else if (t.includes('ingest') || t.includes('upload') || t.includes('evidence') || t.includes('file')) {
+      targetModal = 'upload';
+      modalLabel = 'Universal Evidence Ingestion Hub';
+    } else if (t.includes('blockchain') || t.includes('ledger') || t.includes('tamper')) {
+      targetModal = 'blockchain';
+      modalLabel = 'Forensic Blockchain Ledger';
+    } else if (t.includes('hod') || t.includes('otp') || t.includes('clearance') || t.includes('supervis') || t.includes('two factor')) {
+      targetModal = 'hod';
+      modalLabel = 'HOD 2FA Supervisory Clearance';
+    } else if (t.includes('audit') || t.includes('siem') || t.includes('log')) {
+      targetModal = 'audit';
+      modalLabel = 'SIEM Audit Log Viewer';
+    } else if (t.includes('apk') || t.includes('download') || t.includes('android')) {
+      targetModal = 'apk';
+      modalLabel = 'Android APK Package Manager';
+    } else if (t.includes('trace') || t.includes('path') || t.includes('connect')) {
+      targetModal = 'trace_path';
+      modalLabel = 'Connection Path Tracer';
+    } else if (t.includes('map') || t.includes('geospatial') || t.includes('satellite')) {
+      targetView = 'map';
+    } else if (t.includes('network') || t.includes('graph') || t.includes('canvas')) {
+      targetView = 'network';
+    }
+
+    // Composite directive handling (e.g. "Open labs Switch to Bangalore")
+    if (targetCase && (targetModal || targetView)) {
+      return {
+        action: 'COMPOSITE',
+        payload: { case_id: targetCase, modal: targetModal, view: targetView },
+        spoken_reply: `Switching workspace to ${caseLabel} and opening ${modalLabel || targetView}.`
+      };
+    }
+
+    // Single Case Switch
+    if (targetCase) {
+      return { 
+        action: 'SWITCH_CASE', 
+        payload: { case_id: targetCase }, 
+        spoken_reply: `Switching active workspace to ${caseLabel}.` 
+      };
+    }
+
+    // Single Navigation Target
+    if (targetModal) {
+      return { 
+        action: 'NAVIGATE', 
+        payload: { modal: targetModal }, 
+        spoken_reply: `Opening ${modalLabel}.` 
+      };
+    }
+    if (targetView) {
+      return { 
+        action: 'NAVIGATE', 
+        payload: { view: targetView }, 
+        spoken_reply: `Switching to ${targetView === 'map' ? 'Geospatial Threat Map' : 'Network Graph Canvas'}.` 
+      };
+    }
+
+    // 3. Canvas & Filter Controls
+    if (t.includes('reset') || t.includes('center') || t.includes('fit') || t.includes('recenter')) {
       return { action: 'RESET_CANVAS', payload: {}, spoken_reply: 'Recentering network graph canvas.' };
     }
-    if (t.includes('risk') || t.includes('threat') || t.includes('filter')) {
+    if (t.includes('risk') || t.includes('threat') || t.includes('critical') || t.includes('filter')) {
       return { action: 'FILTER_RISK', payload: { risk_threshold: 0.7 }, spoken_reply: 'Filtering graph for critical threat entities.' };
     }
 
     // 4. Suspect Queries
-    if (t.includes('kingpin') || t.includes('leader') || t.includes('boss')) {
+    if (t.includes('kingpin') || t.includes('leader') || t.includes('boss') || t.includes('apex')) {
       return { action: 'QUERY_AI', payload: { message: 'Identify the primary kingpin and command hierarchy.' }, spoken_reply: 'Synthesized topological hierarchy. Primary command apex identified.' };
+    }
+
+    // 5. Focus on specific suspect name if phrased as "focus on [Name]" or "select [Name]"
+    const focusMatch = t.match(/(?:focus on|select|find|show me|inspect)\s+([a-z\s]+)/i);
+    if (focusMatch && focusMatch[1]) {
+      const name = focusMatch[1].trim();
+      return { action: 'SELECT_ENTITY', payload: { entity_name: name }, spoken_reply: `Focusing intelligence dossier on ${name}.` };
     }
 
     return { action: 'QUERY_AI', payload: { message: cmd }, spoken_reply: `Processed tactical voice query: ${cmd}` };
   };
 
-  // Initialize Web Speech API
-  useEffect(() => {
+  // Robust Speech Recognition Initializer
+  const startListening = async () => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) {
       setIsSupported(false);
+      setPermissionError('Web Speech API is not supported in this browser. Please use Google Chrome, Microsoft Edge, or Safari, or click the directive chips below.');
       return;
     }
 
+    // Safely abort previous session if active
+    if (recognitionRef.current) {
+      try {
+        recognitionRef.current.abort();
+      } catch (_) {}
+      recognitionRef.current = null;
+    }
+
+    setTranscript('');
+    transcriptRef.current = '';
+    setPermissionError('');
+
     try {
+      // Prompt/verify microphone permissions
+      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+          stream.getTracks().forEach(track => track.stop());
+        } catch (permErr) {
+          console.warn('Microphone permission check:', permErr);
+          if (permErr.name === 'NotAllowedError' || permErr.name === 'PermissionDeniedError') {
+            setPermissionError('Microphone blocked. Click the lock/camera icon in your browser address bar to allow mic access.');
+            setIsListening(false);
+            return;
+          }
+        }
+      }
+
+      // Create a fresh instance for every session to avoid stale Web Speech errors
       const recognition = new SpeechRecognition();
       recognition.continuous = false;
       recognition.interimResults = true;
       recognition.lang = 'en-US';
+      recognition.maxAlternatives = 1;
 
       recognition.onstart = () => {
         setIsListening(true);
-        setTranscript('');
-        transcriptRef.current = '';
         setPermissionError('');
       };
 
@@ -129,10 +221,16 @@ export default function VoiceControlHUD({
       };
 
       recognition.onerror = (event) => {
-        console.warn('Speech recognition event error:', event.error);
+        console.warn('Speech recognition error event:', event.error);
         setIsListening(false);
         if (event.error === 'not-allowed') {
-          setPermissionError('Microphone permission blocked. Please allow mic access in browser.');
+          setPermissionError('Microphone access blocked. Click the lock icon in your browser address bar to allow microphone.');
+        } else if (event.error === 'no-speech') {
+          setPermissionError('No speech detected. Please speak into your microphone or click any quick directive below.');
+        } else if (event.error === 'network') {
+          setPermissionError('Speech recognition network error. (Google Chrome requires internet access for speech-to-text).');
+        } else if (event.error !== 'aborted') {
+          setPermissionError(`Speech recognition status: ${event.error}`);
         }
       };
 
@@ -145,11 +243,45 @@ export default function VoiceControlHUD({
       };
 
       recognitionRef.current = recognition;
-    } catch (e) {
-      console.warn('Speech recognition init error:', e);
-      setIsSupported(false);
+      recognition.start();
+    } catch (err) {
+      console.warn('Failed to start speech recognition:', err);
+      setIsListening(false);
+      setPermissionError('Could not start microphone. Please ensure your microphone is connected and allowed.');
     }
+  };
 
+  const stopListening = () => {
+    if (recognitionRef.current) {
+      try {
+        recognitionRef.current.stop();
+      } catch (_) {}
+    }
+    setIsListening(false);
+  };
+
+  const toggleListening = () => {
+    if (isListening) {
+      stopListening();
+    } else {
+      startListening();
+    }
+  };
+
+  // Auto-start listening when HUD opens
+  useEffect(() => {
+    if (isOpen) {
+      const timer = setTimeout(() => {
+        startListening();
+      }, 250);
+      return () => clearTimeout(timer);
+    } else {
+      stopListening();
+    }
+  }, [isOpen]);
+
+  // Cleanup on unmount
+  useEffect(() => {
     return () => {
       if (recognitionRef.current) {
         try {
@@ -158,18 +290,6 @@ export default function VoiceControlHUD({
       }
     };
   }, []);
-
-  // Hotkey listener (Alt+V or Ctrl+Space)
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if ((e.altKey && e.key.toLowerCase() === 'v') || (e.ctrlKey && e.code === 'Space')) {
-        e.preventDefault();
-        toggleListening();
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isListening]);
 
   const speakText = (text) => {
     if (!audioFeedback || !window.speechSynthesis || !text) return;
@@ -182,32 +302,17 @@ export default function VoiceControlHUD({
     } catch (_) {}
   };
 
-  const toggleListening = () => {
-    if (!recognitionRef.current) {
-      return;
-    }
-    if (isListening) {
-      try {
-        recognitionRef.current.stop();
-      } catch (_) {}
-    } else {
-      setTranscript('');
-      transcriptRef.current = '';
-      setPermissionError('');
-      try {
-        recognitionRef.current.start();
-      } catch (err) {
-        console.warn('Recognition start caught error:', err);
-      }
-    }
-  };
-
   const dispatchParsedAction = (data, rawCmd) => {
     setLastCommand(data);
     setSpokenReply(data.spoken_reply || 'Command executed.');
     speakText(data.spoken_reply);
 
     switch (data.action) {
+      case 'COMPOSITE':
+        if (data.payload?.case_id && onSwitchCase) onSwitchCase(data.payload.case_id);
+        if (data.payload?.modal && onNavigate) onNavigate(data.payload.modal);
+        if (data.payload?.view && onNavigate) onNavigate(data.payload.view);
+        break;
       case 'NAVIGATE':
         if (data.payload?.modal && onNavigate) onNavigate(data.payload.modal);
         if (data.payload?.view && onNavigate) onNavigate(data.payload.view);
@@ -232,22 +337,19 @@ export default function VoiceControlHUD({
     }
   };
 
-  // Dispatch command to backend or client-side fallback
+  // Dispatch command with instant client-side intent execution (<5ms response time)
   const executeCommand = async (textToExecute) => {
     const cmd = textToExecute || transcript;
     if (!cmd || !cmd.trim()) return;
 
     setIsProcessing(true);
+    setPermissionError('');
+
     try {
-      const res = await client.post('/api/voice/command', {
-        transcript: cmd,
-        case_id: activeCase
-      });
-      dispatchParsedAction(res.data, cmd);
-    } catch (err) {
-      // Offline / Vercel Client-Side Intent Parser Execution
       const clientIntent = parseIntentClientSide(cmd);
       dispatchParsedAction(clientIntent, cmd);
+    } catch (err) {
+      console.error('Command execution error:', err);
     } finally {
       setIsProcessing(false);
     }
@@ -256,26 +358,26 @@ export default function VoiceControlHUD({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 w-96 bg-[var(--bg-card)]/95 backdrop-blur-xl border border-[var(--border)] rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+    <div className="fixed bottom-6 right-6 z-50 w-96 max-w-[95vw] bg-[#081220]/95 backdrop-blur-xl border border-[#1e3a5f] rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
       {/* HUD Header */}
-      <div className="px-4 py-3 bg-[var(--bg-primary)]/80 border-b border-[var(--border)] flex items-center justify-between">
+      <div className="px-4 py-3 bg-[#060a14]/90 border-b border-[#1e3a5f] flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <div className={`w-2.5 h-2.5 rounded-full ${isListening ? 'bg-red-500 animate-ping' : 'bg-[var(--text-accent)]'}`}></div>
-          <span className="text-xs font-mono font-bold tracking-wider text-[var(--text-primary)] uppercase flex items-center gap-1.5">
-            <FiRadio className="text-[var(--text-accent)]" /> Voice Tactical Copilot
+          <div className={`w-2.5 h-2.5 rounded-full ${isListening ? 'bg-red-500 animate-ping' : 'bg-[#64ffda]'}`}></div>
+          <span className="text-xs font-mono font-bold tracking-wider text-white uppercase flex items-center gap-1.5">
+            <FiRadio className="text-[#64ffda]" /> Voice Tactical Copilot
           </span>
         </div>
         <div className="flex items-center gap-1">
           <button
             onClick={() => setAudioFeedback(!audioFeedback)}
-            className="p-1.5 text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)] rounded hover:bg-[var(--bg-card-hover)]"
+            className="p-1.5 text-xs text-[#8892b0] hover:text-white rounded hover:bg-[#162a45] transition-colors"
             title={audioFeedback ? 'Mute Voice Output' : 'Enable Voice Output'}
           >
-            {audioFeedback ? <FiVolume2 size={14} /> : <FiVolumeX size={14} />}
+            {audioFeedback ? <FiVolume2 size={14} className="text-[#64ffda]" /> : <FiVolumeX size={14} />}
           </button>
           <button
             onClick={onClose}
-            className="p-1.5 text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)] rounded hover:bg-[var(--bg-card-hover)]"
+            className="p-1.5 text-xs text-[#8892b0] hover:text-white rounded hover:bg-[#162a45] transition-colors"
           >
             <FiX size={14} />
           </button>
@@ -284,11 +386,18 @@ export default function VoiceControlHUD({
 
       {/* Main Body */}
       <div className="p-4 space-y-3.5">
-        {/* Permission Warning if Mic is blocked */}
+        {/* Permission Warning / Browser Support Warning */}
         {permissionError && (
-          <div className="p-2 rounded bg-red-500/10 border border-red-500/30 text-red-400 text-xs font-mono flex items-center gap-1.5">
-            <FiAlertCircle size={14} className="shrink-0" />
-            <span>{permissionError}</span>
+          <div className="p-2.5 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 text-xs font-mono flex items-start gap-2">
+            <FiAlertCircle size={15} className="shrink-0 mt-0.5" />
+            <span className="leading-relaxed">{permissionError}</span>
+          </div>
+        )}
+
+        {!isSupported && !permissionError && (
+          <div className="p-2.5 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-mono flex items-start gap-2">
+            <FiAlertCircle size={15} className="shrink-0 mt-0.5" />
+            <span>Web Speech API is optimized for Google Chrome, Microsoft Edge, or Safari. Use the quick buttons below or manual input.</span>
           </div>
         )}
 
@@ -298,9 +407,10 @@ export default function VoiceControlHUD({
             onClick={toggleListening}
             className={`relative p-5 rounded-full transition-all duration-300 cursor-pointer ${
               isListening
-                ? 'bg-red-500/20 text-red-400 border-2 border-red-500 shadow-[0_0_25px_rgba(239,68,68,0.5)]'
-                : 'bg-[var(--bg-primary)] text-[var(--text-accent)] border border-[var(--border)] hover:border-[var(--text-accent)] shadow-lg'
+                ? 'bg-red-500/20 text-red-400 border-2 border-red-500 shadow-[0_0_30px_rgba(239,68,68,0.6)] scale-105'
+                : 'bg-[#0a1424] text-[#64ffda] border border-[#1e3a5f] hover:border-[#64ffda] shadow-lg hover:scale-105'
             }`}
+            title={isListening ? 'Click to stop listening' : 'Click to start microphone listening'}
           >
             {isListening ? <FiMicOff size={28} className="animate-pulse" /> : <FiMic size={28} />}
             {isListening && (
@@ -310,46 +420,57 @@ export default function VoiceControlHUD({
               </span>
             )}
           </button>
-          <div className="mt-2 text-[11px] font-mono text-[var(--text-secondary)]">
-            {isListening ? 'LISTENING... (Speak now)' : 'TAP MIC OR PRESS ALT+V'}
+          <div className="mt-2.5 text-[11px] font-mono font-semibold tracking-wide">
+            {isListening ? (
+              <span className="text-red-400 animate-pulse flex items-center gap-1.5">
+                ● LISTENING... SPEAK NOW
+              </span>
+            ) : (
+              <span className="text-[#8892b0]">TAP MIC TO SPEAK OR PRESS ALT+V</span>
+            )}
           </div>
         </div>
 
         {/* Live Transcript Display */}
-        <div className="bg-[var(--bg-primary)] p-3 rounded-lg border border-[var(--border)] min-h-[48px] flex items-center">
-          <div className="text-xs font-mono text-[var(--text-primary)] break-words w-full">
+        <div className="bg-[#060a14] p-3 rounded-lg border border-[#1e3a5f] min-h-[50px] flex items-center shadow-inner">
+          <div className="text-xs font-mono text-white break-words w-full">
             {transcript ? (
-              <span className="text-[var(--text-accent)] font-semibold">"{transcript}"</span>
+              <span className="text-[#64ffda] font-semibold">"{transcript}"</span>
             ) : (
-              <span className="text-[var(--text-secondary)] italic text-[11px]">
-                Speak naturally: "Switch to Gujarat case", "Open experimental labs", "Filter high risk", "Who is the kingpin"...
+              <span className="text-[#8892b0]/70 italic text-[11px]">
+                Speak naturally: "Switch to Bangalore", "Open experimental labs", "Trace path", "Filter high risk", "Who is kingpin"...
               </span>
             )}
           </div>
         </div>
 
         {/* Quick Voice Command Chips */}
-        <div className="space-y-1">
-          <div className="text-[10px] font-mono uppercase text-[var(--text-secondary)]">Quick Spoken Directives:</div>
-          <div className="flex flex-wrap gap-1.5">
+        <div className="space-y-1.5">
+          <div className="text-[10px] font-mono uppercase text-[#8892b0] flex items-center justify-between">
+            <span>Quick Spoken Directives:</span>
+            <span className="text-[9px] text-[#64ffda]">1-CLICK EXECUTE</span>
+          </div>
+          <div className="grid grid-cols-2 gap-1.5">
             {[
-              'Switch to Gujarat',
-              'Open Punjab',
-              'Open Labs',
-              'Filter High Risk',
-              'Who is Kingpin?',
-              'Reset Canvas'
-            ].map((chip) => (
+              { label: '⚡ Open Labs', cmd: 'Open experimental labs' },
+              { label: '🏙️ Bangalore Case', cmd: 'Switch to Bangalore' },
+              { label: '🍁 Punjab Case', cmd: 'Switch to Punjab' },
+              { label: '🕶️ Dawood Case', cmd: 'Switch to Dawood' },
+              { label: '🔗 Trace Path', cmd: 'Trace connection path' },
+              { label: '🗺️ Threat Map', cmd: 'Switch to map view' },
+              { label: '⚠️ Filter High Risk', cmd: 'Filter high risk threats' },
+              { label: '🔄 Reset Canvas', cmd: 'Reset network canvas' }
+            ].map((item) => (
               <button
-                key={chip}
+                key={item.label}
                 type="button"
                 onClick={() => {
-                  setTranscript(chip);
-                  executeCommand(chip);
+                  setTranscript(item.cmd);
+                  executeCommand(item.cmd);
                 }}
-                className="px-2 py-1 rounded bg-[var(--bg-primary)] hover:bg-[var(--text-accent)]/15 border border-[var(--border)] hover:border-[var(--text-accent)]/40 text-[10px] font-mono text-[var(--text-primary)] transition-all cursor-pointer"
+                className="px-2 py-1.5 rounded-lg bg-[#0a1424] hover:bg-[#162a45] border border-[#1e3a5f] hover:border-[#64ffda]/50 text-[11px] font-mono text-[#c8d6e5] hover:text-white transition-all text-left flex items-center gap-1.5 cursor-pointer truncate"
               >
-                {chip}
+                <span className="truncate">{item.label}</span>
               </button>
             ))}
           </div>
@@ -357,11 +478,11 @@ export default function VoiceControlHUD({
 
         {/* Feedback Response */}
         {spokenReply && (
-          <div className="p-2.5 rounded-lg bg-[var(--bg-primary)]/90 border border-[var(--text-accent)]/30 text-xs font-mono">
-            <div className="text-[10px] text-[var(--text-accent)] font-bold uppercase tracking-wider mb-1 flex items-center gap-1">
+          <div className="p-2.5 rounded-lg bg-[#060a14] border border-[#64ffda]/30 text-xs font-mono animate-in fade-in duration-150">
+            <div className="text-[10px] text-[#64ffda] font-bold uppercase tracking-wider mb-1 flex items-center gap-1">
               <FiTerminal size={10} /> Copilot Action Response
             </div>
-            <div className="text-[var(--text-primary)]">{spokenReply}</div>
+            <div className="text-white leading-relaxed">{spokenReply}</div>
           </div>
         )}
 
@@ -372,20 +493,20 @@ export default function VoiceControlHUD({
             executeCommand(manualInput);
             setManualInput('');
           }}
-          className="flex gap-1.5 pt-1 border-t border-[var(--border)]"
+          className="flex gap-1.5 pt-2 border-t border-[#1e3a5f]"
         >
           <input
             type="text"
             value={manualInput}
             onChange={(e) => setManualInput(e.target.value)}
             placeholder="Type directive override..."
-            className="flex-1 bg-[var(--bg-primary)] border border-[var(--border)] rounded px-2.5 py-1.5 text-xs text-[var(--text-primary)] focus:outline-none focus:border-[var(--text-accent)] font-mono"
+            className="flex-1 bg-[#060a14] border border-[#1e3a5f] rounded-lg px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-[#64ffda] font-mono"
           />
           <button
             type="submit"
-            className="px-3 py-1.5 bg-[var(--bg-card-hover)] hover:bg-[var(--border)] text-xs text-[var(--text-primary)] rounded border border-[var(--border)] font-mono font-bold"
+            className="px-3 py-1.5 bg-[#162a45] hover:bg-[#1e3a5f] text-xs text-[#64ffda] rounded-lg border border-[#64ffda]/30 font-mono font-bold transition-colors cursor-pointer"
           >
-            SEND
+            EXECUTE
           </button>
         </form>
       </div>
