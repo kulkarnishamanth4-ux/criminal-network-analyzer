@@ -77,6 +77,160 @@ async def read_and_validate_upload(file: UploadFile, max_size: int = MAX_UPLOAD_
         raise ValueError(f"File size exceeds maximum allowed limit of {max_size // (1024 * 1024)}MB")
     return content
 
+def process_fir_nlp_and_graph(db: Session, text: str, target_case_id: str, clear_existing: bool = False):
+    """Parses FIR narrative with NLP, creates entities, builds relational graph, and returns summary."""
+    if clear_existing:
+        db.query(crud.Relationship).filter(crud.Relationship.case_id == target_case_id).delete()
+        db.query(crud.Entity).filter(crud.Entity.case_id == target_case_id).delete()
+        db.query(crud.FIR).filter(crud.FIR.case_id == target_case_id).delete()
+        db.query(UploadedFile).filter(UploadedFile.case_id == target_case_id).delete()
+        db.query(crud.Anomaly).filter(crud.Anomaly.case_id == target_case_id).delete()
+        db.commit()
+
+    existing_entities = {e.name for e in db.query(crud.Entity).filter(crud.Entity.case_id == target_case_id).all()}
+    extracted = extract_entities_from_text(text, known_entities=existing_entities)
+    classification = classify_crime(text)
+
+    fir = crud.create_fir(
+        db=db,
+        raw_text=text,
+        crime_type=classification.get('crime_type'),
+        crime_confidence=classification.get('confidence'),
+        extracted_entities=extracted,
+        case_id=target_case_id
+    )
+
+    person_ents = []
+    for p in extracted.get("persons", []):
+        props = {"aliases": p.get("aliases", [])} if p.get("aliases") else {}
+        ent = crud.get_or_create_entity(db, "PERSON", p["name"], properties=props, case_id=target_case_id)
+        if p.get("aliases") and not (ent.properties and ent.properties.get("aliases")):
+            ent.properties = {**(ent.properties or {}), "aliases": p["aliases"]}
+        person_ents.append(ent)
+
+    loc_ents = []
+    for l in extracted.get("locations", []):
+        ent = crud.get_or_create_entity(db, "LOCATION", l["name"], case_id=target_case_id)
+        loc_ents.append(ent)
+
+    phone_ents = []
+    for ph in extracted.get("phones", []):
+        ent = crud.get_or_create_entity(db, "PHONE", ph["number"], case_id=target_case_id)
+        phone_ents.append(ent)
+
+    veh_ents = []
+    for v in extracted.get("vehicles", []):
+        ent = crud.get_or_create_entity(db, "VEHICLE", v["plate"], case_id=target_case_id)
+        veh_ents.append(ent)
+
+    org_ents = []
+    for o in extracted.get("organizations", []):
+        ent = crud.get_or_create_entity(db, "ORGANIZATION", o["name"], case_id=target_case_id)
+        org_ents.append(ent)
+
+    entities_created = len(person_ents) + len(loc_ents) + len(phone_ents) + len(veh_ents) + len(org_ents)
+
+    new_relationships = []
+    existing_rel_pairs = set()
+
+    fir_date_match = re.search(r'Date[:\s]+(\d{1,2}[-/]\d{1,2}[-/]\d{2,4})', text)
+    fir_ts = parse_iso_datetime(fir_date_match.group(1)) if fir_date_match else datetime.utcnow()
+
+    def add_rel(src_id, tgt_id, rel_type, weight=1.0, props=None, rel_ts=None):
+        if src_id == tgt_id:
+            return
+        pair = tuple(sorted((src_id, tgt_id))) + (rel_type,)
+        if pair not in existing_rel_pairs:
+            existing_rel_pairs.add(pair)
+            new_relationships.append(
+                crud.Relationship(
+                    source_id=src_id,
+                    target_id=tgt_id,
+                    rel_type=rel_type,
+                    weight=weight,
+                    properties=props or {"fir_id": fir.id},
+                    timestamp=rel_ts or fir_ts,
+                    case_id=target_case_id
+                )
+            )
+
+    if person_ents:
+        primary_person = person_ents[0]
+        for p_ent in person_ents[1:]:
+            add_rel(primary_person.id, p_ent.id, "CO_ACCUSED", weight=2.0)
+
+        for i in range(len(person_ents)):
+            for j in range(i + 1, len(person_ents)):
+                p1, p2 = person_ents[i], person_ents[j]
+                for s in re.split(r'[\n.]+', text):
+                    if p1.name.lower() in s.lower() and p2.name.lower() in s.lower():
+                        if any(kw in s.lower() for kw in ['transfer', 'sent', 'paid', 'hawala', 'amount', 'lakh', 'crore']):
+                            add_rel(p1.id, p2.id, "TRANSFERRED_MONEY_TO", weight=2.5)
+                        else:
+                            add_rel(p1.id, p2.id, "CO_ACCUSED", weight=1.5)
+
+    def resolve_target_person(item_name: str):
+        if not person_ents:
+            return None
+        item_lower = item_name.lower()
+        for c in re.split(r'[,;.\n]+', text):
+            if item_lower in c.lower():
+                for p_ent in person_ents:
+                    if p_ent.name.lower() in c.lower():
+                        return p_ent
+        for s in re.split(r'[\n.]+', text):
+            if item_lower in s.lower():
+                for p_ent in person_ents:
+                    if p_ent.name.lower() in s.lower():
+                        return p_ent
+        for para in [p.strip() for p in text.split('\n\n') if p.strip()]:
+            if item_lower in para.lower():
+                for p_ent in person_ents:
+                    if p_ent.name.lower() in para.lower():
+                        return p_ent
+        return person_ents[0]
+
+    for ph in phone_ents:
+        target = resolve_target_person(ph.name)
+        if target:
+            add_rel(target.id, ph.id, "OWNS_PHONE", weight=3.0)
+
+    for v in veh_ents:
+        target = resolve_target_person(v.name)
+        if target:
+            add_rel(target.id, v.id, "OPERATES_VEHICLE", weight=3.0)
+
+    for o in org_ents:
+        target = resolve_target_person(o.name)
+        if target:
+            add_rel(target.id, o.id, "OPERATES", weight=2.5)
+
+    for l in loc_ents:
+        target = resolve_target_person(l.name)
+        if target:
+            add_rel(target.id, l.id, "OPERATES_IN", weight=2.0)
+
+    if not person_ents:
+        all_fallback = loc_ents + phone_ents + veh_ents + org_ents
+        for i in range(len(all_fallback) - 1):
+            add_rel(all_fallback[i].id, all_fallback[i+1].id, "MENTIONED_IN_FIR", weight=1.0)
+
+    rel_count = len(new_relationships)
+    if new_relationships:
+        db.add_all(new_relationships)
+        db.commit()
+
+    compute_all_analytics(db, case_id=target_case_id)
+
+    return {
+        "fir": fir,
+        "extracted": extracted,
+        "classification": classification,
+        "entities_created": entities_created,
+        "relationships_created": rel_count
+    }
+
+
 @router.post("/upload/fir")
 @limiter.limit("30/minute")
 async def upload_fir(
@@ -97,167 +251,12 @@ async def upload_fir(
         if not text.strip():
             return JSONResponse(status_code=400, content={"status": "error", "message": f"Empty or unparseable file uploaded ({file.filename})"})
         
-        # Optionally wipe old dirty data for this investigation if user requested a fresh import
-        if clear_existing:
-            db.query(crud.Relationship).filter(crud.Relationship.case_id == target_case_id).delete()
-            db.query(crud.Entity).filter(crud.Entity.case_id == target_case_id).delete()
-            db.query(crud.FIR).filter(crud.FIR.case_id == target_case_id).delete()
-            db.query(UploadedFile).filter(UploadedFile.case_id == target_case_id).delete()
-            db.query(crud.Anomaly).filter(crud.Anomaly.case_id == target_case_id).delete()
-            db.commit()
-        
-        # Get existing entities for fuzzy matching (typo snapping)
-        existing_entities = {e.name for e in db.query(crud.Entity).filter(crud.Entity.case_id == target_case_id).all()}
-        extracted = extract_entities_from_text(text, known_entities=existing_entities)
-        
-        classification = classify_crime(text)
-        
-        fir = crud.create_fir(
-            db=db,
-            raw_text=text,
-            crime_type=classification.get('crime_type'),
-            crime_confidence=classification.get('confidence'),
-            extracted_entities=extracted,
-            case_id=target_case_id
-        )
-        
-        # Create entities by type
-        person_ents = []
-        for p in extracted.get("persons", []):
-            props = {"aliases": p.get("aliases", [])} if p.get("aliases") else {}
-            ent = crud.get_or_create_entity(db, "PERSON", p["name"], properties=props, case_id=target_case_id)
-            if p.get("aliases") and not (ent.properties and ent.properties.get("aliases")):
-                ent.properties = {**(ent.properties or {}), "aliases": p["aliases"]}
-            person_ents.append(ent)
-            
-        loc_ents = []
-        for l in extracted.get("locations", []):
-            ent = crud.get_or_create_entity(db, "LOCATION", l["name"], case_id=target_case_id)
-            loc_ents.append(ent)
-            
-        phone_ents = []
-        for ph in extracted.get("phones", []):
-            ent = crud.get_or_create_entity(db, "PHONE", ph["number"], case_id=target_case_id)
-            phone_ents.append(ent)
-            
-        veh_ents = []
-        for v in extracted.get("vehicles", []):
-            ent = crud.get_or_create_entity(db, "VEHICLE", v["plate"], case_id=target_case_id)
-            veh_ents.append(ent)
-            
-        org_ents = []
-        for o in extracted.get("organizations", []):
-            ent = crud.get_or_create_entity(db, "ORGANIZATION", o["name"], case_id=target_case_id)
-            org_ents.append(ent)
-            
-        entities_created = len(person_ents) + len(loc_ents) + len(phone_ents) + len(veh_ents) + len(org_ents)
-        
-        # Build Semantic Graph Relationships (Hierarchical, avoiding O(N^2) complete cliques)
-        new_relationships = []
-        existing_rel_pairs = set()
-
-        # Parse FIR incident/filing date for chronological timeline progression
-        fir_date_match = re.search(r'Date[:\s]+(\d{1,2}[-/]\d{1,2}[-/]\d{2,4})', text)
-        fir_ts = parse_iso_datetime(fir_date_match.group(1)) if fir_date_match else datetime.utcnow()
-
-        def add_rel(src_id, tgt_id, rel_type, weight=1.0, props=None, rel_ts=None):
-            if src_id == tgt_id:
-                return
-            pair = tuple(sorted((src_id, tgt_id))) + (rel_type,)
-            if pair not in existing_rel_pairs:
-                existing_rel_pairs.add(pair)
-                new_relationships.append(
-                    crud.Relationship(
-                        source_id=src_id,
-                        target_id=tgt_id,
-                        rel_type=rel_type,
-                        weight=weight,
-                        properties=props or {"fir_id": fir.id},
-                        timestamp=rel_ts or fir_ts,
-                        case_id=target_case_id
-                    )
-                )
-
-        # 1. Person-to-Person relationships
-        if person_ents:
-            primary_person = person_ents[0]
-            # Link secondary suspects to primary suspect
-            for p_ent in person_ents[1:]:
-                add_rel(primary_person.id, p_ent.id, "CO_ACCUSED", weight=2.0)
-
-            # Check co-occurrences in text sentences/paragraphs for specific actions (e.g. money transfer)
-            for i in range(len(person_ents)):
-                for j in range(i + 1, len(person_ents)):
-                    p1, p2 = person_ents[i], person_ents[j]
-                    for s in re.split(r'[\n.]+', text):
-                        if p1.name.lower() in s.lower() and p2.name.lower() in s.lower():
-                            if any(kw in s.lower() for kw in ['transfer', 'sent', 'paid', 'hawala', 'amount', 'lakh', 'crore']):
-                                add_rel(p1.id, p2.id, "TRANSFERRED_MONEY_TO", weight=2.5)
-                            else:
-                                add_rel(p1.id, p2.id, "CO_ACCUSED", weight=1.5)
-
-        # Helper to resolve closest person entity for non-person entities
-        def resolve_target_person(item_name: str):
-            if not person_ents:
-                return None
-            item_lower = item_name.lower()
-            # Clause level
-            for c in re.split(r'[,;.\n]+', text):
-                if item_lower in c.lower():
-                    for p_ent in person_ents:
-                        if p_ent.name.lower() in c.lower():
-                            return p_ent
-            # Sentence level
-            for s in re.split(r'[\n.]+', text):
-                if item_lower in s.lower():
-                    for p_ent in person_ents:
-                        if p_ent.name.lower() in s.lower():
-                            return p_ent
-            # Paragraph level
-            for para in [p.strip() for p in text.split('\n\n') if p.strip()]:
-                if item_lower in para.lower():
-                    for p_ent in person_ents:
-                        if p_ent.name.lower() in para.lower():
-                            return p_ent
-            # Default to primary person
-            return person_ents[0]
-
-        # 2. Wire Phones to Persons (OWNS_PHONE)
-        for ph in phone_ents:
-            target = resolve_target_person(ph.name)
-            if target:
-                add_rel(target.id, ph.id, "OWNS_PHONE", weight=3.0)
-
-        # 3. Wire Vehicles to Persons (OPERATES_VEHICLE)
-        for v in veh_ents:
-            target = resolve_target_person(v.name)
-            if target:
-                add_rel(target.id, v.id, "OPERATES_VEHICLE", weight=3.0)
-
-        # 4. Wire Organizations to Persons (OPERATES)
-        for o in org_ents:
-            target = resolve_target_person(o.name)
-            if target:
-                add_rel(target.id, o.id, "OPERATES", weight=2.5)
-
-        # 5. Wire Locations to Persons (OPERATES_IN)
-        for l in loc_ents:
-            target = resolve_target_person(l.name)
-            if target:
-                add_rel(target.id, l.id, "OPERATES_IN", weight=2.0)
-
-        # Fallback: if no persons exist in FIR, connect entities sequentially
-        if not person_ents:
-            all_fallback = loc_ents + phone_ents + veh_ents + org_ents
-            for i in range(len(all_fallback) - 1):
-                add_rel(all_fallback[i].id, all_fallback[i+1].id, "MENTIONED_IN_FIR", weight=1.0)
-
-        rel_count = len(new_relationships)
-        if new_relationships:
-            db.add_all(new_relationships)
-            db.commit()
-            
-        compute_all_analytics(db, case_id=target_case_id)
+        result = process_fir_nlp_and_graph(db, text, target_case_id, clear_existing)
+        fir = result["fir"]
+        extracted = result["extracted"]
+        classification = result["classification"]
+        entities_created = result["entities_created"]
+        rel_count = result["relationships_created"]
 
         # Save to uploaded_files record
         uploaded_record = UploadedFile(
@@ -894,36 +893,22 @@ async def upload_auto(
             text = converted["clean_content"]
             if not text.strip():
                 return JSONResponse(status_code=400, content={"status": "error", "message": f"No readable text extracted from narrative document {file.filename}"})
-            if clear_existing:
-                db.query(crud.Relationship).filter(crud.Relationship.case_id == target_case_id).delete()
-                db.query(crud.Entity).filter(crud.Entity.case_id == target_case_id).delete()
-                db.query(crud.FIR).filter(crud.FIR.case_id == target_case_id).delete()
-                db.query(UploadedFile).filter(UploadedFile.case_id == target_case_id).delete()
-                db.query(crud.Anomaly).filter(crud.Anomaly.case_id == target_case_id).delete()
-                db.commit()
-            existing_ents = {e.name for e in db.query(crud.Entity).filter(crud.Entity.case_id == target_case_id).all()}
-            extracted = extract_entities_from_text(text, known_entities=existing_ents)
-            classification = classify_crime(text)
-            crud.create_fir(
-                db=db,
-                raw_text=text,
-                crime_type=classification.get('crime_type'),
-                crime_confidence=classification.get('confidence'),
-                extracted_entities=extracted,
-                case_id=target_case_id
-            )
-            for p in extracted.get("persons", []):
-                crud.get_or_create_entity(db, "PERSON", p["name"], properties={"aliases": p.get("aliases", [])}, case_id=target_case_id)
-            for l in extracted.get("locations", []):
-                crud.get_or_create_entity(db, "LOCATION", l["name"], case_id=target_case_id)
-            for ph in extracted.get("phones", []):
-                crud.get_or_create_entity(db, "PHONE", ph["name"], case_id=target_case_id)
-            for v in extracted.get("vehicles", []):
-                crud.get_or_create_entity(db, "VEHICLE", v["name"], case_id=target_case_id)
-            for o in extracted.get("organizations", []):
-                crud.get_or_create_entity(db, "ORGANIZATION", o["name"], case_id=target_case_id)
-            db.commit()
-            count = sum(len(v) for v in extracted.values())
+            fir_result = process_fir_nlp_and_graph(db, text, target_case_id, clear_existing)
+            count = fir_result["entities_created"]
+            extracted_obj = fir_result["extracted"]
+            classification_obj = fir_result["classification"]
+            rel_count = fir_result["relationships_created"]
+
+        if dtype == "fir":
+            parsed_preview_data = {
+                "entities": extracted_obj,
+                "crime_type": classification_obj.get("crime_type"),
+                "crime_confidence": classification_obj.get("confidence"),
+                "entities_count": count,
+                "relationships_count": rel_count
+            }
+        else:
+            parsed_preview_data = preview_records if preview_records else {"records_count": count}
 
         # Save to Evidence Vault (UploadedFile)
         try:
@@ -932,7 +917,7 @@ async def upload_auto(
                 file_type=dtype,
                 file_size=len(content),
                 raw_content=converted.get("clean_content", "")[:20000],
-                parsed_preview=preview_records if preview_records else {"records_count": count},
+                parsed_preview=parsed_preview_data,
                 case_id=target_case_id
             )
             db.add(vault_entry)

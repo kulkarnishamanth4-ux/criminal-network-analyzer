@@ -54,12 +54,31 @@ export default function UploadModal({ onClose, onSuccess, activeCase }) {
   const [batchTotal, setBatchTotal] = useState(0);
   const [batchCurrent, setBatchCurrent] = useState(0);
 
+  // Auto-sorted category filter for Evidence Vault
+  const [vaultCategory, setVaultCategory] = useState('all');
+
+  const categoryCounts = useMemo(() => {
+    const counts = { all: uploadedFiles.length, fir: 0, cdr: 0, financial: 0, vehicle: 0 };
+    uploadedFiles.forEach(f => {
+      const type = (f.file_type || '').toLowerCase();
+      if (counts[type] !== undefined) {
+        counts[type]++;
+      }
+    });
+    return counts;
+  }, [uploadedFiles]);
+
+  const filteredUploadedFiles = useMemo(() => {
+    if (vaultCategory === 'all') return uploadedFiles;
+    return uploadedFiles.filter(f => (f.file_type || '').toLowerCase() === vaultCategory);
+  }, [uploadedFiles, vaultCategory]);
+
   const tabs = [
-    { id: 'auto', label: 'Universal Ingestion (Auto-Detect Any Format)' },
-    { id: 'fir', label: 'FIR Docs (.txt, .pdf, .docx, .md)' },
-    { id: 'cdr', label: 'CDR Logs (.csv, .xlsx)' },
-    { id: 'financial', label: 'Financial (.csv, .xlsx)' },
-    { id: 'vehicle', label: 'Vehicle DB (.csv, .xlsx)' }
+    { id: 'auto', label: 'Universal Ingestion (Auto-Sort All)', count: null },
+    { id: 'fir', label: 'FIR Narratives', count: categoryCounts.fir },
+    { id: 'cdr', label: 'CDR Telecom', count: categoryCounts.cdr },
+    { id: 'financial', label: 'Financial Ledgers', count: categoryCounts.financial },
+    { id: 'vehicle', label: 'Vehicle DB', count: categoryCounts.vehicle }
   ];
 
   const loadUploadedFiles = useCallback(async () => {
@@ -179,31 +198,33 @@ export default function UploadModal({ onClose, onSuccess, activeCase }) {
 
     // Set summary result
     if (allFiles.length === 1) {
-      // Single file — use original simple feedback
+      // Single file feedback
       if (successCount === 1) {
-        setResult({ success: true, data: initialResults[0], notice: initialResults[0].notice, destinationCase: lastSuccessCase });
-        setTimeout(() => {
-          setResult(null);
-          setBatchResults([]);
-          if (onSuccess) onSuccess(lastSuccessCase);
-        }, 1500);
+        const detected = initialResults[0].detectedType || activeTab;
+        if (detected && detected !== 'auto') {
+          setVaultCategory(detected);
+        }
+        setResult({ 
+          success: true, 
+          data: initialResults[0], 
+          notice: initialResults[0].notice, 
+          destinationCase: lastSuccessCase,
+          detectedType: detected
+        });
+        if (onSuccess) onSuccess(lastSuccessCase, false);
       } else {
         setResult({ success: false, error: initialResults[0].error });
       }
     } else {
-      // Multi-file — show batch summary (auto-dismiss after longer delay)
+      // Multi-file batch summary
       setResult({
         success: errorCount === 0,
         batch: true,
         data: { message: `Batch complete: ${successCount} succeeded, ${errorCount} failed out of ${allFiles.length} files.` },
         destinationCase: lastSuccessCase
       });
-      if (successCount > 0) {
-        setTimeout(() => {
-          setResult(null);
-          setBatchResults([]);
-          if (onSuccess) onSuccess(lastSuccessCase);
-        }, 4000);
+      if (successCount > 0 && onSuccess) {
+        onSuccess(lastSuccessCase, false);
       }
     }
   }, [activeTab, targetCase, clearExisting, onSuccess, loadUploadedFiles]);
@@ -541,18 +562,31 @@ export default function UploadModal({ onClose, onSuccess, activeCase }) {
 
             {/* Section B: Upload Zone */}
             <div className="border border-[#1e3a5f]/80 rounded-xl bg-[#0a1526]/60 overflow-hidden">
-              <div className="flex border-b border-[#1e3a5f] bg-[#070e1a]">
+              <div className="flex border-b border-[#1e3a5f] bg-[#070e1a] overflow-x-auto">
                 {tabs.map(tab => (
                   <button
                     key={tab.id}
-                    className={`flex-1 py-3 text-xs font-semibold tracking-wider uppercase transition-all ${
+                    className={`flex-1 py-3 px-2 text-xs font-semibold tracking-wider uppercase transition-all whitespace-nowrap flex items-center justify-center gap-1.5 cursor-pointer ${
                       activeTab === tab.id 
                         ? 'text-[#64ffda] border-b-2 border-[#64ffda] bg-[#10223a]' 
                         : 'text-gray-400 hover:text-gray-200 hover:bg-[#0c1a2f]'
                     }`}
-                    onClick={() => { setActiveTab(tab.id); setResult(null); }}
+                    onClick={() => { 
+                      setActiveTab(tab.id); 
+                      setResult(null); 
+                      if (tab.id !== 'auto') {
+                        setVaultCategory(tab.id);
+                      } else {
+                        setVaultCategory('all');
+                      }
+                    }}
                   >
-                    {tab.label}
+                    <span>{tab.label}</span>
+                    {tab.count !== null && tab.count > 0 && (
+                      <span className="px-1.5 py-0.2 rounded-full text-[10px] font-mono bg-[#64ffda]/20 text-[#64ffda] border border-[#64ffda]/30 font-bold">
+                        {tab.count}
+                      </span>
+                    )}
                   </button>
                 ))}
               </div>
@@ -812,13 +846,45 @@ export default function UploadModal({ onClose, onSuccess, activeCase }) {
 
               {!isVaultCollapsed && (
                 <>
+                  {/* Category filter pills */}
+                  {uploadedFiles.length > 0 && (
+                    <div className="flex items-center gap-1.5 mb-2 flex-wrap">
+                      {[
+                        { key: 'all', label: 'All' },
+                        { key: 'fir', label: 'FIR' },
+                        { key: 'cdr', label: 'CDR' },
+                        { key: 'financial', label: 'Financial' },
+                        { key: 'vehicle', label: 'Vehicle' },
+                      ].map(cat => (
+                        <button
+                          key={cat.key}
+                          onClick={() => setVaultCategory(cat.key)}
+                          className={`px-2.5 py-1 text-[11px] font-mono font-semibold rounded-full border transition-all cursor-pointer ${
+                            vaultCategory === cat.key
+                              ? 'bg-[#64ffda]/20 text-[#64ffda] border-[#64ffda]/50'
+                              : 'bg-[#0c1a2f] text-gray-400 border-[#1e3a5f]/50 hover:border-[#64ffda]/30 hover:text-gray-200'
+                          }`}
+                        >
+                          {cat.label}
+                          {categoryCounts[cat.key] > 0 && (
+                            <span className="ml-1 text-[10px] opacity-70">({categoryCounts[cat.key]})</span>
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+
                   {uploadedFiles.length === 0 ? (
                     <div className="text-xs text-gray-500 text-center py-6 border border-dashed border-[#1e3a5f]/40 rounded-lg">
                       No files uploaded yet for this investigation. Use the upload area above or try a sample kit!
                     </div>
+                  ) : filteredUploadedFiles.length === 0 ? (
+                    <div className="text-xs text-gray-500 text-center py-4 border border-dashed border-[#1e3a5f]/40 rounded-lg">
+                      No <span className="text-[#64ffda] uppercase font-mono">{vaultCategory}</span> files in the vault.
+                    </div>
                   ) : (
                     <div className="space-y-2 max-h-52 overflow-y-auto pr-1.5 custom-scrollbar">
-                      {uploadedFiles.map((file) => (
+                      {filteredUploadedFiles.map((file) => (
                         <div 
                           key={file.id} 
                           onClick={() => handlePreview(file)}

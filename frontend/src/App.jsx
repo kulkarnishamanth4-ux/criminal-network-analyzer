@@ -325,8 +325,10 @@ function App() {
     setHighlightPath(null);
   };
 
-  const handleUploadSuccess = (targetCase) => {
-    setShowUploadModal(false);
+  const handleUploadSuccess = (targetCase, shouldClose = false) => {
+    if (shouldClose) {
+      setShowUploadModal(false);
+    }
     const destination = targetCase || 'custom_investigation';
     showToast(`Data ingested successfully into ${destination === 'custom_investigation' ? 'New Investigation' : destination}.`, 'success');
     if (destination !== activeCase) {

@@ -98,37 +98,61 @@ def convert_markdown_to_text(content: bytes) -> str:
 
 def detect_file_nature(filename: str, content: bytes, text_preview: str, tables_data: List[Dict[str, Any]]) -> str:
     """
-    Classifies the content into one of:
-    - 'cdr' (Call Detail Records)
-    - 'financial' (Banking / Hawala Ledger)
-    - 'vehicle' (ANPR / Sighting Logs)
-    - 'fir' (Incident narrative report)
+    Classifies incoming evidence content into one of:
+    - 'fir' (First Information Report / Narrative Police Intel)
+    - 'cdr' (Call Detail Records / Telecom Logs)
+    - 'financial' (Banking / Hawala Transaction Ledgers)
+    - 'vehicle' (ANPR / Vehicle Sighting Logs)
     """
     fn_lower = filename.lower()
     t_lower = text_preview.lower()
     
-    # Check headers in extracted tables or CSV lines
+    # 1. Strong FIR Content Signatures (Narrative Police Reports)
+    fir_text_keywords = [
+        "first information report", "fir no", "police station", "ps ",
+        "under section", "u/s", "indian penal code", "ipc", "cr.p.c", "crpc",
+        "complainant", "accused details", "details of the offence",
+        "economic offences", "sub-inspector", "inspector", "station house officer"
+    ]
+    if any(kw in t_lower for kw in fir_text_keywords):
+        return "fir"
+
+    # 2. Strong Filename Clues for FIR
+    if any(k in fn_lower for k in ["fir", "complaint", "police_report", "crime_report", "incident_report"]):
+        return "fir"
+
+    # 3. Check headers in extracted tables (from docx/pdf/excel)
     if tables_data:
         keys = set(k.lower() for k in tables_data[0].keys())
-        if any(k in keys for k in ["caller", "receiver", "calling_number", "dialed_number", "duration"]):
+        if any(k in keys for k in ["caller", "receiver", "calling_number", "dialed_number", "duration", "cell_tower", "call_type"]):
             return "cdr"
-        if any(k in keys for k in ["amount", "sender_account", "receiver_account", "transaction_id", "inflow", "outflow"]):
+        if any(k in keys for k in ["amount", "sender_account", "receiver_account", "transaction_id", "inflow", "outflow", "utr", "bank"]):
             return "financial"
-        if any(k in keys for k in ["plate_number", "vehicle", "camera_id", "toll_booth"]):
+        if any(k in keys for k in ["plate_number", "license_plate", "vehicle", "camera_id", "toll_booth", "speed"]):
             return "vehicle"
 
-    # Inspect CSV header line if text has comma separation
-    first_line = t_lower.split("\n")[0] if "\n" in t_lower else t_lower
-    if "," in first_line:
-        cols = [c.strip() for c in first_line.split(",")]
-        if any(c in cols for c in ["caller", "receiver", "calling", "dialed"]):
-            return "cdr"
-        if any(c in cols for c in ["amount", "sender", "receiver", "account", "transaction"]):
-            return "financial"
-        if any(c in cols for c in ["plate", "vehicle", "camera", "license"]):
-            return "vehicle"
+    # 4. Inspect CSV / Delimited header line
+    lines = [line.strip() for line in t_lower.split("\n") if line.strip()]
+    if lines:
+        header_candidate = lines[0]
+        # Check first line or second line if first is a title
+        for cand in [lines[0], lines[1] if len(lines) > 1 else ""]:
+            if not cand or "," not in cand:
+                continue
+            cols = [c.strip().strip('"').strip("'") for c in cand.split(",")]
+            cols_lower = [c.lower() for c in cols]
+            
+            # CDR Headers
+            if any(k in cols_lower for k in ["caller", "receiver", "calling_number", "dialed_number", "duration", "duration_seconds", "cell_tower", "call_type"]):
+                return "cdr"
+            # Financial Headers
+            if any(k in cols_lower for k in ["amount", "sender_account", "receiver_account", "transaction_id", "utr", "sender_name", "receiver_name", "debit", "credit", "bank"]):
+                return "financial"
+            # Vehicle Headers
+            if any(k in cols_lower for k in ["plate_number", "plate", "license_plate", "camera_id", "toll_booth", "location", "vehicle"]):
+                return "vehicle"
 
-    # Filename clues
+    # 5. Filename clues for tabular logs
     if any(k in fn_lower for k in ["cdr", "call", "telecom"]):
         return "cdr"
     if any(k in fn_lower for k in ["bank", "financial", "transaction", "hawala", "ledger"]):
@@ -136,7 +160,7 @@ def detect_file_nature(filename: str, content: bytes, text_preview: str, tables_
     if any(k in fn_lower for k in ["vehicle", "anpr", "toll", "traffic", "plate"]):
         return "vehicle"
 
-    # Default to FIR / narrative report
+    # 6. Default to FIR / narrative report for unstructured documents
     return "fir"
 
 
