@@ -3,16 +3,32 @@ from datetime import datetime, timedelta
 from backend.database.models import Entity, Relationship
 from collections import defaultdict
 
-def detect_ghost_rendezvous(db: Session, max_time_diff_hours: int = 48) -> dict:
+def detect_ghost_rendezvous(db: Session, max_time_diff_hours: int = 48, case_id: str = "dawood") -> dict:
     """
     Spatiotemporal Ghost-Rendezvous Engine (4D Trajectory Co-Location Intersection).
     Uncovers covert physical rendezvous between suspects who deliberately avoid
     direct phone calls or direct bank transfers with each other.
     Uses ACTUAL timestamps to verify they were at the same location within `max_time_diff_hours`.
     """
-    persons = db.query(Entity).filter(Entity.entity_type == "PERSON").all()
+    ent_filter = (Entity.case_id == case_id) | ((Entity.case_id == None) & (case_id == "dawood"))
+    rel_filter = (Relationship.case_id == case_id) | ((Relationship.case_id == None) & (case_id == "dawood"))
+
+    persons = db.query(Entity).filter(Entity.entity_type == "PERSON").filter(ent_filter).all()
     if len(persons) < 2:
-        return {"status": "empty", "rendezvous_events": [], "count": 0}
+        return {
+            "status": "empty", 
+            "case_id": case_id,
+            "rendezvous_events": [], 
+            "count": 0,
+            "summary": f"Insufficient person entities ({len(persons)}) in case '{case_id}' to cross-correlate physical rendezvous.",
+            "calculation_proof": {
+                "formula": "Suspicion Score = 20 (base) + 40 (Zero-Direct Telecom/Banking) + 40 * (1 - Δt / max_Δt)",
+                "temporal_window_hours": max_time_diff_hours,
+                "persons_evaluated": len(persons),
+                "co_locations_found": 0,
+                "proof": "Requires at least 2 distinct person entities with spatiotemporal telemetry records."
+            }
+        }
         
     person_ids = {p.id: p.name for p in persons}
     
@@ -23,14 +39,14 @@ def detect_ghost_rendezvous(db: Session, max_time_diff_hours: int = 48) -> dict:
     person_phones = defaultdict(list)
     person_accounts = defaultdict(list)
     
-    for rel in db.query(Relationship).all():
+    for rel in db.query(Relationship).filter(rel_filter).all():
         if rel.rel_type == "OWNS_PHONE":
             person_phones[rel.source_id].append(rel.target_id)
         elif rel.rel_type == "OWNS_ACCOUNT":
             person_accounts[rel.source_id].append(rel.target_id)
             
     # Resolve Person to Person direct ties via Phones and Accounts
-    for rel in db.query(Relationship).all():
+    for rel in db.query(Relationship).filter(rel_filter).all():
         if rel.rel_type == "CALLED":
             # Phone to Phone
             p1 = next((p for p, phones in person_phones.items() if rel.source_id in phones), None)
@@ -48,10 +64,10 @@ def detect_ghost_rendezvous(db: Session, max_time_diff_hours: int = 48) -> dict:
     person_locations = defaultdict(list)
     
     # Vehicle sightings
-    owns_vehicle_rels = db.query(Relationship).filter(Relationship.rel_type == "OWNS_VEHICLE").all()
+    owns_vehicle_rels = db.query(Relationship).filter(rel_filter).filter(Relationship.rel_type == "OWNS_VEHICLE").all()
     vehicle_owners = {r.target_id: r.source_id for r in owns_vehicle_rels}
     
-    for sr in db.query(Relationship).filter(Relationship.rel_type == "SPOTTED_AT").all():
+    for sr in db.query(Relationship).filter(rel_filter).filter(Relationship.rel_type == "SPOTTED_AT").all():
         loc = db.query(Entity).filter(Entity.id == sr.target_id).first()
         if not loc: continue
         
@@ -64,7 +80,7 @@ def detect_ghost_rendezvous(db: Session, max_time_diff_hours: int = 48) -> dict:
         elif owner_id:
             person_locations[owner_id].append({"loc": loc.name, "ts": ts, "src": f"Vehicle ANPR ({sr.source_id})"})
             
-    for fr in db.query(Relationship).filter(Relationship.rel_type == "MENTIONED_IN_FIR").all():
+    for fr in db.query(Relationship).filter(rel_filter).filter(Relationship.rel_type == "MENTIONED_IN_FIR").all():
         s = db.query(Entity).filter(Entity.id == fr.source_id).first()
         t = db.query(Entity).filter(Entity.id == fr.target_id).first()
         ts = fr.timestamp or datetime.utcnow()
@@ -115,6 +131,17 @@ def detect_ghost_rendezvous(db: Session, max_time_diff_hours: int = 48) -> dict:
                                     "Zero direct phone/bank records found (Covert operational radio-silence)." if not has_direct_telecom else "Direct telecom connection exists (Standard meetup)."
                                 ],
                                 "suspicion_score": suspicion_score,
+                                "calculation_proof": {
+                                    "formula": "Suspicion Score = 20 (base) + Telecom Hygiene (40 if no direct contact) + Time Proximity (40 * (1 - Δt / max_Δt))",
+                                    "base_score": 20,
+                                    "telecom_hygiene_bonus": telecom_hygiene_bonus,
+                                    "has_direct_telecom": has_direct_telecom,
+                                    "time_delta_hours": round(time_diff_hours, 2),
+                                    "max_window_hours": max_time_diff_hours,
+                                    "proximity_bonus": round(time_proximity_bonus, 1),
+                                    "total_score": suspicion_score,
+                                    "verifiable_sources": [t1["src"], t2["src"]]
+                                },
                                 "tactical_assessment": "CRITICAL: Covert physical meetup highly probable." if suspicion_score > 75 else "MODERATE: Coincidental overlap possible."
                             })
 
@@ -129,9 +156,33 @@ def detect_ghost_rendezvous(db: Session, max_time_diff_hours: int = 48) -> dict:
             seen_pairs.add(pair)
             unique_events.append(ev)
     
+    if len(unique_events) == 0:
+        return {
+            "status": "empty",
+            "case_id": case_id,
+            "count": 0,
+            "rendezvous_events": [],
+            "summary": f"No covert physical co-locations detected for case '{case_id}' within {max_time_diff_hours} hours.",
+            "calculation_proof": {
+                "formula": "Suspicion Score = 20 (base) + 40 (Zero-Direct Telecom/Banking) + 40 * (1 - Δt / max_Δt)",
+                "temporal_window_hours": max_time_diff_hours,
+                "persons_evaluated": len(persons),
+                "co_locations_found": 0,
+                "proof": f"Cross-referenced telemetry for {len(persons)} suspects over {max_time_diff_hours}h. Zero co-locations detected within time threshold."
+            }
+        }
+
     return {
         "status": "success",
+        "case_id": case_id,
         "count": len(unique_events),
         "rendezvous_events": unique_events[:10],
-        "summary": f"Detected {len(unique_events)} covert physical co-location events with strict spatiotemporal overlap (<{max_time_diff_hours}hrs)."
+        "summary": f"Detected {len(unique_events)} covert physical co-location events with strict spatiotemporal overlap (<{max_time_diff_hours}hrs).",
+        "calculation_proof": {
+            "formula": "Suspicion Score = 20 (base) + 40 (Zero-Direct Telecom/Banking) + 40 * (1 - Δt / max_Δt)",
+            "temporal_window_hours": max_time_diff_hours,
+            "persons_evaluated": len(persons),
+            "co_locations_found": len(unique_events),
+            "top_suspicion_score": unique_events[0]["suspicion_score"] if unique_events else 0
+        }
     }

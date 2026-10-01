@@ -16,10 +16,23 @@ def compute_decapitation_strategy(db: Session, max_targets: int = 3, case_id: st
     if len(undirected.nodes) == 0:
         return {
             "status": "empty",
-            "message": "No graph data available to simulate decapitation",
+            "case_id": case_id,
+            "message": f"No network entities found for case '{case_id}' to simulate decapitation strike.",
             "baseline_lcc_size": 0,
+            "initial_lcc_size": 0,
+            "final_lcc_size": 0,
+            "syndicate_disruption_efficiency_pct": 0,
+            "targets": [],
             "recommended_targets": [],
-            "simulation_results": []
+            "simulation_results": [],
+            "calculation_proof": {
+                "formula": "Fragmentation % = (1 - (LCC_post / LCC_initial)) * 100",
+                "initial_lcc_size": 0,
+                "final_lcc_size": 0,
+                "algebraic_proof": "Network has 0 nodes (LCC = 0). Percolation requires active graph topology.",
+                "spectral_method": "Fiedler Vector & Greedy Articulation Cut-Set",
+                "graph_metrics_used": ["Betweenness Centrality", "Normalized Degree", "Articulation Multipliers"]
+            }
         }
         
     initial_nodes_count = len(undirected.nodes)
@@ -114,11 +127,25 @@ def compute_decapitation_strategy(db: Session, max_targets: int = 3, case_id: st
     
     return {
         "status": "success",
+        "case_id": case_id,
         "initial_entities": initial_nodes_count,
         "initial_lcc_size": initial_lcc_size,
         "final_lcc_size": final_lcc,
         "total_isolated_fragments": len(final_comps),
         "syndicate_disruption_efficiency_pct": final_disruption,
         "targets": targets,
-        "summary": f"Executing {len(targets)} targeted warrants will reduce the primary criminal syndicate from {initial_lcc_size} interconnected nodes to {final_lcc} nodes, achieving {final_disruption}% network collapse across {len(final_comps)} splintered clusters."
+        "summary": f"Executing {len(targets)} targeted warrants will reduce the primary criminal syndicate from {initial_lcc_size} interconnected nodes to {final_lcc} nodes, achieving {final_disruption}% network collapse across {len(final_comps)} splintered clusters.",
+        "calculation_proof": {
+            "formula": "Syndicate Disruption % = (1 - (LCC_final / LCC_initial)) * 100",
+            "initial_lcc_size": initial_lcc_size,
+            "final_lcc_size": final_lcc,
+            "algebraic_proof": f"1 - ({final_lcc} / {max(1, initial_lcc_size)}) = {final_disruption}%",
+            "spectral_method": "Greedy Percolation across Articulation Points & Betweenness Centrality",
+            "graph_metrics_used": [
+                "Betweenness Centrality (0.6x weight)",
+                "Normalized Node Degree (0.4x weight)",
+                "Tarjan's Articulation Point Multiplier (2.0x weight)",
+                "Entity Type Prioritization (Person: 1.5x, Org/Account: 1.2x)"
+            ]
+        }
     }
