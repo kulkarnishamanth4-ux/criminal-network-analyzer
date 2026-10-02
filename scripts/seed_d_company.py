@@ -145,6 +145,11 @@ def seed_dawood_case():
     crud.create_relationship(db, salem_car.id, taj_hotel.id, "SPOTTED_AT", 1.0, {"source": "ALPR Cam Bandra", "confidence": "99%"}, meet_time)
     crud.create_relationship(db, shooter_bike.id, taj_hotel.id, "SPOTTED_AT", 1.0, {"source": "CCTV Taj Parking", "confidence": "94%"}, meet_time + timedelta(minutes=10))
 
+    # Event 2: Chhota Shakeel and Tiger Memon clandestine meeting at Dongri Safehouse
+    meet_time_2 = now - timedelta(days=1, hours=22, minutes=15) # 10:15 PM
+    crud.create_relationship(db, shakeel.id, safehouse.id, "SPOTTED_AT", 1.0, {"source": "Surveillance Camera Dongri", "confidence": "96%"}, meet_time_2)
+    crud.create_relationship(db, memon.id, safehouse.id, "SPOTTED_AT", 1.0, {"source": "Cell Azimuth Triangulation", "confidence": "92%"}, meet_time_2 + timedelta(minutes=35))
+
     # ---------------------------------------------------------
     # 6. FIR RECORDS (NLP Targets)
     # ---------------------------------------------------------

@@ -69,31 +69,46 @@ def generate_case_data(db: Session, case_id: str, case_name: str, location_base:
     # Connect foot soldiers
     for i, fs in enumerate(foot_soldiers):
         leader = lt1 if i < 5 else lt2
-        create_relationship(db, leader.id, fs.id, "DIRECTS", 0.8, {"case_id": case_id})
+        create_relationship(db, leader.id, fs.id, "DIRECTS", 0.8, {"case_id": case_id}, now - timedelta(days=20 + i))
         create_relationship(db, fs.id, phones[3 + (i % 7)].id, "OWNS_PHONE", 0.9, {"case_id": case_id})
-        create_relationship(db, fs.id, locations[i % 5].id, "SPOTTED_AT", 0.9, {"case_id": case_id})
+        spot_time = now - timedelta(days=1, hours=i * 2 + 1, minutes=15)
+        create_relationship(db, fs.id, locations[i % 5].id, "SPOTTED_AT", 0.9, {"case_id": case_id, "camera": f"CAM-SECTOR-{i+1}"}, spot_time)
         if i % 3 == 0:
             create_relationship(db, fs.id, vehicles[2 + (i % 2)].id, "OWNS_VEHICLE", 1.0, {"case_id": case_id})
         if i % 2 == 0:
             create_relationship(db, fs.id, accounts[3 + (i % 2)].id, "OWNS_ACCOUNT", 1.0, {"case_id": case_id})
             
+    # Covert Spatiotemporal Rendezvous Setup (Zero Direct Contact + Co-Location within 2 hours)
+    # Event 1: Lieutenant 1 and Lieutenant 2 secret rendezvous at Safehouse Alpha
+    rendezvous_t1 = now - timedelta(hours=14, minutes=30)
+    create_relationship(db, lt1.id, locations[0].id, "SPOTTED_AT", 1.0, {"case_id": case_id, "source": "ANPR Checkpoint", "evidence": "Physical Vehicle Sighting"}, rendezvous_t1)
+    create_relationship(db, lt2.id, locations[0].id, "SPOTTED_AT", 1.0, {"case_id": case_id, "source": "Perimeter CCTV", "evidence": "Facial Recognition Match"}, rendezvous_t1 + timedelta(minutes=45))
+
+    # Event 2: Boss Vehicle and Operative 0 rendezvous at Warehouse
+    rendezvous_t2 = now - timedelta(hours=28, minutes=10)
+    create_relationship(db, vehicles[0].id, locations[1].id, "SPOTTED_AT", 1.0, {"case_id": case_id, "source": "Highway FASTag Sighting"}, rendezvous_t2)
+    create_relationship(db, foot_soldiers[0].id, locations[1].id, "SPOTTED_AT", 1.0, {"case_id": case_id, "source": "Toll Booth Sensor"}, rendezvous_t2 + timedelta(minutes=30))
+
     # Cross connections
     create_relationship(db, foot_soldiers[0].id, foot_soldiers[1].id, "ASSOCIATED_WITH", 0.7, {"case_id": case_id})
     create_relationship(db, foot_soldiers[5].id, foot_soldiers[6].id, "ASSOCIATED_WITH", 0.7, {"case_id": case_id})
     
     # Calls & Finance
-    for _ in range(15):
+    for idx in range(15):
         p1, p2 = random.sample(phones, 2)
-        create_relationship(db, p1.id, p2.id, "CALLED", random.uniform(0.3, 1.0), {"case_id": case_id, "duration": random.randint(10, 600)})
+        call_time = now - timedelta(days=random.randint(1, 10), hours=random.randint(0, 23))
+        create_relationship(db, p1.id, p2.id, "CALLED", random.uniform(0.3, 1.0), {"case_id": case_id, "duration": random.randint(10, 600)}, call_time)
         
-    for _ in range(10):
+    for idx in range(10):
         a1, a2 = random.sample(accounts, 2)
-        create_relationship(db, a1.id, a2.id, "TRANSFERRED_MONEY_TO", random.uniform(0.5, 1.0), {"case_id": case_id, "amount": random.randint(10000, 5000000)})
+        tx_time = now - timedelta(days=random.randint(1, 15), hours=random.randint(0, 23))
+        create_relationship(db, a1.id, a2.id, "TRANSFERRED_MONEY_TO", random.uniform(0.5, 1.0), {"case_id": case_id, "amount": random.randint(10000, 5000000)}, tx_time)
         
-    for _ in range(8):
+    for idx in range(8):
         v = random.choice(vehicles)
         l = random.choice(locations)
-        create_relationship(db, v.id, l.id, "SPOTTED_AT", 1.0, {"case_id": case_id})
+        v_spot_time = now - timedelta(days=random.randint(1, 5), hours=random.randint(1, 20))
+        create_relationship(db, v.id, l.id, "SPOTTED_AT", 1.0, {"case_id": case_id}, v_spot_time)
 
     # Create Anomalies
     anomaly_types = [

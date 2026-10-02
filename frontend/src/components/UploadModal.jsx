@@ -522,16 +522,76 @@ export default function UploadModal({ onClose, onSuccess, activeCase }) {
                 </h3>
                 <span className="text-[10px] text-[#8892b0] font-mono">Ready to upload</span>
               </div>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-2.5">
+                <a 
+                  href="/samples/sample_fir_report.pdf" 
+                  download 
+                  className="flex items-center gap-2 bg-[#0c1a2f] border border-[#1e3a5f] hover:border-[#ff6b6b] text-xs p-2.5 rounded-lg transition-all hover:bg-[#12233f] text-[#c8d6e5] group"
+                >
+                  <FiFileText className="text-rose-400 group-hover:scale-110 transition-transform" />
+                  <div className="truncate">
+                    <div className="font-semibold text-white truncate">FIR Report (PDF)</div>
+                    <div className="text-[10px] text-rose-300 font-mono">.pdf (Universal)</div>
+                  </div>
+                </a>
+
+                <a 
+                  href="/samples/sample_fir_report.docx" 
+                  download 
+                  className="flex items-center gap-2 bg-[#0c1a2f] border border-[#1e3a5f] hover:border-[#45b7d1] text-xs p-2.5 rounded-lg transition-all hover:bg-[#12233f] text-[#c8d6e5] group"
+                >
+                  <FiFileText className="text-blue-400 group-hover:scale-110 transition-transform" />
+                  <div className="truncate">
+                    <div className="font-semibold text-white truncate">FIR Report (Word)</div>
+                    <div className="text-[10px] text-blue-300 font-mono">.docx (Word Doc)</div>
+                  </div>
+                </a>
+
+                <a 
+                  href="/samples/sample_cdr_records.xlsx" 
+                  download 
+                  className="flex items-center gap-2 bg-[#0c1a2f] border border-[#1e3a5f] hover:border-[#4ecdc4] text-xs p-2.5 rounded-lg transition-all hover:bg-[#12233f] text-[#c8d6e5] group"
+                >
+                  <FiDatabase className="text-emerald-400 group-hover:scale-110 transition-transform" />
+                  <div className="truncate">
+                    <div className="font-semibold text-white truncate">CDR Logs (Excel)</div>
+                    <div className="text-[10px] text-emerald-300 font-mono">.xlsx (Workbook)</div>
+                  </div>
+                </a>
+
+                <a 
+                  href="/samples/sample_financial_ledger.xlsx" 
+                  download 
+                  className="flex items-center gap-2 bg-[#0c1a2f] border border-[#1e3a5f] hover:border-[#f9ca24] text-xs p-2.5 rounded-lg transition-all hover:bg-[#12233f] text-[#c8d6e5] group"
+                >
+                  <FiDatabase className="text-amber-400 group-hover:scale-110 transition-transform" />
+                  <div className="truncate">
+                    <div className="font-semibold text-white truncate">Ledger (Excel)</div>
+                    <div className="text-[10px] text-amber-300 font-mono">.xlsx (Accounts)</div>
+                  </div>
+                </a>
+
+                <a 
+                  href="/samples/sample_vehicle_sightings.xlsx" 
+                  download 
+                  className="flex items-center gap-2 bg-[#0c1a2f] border border-[#1e3a5f] hover:border-[#96c93d] text-xs p-2.5 rounded-lg transition-all hover:bg-[#12233f] text-[#c8d6e5] group"
+                >
+                  <FiDatabase className="text-lime-400 group-hover:scale-110 transition-transform" />
+                  <div className="truncate">
+                    <div className="font-semibold text-white truncate">ANPR (Excel)</div>
+                    <div className="text-[10px] text-lime-300 font-mono">.xlsx (Cameras)</div>
+                  </div>
+                </a>
+
                 <a 
                   href="/samples/sample_fir_report.txt" 
                   download 
                   className="flex items-center gap-2 bg-[#0c1a2f] border border-[#1e3a5f] hover:border-[#64ffda] text-xs p-2.5 rounded-lg transition-all hover:bg-[#12233f] text-[#c8d6e5] group"
                 >
-                  <FiFileText className="text-red-400 group-hover:scale-110 transition-transform" />
+                  <FiFileText className="text-teal-400 group-hover:scale-110 transition-transform" />
                   <div className="truncate">
-                    <div className="font-semibold text-white truncate">FIR Report</div>
-                    <div className="text-[10px] text-gray-400 font-mono">.txt (NLP Parsing)</div>
+                    <div className="font-semibold text-white truncate">FIR Report (Text)</div>
+                    <div className="text-[10px] text-gray-400 font-mono">.txt (Raw NLP)</div>
                   </div>
                 </a>
 
@@ -540,9 +600,9 @@ export default function UploadModal({ onClose, onSuccess, activeCase }) {
                   download 
                   className="flex items-center gap-2 bg-[#0c1a2f] border border-[#1e3a5f] hover:border-[#64ffda] text-xs p-2.5 rounded-lg transition-all hover:bg-[#12233f] text-[#c8d6e5] group"
                 >
-                  <FiDatabase className="text-teal-400 group-hover:scale-110 transition-transform" />
+                  <FiDatabase className="text-cyan-400 group-hover:scale-110 transition-transform" />
                   <div className="truncate">
-                    <div className="font-semibold text-white truncate">CDR Logs</div>
+                    <div className="font-semibold text-white truncate">CDR Logs (CSV)</div>
                     <div className="text-[10px] text-gray-400 font-mono">.csv (Call Chains)</div>
                   </div>
                 </a>
@@ -552,9 +612,9 @@ export default function UploadModal({ onClose, onSuccess, activeCase }) {
                   download 
                   className="flex items-center gap-2 bg-[#0c1a2f] border border-[#1e3a5f] hover:border-[#64ffda] text-xs p-2.5 rounded-lg transition-all hover:bg-[#12233f] text-[#c8d6e5] group"
                 >
-                  <FiDatabase className="text-amber-400 group-hover:scale-110 transition-transform" />
+                  <FiDatabase className="text-yellow-400 group-hover:scale-110 transition-transform" />
                   <div className="truncate">
-                    <div className="font-semibold text-white truncate">Financial Ledger</div>
+                    <div className="font-semibold text-white truncate">Ledger (CSV)</div>
                     <div className="text-[10px] text-gray-400 font-mono">.csv (Money Flows)</div>
                   </div>
                 </a>
@@ -566,8 +626,8 @@ export default function UploadModal({ onClose, onSuccess, activeCase }) {
                 >
                   <FiDatabase className="text-green-400 group-hover:scale-110 transition-transform" />
                   <div className="truncate">
-                    <div className="font-semibold text-white truncate">Vehicle Sightings</div>
-                    <div className="text-[10px] text-gray-400 font-mono">.csv (ANPR GPS)</div>
+                    <div className="font-semibold text-white truncate">ANPR (CSV)</div>
+                    <div className="text-[10px] text-gray-400 font-mono">.csv (GPS Sightings)</div>
                   </div>
                 </a>
               </div>

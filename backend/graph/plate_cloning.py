@@ -191,6 +191,232 @@ CASE_CLONED_PLATE_DATABASE = {
             ]
         }
     ],
+    "ht_assam": [
+        {
+            "plate_number": "AS-01-BK-4091",
+            "sighting_1": {
+                "toll_plaza": "Saraighat Bridge Highway Toll Plaza (Guwahati)",
+                "timestamp": "2026-08-15 10:10:00 IST",
+                "optical_vehicle_make": "Force Traveller Minibus (Yellow/White)",
+                "camera_id": "AS-SARAI-CAM-01",
+                "fastag_rfid": "FASTAG-AS01-TRAV-AUTH",
+                "chassis_vin": "VIN-AS-FORCE-4091"
+            },
+            "sighting_2": {
+                "toll_plaza": "Dhubri Riverine Highway Checkpost",
+                "timestamp": "2026-08-15 10:32:00 IST",
+                "optical_vehicle_make": "Tata Sumo (Silver)",
+                "camera_id": "AS-DHUB-CAM-04",
+                "fastag_rfid": "COUNTERFEIT-TRAFFICK-CLONE",
+                "chassis_vin": "VIN-MISMATCH-SUMO"
+            },
+            "highway_distance_km": 280.0,
+            "elapsed_time_minutes": 22.0,
+            "required_kinematic_velocity_kmh": 763.6,
+            "choke_points": [
+                {
+                    "toll_plaza": "Goalpara NH-17 Interceptor Point",
+                    "action": "Intercept Human Trafficking Transit Minibus",
+                    "eta": "15 MINS",
+                    "status": "DISPATCH_READY"
+                },
+                {
+                    "toll_plaza": "Bongaigaon Junction Barricade",
+                    "action": "Seize Decoy Mule Vehicle",
+                    "eta": "19 MINS",
+                    "status": "DISPATCH_READY"
+                }
+            ]
+        }
+    ],
+    "arms_chhattisgarh": [
+        {
+            "plate_number": "CG-04-MZ-3310",
+            "sighting_1": {
+                "toll_plaza": "Raipur Mandir Hasaud Toll Plaza",
+                "timestamp": "2026-08-15 08:15:00 IST",
+                "optical_vehicle_make": "Tata Heavy 16-Wheel Ore Truck (Rust Red)",
+                "camera_id": "CG-RPR-ANPR-02",
+                "fastag_rfid": "FASTAG-CG04-TATA-AUTH",
+                "chassis_vin": "VIN-CG-TATA-3310"
+            },
+            "sighting_2": {
+                "toll_plaza": "Jagdalpur Bastar Transit Checkpost",
+                "timestamp": "2026-08-15 08:40:00 IST",
+                "optical_vehicle_make": "Mahindra Bolero Pickup (White)",
+                "camera_id": "CG-JGD-CAM-07",
+                "fastag_rfid": "COUNTERFEIT-ARMS-CLONE",
+                "chassis_vin": "VIN-MISMATCH-BOLERO"
+            },
+            "highway_distance_km": 298.0,
+            "elapsed_time_minutes": 25.0,
+            "required_kinematic_velocity_kmh": 715.2,
+            "choke_points": [
+                {
+                    "toll_plaza": "Kanker Valley Choke-Point (NH-30)",
+                    "action": "Intercept Ammunition Cache Ore Truck",
+                    "eta": "16 MINS",
+                    "status": "DISPATCH_READY"
+                },
+                {
+                    "toll_plaza": "Dhamtari Highway Flying Squad",
+                    "action": "Seize Cloned Decoy Arms Mule",
+                    "eta": "12 MINS",
+                    "status": "DISPATCH_READY"
+                }
+            ]
+        }
+    ],
+    "wildlife_kerala": [
+        {
+            "plate_number": "KL-07-BW-8819",
+            "sighting_1": {
+                "toll_plaza": "Wayanad Lakkidi Ghat Viewpoint Checkpost",
+                "timestamp": "2026-08-15 02:15:00 IST",
+                "optical_vehicle_make": "Eicher Refrigerated Spice Van (White)",
+                "camera_id": "KL-WYND-CAM-03",
+                "fastag_rfid": "FASTAG-KL07-EICH-AUTH",
+                "chassis_vin": "VIN-KL-EICHER-8819"
+            },
+            "sighting_2": {
+                "toll_plaza": "Kochi International Container Port Gate Toll",
+                "timestamp": "2026-08-15 02:35:00 IST",
+                "optical_vehicle_make": "Toyota Fortuner (Black)",
+                "camera_id": "KL-KOC-PORT-01",
+                "fastag_rfid": "COUNTERFEIT-IVORY-CLONE",
+                "chassis_vin": "VIN-MISMATCH-FORTUNER"
+            },
+            "highway_distance_km": 245.0,
+            "elapsed_time_minutes": 20.0,
+            "required_kinematic_velocity_kmh": 735.0,
+            "choke_points": [
+                {
+                    "toll_plaza": "Thrissur Bypass Interceptor Squad",
+                    "action": "Intercept Poached Ivory Contraband Van",
+                    "eta": "14 MINS",
+                    "status": "DISPATCH_READY"
+                },
+                {
+                    "toll_plaza": "Edappally Toll Interception Gate",
+                    "action": "Seize Decoy Smuggling Escort",
+                    "eta": "09 MINS",
+                    "status": "DISPATCH_READY"
+                }
+            ]
+        }
+    ],
+    "extortion_up": [
+        {
+            "plate_number": "UP-53-DX-9999",
+            "sighting_1": {
+                "toll_plaza": "Gorakhpur AIIMS Expressway Toll Plaza",
+                "timestamp": "2026-08-15 12:20:00 IST",
+                "optical_vehicle_make": "Toyota Fortuner (White Convoy)",
+                "camera_id": "UP-GKP-CAM-05",
+                "fastag_rfid": "FASTAG-UP53-FORT-AUTH",
+                "chassis_vin": "VIN-UP-FORT-9999"
+            },
+            "sighting_2": {
+                "toll_plaza": "Lucknow Shaheed Path Expressway Toll",
+                "timestamp": "2026-08-15 12:44:00 IST",
+                "optical_vehicle_make": "Mahindra Scorpio-N (Black)",
+                "camera_id": "UP-LKO-PATH-12",
+                "fastag_rfid": "COUNTERFEIT-BAHUBALI-CLONE",
+                "chassis_vin": "VIN-MISMATCH-SCORPIO"
+            },
+            "highway_distance_km": 270.0,
+            "elapsed_time_minutes": 24.0,
+            "required_kinematic_velocity_kmh": 675.0,
+            "choke_points": [
+                {
+                    "toll_plaza": "Ayodhya Bypass Interceptor Point",
+                    "action": "Intercept Extortion Shooter Convoy",
+                    "eta": "13 MINS",
+                    "status": "DISPATCH_READY"
+                },
+                {
+                    "toll_plaza": "Barabanki Highway Police Flying Post",
+                    "action": "Seize Cloned Decoy Bahubali SUV",
+                    "eta": "10 MINS",
+                    "status": "DISPATCH_READY"
+                }
+            ]
+        }
+    ],
+    "custom_investigation": [
+        {
+            "plate_number": "DL-05-CQ-4521",
+            "sighting_1": {
+                "toll_plaza": "DND Flyway Toll Plaza (Delhi-Noida)",
+                "timestamp": "2026-08-15 09:15:00 IST",
+                "optical_vehicle_make": "White Toyota Fortuner (SUV)",
+                "camera_id": "DND-ANPR-02",
+                "fastag_rfid": "FASTAG-DL05-FORT-AUTH",
+                "chassis_vin": "VIN-DL-TOYOTA-4521"
+            },
+            "sighting_2": {
+                "toll_plaza": "Mathura Toll Plaza (Yamuna Expressway)",
+                "timestamp": "2026-08-15 09:31:00 IST",
+                "optical_vehicle_make": "Black Mahindra Scorpio (SUV)",
+                "camera_id": "YAMUNA-EXP-08",
+                "fastag_rfid": "COUNTERFEIT-CLONED-MULE",
+                "chassis_vin": "VIN-MISMATCH-SCORPIO-BLACK"
+            },
+            "highway_distance_km": 135.0,
+            "elapsed_time_minutes": 16.0,
+            "required_kinematic_velocity_kmh": 506.2,
+            "choke_points": [
+                {
+                    "toll_plaza": "Jewar Toll Choke-Point (Corridor Delta)",
+                    "action": "Intercept Hawala Cash Carrier",
+                    "eta": "13 MINS",
+                    "status": "DISPATCH_READY"
+                },
+                {
+                    "toll_plaza": "Agra Expressway Interceptor Post",
+                    "action": "Seize Decoy Scorpio",
+                    "eta": "21 MINS",
+                    "status": "DISPATCH_READY"
+                }
+            ]
+        },
+        {
+            "plate_number": "UP-32-AB-7890",
+            "sighting_1": {
+                "toll_plaza": "Noida-Greater Noida Expressway Toll",
+                "timestamp": "2026-08-15 13:40:00 IST",
+                "optical_vehicle_make": "Honda City (White Sedan)",
+                "camera_id": "NOIDA-EXP-CAM-01",
+                "fastag_rfid": "FASTAG-UP32-CITY-AUTH",
+                "chassis_vin": "VIN-UP-HONDA-7890"
+            },
+            "sighting_2": {
+                "toll_plaza": "Sadar Bazar Highway Interceptor Post",
+                "timestamp": "2026-08-15 13:45:00 IST",
+                "optical_vehicle_make": "Maruti Baleno (Grey)",
+                "camera_id": "DELHI-SADAR-CAM-11",
+                "fastag_rfid": "DUPLICATE-TAG-CLONE",
+                "chassis_vin": "VIN-MISMATCH-BALENO"
+            },
+            "highway_distance_km": 48.0,
+            "elapsed_time_minutes": 5.0,
+            "required_kinematic_velocity_kmh": 576.0,
+            "choke_points": [
+                {
+                    "toll_plaza": "Mayur Vihar Choke-Point (Corridor Echo)",
+                    "action": "Intercept Document Forgery Logistics",
+                    "eta": "06 MINS",
+                    "status": "DISPATCH_READY"
+                },
+                {
+                    "toll_plaza": "Ashram Chowk Interceptor Squad",
+                    "action": "Seize Decoy Baleno",
+                    "eta": "12 MINS",
+                    "status": "DISPATCH_READY"
+                }
+            ]
+        }
+    ],
     "default": [
         {
             "plate_number": "DL-05-CQ-4521",

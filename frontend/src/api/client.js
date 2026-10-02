@@ -371,27 +371,83 @@ export const getShortestPath = (sourceId, targetId, caseId = 'dawood') => {
 };
 
 export const getDecapitation = (maxTargets = 3, caseId = "dawood") => {
-  return client.get('/api/experimental/decapitation', { params: { max_targets: maxTargets, case_id: caseId } }).then(res => res.data);
+  return client.get('/api/experimental/decapitation', { params: { max_targets: maxTargets, case_id: caseId } })
+    .then(res => res.data)
+    .catch(() => offlineData[caseId]?.decapitation || offlineData['dawood']?.decapitation || { targets: [] });
 };
 
 export const getGhostRendezvous = (maxHours = 48, caseId = "dawood") => {
-  return client.get('/api/experimental/ghost-rendezvous', { params: { max_time_diff_hours: maxHours, case_id: caseId } }).then(res => res.data);
+  return client.get('/api/experimental/ghost-rendezvous', { params: { max_time_diff_hours: maxHours, case_id: caseId } })
+    .then(res => res.data)
+    .catch(() => offlineData[caseId]?.ghost_rendezvous || offlineData['dawood']?.ghost_rendezvous || { rendezvous_events: [], count: 0 });
 };
 
 export const interrogateSuspect = (entityId, question, history = [], caseId = "dawood") => {
-  return client.post('/api/experimental/interrogate', { entity_id: entityId, question, history, case_id: caseId }).then(res => res.data);
+  return client.post('/api/experimental/interrogate', { entity_id: entityId, question, history, case_id: caseId })
+    .then(res => res.data)
+    .catch(() => {
+      const suspectList = offlineData[caseId]?.suspects || offlineData['dawood']?.suspects || [];
+      const sObj = suspectList.find(s => String(s.id) === String(entityId)) || { name: 'Accused Suspect' };
+      const qLower = (question || '').toLowerCase();
+      
+      let reply = `Officer, I have nothing to hide. I am a legitimate commercial operator and I have no knowledge of any criminal conspiracy.`;
+      let demeanor = `Defiant & Guarded`;
+      let contradiction = null;
+
+      if (qLower.includes('cdr') || qLower.includes('phone') || qLower.includes('call')) {
+        reply = `I never made those calls. My phone is often borrowed by transport drivers and casual laborers in the depot.`;
+        demeanor = `Evasive & Agitated`;
+        contradiction = {
+          ground_truth: `Telecommunications forensic extract links SIM to ${sObj.name}'s biometric KYC with 45 burst calls to syndicate nodes.`,
+          recommended_trap_question: `Confront suspect with cell-tower handover telemetry recorded during incident window.`
+        };
+      } else if (qLower.includes('money') || qLower.includes('hawala') || qLower.includes('cash') || qLower.includes('account') || qLower.includes('ledger')) {
+        reply = `Those bank transfers were standard vendor advances and freight invoices, completely audited by our chartered accountant.`;
+        demeanor = `Nervous & Stuttering`;
+        contradiction = {
+          ground_truth: `Financial intelligence shows structured layering (<₹50,000 threshold) with immediate overseas drain.`,
+          recommended_trap_question: `Present signed bearer token receipts and rapid smurfing ledger records.`
+        };
+      } else if (qLower.includes('car') || qLower.includes('vehicle') || qLower.includes('anpr') || qLower.includes('toll')) {
+        reply = `I was not driving that vehicle on the highway. Someone else must have cloned the registration or borrowed the car.`;
+        demeanor = `Sweating / Bio-Stress Spike`;
+        contradiction = {
+          ground_truth: `Highway FASTag RFID and optical ANPR high-resolution face capture confirm suspect behind the wheel.`,
+          recommended_trap_question: `Display timestamped high-speed expressway toll photo capture.`
+        };
+      } else if (qLower.includes('safehouse') || qLower.includes('meet') || qLower.includes('rendezvous') || qLower.includes('package') || qLower.includes('chat') || qLower.includes('telemetry')) {
+        reply = `I don't know what package you are talking about. I was resting at my family residence.`;
+        demeanor = `Breakdown / Contradiction Exposed`;
+        contradiction = {
+          ground_truth: `Physical surveillance logs place suspect at rendezvous coordinates concurrently with co-accused.`,
+          recommended_trap_question: `Demand explanation for GPS telemetry overlap with known safehouse.`
+        };
+      }
+
+      return {
+        suspect_response: reply,
+        suspect_demeanor: demeanor,
+        contradiction: contradiction
+      };
+    });
 };
 
 export const getSuspectsList = (caseId = "dawood") => {
-  return client.get('/api/experimental/suspects', { params: { case_id: caseId } }).then(res => res.data);
+  return client.get('/api/experimental/suspects', { params: { case_id: caseId } })
+    .then(res => res.data)
+    .catch(() => ({ suspects: offlineData[caseId]?.suspects || offlineData['dawood']?.suspects || [] }));
 };
 
 export const getQuantumMole = (caseId = "dawood") => {
-  return client.get('/api/experimental/quantum-mole', { params: { case_id: caseId } }).then(res => res.data);
+  return client.get('/api/experimental/quantum-mole', { params: { case_id: caseId } })
+    .then(res => res.data)
+    .catch(() => offlineData[caseId]?.quantum_mole || offlineData['dawood']?.quantum_mole || { leak_detections: [] });
 };
 
 export const getPlateCloningResolver = (caseId = "dawood") => {
-  return client.get('/api/experimental/plate-cloning-resolver', { params: { case_id: caseId } }).then(res => res.data);
+  return client.get('/api/experimental/plate-cloning-resolver', { params: { case_id: caseId } })
+    .then(res => res.data)
+    .catch(() => offlineData[caseId]?.plate_cloning || offlineData['dawood']?.plate_cloning || { resolved_plate_anomalies: [] });
 };
 
 export const sendChatMessage = (message) => {
@@ -399,7 +455,50 @@ export const sendChatMessage = (message) => {
 };
 
 export const analyzeSocmint = (posts, caseId = "dawood") => {
-  return client.post('/api/experimental/socmint/analyze', { posts, case_id: caseId }).then(res => res.data);
+  return client.post('/api/experimental/socmint/analyze', { posts, case_id: caseId })
+    .then(res => res.data)
+    .catch(() => {
+      const base = offlineData[caseId]?.socmint || offlineData['dawood']?.socmint || {
+        threat_level: "HIGH",
+        gang_escalation_probability: "78.4%",
+        detected_handles: ["@monitored_target"],
+        geo_anchoring: ["Jurisdiction Safehouse"],
+        insights: ["Telemetry scanned from local intelligence stream."]
+      };
+      
+      const txt = posts && posts[0] ? posts[0].toLowerCase() : '';
+      if (txt) {
+        let score = 15;
+        const matched = [];
+        const weights = {
+          critical: { peti: 20, khoka: 20, shooter: 25, kill: 30, goli: 25, bomb: 35, blast: 35, kidnap: 30, ransom: 25, heroin: 25, arms: 25, "zero-day": 25, btc: 15 },
+          high: { package: 12, consignment: 15, drop: 15, wire: 12, border: 15, hafta: 15, vasuli: 15, dada: 12, loot: 15, threat: 15, tender: 12, tonight: 10 },
+          medium: { system: 8, ready: 8, cash: 10, lakh: 10, crore: 15, contact: 6, bhai: 10, don: 10, boys: 6 }
+        };
+        for (const tier of Object.values(weights)) {
+          for (const [kw, w] of Object.entries(tier)) {
+            if (txt.includes(kw)) {
+              matched.push(`'${kw}' (+${w}%)`);
+              score += w;
+            }
+          }
+        }
+        const prob = Math.min(98.5, Math.max(15.0, score));
+        const lvl = prob >= 85 ? "CRITICAL" : (prob >= 65 ? "HIGH" : (prob >= 35 ? "MEDIUM" : "LOW"));
+        return {
+          ...base,
+          threat_level: lvl,
+          gang_escalation_probability: `${prob.toFixed(1)}%`,
+          sentiment_analysis: `Intercepted Post: "${posts[0].substring(0, 80)}..."`,
+          calculation_proof: {
+            formula: "Escalation Probability = Min(98.5%, Base 15% + Keyword Threat Score Sum(w_i))",
+            matched_keywords: matched.length > 0 ? matched : ["None (baseline)"],
+            proof: `Base 15% + Matched Indicators [${matched.join(', ') || 'None'}] = ${prob.toFixed(1)}% (${lvl})`
+          }
+        };
+      }
+      return base;
+    });
 };
 
 
