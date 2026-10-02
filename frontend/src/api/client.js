@@ -228,7 +228,8 @@ export const uploadFile = (type, file, caseId, clearExisting = false) => {
   const formData = new FormData();
   formData.append('file', file);
   return client.post(`/api/upload/${type}?case_id=${caseId || 'custom_investigation'}&clear_existing=${clearExisting}`, formData, {
-    headers: { 'Content-Type': 'multipart/form-data' }
+    headers: { 'Content-Type': 'multipart/form-data' },
+    timeout: 60000, // 60s timeout for uploads (NLP processing of FIR documents can take 4-10s)
   }).then(res => res.data);
 };
 

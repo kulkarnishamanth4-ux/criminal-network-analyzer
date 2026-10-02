@@ -631,10 +631,16 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes, activ
                     </p>
                   </div>
                   <div className="text-right">
-                    <div className="text-2xl font-mono font-bold text-[var(--neon-red)]">
-                      {plateLoading ? '...' : (anomalies.length || plateResult?.cloned_plate_paradoxes_count || 2)}
+                    <div className={`text-2xl font-mono font-bold ${
+                      (anomalies.length ?? plateResult?.cloned_plate_paradoxes_count ?? 0) > 0 ? 'text-[var(--neon-red)]' : 'text-green-400'
+                    }`}>
+                      {plateLoading ? '...' : (anomalies.length ?? plateResult?.cloned_plate_paradoxes_count ?? 0)}
                     </div>
-                    <div className="text-[10px] text-[var(--text-secondary)] uppercase">Cloned Vehicles Flagged</div>
+                    <div className={`text-[10px] uppercase font-mono ${
+                      (anomalies.length ?? plateResult?.cloned_plate_paradoxes_count ?? 0) > 0 ? 'text-[var(--text-secondary)]' : 'text-green-400/80 font-semibold'
+                    }`}>
+                      {(anomalies.length ?? plateResult?.cloned_plate_paradoxes_count ?? 0) === 0 ? '0 Cloned Vehicles (Clean)' : 'Cloned Vehicles Flagged'}
+                    </div>
                   </div>
                 </div>
 

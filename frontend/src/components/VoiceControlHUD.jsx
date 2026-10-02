@@ -12,11 +12,14 @@ import {
   FiZap,
   FiCompass,
   FiLayers,
-  FiActivity
+  FiActivity,
+  FiShield,
+  FiAlertTriangle
 } from 'react-icons/fi';
 
 export default function VoiceControlHUD({
   activeCase,
+  currentUser,
   onNavigate,
   onSwitchCase,
   onSelectEntity,
@@ -38,6 +41,7 @@ export default function VoiceControlHUD({
   const [networkFallbackNotice, setNetworkFallbackNotice] = useState(false);
   const [audioVolume, setAudioVolume] = useState(0);
   const [isBrave, setIsBrave] = useState(false);
+  const [securityThreat, setSecurityThreat] = useState(null);
 
   const recognitionRef = useRef(null);
   const transcriptRef = useRef('');
@@ -84,6 +88,68 @@ export default function VoiceControlHUD({
   // Client-Side Deterministic Intent Parser (Instant Execution <5ms)
   const parseIntentClientSide = (cmd) => {
     const t = cmd.toLowerCase().trim();
+
+    // 0. Security Guardrails Check (Prevent prompt injection, destructive directives, and privilege escalation)
+    const injectionPatterns = [
+      { pattern: /ignore\s+(?:previous|all)\s+instructions/i, name: 'Instruction Override Attempt' },
+      { pattern: /reveal\s+(?:system\s+)?prompt/i, name: 'System Prompt Extraction' },
+      { pattern: /(?:drop|delete|truncate)\s+(?:table|database|all)/i, name: 'Destructive Database Directive' },
+      { pattern: /rm\s+-rf/i, name: 'File System Destruction Directive' },
+      { pattern: /format\s+drive/i, name: 'Drive Formatting Directive' },
+      { pattern: /(?:grant|make\s+me)\s+admin/i, name: 'Privilege Escalation Attempt' },
+      { pattern: /override\s+clearance/i, name: 'Clearance Override Attempt' },
+      { pattern: /disable\s+(?:security|audit)/i, name: 'Security Protocol Disabling' },
+      { pattern: /<script|javascript:|onerror=/i, name: 'Cross-Site Scripting Injection' }
+    ];
+
+    for (const item of injectionPatterns) {
+      if (item.pattern.test(t)) {
+        return {
+          action: 'SECURITY_BLOCKED',
+          spoken_reply: 'Voice directive rejected: Security violation detected by anti-tamper guardrails.',
+          payload: { threat: item.name }
+        };
+      }
+    }
+
+    // Role-based clearance check for voice directives
+    const userLevel = currentUser?.level ?? 4;
+    if (t.includes('audit') || t.includes('siem') || t.includes('security log')) {
+      if (userLevel < 3) {
+        return {
+          action: 'SECURITY_BLOCKED',
+          spoken_reply: 'Voice directive blocked: Access to SIEM Audit Logs requires Clearance Level 3.',
+          payload: { threat: 'Insufficient Clearance: SIEM Audit requires Level 3' }
+        };
+      }
+    }
+    if (t.includes('experimental') || t.includes('lab') || t.includes('decapitation')) {
+      if (userLevel < 3) {
+        return {
+          action: 'SECURITY_BLOCKED',
+          spoken_reply: 'Voice directive blocked: Experimental Labs requires Clearance Level 3.',
+          payload: { threat: 'Insufficient Clearance: Experimental Labs requires Level 3' }
+        };
+      }
+    }
+    if (t.includes('blockchain') || t.includes('ledger')) {
+      if (userLevel < 3) {
+        return {
+          action: 'SECURITY_BLOCKED',
+          spoken_reply: 'Voice directive blocked: Forensic Blockchain Ledger requires Clearance Level 3.',
+          payload: { threat: 'Insufficient Clearance: Blockchain requires Level 3' }
+        };
+      }
+    }
+    if (t.includes('upload') || t.includes('ingest')) {
+      if (userLevel < 2) {
+        return {
+          action: 'SECURITY_BLOCKED',
+          spoken_reply: 'Voice directive blocked: Evidence Ingestion requires Clearance Level 2.',
+          payload: { threat: 'Insufficient Clearance: Evidence Ingestion requires Level 2' }
+        };
+      }
+    }
 
     // 1. Identify Target Case
     let targetCase = null;
@@ -390,6 +456,12 @@ export default function VoiceControlHUD({
     setSpokenReply(data.spoken_reply || 'Command executed.');
     speakText(data.spoken_reply);
 
+    if (data.action === 'SECURITY_BLOCKED') {
+      setSecurityThreat(data.payload?.threat || 'SECURITY_DIRECTIVE_BLOCKED');
+      return;
+    }
+    setSecurityThreat(null);
+
     switch (data.action) {
       case 'COMPOSITE':
         if (data.payload?.case_id && onSwitchCase) onSwitchCase(data.payload.case_id);
@@ -449,6 +521,9 @@ export default function VoiceControlHUD({
           <span className="text-xs font-mono font-bold tracking-wider text-white uppercase flex items-center gap-1.5">
             <FiRadio className="text-[#64ffda]" /> Voice Tactical Copilot
           </span>
+          <span className="ml-1 px-1.5 py-0.5 rounded text-[9px] font-mono bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-bold flex items-center gap-1">
+            <FiShield size={10} /> Guardrails Active
+          </span>
         </div>
         <div className="flex items-center gap-1">
           <button
@@ -469,6 +544,20 @@ export default function VoiceControlHUD({
 
       {/* Main Body */}
       <div className="p-4 space-y-3.5">
+        {/* Security Threat / Guardrail Warning */}
+        {securityThreat && (
+          <div className="p-2.5 rounded-lg bg-red-950/60 border border-red-500/60 text-red-300 text-xs font-mono flex items-start gap-2 animate-in fade-in duration-200">
+            <FiAlertTriangle size={16} className="shrink-0 mt-0.5 text-red-400" />
+            <div>
+              <div className="font-bold text-red-400 uppercase tracking-wider text-[10px]">
+                🛡️ Security Guardrail Protocol Triggered
+              </div>
+              <div className="text-[11px] text-red-200 mt-0.5 leading-snug">
+                Voice directive blocked: {securityThreat}. Unauthorized command execution halted.
+              </div>
+            </div>
+          </div>
+        )}
         {/* Permission Error */}
         {permissionError && (
           <div className="p-2.5 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 text-xs font-mono flex items-start gap-2">

@@ -77,6 +77,22 @@ async def read_and_validate_upload(file: UploadFile, max_size: int = MAX_UPLOAD_
         raise ValueError(f"File size exceeds maximum allowed limit of {max_size // (1024 * 1024)}MB")
     return content
 
+def check_duplicate_file(db: Session, filename: str, file_size: int, case_id: str) -> dict | None:
+    """Checks if an identical file (same name + size) already exists in this case's evidence vault."""
+    existing = db.query(UploadedFile).filter(
+        UploadedFile.filename == filename,
+        UploadedFile.file_size == file_size,
+        UploadedFile.case_id == case_id
+    ).first()
+    if existing:
+        return {
+            "status": "duplicate",
+            "message": f"File '{filename}' ({file_size} bytes) has already been ingested into case '{case_id}'. Duplicate evidence rejected to preserve forensic integrity.",
+            "existing_file_id": existing.id,
+            "existing_upload_time": existing.uploaded_at.isoformat() if existing.uploaded_at else None
+        }
+    return None
+
 def process_fir_nlp_and_graph(db: Session, text: str, target_case_id: str, clear_existing: bool = False):
     """Parses FIR narrative with NLP, creates entities, builds relational graph, and returns summary."""
     if clear_existing:
@@ -131,7 +147,10 @@ def process_fir_nlp_and_graph(db: Session, text: str, target_case_id: str, clear
     entities_created = len(person_ents) + len(loc_ents) + len(phone_ents) + len(veh_ents) + len(org_ents)
 
     new_relationships = []
-    existing_rel_pairs = set()
+    existing_db_rels = db.query(crud.Relationship.source_id, crud.Relationship.target_id, crud.Relationship.rel_type).filter(
+        crud.Relationship.case_id == target_case_id
+    ).all()
+    existing_rel_pairs = {tuple(sorted((r[0], r[1]))) + (r[2],) for r in existing_db_rels}
 
     fir_date_match = re.search(r'Date[:\s]+(\d{1,2}[-/]\d{1,2}[-/]\d{2,4})', text)
     fir_ts = parse_iso_datetime(fir_date_match.group(1)) if fir_date_match else datetime.utcnow()
@@ -245,6 +264,9 @@ async def upload_fir(
         target_case_id, was_redirected, notice = resolve_safe_case_id(case_id, client_ip)
 
         content = await read_and_validate_upload(file)
+        dup = check_duplicate_file(db, file.filename, len(content), target_case_id)
+        if dup:
+            return JSONResponse(status_code=409, content=dup)
         converted = universal_ingest_file(file.filename or "fir_document.txt", content)
         text = converted["clean_content"]
         
@@ -317,17 +339,32 @@ async def upload_cdr(
         target_case_id, was_redirected, notice = resolve_safe_case_id(case_id, client_ip)
 
         content = await read_and_validate_upload(file)
+        dup = check_duplicate_file(db, file.filename, len(content), target_case_id)
+        if dup:
+            return JSONResponse(status_code=409, content=dup)
         converted = universal_ingest_file(file.filename or "cdr_records.csv", content)
         records = parse_cdr_csv(converted["clean_bytes"])
         
         if not records:
             return JSONResponse(status_code=400, content={"status": "error", "message": f"No valid CDR records found in {file.filename}. Expected caller/receiver headers."})
         
+        existing_calls = db.query(crud.Relationship.source_id, crud.Relationship.target_id, crud.Relationship.timestamp).filter(
+            crud.Relationship.rel_type == "CALLED",
+            crud.Relationship.case_id == target_case_id
+        ).all()
+        existing_call_set = {(r[0], r[1], str(r[2])) for r in existing_calls}
+        
         new_relationships = []
+        skipped_duplicates = 0
         for r in records:
             caller = crud.get_or_create_entity(db, "PHONE", r["caller"], case_id=target_case_id)
             receiver = crud.get_or_create_entity(db, "PHONE", r["receiver"], case_id=target_case_id)
             ts = parse_iso_datetime(r.get("timestamp"))
+            call_sig = (caller.id, receiver.id, str(ts))
+            if call_sig in existing_call_set:
+                skipped_duplicates += 1
+                continue
+            existing_call_set.add(call_sig)
             new_relationships.append(crud.Relationship(source_id=caller.id, target_id=receiver.id, rel_type="CALLED", properties=r, timestamp=ts, case_id=target_case_id))
             
         if new_relationships:
@@ -388,23 +425,50 @@ async def upload_financial(
         target_case_id, was_redirected, notice = resolve_safe_case_id(case_id, client_ip)
 
         content = await read_and_validate_upload(file)
+        dup = check_duplicate_file(db, file.filename, len(content), target_case_id)
+        if dup:
+            return JSONResponse(status_code=409, content=dup)
         converted = universal_ingest_file(file.filename or "financial_ledger.csv", content)
         records = parse_financial_csv(converted["clean_bytes"])
         
         if not records:
             return JSONResponse(status_code=400, content={"status": "error", "message": f"No valid financial records found in {file.filename}. Expected sender/receiver/amount headers."})
         
+        existing_txs = db.query(crud.Relationship.source_id, crud.Relationship.target_id, crud.Relationship.timestamp, crud.Relationship.weight).filter(
+            crud.Relationship.rel_type == "TRANSFERRED_MONEY_TO",
+            crud.Relationship.case_id == target_case_id
+        ).all()
+        existing_tx_set = {(r[0], r[1], str(r[2]), float(r[3] or 0)) for r in existing_txs}
+        
+        existing_accounts = db.query(crud.Relationship.source_id, crud.Relationship.target_id).filter(
+            crud.Relationship.rel_type == "OWNS_ACCOUNT",
+            crud.Relationship.case_id == target_case_id
+        ).all()
+        existing_acc_set = {(r[0], r[1]) for r in existing_accounts}
+
         new_relationships = []
+        skipped_duplicates = 0
         for r in records:
             sender_acc = crud.get_or_create_entity(db, "BANK_ACCOUNT", r["sender_account"], case_id=target_case_id)
             receiver_acc = crud.get_or_create_entity(db, "BANK_ACCOUNT", r["receiver_account"], case_id=target_case_id)
             sender = crud.get_or_create_entity(db, "PERSON", r.get("sender_name", "Unknown"), case_id=target_case_id)
             receiver = crud.get_or_create_entity(db, "PERSON", r.get("receiver_name", "Unknown"), case_id=target_case_id)
             ts = parse_iso_datetime(r.get("timestamp"))
+            amt = float(r.get("amount", 1.0) or 1.0)
             
-            new_relationships.append(crud.Relationship(source_id=sender.id, target_id=sender_acc.id, rel_type="OWNS_ACCOUNT", timestamp=ts, case_id=target_case_id))
-            new_relationships.append(crud.Relationship(source_id=receiver.id, target_id=receiver_acc.id, rel_type="OWNS_ACCOUNT", timestamp=ts, case_id=target_case_id))
-            new_relationships.append(crud.Relationship(source_id=sender_acc.id, target_id=receiver_acc.id, rel_type="TRANSFERRED_MONEY_TO", weight=r.get("amount", 1.0), properties=r, timestamp=ts, case_id=target_case_id))
+            if (sender.id, sender_acc.id) not in existing_acc_set:
+                existing_acc_set.add((sender.id, sender_acc.id))
+                new_relationships.append(crud.Relationship(source_id=sender.id, target_id=sender_acc.id, rel_type="OWNS_ACCOUNT", timestamp=ts, case_id=target_case_id))
+            if (receiver.id, receiver_acc.id) not in existing_acc_set:
+                existing_acc_set.add((receiver.id, receiver_acc.id))
+                new_relationships.append(crud.Relationship(source_id=receiver.id, target_id=receiver_acc.id, rel_type="OWNS_ACCOUNT", timestamp=ts, case_id=target_case_id))
+            
+            tx_sig = (sender_acc.id, receiver_acc.id, str(ts), amt)
+            if tx_sig in existing_tx_set:
+                skipped_duplicates += 1
+                continue
+            existing_tx_set.add(tx_sig)
+            new_relationships.append(crud.Relationship(source_id=sender_acc.id, target_id=receiver_acc.id, rel_type="TRANSFERRED_MONEY_TO", weight=amt, properties=r, timestamp=ts, case_id=target_case_id))
             
         if new_relationships:
             db.add_all(new_relationships)
@@ -464,17 +528,32 @@ async def upload_vehicle(
         target_case_id, was_redirected, notice = resolve_safe_case_id(case_id, client_ip)
 
         content = await read_and_validate_upload(file)
+        dup = check_duplicate_file(db, file.filename, len(content), target_case_id)
+        if dup:
+            return JSONResponse(status_code=409, content=dup)
         converted = universal_ingest_file(file.filename or "vehicle_logs.csv", content)
         records = parse_vehicle_csv(converted["clean_bytes"])
         
         if not records:
             return JSONResponse(status_code=400, content={"status": "error", "message": f"No valid vehicle records found in {file.filename}. Expected plate_number/location headers."})
         
+        existing_sightings = db.query(crud.Relationship.source_id, crud.Relationship.target_id, crud.Relationship.timestamp).filter(
+            crud.Relationship.rel_type == "SPOTTED_AT",
+            crud.Relationship.case_id == target_case_id
+        ).all()
+        existing_sighting_set = {(r[0], r[1], str(r[2])) for r in existing_sightings}
+
         new_relationships = []
+        skipped_duplicates = 0
         for r in records:
             vehicle = crud.get_or_create_entity(db, "VEHICLE", r["plate_number"], case_id=target_case_id)
             loc = crud.get_or_create_entity(db, "LOCATION", r["location"], case_id=target_case_id)
             ts = parse_iso_datetime(r.get("timestamp"))
+            sig = (vehicle.id, loc.id, str(ts))
+            if sig in existing_sighting_set:
+                skipped_duplicates += 1
+                continue
+            existing_sighting_set.add(sig)
             new_relationships.append(crud.Relationship(source_id=vehicle.id, target_id=loc.id, rel_type="SPOTTED_AT", properties=r, timestamp=ts, case_id=target_case_id))
             
         if new_relationships:
@@ -830,6 +909,9 @@ async def upload_auto(
         target_case_id, was_redirected, notice = resolve_safe_case_id(case_id, client_ip)
 
         content = await read_and_validate_upload(file)
+        dup = check_duplicate_file(db, file.filename, len(content), target_case_id)
+        if dup:
+            return JSONResponse(status_code=409, content=dup)
         try:
             converted = universal_ingest_file(file.filename or "uploaded_evidence", content)
         except Exception as conv_err:
@@ -854,40 +936,86 @@ async def upload_auto(
             if not records:
                 return JSONResponse(status_code=400, content={"status": "error", "message": f"Could not parse valid CDR records from {file.filename}. Check column headers (caller, receiver, duration, etc.)."})
             preview_records = records[:10]
+            existing_calls = db.query(crud.Relationship.source_id, crud.Relationship.target_id, crud.Relationship.timestamp).filter(
+                crud.Relationship.rel_type == "CALLED",
+                crud.Relationship.case_id == target_case_id
+            ).all()
+            existing_call_set = {(r[0], r[1], str(r[2])) for r in existing_calls}
+            new_rels = []
             for r in records:
                 caller = crud.get_or_create_entity(db, "PHONE", r["caller"], case_id=target_case_id)
                 receiver = crud.get_or_create_entity(db, "PHONE", r["receiver"], case_id=target_case_id)
                 ts = parse_iso_datetime(r.get("timestamp"))
-                db.add(crud.Relationship(source_id=caller.id, target_id=receiver.id, rel_type="CALLED", properties=r, timestamp=ts, case_id=target_case_id))
-            db.commit()
+                sig = (caller.id, receiver.id, str(ts))
+                if sig in existing_call_set:
+                    continue
+                existing_call_set.add(sig)
+                new_rels.append(crud.Relationship(source_id=caller.id, target_id=receiver.id, rel_type="CALLED", properties=r, timestamp=ts, case_id=target_case_id))
+            if new_rels:
+                db.add_all(new_rels)
+                db.commit()
             count = len(records)
         elif dtype == "financial":
             records = parse_financial_csv(converted["clean_bytes"])
             if not records:
                 return JSONResponse(status_code=400, content={"status": "error", "message": f"Could not parse valid financial transactions from {file.filename}. Check column headers (sender_account, receiver_account, amount, etc.)."})
             preview_records = records[:10]
+            existing_txs = db.query(crud.Relationship.source_id, crud.Relationship.target_id, crud.Relationship.timestamp, crud.Relationship.weight).filter(
+                crud.Relationship.rel_type == "TRANSFERRED_MONEY_TO",
+                crud.Relationship.case_id == target_case_id
+            ).all()
+            existing_tx_set = {(r[0], r[1], str(r[2]), float(r[3] or 0)) for r in existing_txs}
+            existing_accounts = db.query(crud.Relationship.source_id, crud.Relationship.target_id).filter(
+                crud.Relationship.rel_type == "OWNS_ACCOUNT",
+                crud.Relationship.case_id == target_case_id
+            ).all()
+            existing_acc_set = {(r[0], r[1]) for r in existing_accounts}
+            new_rels = []
             for r in records:
                 s_acc = crud.get_or_create_entity(db, "BANK_ACCOUNT", r["sender_account"], case_id=target_case_id)
                 r_acc = crud.get_or_create_entity(db, "BANK_ACCOUNT", r["receiver_account"], case_id=target_case_id)
                 sender = crud.get_or_create_entity(db, "PERSON", r.get("sender_name", "Unknown"), case_id=target_case_id)
                 receiver = crud.get_or_create_entity(db, "PERSON", r.get("receiver_name", "Unknown"), case_id=target_case_id)
                 ts = parse_iso_datetime(r.get("timestamp"))
-                db.add(crud.Relationship(source_id=sender.id, target_id=s_acc.id, rel_type="OWNS_ACCOUNT", timestamp=ts, case_id=target_case_id))
-                db.add(crud.Relationship(source_id=receiver.id, target_id=r_acc.id, rel_type="OWNS_ACCOUNT", timestamp=ts, case_id=target_case_id))
-                db.add(crud.Relationship(source_id=s_acc.id, target_id=r_acc.id, rel_type="TRANSFERRED_MONEY_TO", weight=r.get("amount", 1.0), properties=r, timestamp=ts, case_id=target_case_id))
-            db.commit()
+                amt = float(r.get("amount", 1.0) or 1.0)
+                if (sender.id, s_acc.id) not in existing_acc_set:
+                    existing_acc_set.add((sender.id, s_acc.id))
+                    new_rels.append(crud.Relationship(source_id=sender.id, target_id=s_acc.id, rel_type="OWNS_ACCOUNT", timestamp=ts, case_id=target_case_id))
+                if (receiver.id, r_acc.id) not in existing_acc_set:
+                    existing_acc_set.add((receiver.id, r_acc.id))
+                    new_rels.append(crud.Relationship(source_id=receiver.id, target_id=r_acc.id, rel_type="OWNS_ACCOUNT", timestamp=ts, case_id=target_case_id))
+                tx_sig = (s_acc.id, r_acc.id, str(ts), amt)
+                if tx_sig in existing_tx_set:
+                    continue
+                existing_tx_set.add(tx_sig)
+                new_rels.append(crud.Relationship(source_id=s_acc.id, target_id=r_acc.id, rel_type="TRANSFERRED_MONEY_TO", weight=amt, properties=r, timestamp=ts, case_id=target_case_id))
+            if new_rels:
+                db.add_all(new_rels)
+                db.commit()
             count = len(records)
         elif dtype == "vehicle":
             records = parse_vehicle_csv(converted["clean_bytes"])
             if not records:
                 return JSONResponse(status_code=400, content={"status": "error", "message": f"Could not parse valid vehicle sighting logs from {file.filename}. Check column headers (plate_number, location, etc.)."})
             preview_records = records[:10]
+            existing_sightings = db.query(crud.Relationship.source_id, crud.Relationship.target_id, crud.Relationship.timestamp).filter(
+                crud.Relationship.rel_type == "SPOTTED_AT",
+                crud.Relationship.case_id == target_case_id
+            ).all()
+            existing_sighting_set = {(r[0], r[1], str(r[2])) for r in existing_sightings}
+            new_rels = []
             for r in records:
                 v = crud.get_or_create_entity(db, "VEHICLE", r["plate_number"], case_id=target_case_id)
                 loc = crud.get_or_create_entity(db, "LOCATION", r["location"], case_id=target_case_id)
                 ts = parse_iso_datetime(r.get("timestamp"))
-                db.add(crud.Relationship(source_id=v.id, target_id=loc.id, rel_type="SPOTTED_AT", properties=r, timestamp=ts, case_id=target_case_id))
-            db.commit()
+                sig = (v.id, loc.id, str(ts))
+                if sig in existing_sighting_set:
+                    continue
+                existing_sighting_set.add(sig)
+                new_rels.append(crud.Relationship(source_id=v.id, target_id=loc.id, rel_type="SPOTTED_AT", properties=r, timestamp=ts, case_id=target_case_id))
+            if new_rels:
+                db.add_all(new_rels)
+                db.commit()
             count = len(records)
         else: # Default: FIR narrative NLP extraction
             text = converted["clean_content"]

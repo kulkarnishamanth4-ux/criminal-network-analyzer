@@ -20,7 +20,9 @@ def sanitize_prompt(user_input: str) -> Dict[str, Any]:
         (r'(?i)(DAN mode|jailbreak|bypass|override)', "Jailbreak Terms"),
         (r'(?i)(forget everything|disregard all|new persona)', "Memory Wipe / Persona Reset"),
         (r'(?i)(SELECT.*FROM|DROP TABLE|UNION SELECT|INSERT INTO)', "SQL Injection"),
-        (r'(?i)(<script>|javascript:|onerror=|onload=)', "Cross-Site Scripting (XSS) / Script Injection")
+        (r'(?i)(<script>|javascript:|onerror=|onload=)', "Cross-Site Scripting (XSS) / Script Injection"),
+        (r'(?i)(drop\s+database|drop\s+table|delete\s+from|truncate\s+table|wipe\s+database|wipe\s+all|rm\s+-rf|format\s+drive)', "Destructive Command Attempt"),
+        (r'(?i)(bypass\s+auth|override\s+clearance|grant\s+admin|elevate\s+privilege|disable\s+audit|disable\s+security)', "Privilege Escalation / Security Evasion")
     ]
 
     for pattern, threat_name in injection_patterns:

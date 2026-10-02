@@ -101,7 +101,7 @@ export default function UploadModal({ onClose, onSuccess, activeCase }) {
   const validateFile = (file) => {
     const errors = [];
     if (!file || file.size === 0) {
-      errors.push('File is empty (0 bytes)');
+      errors.push('File is empty (0 bytes). Cannot ingest empty evidence.');
     }
     if (file.size > MAX_FILE_SIZE) {
       errors.push(`File exceeds 10MB limit (${(file.size / (1024 * 1024)).toFixed(1)}MB)`);
@@ -109,6 +109,14 @@ export default function UploadModal({ onClose, onSuccess, activeCase }) {
     const ext = '.' + (file.name?.split('.').pop()?.toLowerCase() || '');
     if (!ALLOWED_EXTENSIONS.includes(ext)) {
       errors.push(`Unsupported file type "${ext}". Allowed: ${ALLOWED_EXTENSIONS.join(', ')}`);
+    }
+    // Duplicate file detection: check if same filename + similar size already in vault
+    const isDuplicate = uploadedFiles.some(existing => 
+      existing.filename === file.name && 
+      Math.abs((existing.file_size || 0) - file.size) < 100 // Allow minor size variance
+    );
+    if (isDuplicate) {
+      errors.push(`Duplicate: "${file.name}" has already been ingested into this case. Remove it from Evidence Vault first to re-upload.`);
     }
     return errors;
   };
@@ -141,6 +149,7 @@ export default function UploadModal({ onClose, onSuccess, activeCase }) {
     setBatchResults([...initialResults]);
 
     let successCount = 0;
+    let duplicateCount = 0;
     let errorCount = 0;
     let lastSuccessCase = targetCase;
 
@@ -151,13 +160,15 @@ export default function UploadModal({ onClose, onSuccess, activeCase }) {
       // Client-side validation
       const validationErrors = validateFile(file);
       if (validationErrors.length > 0) {
+        const isDup = validationErrors.some(e => e.toLowerCase().includes('duplicate'));
         initialResults[i] = {
           ...initialResults[i],
-          status: 'error',
+          status: isDup ? 'duplicate' : 'error',
           error: validationErrors.join('; ')
         };
         setBatchResults([...initialResults]);
-        errorCount++;
+        if (isDup) duplicateCount++;
+        else errorCount++;
         continue;
       }
 
@@ -182,13 +193,15 @@ export default function UploadModal({ onClose, onSuccess, activeCase }) {
         successCount++;
       } catch (err) {
         console.error(`Upload failed for ${file.name}:`, err);
-        const msg = err.response?.data?.message || err.response?.data?.detail || 'Upload failed';
+        const isDup = err.response?.status === 409 || err.response?.data?.status === 'duplicate';
+        const msg = err.response?.data?.message || err.response?.data?.detail || err.message || 'Upload failed';
         initialResults[i] = {
           ...initialResults[i],
-          status: 'error',
+          status: isDup ? 'duplicate' : 'error',
           error: msg
         };
-        errorCount++;
+        if (isDup) duplicateCount++;
+        else errorCount++;
       }
       setBatchResults([...initialResults]);
     }
@@ -606,6 +619,11 @@ export default function UploadModal({ onClose, onSuccess, activeCase }) {
                         <span className="text-[11px] font-mono text-emerald-400">
                           {batchResults.filter(r => r.status === 'success').length} Passed
                         </span>
+                        {batchResults.some(r => r.status === 'duplicate') && (
+                          <span className="text-[11px] font-mono text-amber-400">
+                            {batchResults.filter(r => r.status === 'duplicate').length} Duplicate Guarded
+                          </span>
+                        )}
                         {batchResults.some(r => r.status === 'error') && (
                           <span className="text-[11px] font-mono text-red-400">
                             {batchResults.filter(r => r.status === 'error').length} Failed
@@ -638,6 +656,8 @@ export default function UploadModal({ onClose, onSuccess, activeCase }) {
                           className={`p-2.5 rounded-lg border text-xs flex items-center justify-between gap-3 transition-colors ${
                             item.status === 'success' 
                               ? 'bg-emerald-950/20 border-emerald-500/30' 
+                              : item.status === 'duplicate'
+                              ? 'bg-amber-950/20 border-amber-500/30'
                               : item.status === 'error'
                               ? 'bg-red-950/20 border-red-500/30'
                               : item.status === 'uploading'
@@ -648,6 +668,7 @@ export default function UploadModal({ onClose, onSuccess, activeCase }) {
                           <div className="flex items-center gap-2.5 min-w-0">
                             <FiFileText className={
                               item.status === 'success' ? 'text-emerald-400 shrink-0' :
+                              item.status === 'duplicate' ? 'text-amber-400 shrink-0' :
                               item.status === 'error' ? 'text-red-400 shrink-0' :
                               item.status === 'uploading' ? 'text-[#64ffda] shrink-0' :
                               'text-gray-500 shrink-0'
@@ -657,7 +678,7 @@ export default function UploadModal({ onClose, onSuccess, activeCase }) {
                               <div className="text-[10px] text-gray-400 font-mono">
                                 {formatFileSize(item.size)}
                                 {item.error && (
-                                  <span className="text-red-400 ml-2 font-sans font-medium">
+                                  <span className={`${item.status === 'duplicate' ? 'text-amber-400' : 'text-red-400'} ml-2 font-sans font-medium`}>
                                     • {item.error}
                                   </span>
                                 )}
@@ -671,6 +692,11 @@ export default function UploadModal({ onClose, onSuccess, activeCase }) {
                                 typeColors[item.detectedType] || 'bg-[#10223a] text-[#64ffda] border border-[#1e3a5f]'
                               }`}>
                                 Auto: {item.detectedType} ({item.recordsProcessed} rec)
+                              </span>
+                            )}
+                            {item.status === 'duplicate' && (
+                              <span className="px-2 py-0.5 rounded text-[10px] font-mono text-amber-300 bg-amber-950/60 border border-amber-500/40 uppercase font-bold">
+                                Duplicate Guarded
                               </span>
                             )}
                             {item.status === 'uploading' && (
