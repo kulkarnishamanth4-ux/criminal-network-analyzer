@@ -18,11 +18,11 @@ const USERS = [
   { 
     username: 'director', 
     password: 'director', 
-    displayName: 'Director Sharma', 
+    displayName: 'Director', 
     role: 'DIRECTOR', 
     level: 4, 
     clearance: 'TOP SECRET',
-    badge: 'DIR-001',
+    badge: '',
     dept: 'Sovereign Intelligence Directorate',
     icon: 'DIR',
     color: '#f9ca24',
@@ -37,11 +37,11 @@ const USERS = [
   { 
     username: 'admin', 
     password: 'admin', 
-    displayName: 'Superintendent Verma', 
+    displayName: 'Superintendent', 
     role: 'ADMIN', 
     level: 3, 
     clearance: 'SECRET',
-    badge: 'SP-104',
+    badge: '',
     dept: 'Special Cyber Operations Cell',
     icon: 'SP',
     color: '#4ecdc4',
@@ -55,11 +55,11 @@ const USERS = [
   { 
     username: 'officer', 
     password: 'officer', 
-    displayName: 'Inspector Rajesh', 
+    displayName: 'Inspector', 
     role: 'INVESTIGATOR', 
     level: 2, 
     clearance: 'CONFIDENTIAL',
-    badge: 'INS-421',
+    badge: '',
     dept: 'Organized Crime Investigation Unit',
     icon: 'INS',
     color: '#45b7d1',
@@ -73,11 +73,11 @@ const USERS = [
   { 
     username: 'constable', 
     password: 'constable', 
-    displayName: 'Constable Yadav', 
+    displayName: 'Constable', 
     role: 'CONSTABLE', 
     level: 1, 
     clearance: 'RESTRICTED',
-    badge: 'CT-892',
+    badge: '',
     dept: 'Field Intelligence & Surveillance',
     icon: 'CT',
     color: '#94a3b8',
@@ -238,23 +238,16 @@ export default function LoginScreen({ onLogin, onDownloadApkClick }) {
 
           <div>
             {/* Terminal Title & Subtitle */}
-            <div className="flex items-center justify-between border-b border-[#1e3a5f]/60 pb-3.5 mb-5">
-              <div>
-                <div className="flex items-center gap-2">
-                  <FiTerminal className="text-[#64ffda]" />
-                  <span className="text-xs uppercase tracking-widest font-mono font-bold text-[#64ffda]">
-                    Access Terminal
-                  </span>
-                </div>
-                <h2 className="text-lg sm:text-xl font-bold text-white mt-0.5">
-                  Operative Clearance Handshake
-                </h2>
-              </div>
-              <div className="text-right">
-                <span className="px-2 py-1 rounded bg-[#0a182b] border border-[#1e3a5f] text-[10px] font-mono text-[#4ecdc4] uppercase tracking-wider">
-                  Tier-1 Gate
+            <div className="border-b border-[#1e3a5f]/60 pb-3.5 mb-5">
+              <div className="flex items-center gap-2">
+                <FiTerminal className="text-[#64ffda]" />
+                <span className="text-xs uppercase tracking-widest font-mono font-bold text-[#64ffda]">
+                  Access Terminal
                 </span>
               </div>
+              <h2 className="text-lg sm:text-xl font-bold text-white mt-0.5">
+                Operative Clearance Handshake
+              </h2>
             </div>
 
             {/* Mode Switcher: SMS OTP 2FA vs Demo Credentials */}
@@ -332,7 +325,7 @@ export default function LoginScreen({ onLogin, onDownloadApkClick }) {
                       type="text"
                       value={smsOfficerName}
                       onChange={e => setSmsOfficerName(e.target.value)}
-                      placeholder="e.g. Director Sharma, Inspector Rajesh..."
+                      placeholder="e.g. Director, Inspector..."
                       className="w-full bg-[#040814] border border-[#1e3a5f] rounded-lg focus:border-[#64ffda] text-white pl-10 pr-4 py-2 text-xs outline-none font-mono"
                     />
                   </div>
@@ -466,8 +459,7 @@ export default function LoginScreen({ onLogin, onDownloadApkClick }) {
                             </span>
                           </div>
 
-                          <div className="flex items-center justify-between text-[10px] font-mono text-gray-400 mt-1">
-                            <span className="truncate">{u.badge}</span>
+                          <div className="flex items-center justify-end text-[10px] font-mono text-gray-400 mt-1">
                             <span className="text-gray-300 font-semibold">{u.clearance}</span>
                           </div>
 
@@ -587,18 +579,15 @@ export default function LoginScreen({ onLogin, onDownloadApkClick }) {
               <span className="w-2 h-2 rounded-full bg-[#00ff41] inline-block animate-pulse" />
               SESSION: Active Handshake
             </span>
-            <div className="flex items-center gap-3">
-              {onDownloadApkClick && (
-                <button
-                  type="button"
-                  onClick={onDownloadApkClick}
-                  className="text-blue-400 hover:text-blue-300 underline flex items-center gap-1 cursor-pointer font-semibold"
-                >
-                  <FiPhone size={10} /> Download APK (.apk)
-                </button>
-              )}
-              <span>SIEM AUDIT ENABLED • v3.4</span>
-            </div>
+            {onDownloadApkClick && (
+              <button
+                type="button"
+                onClick={onDownloadApkClick}
+                className="text-blue-400 hover:text-blue-300 underline flex items-center gap-1 cursor-pointer font-semibold"
+              >
+                <FiPhone size={10} /> Download APK (.apk)
+              </button>
+            )}
           </div>
 
         </div>
