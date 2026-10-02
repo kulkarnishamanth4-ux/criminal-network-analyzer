@@ -99,16 +99,42 @@ Open **http://localhost:5173** in your browser.
 
 ---
 
-## Automated Demo Data Seeding
+## Project Structure
 
-The platform includes an advanced synthetic data generator (`scripts/seed_rich_data.py`). If the database is empty when the backend starts, it automatically injects a deeply interconnected narrative dataset ("The Syndicate X Takedown") designed specifically to mathematically trigger all 15 Experimental Modules.
+```
+├── backend/                  # FastAPI Application
+│   ├── api/                  # REST API Route Handlers (13 domain routers)
+│   ├── database/             # SQLAlchemy ORM Models, Schemas & CRUD
+│   ├── graph/                # NetworkX Graph Engines & Mathematical Algorithms
+│   ├── nlp/                  # SpaCy NLP Pipeline, Universal Ingestion, Stylometry
+│   ├── security/             # Cryptographic SIEM Audit Logger & Guardrails
+│   ├── blockchain/           # Forensic Evidence Blockchain Ledger & Section 65B
+│   ├── config.py             # Server & Environment Configuration
+│   └── main.py               # Application Entrypoint & Startup Tasks
+├── frontend/                 # React 18 + Vite Web Application
+│   ├── src/
+│   │   ├── api/              # Axios Client & Offline Data Bridge
+│   │   ├── components/       # UI Modals, Graph Canvas, Command Center Panels
+│   │   └── data/             # Air-Gapped Offline Intelligence Bundles
+│   └── public/samples/       # Downloadable Evidence Files (.xlsx, .pdf, .docx, .csv, .txt)
+├── docs/                     # Technical Guides & Architectural Reference
+│   ├── API_DOCUMENTATION.md                  # Complete REST API Endpoint Reference
+│   ├── SYSTEM_ARCHITECTURE_AND_MATH_EXPLAINED.md # Graph Theory, percolation & formulas
+│   └── OFFLINE_FEATURES_SETUP_GUIDE.md       # Air-gapped & local setup instructions
+├── scripts/                  # Data Seeding, Offline Bundling & Test Utilities
+├── uploads/                  # Temporary Multi-Format Ingestion Staging
+├── render.yaml               # Deployment Configuration
+└── README.md                 # Project Overview & Quickstart Guide
+```
 
-This dataset includes:
-- Complex Hawala financial loops (Smurfing)
-- Geo-temporal anomalies for Plate Cloning algorithms
-- Ghost Rendezvous timeline triggers
-- Retaliatory trigger FIRs for Gang War Cascades
-- Burst Calling networks for Panic Entropy tracking
+---
+
+## Documentation
+
+For in-depth mathematical proofs, architecture diagrams, and API references:
+- 📖 [Complete REST API Documentation](docs/API_DOCUMENTATION.md)
+- 📐 [System Architecture & Mathematical Formulas](docs/SYSTEM_ARCHITECTURE_AND_MATH_EXPLAINED.md)
+- 🔒 [Air-Gapped & Offline Setup Guide](docs/OFFLINE_FEATURES_SETUP_GUIDE.md)
 
 ---
 
@@ -121,3 +147,4 @@ Built for **SIH 2026** - Problem Statement SIH26189
 ## License
 
 This project is built for educational and hackathon purposes.
+
