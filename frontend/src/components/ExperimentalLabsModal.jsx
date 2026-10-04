@@ -115,23 +115,30 @@ export default function ExperimentalLabsModal({ onClose, onHighlightNodes, activ
     } else {
       setSocmintInput("Intercepted broadcast ping: Package loaded for highway transit. Standby for delivery instructions.");
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeCase]);
 
-  // Fetch data on active tab switch
+  // Fetch data on active tab switch OR case change
+  // We use a ref to track the previous case so we know when to force-refetch
+  const prevCaseRef = React.useRef(activeCase);
   useEffect(() => {
-    if (activeTab === 'decapitation' && !decapData) {
+    const caseChanged = prevCaseRef.current !== activeCase;
+    prevCaseRef.current = activeCase;
+
+    // If the case changed, always fetch regardless of cached state
+    if (activeTab === 'decapitation' && (caseChanged || !decapData)) {
       setDecapLoading(true);
       getDecapitation(strikeTeams, activeCase).then(res => { setDecapData(res); setDecapLoading(false); }).catch(() => setDecapLoading(false));
-    } else if (activeTab === 'ghost' && !ghostData) {
+    } else if (activeTab === 'ghost' && (caseChanged || !ghostData)) {
       setGhostLoading(true);
       getGhostRendezvous(48, activeCase).then(res => { setGhostData(res); setGhostLoading(false); }).catch(() => setGhostLoading(false));
-    } else if (activeTab === 'quantum_mole' && !moleResult) {
+    } else if (activeTab === 'quantum_mole' && (caseChanged || !moleResult)) {
       setMoleLoading(true);
       getQuantumMole(activeCase).then(res => { setMoleResult(res); setMoleLoading(false); }).catch(() => setMoleLoading(false));
     } else if (activeTab === 'plate_cloning') {
       setPlateLoading(true);
       getPlateCloningResolver(activeCase).then(res => { setPlateResult(res); setPlateLoading(false); }).catch(() => setPlateLoading(false));
-    } else if (activeTab === 'socmint' && !socmintData) {
+    } else if (activeTab === 'socmint' && (caseChanged || !socmintData)) {
       handleRunSocmint();
     }
   }, [activeTab, activeCase]);

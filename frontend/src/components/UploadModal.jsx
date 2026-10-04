@@ -478,13 +478,13 @@ export default function UploadModal({ onClose, onSuccess, activeCase }) {
                 Evidence Ingestion Hub
               </h2>
               <div className="text-[11px] text-[#8892b0] flex items-center gap-2 flex-wrap">
-                <span>Destination:</span>
+                <span>Active Case:</span>
                 <span className="font-mono text-[#64ffda] bg-[#64ffda]/10 px-1.5 py-0.5 rounded border border-[#64ffda]/20 font-bold">
-                  {targetCase === 'custom_investigation' ? '🆕 New Investigation' : targetCase}
+                  {activeCase === 'custom_investigation' ? 'Custom Investigation' : activeCase.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}
                 </span>
                 {isProtectedCase && (
                   <span className="text-[10px] font-mono text-amber-300 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/30 flex items-center gap-1">
-                    🛡️ Official Case "{activeCase}" Sealed & Protected
+                    Uploads routed to Custom Investigation (read-only case)
                   </span>
                 )}
               </div>
@@ -514,122 +514,44 @@ export default function UploadModal({ onClose, onSuccess, activeCase }) {
               </div>
             )}
             
-            {/* Section A: Sample Data Downloads */}
-            <div className="border border-[#1e3a5f]/80 rounded-xl p-4 bg-[#0a1526]/60 shadow-inner">
-              <div className="flex items-center justify-between mb-3">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-[#64ffda] flex items-center gap-2">
-                  <FiDownload size={14} /> Sample Evidence Datasets (Download & Test)
-                </h3>
-                <span className="text-[10px] text-[#8892b0] font-mono">Ready to upload</span>
-              </div>
-              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-2.5">
-                <a 
-                  href="/samples/sample_fir_report.pdf" 
-                  download 
-                  className="flex items-center gap-2 bg-[#0c1a2f] border border-[#1e3a5f] hover:border-[#ff6b6b] text-xs p-2.5 rounded-lg transition-all hover:bg-[#12233f] text-[#c8d6e5] group"
-                >
-                  <FiFileText className="text-rose-400 group-hover:scale-110 transition-transform" />
-                  <div className="truncate">
-                    <div className="font-semibold text-white truncate">FIR Report (PDF)</div>
-                    <div className="text-[10px] text-rose-300 font-mono">.pdf (Universal)</div>
-                  </div>
-                </a>
-
-                <a 
-                  href="/samples/sample_fir_report.docx" 
-                  download 
-                  className="flex items-center gap-2 bg-[#0c1a2f] border border-[#1e3a5f] hover:border-[#45b7d1] text-xs p-2.5 rounded-lg transition-all hover:bg-[#12233f] text-[#c8d6e5] group"
-                >
-                  <FiFileText className="text-blue-400 group-hover:scale-110 transition-transform" />
-                  <div className="truncate">
-                    <div className="font-semibold text-white truncate">FIR Report (Word)</div>
-                    <div className="text-[10px] text-blue-300 font-mono">.docx (Word Doc)</div>
-                  </div>
-                </a>
-
-                <a 
-                  href="/samples/sample_cdr_records.xlsx" 
-                  download 
-                  className="flex items-center gap-2 bg-[#0c1a2f] border border-[#1e3a5f] hover:border-[#4ecdc4] text-xs p-2.5 rounded-lg transition-all hover:bg-[#12233f] text-[#c8d6e5] group"
-                >
-                  <FiDatabase className="text-emerald-400 group-hover:scale-110 transition-transform" />
-                  <div className="truncate">
-                    <div className="font-semibold text-white truncate">CDR Logs (Excel)</div>
-                    <div className="text-[10px] text-emerald-300 font-mono">.xlsx (Workbook)</div>
-                  </div>
-                </a>
-
-                <a 
-                  href="/samples/sample_financial_ledger.xlsx" 
-                  download 
-                  className="flex items-center gap-2 bg-[#0c1a2f] border border-[#1e3a5f] hover:border-[#f9ca24] text-xs p-2.5 rounded-lg transition-all hover:bg-[#12233f] text-[#c8d6e5] group"
-                >
-                  <FiDatabase className="text-amber-400 group-hover:scale-110 transition-transform" />
-                  <div className="truncate">
-                    <div className="font-semibold text-white truncate">Ledger (Excel)</div>
-                    <div className="text-[10px] text-amber-300 font-mono">.xlsx (Accounts)</div>
-                  </div>
-                </a>
-
-                <a 
-                  href="/samples/sample_vehicle_sightings.xlsx" 
-                  download 
-                  className="flex items-center gap-2 bg-[#0c1a2f] border border-[#1e3a5f] hover:border-[#96c93d] text-xs p-2.5 rounded-lg transition-all hover:bg-[#12233f] text-[#c8d6e5] group"
-                >
-                  <FiDatabase className="text-lime-400 group-hover:scale-110 transition-transform" />
-                  <div className="truncate">
-                    <div className="font-semibold text-white truncate">ANPR (Excel)</div>
-                    <div className="text-[10px] text-lime-300 font-mono">.xlsx (Cameras)</div>
-                  </div>
-                </a>
-
-                <a 
-                  href="/samples/sample_fir_report.txt" 
-                  download 
-                  className="flex items-center gap-2 bg-[#0c1a2f] border border-[#1e3a5f] hover:border-[#64ffda] text-xs p-2.5 rounded-lg transition-all hover:bg-[#12233f] text-[#c8d6e5] group"
-                >
-                  <FiFileText className="text-teal-400 group-hover:scale-110 transition-transform" />
-                  <div className="truncate">
-                    <div className="font-semibold text-white truncate">FIR Report (Text)</div>
-                    <div className="text-[10px] text-gray-400 font-mono">.txt (Raw NLP)</div>
-                  </div>
-                </a>
-
-                <a 
-                  href="/samples/sample_cdr_records.csv" 
-                  download 
-                  className="flex items-center gap-2 bg-[#0c1a2f] border border-[#1e3a5f] hover:border-[#64ffda] text-xs p-2.5 rounded-lg transition-all hover:bg-[#12233f] text-[#c8d6e5] group"
-                >
-                  <FiDatabase className="text-cyan-400 group-hover:scale-110 transition-transform" />
-                  <div className="truncate">
-                    <div className="font-semibold text-white truncate">CDR Logs (CSV)</div>
-                    <div className="text-[10px] text-gray-400 font-mono">.csv (Call Chains)</div>
-                  </div>
-                </a>
-
-                <a 
-                  href="/samples/sample_financial_ledger.csv" 
-                  download 
-                  className="flex items-center gap-2 bg-[#0c1a2f] border border-[#1e3a5f] hover:border-[#64ffda] text-xs p-2.5 rounded-lg transition-all hover:bg-[#12233f] text-[#c8d6e5] group"
-                >
-                  <FiDatabase className="text-yellow-400 group-hover:scale-110 transition-transform" />
-                  <div className="truncate">
-                    <div className="font-semibold text-white truncate">Ledger (CSV)</div>
-                    <div className="text-[10px] text-gray-400 font-mono">.csv (Money Flows)</div>
-                  </div>
-                </a>
-
-                <a 
-                  href="/samples/sample_vehicle_sightings.csv" 
-                  download 
-                  className="flex items-center gap-2 bg-[#0c1a2f] border border-[#1e3a5f] hover:border-[#64ffda] text-xs p-2.5 rounded-lg transition-all hover:bg-[#12233f] text-[#c8d6e5] group"
-                >
-                  <FiDatabase className="text-green-400 group-hover:scale-110 transition-transform" />
-                  <div className="truncate">
-                    <div className="font-semibold text-white truncate">ANPR (CSV)</div>
-                    <div className="text-[10px] text-gray-400 font-mono">.csv (GPS Sightings)</div>
-                  </div>
-                </a>
+            {/* Section A: Sample Data Downloads — Compact */}
+            <div className="border border-[#1e3a5f]/80 rounded-xl p-3 bg-[#0a1526]/60 shadow-inner">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <FiDownload size={14} className="text-[#64ffda]" />
+                  <span className="text-xs font-bold uppercase tracking-wider text-[#64ffda]">Sample Evidence Kit</span>
+                  <span className="text-[10px] text-[#8892b0] font-mono ml-1">9 files &middot; .pdf .docx .xlsx .csv .txt</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => {
+                      const files = [
+                        '/samples/sample_fir_report.pdf',
+                        '/samples/sample_fir_report.docx',
+                        '/samples/sample_fir_report.txt',
+                        '/samples/sample_cdr_records.xlsx',
+                        '/samples/sample_cdr_records.csv',
+                        '/samples/sample_financial_ledger.xlsx',
+                        '/samples/sample_financial_ledger.csv',
+                        '/samples/sample_vehicle_sightings.xlsx',
+                        '/samples/sample_vehicle_sightings.csv',
+                      ];
+                      files.forEach((f, i) => {
+                        setTimeout(() => {
+                          const a = document.createElement('a');
+                          a.href = f;
+                          a.download = f.split('/').pop();
+                          document.body.appendChild(a);
+                          a.click();
+                          document.body.removeChild(a);
+                        }, i * 300);
+                      });
+                    }}
+                    className="px-3 py-1.5 text-[11px] font-bold font-mono rounded-lg bg-[#64ffda]/10 border border-[#64ffda]/30 hover:bg-[#64ffda]/20 text-[#64ffda] transition-all flex items-center gap-1.5"
+                  >
+                    <FiDownload size={12} /> Download All Samples
+                  </button>
+                </div>
               </div>
             </div>
 
