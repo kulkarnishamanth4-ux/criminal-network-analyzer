@@ -372,19 +372,28 @@ export const getShortestPath = (sourceId, targetId, caseId = 'dawood') => {
 
 export const getDecapitation = (maxTargets = 3, caseId = "dawood") => {
   return client.get('/api/experimental/decapitation', { params: { max_targets: maxTargets, case_id: caseId } })
-    .then(res => res.data)
+    .then(res => {
+      if (res.data && res.data.targets && res.data.targets.length > 0) return res.data;
+      return offlineData[caseId]?.decapitation || offlineData['dawood']?.decapitation || { targets: [] };
+    })
     .catch(() => offlineData[caseId]?.decapitation || offlineData['dawood']?.decapitation || { targets: [] });
 };
 
 export const getGhostRendezvous = (maxHours = 48, caseId = "dawood") => {
   return client.get('/api/experimental/ghost-rendezvous', { params: { max_time_diff_hours: maxHours, case_id: caseId } })
-    .then(res => res.data)
+    .then(res => {
+      if (res.data && res.data.rendezvous_events && res.data.rendezvous_events.length > 0) return res.data;
+      return offlineData[caseId]?.ghost_rendezvous || offlineData['dawood']?.ghost_rendezvous || { rendezvous_events: [], count: 0 };
+    })
     .catch(() => offlineData[caseId]?.ghost_rendezvous || offlineData['dawood']?.ghost_rendezvous || { rendezvous_events: [], count: 0 });
 };
 
 export const interrogateSuspect = (entityId, question, history = [], caseId = "dawood") => {
   return client.post('/api/experimental/interrogate', { entity_id: entityId, question, history, case_id: caseId })
-    .then(res => res.data)
+    .then(res => {
+      if (res.data && res.data.suspect_response) return res.data;
+      throw new Error("Invalid response");
+    })
     .catch(() => {
       const suspectList = offlineData[caseId]?.suspects || offlineData['dawood']?.suspects || [];
       const sObj = suspectList.find(s => String(s.id) === String(entityId)) || { name: 'Accused Suspect' };
@@ -434,19 +443,28 @@ export const interrogateSuspect = (entityId, question, history = [], caseId = "d
 
 export const getSuspectsList = (caseId = "dawood") => {
   return client.get('/api/experimental/suspects', { params: { case_id: caseId } })
-    .then(res => res.data)
+    .then(res => {
+      if (res.data && res.data.suspects && res.data.suspects.length > 0) return res.data;
+      return { suspects: offlineData[caseId]?.suspects || offlineData['dawood']?.suspects || [] };
+    })
     .catch(() => ({ suspects: offlineData[caseId]?.suspects || offlineData['dawood']?.suspects || [] }));
 };
 
 export const getQuantumMole = (caseId = "dawood") => {
   return client.get('/api/experimental/quantum-mole', { params: { case_id: caseId } })
-    .then(res => res.data)
+    .then(res => {
+      if (res.data && res.data.leak_detections && res.data.leak_detections.length > 0) return res.data;
+      return offlineData[caseId]?.quantum_mole || offlineData['dawood']?.quantum_mole || { leak_detections: [] };
+    })
     .catch(() => offlineData[caseId]?.quantum_mole || offlineData['dawood']?.quantum_mole || { leak_detections: [] });
 };
 
 export const getPlateCloningResolver = (caseId = "dawood") => {
   return client.get('/api/experimental/plate-cloning-resolver', { params: { case_id: caseId } })
-    .then(res => res.data)
+    .then(res => {
+      if (res.data && ((res.data.resolved_plate_anomalies && res.data.resolved_plate_anomalies.length > 0) || (res.data.resolved_paradox_cases && res.data.resolved_paradox_cases.length > 0))) return res.data;
+      return offlineData[caseId]?.plate_cloning || offlineData['dawood']?.plate_cloning || { resolved_plate_anomalies: [] };
+    })
     .catch(() => offlineData[caseId]?.plate_cloning || offlineData['dawood']?.plate_cloning || { resolved_plate_anomalies: [] });
 };
 
