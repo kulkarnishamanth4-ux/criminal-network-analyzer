@@ -1,0 +1,518 @@
+{
+  "blocks": [
+    {
+      "index": 0,
+      "timestamp": "2026-01-01T00:00:00Z",
+      "case_id": "SYSTEM",
+      "evidence_type": "GENESIS_PROTOCOL",
+      "payload_summary": "CrimeNet National Security Ledger Genesis Block Initialized",
+      "payload_data": {
+        "consensus": "Proof-of-Authority (PoA)",
+        "encryption": "SHA-256 Merkle Ledger",
+        "standard": "BSA Section 63 / IEA Section 65B"
+      },
+      "officer_badge": "MHA-ROOT-001",
+      "validator_node": "CFSL Central Forensic Server (New Delhi)",
+      "merkle_root": "6e518d33f73322d92669391f4b9596b11f8d331d2fe63aac2e1c10c12378d2b4",
+      "previous_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+      "hash": "000056eea7c23948ab216cc431ea10ca87f2f9690a4c17d16a1769394a01ab25",
+      "nonce": 100,
+      "status": "VALID_IMMUTABLE"
+    },
+    {
+      "index": 1,
+      "timestamp": "2026-10-07T01:37:31.347778Z",
+      "case_id": "dawood",
+      "evidence_type": "CDR_VOIP_INTERCEPT",
+      "payload_summary": "VoIP Satellite Extortion Call Intercept (Dubai-Karachi-Mumbai Dadar Sector)",
+      "payload_data": {
+        "caller": "+92-300-8849921",
+        "receiver": "+91-98200-11223",
+        "target": "Bollywood Producer",
+        "duration_sec": 312,
+        "audio_sha256": "8a4f21bc9e1..."
+      },
+      "officer_badge": "MH-ATS-8821",
+      "validator_node": "CFSL Western Cyber Forensic Lab",
+      "merkle_root": "146f7d9ba778a85bf9cf140a4861001c8c0cb182c4b3b3cb72ef20b1000a47c0",
+      "previous_hash": "000056eea7c23948ab216cc431ea10ca87f2f9690a4c17d16a1769394a01ab25",
+      "hash": "80bfdcc4765c8ecb22d51338cecd5730d0a7f00acd36b7dcfd7d74c89bbcb769",
+      "nonce": 0,
+      "status": "VALID_IMMUTABLE"
+    },
+    {
+      "index": 2,
+      "timestamp": "2026-10-07T01:37:31.348208Z",
+      "case_id": "dawood",
+      "evidence_type": "HAWALA_LEDGER_SEIZURE",
+      "payload_summary": "Seized Physical Angadia Token Ledger #786 & Serial Match Note",
+      "payload_data": {
+        "token_serial": "786-990-21",
+        "settlement_inr": 250000000,
+        "conduit": "Surat-Dubai Angadia Pipeline"
+      },
+      "officer_badge": "ED-MUM-4402",
+      "validator_node": "Financial Intelligence Unit (FIU-IND Node)",
+      "merkle_root": "cb621afd27c9e1b95854b9936218b3049cd92addc34bc72dfef7e9e4ac5c81eb",
+      "previous_hash": "80bfdcc4765c8ecb22d51338cecd5730d0a7f00acd36b7dcfd7d74c89bbcb769",
+      "hash": "09f361fd2df791b6b15661e8bc51f6cbffe4583abdb4c8ff8ea174728514783c",
+      "nonce": 0,
+      "status": "VALID_IMMUTABLE"
+    },
+    {
+      "index": 3,
+      "timestamp": "2026-10-07T01:37:31.348276Z",
+      "case_id": "drug_punjab",
+      "evidence_type": "UAV_RADAR_TELEMETRY",
+      "payload_summary": "BSF Border Drone Radar Incursion Logs & GPS Drop Coordinates",
+      "payload_data": {
+        "sector": "Majha Border Zero-Line",
+        "altitude_m": 120,
+        "payload_kg": 4.5,
+        "contraband": "Heroin Serials A-99"
+      },
+      "officer_badge": "PB-STF-1104",
+      "validator_node": "BSF Electronic Surveillance Wing",
+      "merkle_root": "6bc4d36c0612f12ecc5e278b296b6ab92231c35337068ffbc039ba3ba6a62a70",
+      "previous_hash": "09f361fd2df791b6b15661e8bc51f6cbffe4583abdb4c8ff8ea174728514783c",
+      "hash": "f0cafc16a2a8b6528cf71306d5771f2ccea0304c4d8b5d27c8215dbfe07769ed",
+      "nonce": 0,
+      "status": "VALID_IMMUTABLE"
+    },
+    {
+      "index": 4,
+      "timestamp": "2026-10-07T01:37:31.348315Z",
+      "case_id": "ht_assam",
+      "evidence_type": "COUNTERFEIT_AADHAAR_BATCH",
+      "payload_summary": "Recovered 24 Fraudulent Identity Papers & Riverine Crossing Logs",
+      "payload_data": {
+        "batch_id": "Dhubri-Pass-2026",
+        "fake_aadhaars_count": 24,
+        "broker": "Rofiqul Islam"
+      },
+      "officer_badge": "AS-CID-9932",
+      "validator_node": "Guwahati Forensic Science Lab",
+      "merkle_root": "927fa23ed377642dc8547a307c99443fc715baa0ef7840df5f7c96048b320752",
+      "previous_hash": "f0cafc16a2a8b6528cf71306d5771f2ccea0304c4d8b5d27c8215dbfe07769ed",
+      "hash": "59cad05aad785fb45b4b914a6c4e9571bcbbd811556d70b665531916dd63424c",
+      "nonce": 0,
+      "status": "VALID_IMMUTABLE"
+    },
+    {
+      "index": 5,
+      "timestamp": "2026-10-07T01:37:31.348366Z",
+      "case_id": "cyber_bengaluru",
+      "evidence_type": "RANSOM_SMART_CONTRACT",
+      "payload_summary": "On-Chain 15 BTC Ransom Escrow Demand & DarkNet Forum Leak",
+      "payload_data": {
+        "bitcoin_address": "1P5ZEDWTKTFGxQjZphgWPQUpe554WKDfHQ",
+        "ransom_demanded_btc": 15.0,
+        "cve": "CVE-2026-9941"
+      },
+      "officer_badge": "KA-CYBER-5511",
+      "validator_node": "CERT-In National Cyber Hub",
+      "merkle_root": "129cf9bb5f523599eac5a2743bcf9926a4e71a9a7f7a1fe310713ba677c6d33c",
+      "previous_hash": "59cad05aad785fb45b4b914a6c4e9571bcbbd811556d70b665531916dd63424c",
+      "hash": "0d542922e7cca2ca85b92e77beedddf541d3ce22aee0af7f664453e88d5c6c5f",
+      "nonce": 0,
+      "status": "VALID_IMMUTABLE"
+    },
+    {
+      "index": 6,
+      "timestamp": "2026-10-07T01:37:31.348381Z",
+      "case_id": "money_gujarat",
+      "evidence_type": "CIRCULAR_BANK_TRANSACTION",
+      "payload_summary": "FIU Layering Detection: A->B->C->A 14-Minute Circular Hawala Transfer",
+      "payload_data": {
+        "origin_acc": "98765432101",
+        "hop_accounts": [
+          "98765432102",
+          "98765432103"
+        ],
+        "volume_inr": 48000000
+      },
+      "officer_badge": "GJ-ED-7721",
+      "validator_node": "Reserve Bank Enforcement Wing",
+      "merkle_root": "9665cb2f129fb09cd022715ee27cd75b007fc9197cd984ca8f0ffe89e8eb2f0a",
+      "previous_hash": "0d542922e7cca2ca85b92e77beedddf541d3ce22aee0af7f664453e88d5c6c5f",
+      "hash": "6f4e892820218cb2f43447820df2593476d6f87508618ac2a1a9b061594154e1",
+      "nonce": 0,
+      "status": "VALID_IMMUTABLE"
+    },
+    {
+      "index": 7,
+      "timestamp": "2026-10-07T01:37:31.348395Z",
+      "case_id": "arms_chhattisgarh",
+      "evidence_type": "ORDNANCE_SEIZURE_MEMO",
+      "payload_summary": "Physical Seizure of 20 Unlicensed Semi-Automatic Rifles & Mining Gelatin Sticks",
+      "payload_data": {
+        "vehicle_plate": "CG-17-AB-9921",
+        "weapons_count": 20,
+        "explosive_kg": 45.0
+      },
+      "officer_badge": "CG-SIB-3399",
+      "validator_node": "Bastar Tactical Ordnance Depot",
+      "merkle_root": "5875de1c578e8cb69583f1cf630994b659b881c4bcef83806b4e3659ce7e6ecc",
+      "previous_hash": "6f4e892820218cb2f43447820df2593476d6f87508618ac2a1a9b061594154e1",
+      "hash": "bef055357e453240e569fb110230bf1a04696a8d2323e54f67283a07c5c4c529",
+      "nonce": 0,
+      "status": "VALID_IMMUTABLE"
+    },
+    {
+      "index": 8,
+      "timestamp": "2026-10-07T01:37:31.348409Z",
+      "case_id": "wildlife_kerala",
+      "evidence_type": "EXOTIC_FAUNA_CARGO_EXIF",
+      "payload_summary": "EXIF Metadata & Shipping Manifest for 70kg Raw Ivory Tusk Consignment",
+      "payload_data": {
+        "container_id": "KOC-SEA-8812",
+        "weight_kg": 70,
+        "origin": "Silent Valley Buffer Zone"
+      },
+      "officer_badge": "KL-WCCB-2201",
+      "validator_node": "Wildlife Crime Control Bureau (WCCB)",
+      "merkle_root": "fedd1ba520025f947e102ff44d6b8ceb96cb9fd0401e640bc89ea1f2210670eb",
+      "previous_hash": "bef055357e453240e569fb110230bf1a04696a8d2323e54f67283a07c5c4c529",
+      "hash": "e87f0b606c6897948843250d97b35a57079700d10b660576a42d7bbf92d240e8",
+      "nonce": 0,
+      "status": "VALID_IMMUTABLE"
+    },
+    {
+      "index": 9,
+      "timestamp": "2026-10-07T01:37:31.348429Z",
+      "case_id": "extortion_up",
+      "evidence_type": "CONVOY_ANPR_SIGHTING",
+      "payload_summary": "Optical FASTag Highway Intercept of 10-Vehicle Armed Gang Convoy",
+      "payload_data": {
+        "toll_plaza": "Gorakhpur Bypass Plaza",
+        "speed_kmh": 118,
+        "firearms_displayed": true
+      },
+      "officer_badge": "UP-STF-6601",
+      "validator_node": "UP State Forensic Science University",
+      "merkle_root": "13f35139b1a7e9b71dc5b0f97dbfb7a2115fcf17e598592457c5a35a84448881",
+      "previous_hash": "e87f0b606c6897948843250d97b35a57079700d10b660576a42d7bbf92d240e8",
+      "hash": "641a4b86b302ad80b8f20cee815953c84f0f87c83308c338ffc38a6c7ac570ad",
+      "nonce": 0,
+      "status": "VALID_IMMUTABLE"
+    }
+  ],
+  "crypto": {
+    "cyber_bengaluru": {
+      "status": "success",
+      "case_id": "cyber_bengaluru",
+      "currency": "Bitcoin (BTC)",
+      "network": "Bitcoin (BTC)",
+      "deposit_wallet": "1P5ZEDWTKTFGxQjZphgWPQUpe554WKDfHQ",
+      "wallet_label": "Zero-Day DarkSec Ransom Escrow Wallet",
+      "total_amount_crypto": "15.00 BTC",
+      "total_volume_crypto": "15.00 BTC",
+      "fiat_equivalent_inr": "12,45,00,000",
+      "tainted_score": 98.4,
+      "tainted_score_pct": 98.4,
+      "mixer_status": "Tornado Cash & ChipMixer BTC Tumbler",
+      "mixer_used": "Tornado Cash & ChipMixer BTC Tumbler",
+      "p2p_mule_nodes": [
+        "SBI Acc #99812400192"
+      ],
+      "flow_hops": [
+        {
+          "hop_index": 1,
+          "stage": "Primary Ransom Deposit",
+          "source_wallet": "1VictimCorpExfil998",
+          "target_wallet": "1P5ZEDWTKTFGxQjZphgWPQUpe554WKDfHQ",
+          "amount": "15.00 BTC",
+          "txid": "e4b2190f8821...a7c2",
+          "description": "Stage 1: Primary Ransom Deposit (EXTORTION_INFLOW) - Risk Classification: CRITICAL",
+          "status": "EXTORTION_INFLOW",
+          "risk": "CRITICAL",
+          "mule_details": null
+        },
+        {
+          "hop_index": 2,
+          "stage": "Peeling Chain Smurfing Split",
+          "source_wallet": "1P5ZEDWTKTFGxQjZphgWPQUpe554WKDfHQ",
+          "target_wallet": "1PeelSplitNodeA_8832",
+          "amount": "4.85 BTC (Fragment 1 of 3)",
+          "txid": "77a89bc1034f...e102",
+          "description": "Stage 2: Peeling Chain Smurfing Split (MICRO_HOP_FRAGMENTATION) - Risk Classification: HIGH",
+          "status": "MICRO_HOP_FRAGMENTATION",
+          "risk": "HIGH",
+          "mule_details": null
+        },
+        {
+          "hop_index": 3,
+          "stage": "Mixer Pool Tumbling",
+          "source_wallet": "1PeelSplitNodeA_8832",
+          "target_wallet": "0xMixerPoolTornado_0x442",
+          "amount": "4.85 BTC",
+          "txid": "33bc99401f82...8831",
+          "description": "Stage 3: Mixer Pool Tumbling (OBFUSCATION_TUMBLING) - Risk Classification: HIGH",
+          "status": "OBFUSCATION_TUMBLING",
+          "risk": "HIGH",
+          "mule_details": null
+        },
+        {
+          "hop_index": 4,
+          "stage": "Indian Exchange P2P Off-Ramp Mule",
+          "source_wallet": "0xMixerPoolTornado_0x442",
+          "target_wallet": "1WazirX_MuleDeposit_Acc9941",
+          "amount": "\u20b93,95,00,000 INR (P2P Fiat Cashout)",
+          "txid": "99ea011244fa...7721",
+          "description": "Stage 4: Indian Exchange P2P Off-Ramp Mule (FIAT_OFFRAMP_IDENTIFIED) - Risk Classification: ACTIONABLE_SEIZURE",
+          "status": "FIAT_OFFRAMP_IDENTIFIED",
+          "risk": "ACTIONABLE_SEIZURE",
+          "mule_details": {
+            "kyc_name": "Sunil Ramesh (Bengaluru Tech Corridor)",
+            "bank_name": "State Bank of India",
+            "branch": "Bengaluru Tech Corridor",
+            "account_number": "SBI Acc #99812400192",
+            "ifsc": "SBIN0008821",
+            "aadhaar_hash": "XXXX-XXXX-9912 [Encrypted Vault]"
+          }
+        }
+      ],
+      "hops": [
+        {
+          "hop_index": 1,
+          "stage": "Primary Ransom Deposit",
+          "from_addr": "1VictimCorpExfil998",
+          "to_addr": "1P5ZEDWTKTFGxQjZphgWPQUpe554WKDfHQ",
+          "amount": "15.00 BTC",
+          "txid": "e4b2190f8821...a7c2",
+          "status": "EXTORTION_INFLOW",
+          "risk": "CRITICAL"
+        },
+        {
+          "hop_index": 2,
+          "stage": "Peeling Chain Smurfing Split",
+          "from_addr": "1P5ZEDWTKTFGxQjZphgWPQUpe554WKDfHQ",
+          "to_addr": "1PeelSplitNodeA_8832",
+          "amount": "4.85 BTC (Fragment 1 of 3)",
+          "txid": "77a89bc1034f...e102",
+          "status": "MICRO_HOP_FRAGMENTATION",
+          "risk": "HIGH"
+        },
+        {
+          "hop_index": 3,
+          "stage": "Mixer Pool Tumbling",
+          "from_addr": "1PeelSplitNodeA_8832",
+          "to_addr": "0xMixerPoolTornado_0x442",
+          "amount": "4.85 BTC",
+          "txid": "33bc99401f82...8831",
+          "status": "OBFUSCATION_TUMBLING",
+          "risk": "HIGH"
+        },
+        {
+          "hop_index": 4,
+          "stage": "Indian Exchange P2P Off-Ramp Mule",
+          "from_addr": "0xMixerPoolTornado_0x442",
+          "to_addr": "1WazirX_MuleDeposit_Acc9941",
+          "amount": "\u20b93,95,00,000 INR (P2P Fiat Cashout)",
+          "txid": "99ea011244fa...7721",
+          "status": "FIAT_OFFRAMP_IDENTIFIED",
+          "risk": "ACTIONABLE_SEIZURE",
+          "linked_kyc_mule": "Sunil Ramesh (Bengaluru Tech Corridor)",
+          "attached_bank_acc": "SBI Acc #99812400192"
+        }
+      ],
+      "tactical_assessment": "ON-CHAIN BITCOIN FORENSICS COMPLETE: 15 BTC ransom was tumbled via ChipMixer, with 4.85 BTC successfully un-mixed and traced to Indian P2P Exchange deposit account belonging to suspect Sunil Ramesh (SBI Acc #99812400192). Action: Issue Section 91 CrPC notice to exchange for immediate fund freeze."
+    },
+    "drug_punjab": {
+      "status": "success",
+      "case_id": "drug_punjab",
+      "currency": "USDT (TRC-20 Tron)",
+      "network": "USDT (TRC-20 Tron)",
+      "deposit_wallet": "TXx9941MajhaBorderNarcoPaymentEscrow772",
+      "wallet_label": "Majha Border Heroin Consignment USDT Escrow",
+      "total_amount_crypto": "450,000 USDT",
+      "total_volume_crypto": "450,000 USDT",
+      "fiat_equivalent_inr": "3,82,50,000",
+      "tainted_score": 96.2,
+      "tainted_score_pct": 96.2,
+      "mixer_status": "Tron Shuffler & Multi-Sig Bridge",
+      "mixer_used": "Tron Shuffler & Multi-Sig Bridge",
+      "p2p_mule_nodes": [
+        "PNB Acc #44091288301"
+      ],
+      "flow_hops": [
+        {
+          "hop_index": 1,
+          "stage": "Cross-Border Narco Settlement",
+          "source_wallet": "TXxForeignSupplyNode_001",
+          "target_wallet": "TXx9941MajhaBorderNarcoPaymentEscrow772",
+          "amount": "450,000 USDT",
+          "txid": "11ab998244cc...9921",
+          "description": "Stage 1: Cross-Border Narco Settlement (NARCO_PAYMENT_INFLOW) - Risk Classification: CRITICAL",
+          "status": "NARCO_PAYMENT_INFLOW",
+          "risk": "CRITICAL",
+          "mule_details": null
+        },
+        {
+          "hop_index": 2,
+          "stage": "Layering Split",
+          "source_wallet": "TXx9941MajhaBorderNarcoPaymentEscrow772",
+          "target_wallet": "TXxMuleSubWallet_Amritsar",
+          "amount": "150,000 USDT",
+          "txid": "88fe33219904...aa12",
+          "description": "Stage 2: Layering Split (DOMESTIC_DISPERSION) - Risk Classification: HIGH",
+          "status": "DOMESTIC_DISPERSION",
+          "risk": "HIGH",
+          "mule_details": null
+        },
+        {
+          "hop_index": 3,
+          "stage": "CoinDCX P2P Liquidation",
+          "source_wallet": "TXxMuleSubWallet_Amritsar",
+          "target_wallet": "TXxCoinDCX_P2P_Mule992",
+          "amount": "\u20b91,27,50,000 INR",
+          "txid": "44ea77110029...bb44",
+          "description": "Stage 3: CoinDCX P2P Liquidation (FIAT_OFFRAMP_IDENTIFIED) - Risk Classification: ACTIONABLE_SEIZURE",
+          "status": "FIAT_OFFRAMP_IDENTIFIED",
+          "risk": "ACTIONABLE_SEIZURE",
+          "mule_details": {
+            "kyc_name": "Garry Sandhu (GT Road Fuel Station Associate)",
+            "bank_name": "Punjab National Bank",
+            "branch": "GT Road Amritsar",
+            "account_number": "PNB Acc #44091288301",
+            "ifsc": "PUNB0123400",
+            "aadhaar_hash": "XXXX-XXXX-9912 [Encrypted Vault]"
+          }
+        }
+      ],
+      "hops": [
+        {
+          "hop_index": 1,
+          "stage": "Cross-Border Narco Settlement",
+          "from_addr": "TXxForeignSupplyNode_001",
+          "to_addr": "TXx9941MajhaBorderNarcoPaymentEscrow772",
+          "amount": "450,000 USDT",
+          "txid": "11ab998244cc...9921",
+          "status": "NARCO_PAYMENT_INFLOW",
+          "risk": "CRITICAL"
+        },
+        {
+          "hop_index": 2,
+          "stage": "Layering Split",
+          "from_addr": "TXx9941MajhaBorderNarcoPaymentEscrow772",
+          "to_addr": "TXxMuleSubWallet_Amritsar",
+          "amount": "150,000 USDT",
+          "txid": "88fe33219904...aa12",
+          "status": "DOMESTIC_DISPERSION",
+          "risk": "HIGH"
+        },
+        {
+          "hop_index": 3,
+          "stage": "CoinDCX P2P Liquidation",
+          "from_addr": "TXxMuleSubWallet_Amritsar",
+          "to_addr": "TXxCoinDCX_P2P_Mule992",
+          "amount": "\u20b91,27,50,000 INR",
+          "txid": "44ea77110029...bb44",
+          "status": "FIAT_OFFRAMP_IDENTIFIED",
+          "risk": "ACTIONABLE_SEIZURE",
+          "linked_kyc_mule": "Garry Sandhu (GT Road Fuel Station Associate)",
+          "attached_bank_acc": "PNB Acc #44091288301"
+        }
+      ],
+      "tactical_assessment": "TRC-20 NARCO-FINANCING TRACED: 450,000 USDT narcotic payment was liquidated via local CoinDCX P2P escrow into GT Road fuel station bank accounts. Immediate bank attachment recommended."
+    },
+    "dawood": {
+      "status": "success",
+      "case_id": "dawood",
+      "currency": "Ethereum (ETH) & USDT (ERC-20)",
+      "network": "Ethereum (ETH) & USDT (ERC-20)",
+      "deposit_wallet": "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D",
+      "wallet_label": "Dubai-Dongri High-Value Hawala Token Escrow",
+      "total_amount_crypto": "850.00 ETH",
+      "total_volume_crypto": "850.00 ETH",
+      "fiat_equivalent_inr": "28,50,00,000",
+      "tainted_score": 99.1,
+      "tainted_score_pct": 99.1,
+      "mixer_status": "Railgun Privacy Smart Contract",
+      "mixer_used": "Railgun Privacy Smart Contract",
+      "p2p_mule_nodes": [
+        "HDFC Commercial Acc #50200088192"
+      ],
+      "flow_hops": [
+        {
+          "hop_index": 1,
+          "stage": "Dubai Bullion Tokenization",
+          "source_wallet": "0xSheikhDawoodDxbNode",
+          "target_wallet": "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D",
+          "amount": "850.00 ETH",
+          "txid": "0x99aa8821ffcc...4411",
+          "description": "Stage 1: Dubai Bullion Tokenization (BULLION_CONVERSION) - Risk Classification: CRITICAL",
+          "status": "BULLION_CONVERSION",
+          "risk": "CRITICAL",
+          "mule_details": null
+        },
+        {
+          "hop_index": 2,
+          "stage": "Railgun Privacy Shield",
+          "source_wallet": "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D",
+          "target_wallet": "0xRailgunShieldPool_009",
+          "amount": "300.00 ETH",
+          "txid": "0x44bb11229988...7733",
+          "description": "Stage 2: Railgun Privacy Shield (ZK_SHIELD_TUMBLING) - Risk Classification: HIGH",
+          "status": "ZK_SHIELD_TUMBLING",
+          "risk": "HIGH",
+          "mule_details": null
+        },
+        {
+          "hop_index": 3,
+          "stage": "Mumbai Real Estate Token Off-Ramp",
+          "source_wallet": "0xRailgunShieldPool_009",
+          "target_wallet": "0xMumbaiBuilderProxyAcc",
+          "amount": "\u20b910,50,00,000 INR",
+          "txid": "0x11ee88443322...5599",
+          "description": "Stage 3: Mumbai Real Estate Token Off-Ramp (FIAT_OFFRAMP_IDENTIFIED) - Risk Classification: ACTIONABLE_SEIZURE",
+          "status": "FIAT_OFFRAMP_IDENTIFIED",
+          "risk": "ACTIONABLE_SEIZURE",
+          "mule_details": {
+            "kyc_name": "Tiger Memon Front Enterprise (Diamond Bourse)",
+            "bank_name": "HDFC Bank Ltd.",
+            "branch": "Bandra Kurla Complex, Mumbai",
+            "account_number": "HDFC Commercial Acc #50200088192",
+            "ifsc": "HDFC0000123",
+            "aadhaar_hash": "XXXX-XXXX-9912 [Encrypted Vault]"
+          }
+        }
+      ],
+      "hops": [
+        {
+          "hop_index": 1,
+          "stage": "Dubai Bullion Tokenization",
+          "from_addr": "0xSheikhDawoodDxbNode",
+          "to_addr": "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D",
+          "amount": "850.00 ETH",
+          "txid": "0x99aa8821ffcc...4411",
+          "status": "BULLION_CONVERSION",
+          "risk": "CRITICAL"
+        },
+        {
+          "hop_index": 2,
+          "stage": "Railgun Privacy Shield",
+          "from_addr": "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D",
+          "to_addr": "0xRailgunShieldPool_009",
+          "amount": "300.00 ETH",
+          "txid": "0x44bb11229988...7733",
+          "status": "ZK_SHIELD_TUMBLING",
+          "risk": "HIGH"
+        },
+        {
+          "hop_index": 3,
+          "stage": "Mumbai Real Estate Token Off-Ramp",
+          "from_addr": "0xRailgunShieldPool_009",
+          "to_addr": "0xMumbaiBuilderProxyAcc",
+          "amount": "\u20b910,50,00,000 INR",
+          "txid": "0x11ee88443322...5599",
+          "status": "FIAT_OFFRAMP_IDENTIFIED",
+          "risk": "ACTIONABLE_SEIZURE",
+          "linked_kyc_mule": "Tiger Memon Front Enterprise (Diamond Bourse)",
+          "attached_bank_acc": "HDFC Commercial Acc #50200088192"
+        }
+      ],
+      "tactical_assessment": "D-COMPANY CRYPTO FLOW EXPOSED: 850 ETH bullion settlements originating from Dubai escrow were un-shielded from Railgun contracts into Mumbai real estate builder front accounts (HDFC Acc #50200088192)."
+    }
+  }
+}

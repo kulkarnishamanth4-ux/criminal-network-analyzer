@@ -441,6 +441,7 @@ function App() {
           activeCase={activeCase}
           isCollapsed={isLeftPanelCollapsed}
           onToggleCollapse={setIsLeftPanelCollapsed}
+          graphData={graphData}
         />
         
         <main className="flex-1 relative flex flex-col bg-[#05050f]">

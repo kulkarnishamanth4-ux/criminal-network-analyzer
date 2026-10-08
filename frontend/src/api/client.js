@@ -1,5 +1,7 @@
 import axios from 'axios';
 import offlineData from '../data/offline_intelligence.json';
+import blockchainSeed from '../data/blockchain_seed.json';
+import { CASE_PREDICTIONS } from '../data/predictions_seed.js';
 
 // Use environment variable for deployed API URL, fallback to localhost for development
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
@@ -81,20 +83,13 @@ export const getAnomalies = (caseId = 'dawood') => {
 export const getCrimePredictions = (caseId = 'dawood') => {
   return client.get('/api/analytics/crime-predictions', { params: { case_id: caseId } })
     .then(res => {
-      if (Array.isArray(res.data) && res.data.length > 0) return res.data;
-      return [
-        { crime_type: "Extortion & Threat Operations", confidence: 0.95, count: 4 },
-        { crime_type: "Organized Crime / Gangland", confidence: 0.90, count: 3 },
-        { crime_type: "Hawala & Money Laundering", confidence: 0.85, count: 2 },
-        { crime_type: "Arms Smuggling & Firearms", confidence: 0.75, count: 2 }
-      ];
+      const list = Array.isArray(res.data) ? res.data : (res.data?.predictions || []);
+      if (list.length > 0 && list.some(p => Array.isArray(p.indicators) && p.indicators.length > 0)) {
+        return list;
+      }
+      return CASE_PREDICTIONS[caseId] || [];
     })
-    .catch(() => [
-      { crime_type: "Extortion & Threat Operations", confidence: 0.95, count: 4 },
-      { crime_type: "Organized Crime / Gangland", confidence: 0.90, count: 3 },
-      { crime_type: "Hawala & Money Laundering", confidence: 0.85, count: 2 },
-      { crime_type: "Arms Smuggling & Firearms", confidence: 0.75, count: 2 }
-    ]);
+    .catch(() => CASE_PREDICTIONS[caseId] || []);
 };
 
 export const getPredictedLinks = (minConfidence = 0.3, caseId = 'dawood') => {
@@ -234,15 +229,83 @@ export const uploadFile = (type, file, caseId, clearExisting = false) => {
 };
 
 export const resetInvestigation = (caseId = 'custom_investigation') => {
-  return client.post(`/api/investigation/reset?case_id=${caseId}`).then(res => res.data);
+  return client.post(`/api/investigation/reset?case_id=${caseId}`)
+    .then(res => res.data)
+    .catch(() => {
+      try {
+        localStorage.removeItem(`crimenet_files_${caseId}`);
+      } catch (e) {}
+      return { status: 'success', message: `Case ${caseId} reset successfully.` };
+    });
 };
 
 export const loadSampleInvestigation = (caseId = 'custom_investigation') => {
-  return client.post(`/api/investigation/load-sample?case_id=${caseId}`).then(res => res.data);
+  return client.post(`/api/investigation/load-sample?case_id=${caseId}`)
+    .then(res => res.data)
+    .catch(() => {
+      const sampleFiles = [
+        {
+          id: 'sample_fir_001',
+          filename: 'sample_fir_report.txt',
+          file_type: 'fir',
+          file_size: 4210,
+          uploaded_at: new Date().toISOString(),
+          case_id: caseId,
+          parsed_preview: {
+            entities_count: 14,
+            crime_type: 'Organized Fraud & Conspiracy',
+            confidence: 0.94
+          }
+        },
+        {
+          id: 'sample_cdr_001',
+          filename: 'sample_cdr_records.csv',
+          file_type: 'cdr',
+          file_size: 18450,
+          uploaded_at: new Date().toISOString(),
+          case_id: caseId,
+          parsed_preview: { records_count: 24, unique_callers: 8 }
+        },
+        {
+          id: 'sample_fin_001',
+          filename: 'sample_financial_ledger.csv',
+          file_type: 'financial',
+          file_size: 15300,
+          uploaded_at: new Date().toISOString(),
+          case_id: caseId,
+          parsed_preview: { records_count: 18, total_volume_inr: 45000000 }
+        },
+        {
+          id: 'sample_veh_001',
+          filename: 'sample_vehicle_sightings.csv',
+          file_type: 'vehicle',
+          file_size: 9200,
+          uploaded_at: new Date().toISOString(),
+          case_id: caseId,
+          parsed_preview: { records_count: 12, monitored_plates: 4 }
+        }
+      ];
+      try {
+        localStorage.setItem(`crimenet_files_${caseId}`, JSON.stringify(sampleFiles));
+      } catch (e) {}
+      return {
+        status: 'success',
+        case_id: caseId,
+        message: 'Sample forensic dataset loaded into case.',
+        files_loaded: 4
+      };
+    });
 };
 
 export const restoreCanonicalCase = (caseId = 'dawood') => {
-  return client.post(`/api/investigation/restore-canonical?case_id=${caseId}`).then(res => res.data);
+  return client.post(`/api/investigation/restore-canonical?case_id=${caseId}`)
+    .then(res => res.data)
+    .catch(() => {
+      try {
+        localStorage.removeItem(`crimenet_files_${caseId}`);
+      } catch (e) {}
+      return { status: 'success', message: `Canonical case ${caseId} restored to baseline.` };
+    });
 };
 
 export const computeOfflineShortestPath = (sourceId, targetId, caseId = 'dawood') => {
@@ -562,47 +625,202 @@ export const chatWithAgent = async (message, caseId = 'dawood', selectedEntity =
   }
 };
 
-// Blockchain & Crypto Intelligence
+// Blockchain & Crypto Intelligence (with in-memory stateful offline ledger)
+let inMemoryChain = JSON.parse(JSON.stringify(blockchainSeed.blocks || []));
+let tamperedBlockIdx = null;
+
+const computeSimpleHash = (str) => {
+  let h1 = 0xdeadbeef, h2 = 0x41c6ce57;
+  for (let i = 0, ch; i < str.length; i++) {
+    ch = str.charCodeAt(i);
+    h1 = Math.imul(h1 ^ ch, 2654435761);
+    h2 = Math.imul(h2 ^ ch, 1597334677);
+  }
+  h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+  h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+  return (4294967296 * (2097151 & h2) + (h1 >>> 0)).toString(16).padStart(16, '0');
+};
+
 export const getBlockchainBlocks = (caseId = null) => {
-  return client.get('/api/blockchain/blocks', { params: { case_id: caseId } }).then(res => res.data);
+  return client.get('/api/blockchain/blocks', { params: { case_id: caseId } })
+    .then(res => {
+      if (res.data && Array.isArray(res.data.blocks) && res.data.blocks.length > 0) return res.data;
+      return { blocks: inMemoryChain, count: inMemoryChain.length };
+    })
+    .catch(() => ({ blocks: inMemoryChain, count: inMemoryChain.length }));
 };
 
 export const mineEvidenceBlock = (payload) => {
-  return client.post('/api/blockchain/mine', payload).then(res => res.data);
+  return client.post('/api/blockchain/mine', payload)
+    .then(res => res.data)
+    .catch(() => {
+      const prev = inMemoryChain[inMemoryChain.length - 1];
+      const newIndex = inMemoryChain.length;
+      const ts = new Date().toISOString();
+      const pDataStr = JSON.stringify(payload.payload_data || {});
+      const merkleRoot = computeSimpleHash(pDataStr) + computeSimpleHash(payload.payload_summary || '') + 'fa412089c' + computeSimpleHash(ts);
+      const prevHash = prev ? prev.hash : '0000000000000000000000000000000000000000000000000000000000000000';
+      const blockHash = computeSimpleHash(prevHash) + merkleRoot.slice(0, 32) + computeSimpleHash(String(newIndex));
+      
+      const newBlock = {
+        index: newIndex,
+        timestamp: ts,
+        case_id: payload.case_id || 'dawood',
+        evidence_type: payload.evidence_type || 'DIGITAL_FORENSIC_EXTRACTION',
+        payload_summary: payload.payload_summary || 'Evidence Block Notarized & Sealed',
+        payload_data: payload.payload_data || {},
+        officer_badge: payload.officer_badge || 'MH-ATS-8821',
+        validator_node: payload.validator_node || 'CFSL Central Forensic Server (New Delhi)',
+        merkle_root: merkleRoot,
+        previous_hash: prevHash,
+        hash: blockHash,
+        nonce: Math.floor(Math.random() * 500) + 1,
+        status: 'VALID_IMMUTABLE'
+      };
+      inMemoryChain.push(newBlock);
+      return { status: 'success', block: newBlock, tx_id: blockHash };
+    });
 };
 
 export const verifyBlockchain = () => {
-  return client.get('/api/blockchain/verify').then(res => res.data);
+  return client.get('/api/blockchain/verify')
+    .then(res => res.data)
+    .catch(() => {
+      if (tamperedBlockIdx !== null) {
+        return {
+          is_valid: false,
+          chain_status: 'CORRUPTED',
+          corrupted_block_index: tamperedBlockIdx,
+          message: `Adversarial hash mismatch detected at Block #${tamperedBlockIdx}`,
+          total_blocks: inMemoryChain.length,
+          verified_merkle_roots: tamperedBlockIdx
+        };
+      }
+      return {
+        is_valid: true,
+        chain_status: 'VALID',
+        total_blocks: inMemoryChain.length,
+        verified_merkle_roots: inMemoryChain.length,
+        genesis_block_hash: inMemoryChain[0]?.hash || ''
+      };
+    });
 };
 
 export const simulateTamperAttack = (blockIndex = 1) => {
-  return client.post('/api/blockchain/simulate-tamper', { block_index: blockIndex }).then(res => res.data);
+  return client.post('/api/blockchain/simulate-tamper', { block_index: blockIndex })
+    .then(res => res.data)
+    .catch(() => {
+      const idx = Math.min(Math.max(blockIndex, 1), inMemoryChain.length - 1);
+      tamperedBlockIdx = idx;
+      if (inMemoryChain[idx]) {
+        inMemoryChain[idx].hash = 'deadbeef8badf00d000000000000000000000000000000000000000000000000';
+        inMemoryChain[idx].status = 'TAMPERED_COMPROMISED';
+        inMemoryChain[idx].payload_summary = '[TAMPERED BY ATTACKER] Evidence record modified without cryptographic key';
+      }
+      return {
+        status: 'tampered',
+        corrupted_block_index: idx,
+        mutation_details: `Injected unauthorized bytecode alteration into Block #${idx} header hash. Chain integrity invalidated.`
+      };
+    });
 };
 
 export const repairBlockchain = () => {
-  return client.post('/api/blockchain/repair').then(res => res.data);
+  return client.post('/api/blockchain/repair')
+    .then(res => res.data)
+    .catch(() => {
+      inMemoryChain = JSON.parse(JSON.stringify(blockchainSeed.blocks || []));
+      tamperedBlockIdx = null;
+      return {
+        status: 'repaired',
+        message: 'Chain restored from distributed CFSL Proof-of-Authority consensus nodes.'
+      };
+    });
 };
 
 export const getSection65BCertificate = (blockIndex) => {
-  return client.get(`/api/blockchain/certificate/${blockIndex}`).then(res => res.data);
+  return client.get(`/api/blockchain/certificate/${blockIndex}`)
+    .then(res => res.data)
+    .catch(() => {
+      const blk = inMemoryChain.find(b => b.index === Number(blockIndex)) || inMemoryChain[0];
+      return {
+        certificate_id: `SEC65B-CRIMENET-${blk.index}-${Date.now().toString(36).toUpperCase()}`,
+        issued_at: blk.timestamp || new Date().toISOString(),
+        case_id: blk.case_id,
+        evidence_type: blk.evidence_type,
+        officer_badge: blk.officer_badge || 'MH-ATS-8821',
+        validator_node: blk.validator_node || 'CFSL Central Forensic Server (New Delhi)',
+        block_hash: blk.hash,
+        merkle_root: blk.merkle_root,
+        payload_data: blk.payload_data || { summary: blk.payload_summary }
+      };
+    });
 };
 
 export const getCryptoFlow = (caseId = 'cyber_bengaluru', walletAddress = null) => {
-  return client.get('/api/blockchain/crypto-flow', { params: { case_id: caseId, wallet_address: walletAddress } }).then(res => res.data);
+  return client.get('/api/blockchain/crypto-flow', { params: { case_id: caseId, wallet_address: walletAddress } })
+    .then(res => res.data)
+    .catch(() => {
+      const defaultFlow = blockchainSeed.crypto?.cyber_bengaluru || {};
+      return blockchainSeed.crypto?.[caseId] || defaultFlow;
+    });
 };
 
 // === FILE MANAGER ===
 export const getUploadedFiles = (caseId) => 
-  client.get(`/api/files/${caseId}`).then(res => res.data);
+  client.get(`/api/files/${caseId}`)
+    .then(res => {
+      const data = res.data;
+      if (Array.isArray(data)) {
+        try { localStorage.setItem(`crimenet_files_${caseId}`, JSON.stringify(data)); } catch (e) {}
+        return data;
+      }
+      return data;
+    })
+    .catch(() => {
+      try {
+        const stored = localStorage.getItem(`crimenet_files_${caseId}`);
+        if (stored) return JSON.parse(stored);
+      } catch (e) {}
+      return [];
+    });
 
 export const getFilePreview = (caseId, fileId) => 
-  client.get(`/api/files/${caseId}/${fileId}/preview`).then(res => res.data);
+  client.get(`/api/files/${caseId}/${fileId}/preview`)
+    .then(res => res.data)
+    .catch(() => {
+      try {
+        const stored = localStorage.getItem(`crimenet_files_${caseId}`);
+        if (stored) {
+          const files = JSON.parse(stored);
+          const f = files.find(x => String(x.id) === String(fileId) || x.filename === fileId);
+          if (f && f.parsed_preview) return { ...f, ...f.parsed_preview };
+        }
+      } catch (e) {}
+      return { error: 'Preview not available offline', parsed_preview: {} };
+    });
 
 export const deleteUploadedFile = (caseId, fileId) =>
-  client.delete(`/api/files/${caseId}/${fileId}`).then(res => res.data);
+  client.delete(`/api/files/${caseId}/${fileId}`)
+    .then(res => res.data)
+    .catch(() => {
+      try {
+        const stored = localStorage.getItem(`crimenet_files_${caseId}`);
+        if (stored) {
+          const files = JSON.parse(stored).filter(x => String(x.id) !== String(fileId) && x.filename !== fileId);
+          localStorage.setItem(`crimenet_files_${caseId}`, JSON.stringify(files));
+        }
+      } catch (e) {}
+      return { status: 'deleted', file_id: fileId };
+    });
 
 export const clearAllUploadedFiles = (caseId) =>
-  client.delete(`/api/files/${caseId}`).then(res => res.data);
+  client.delete(`/api/files/${caseId}`)
+    .then(res => res.data)
+    .catch(() => {
+      try { localStorage.removeItem(`crimenet_files_${caseId}`); } catch (e) {}
+      return { status: 'cleared', count: 0 };
+    });
 
 // === ALIAS PROBABILITY ===
 export const checkAliasMatch = (nameA, nameB, caseId, context = '') => 
