@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { FiUser, FiPhone, FiMapPin, FiBriefcase, FiDollarSign, FiActivity, FiChevronDown, FiChevronUp, FiAlertTriangle, FiTrendingUp, FiUsers, FiClock, FiArrowRight } from 'react-icons/fi';
 import { getEntityDossier, buildOfflineEntityDossier } from '../api/client';
 import { normalizeAnomalyText } from '../utils/anomalyNormalizer';
+import { normalizeEntityType } from '../utils/entityNormalizer';
 
 const getIcon = (type) => {
   switch (type?.toUpperCase()) {
@@ -80,8 +81,9 @@ export default function EntityDossier({ entityData, onEntitySelect, onExpandNetw
   }
 
   const { entity, relationships, firs, anomalies } = dossier || {};
-  const type = entity?.entity_type || entity?.type || entityData?.type || entityData?.entity_type || 'UNKNOWN';
   const name = entity?.name || entity?.label || entityData?.name || entityData?.label || (entity?.id ? `Entity #${entity.id}` : 'Unknown');
+  const rawType = entity?.entity_type || entity?.type || entityData?.type || entityData?.entity_type || 'UNKNOWN';
+  const type = normalizeEntityType(name, rawType);
   const pr = entity?.pagerank || entity?.metrics?.pagerank || entityData?.pagerank || entityData?.metrics?.pagerank || 0;
   const bt = entity?.betweenness || entity?.metrics?.betweenness || entityData?.betweenness || entityData?.metrics?.betweenness || 0;
   const communityId = entity?.community_id ?? entity?.metrics?.community_id ?? entityData?.community_id ?? entityData?.metrics?.community_id ?? null;

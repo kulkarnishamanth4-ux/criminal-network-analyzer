@@ -13,6 +13,7 @@ import {
   FiZap
 } from 'react-icons/fi';
 import { chatWithAgent, checkAliasMatch, getSuggestedSuspects } from '../api/client';
+import { useDraggable } from '../utils/useDraggable';
 
 export default function ChatBot({ activeCase, selectedEntity }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -22,6 +23,16 @@ export default function ChatBot({ activeCase, selectedEntity }) {
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef(null);
+
+  const btnDraggable = useDraggable('crimenet_pos_chatbot_btn', () => ({
+    x: typeof window !== 'undefined' ? Math.max(20, window.innerWidth - 380) : 800,
+    y: typeof window !== 'undefined' ? Math.max(20, window.innerHeight - 80) : 600,
+  }));
+
+  const windowDraggable = useDraggable('crimenet_pos_chatbot_window', () => ({
+    x: typeof window !== 'undefined' ? Math.max(20, window.innerWidth - 760) : 500,
+    y: typeof window !== 'undefined' ? Math.max(20, window.innerHeight - 600) : 100,
+  }));
 
   // Alias Matcher State
   const [showAliasForm, setShowAliasForm] = useState(false);
@@ -111,20 +122,40 @@ export default function ChatBot({ activeCase, selectedEntity }) {
       {/* Floating Action Button */}
       {!isOpen && (
         <button 
-          onClick={() => setIsOpen(true)}
-          className="absolute bottom-24 right-6 w-12 h-12 bg-[#0a0a1a] border border-[#1e3a5f] rounded-full flex items-center justify-center text-[#f9ca24] hover:bg-[#1e3a5f] transition-all shadow-[0_0_15px_rgba(249,202,36,0.3)] z-50 group"
-          title="AI Intelligence Copilot"
+          ref={btnDraggable.nodeRef}
+          onPointerDown={btnDraggable.handlePointerDown}
+          onClick={() => {
+            if (btnDraggable.wasDragged()) return;
+            setIsOpen(true);
+          }}
+          style={{
+            left: `${btnDraggable.pos.x}px`,
+            top: `${btnDraggable.pos.y}px`,
+          }}
+          className="fixed w-12 h-12 bg-[#0a0a1a] border border-[#1e3a5f] hover:border-[#f9ca24] rounded-full flex items-center justify-center text-[#f9ca24] hover:bg-[#1e3a5f] transition-all shadow-[0_0_15px_rgba(249,202,36,0.3)] z-50 group cursor-grab active:cursor-grabbing select-none"
+          title="AI Intelligence Copilot (Drag to reposition)"
         >
-          <FiTerminal size={20} className="group-hover:scale-110 transition-transform" />
+          <FiTerminal size={20} className="group-hover:scale-110 transition-transform pointer-events-none" />
         </button>
       )}
 
       {/* Chat Window */}
       {isOpen && (
-        <div className="absolute bottom-24 right-6 w-[420px] max-w-[95vw] h-[560px] bg-[#05050f] border border-[#1e3a5f] rounded-xl shadow-2xl z-50 flex flex-col overflow-hidden backdrop-blur-xl bg-opacity-95">
-          {/* Header */}
-          <div className="flex justify-between items-center px-4 py-3 border-b border-[#1e3a5f] bg-[#0a0f1d]">
-            <div className="flex items-center gap-2">
+        <div 
+          ref={windowDraggable.nodeRef}
+          style={{
+            left: `${windowDraggable.pos.x}px`,
+            top: `${windowDraggable.pos.y}px`,
+          }}
+          className="fixed w-[420px] max-w-[95vw] h-[560px] bg-[#05050f] border border-[#1e3a5f] rounded-xl shadow-2xl z-50 flex flex-col overflow-hidden backdrop-blur-xl bg-opacity-95"
+        >
+          {/* Header (Drag handle) */}
+          <div 
+            onPointerDown={windowDraggable.handlePointerDown}
+            className="flex justify-between items-center px-4 py-3 border-b border-[#1e3a5f] bg-[#0a0f1d] cursor-grab active:cursor-grabbing select-none"
+            title="Drag header to reposition"
+          >
+            <div className="flex items-center gap-2 pointer-events-none">
               <div className="w-6 h-6 rounded bg-[#f9ca24]/10 border border-[#f9ca24]/30 flex items-center justify-center">
                 <FiTerminal className="text-[#f9ca24] text-xs" />
               </div>
@@ -133,7 +164,11 @@ export default function ChatBot({ activeCase, selectedEntity }) {
                 <span className="block text-[9px] font-mono text-[#64ffda]">ACTIVE CASE: {activeCase}</span>
               </div>
             </div>
-            <button onClick={() => setIsOpen(false)} className="text-gray-400 hover:text-white transition-colors p-1">
+            <button 
+              type="button"
+              onClick={() => setIsOpen(false)} 
+              className="text-gray-400 hover:text-white transition-colors p-1 cursor-pointer"
+            >
               <FiX size={16} />
             </button>
           </div>

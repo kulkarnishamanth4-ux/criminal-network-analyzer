@@ -2,6 +2,9 @@ import axios from 'axios';
 import offlineData from '../data/offline_intelligence.json';
 import blockchainSeed from '../data/blockchain_seed.json';
 import { CASE_PREDICTIONS } from '../data/predictions_seed.js';
+import { normalizeEntityType, normalizeNode } from '../utils/entityNormalizer.js';
+
+export { normalizeEntityType, normalizeNode };
 
 // Use environment variable for deployed API URL, fallback to localhost for development
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
@@ -13,14 +16,23 @@ const client = axios.create({
 
 export const searchEntities = (query, type, caseId = 'dawood') => {
   return client.get('/api/search', { params: { q: query, type, case_id: caseId } })
-    .then(res => res.data)
+    .then(res => {
+      const data = res.data;
+      if (data && data.results) {
+        return {
+          ...data,
+          results: data.results.map(r => normalizeNode(r))
+        };
+      }
+      return data;
+    })
     .catch(() => {
       const g = offlineData[caseId]?.graph;
       if (!g || !query) return { results: [] };
       const qLower = query.toLowerCase();
       const results = (g.nodes || [])
         .filter(n => (n.name || n.label || '').toLowerCase().includes(qLower))
-        .map(n => ({
+        .map(n => normalizeNode({
           id: n.id,
           name: n.name || n.label,
           label: n.name || n.label,
@@ -36,18 +48,31 @@ export const searchEntities = (query, type, caseId = 'dawood') => {
 
 export const getNetwork = (entityId, depth = 2, caseId = 'dawood') => {
   return client.get(`/api/network/${entityId}`, { params: { depth, case_id: caseId } })
-    .then(res => res.data)
-    .catch(() => offlineData[caseId]?.graph || { nodes: [], edges: [] });
+    .then(res => {
+      const data = res.data;
+      if (data?.nodes) {
+        return { ...data, nodes: data.nodes.map(normalizeNode) };
+      }
+      return data;
+    })
+    .catch(() => {
+      const g = offlineData[caseId]?.graph || { nodes: [], edges: [] };
+      return { ...g, nodes: (g.nodes || []).map(normalizeNode) };
+    });
 };
 
 export const getFullGraph = (limit = 150, caseId = 'dawood') => {
   return client.get(`/api/graph/full?limit=${limit}&case_id=${caseId}`)
     .then(res => {
-      if (res.data && res.data.nodes && res.data.nodes.length > 0) return res.data;
-      return offlineData[caseId]?.graph || { nodes: [], edges: [] };
+      if (res.data && res.data.nodes && res.data.nodes.length > 0) {
+        return { ...res.data, nodes: res.data.nodes.map(normalizeNode) };
+      }
+      const g = offlineData[caseId]?.graph || { nodes: [], edges: [] };
+      return { ...g, nodes: (g.nodes || []).map(normalizeNode) };
     })
     .catch(() => {
-      return offlineData[caseId]?.graph || { nodes: [], edges: [] };
+      const g = offlineData[caseId]?.graph || { nodes: [], edges: [] };
+      return { ...g, nodes: (g.nodes || []).map(normalizeNode) };
     });
 };
 
@@ -138,7 +163,8 @@ export const buildOfflineEntityDossier = (entityId, caseId = 'dawood') => {
   }
 
   const rawLabel = node?.name || node?.label || (entityId ? `Entity #${entityId}` : 'Unknown Entity');
-  const type = node?.type || node?.entity_type || 'PERSON';
+  const rawType = node?.type || node?.entity_type || 'PERSON';
+  const type = normalizeEntityType(rawLabel, rawType);
   const pr = node?.metrics?.pagerank || node?.pagerank || 0;
   const bt = node?.metrics?.betweenness || node?.betweenness || 0;
   const cid = node?.metrics?.community_id ?? node?.community_id ?? null;
@@ -210,7 +236,10 @@ export const getEntityDossier = (entityId, caseId = 'dawood') => {
   return client.get(`/api/entity/${entityId}/dossier`)
     .then(res => {
       if (res.data && res.data.entity && !res.data.error) {
-        return res.data;
+        return {
+          ...res.data,
+          entity: normalizeNode(res.data.entity)
+        };
       }
       return buildOfflineEntityDossier(entityId, caseId);
     })

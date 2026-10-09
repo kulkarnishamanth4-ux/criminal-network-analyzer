@@ -16,19 +16,23 @@ def get_entity_ruler_patterns() -> list[dict]:
     last_names = _load_gazetteer('indian_last_names.txt')
     cities_lines = _load_gazetteer('indian_cities.txt')
     states = _load_gazetteer('indian_states.txt')
+    localities = _load_gazetteer('indian_localities.txt')
+    vehicles = _load_gazetteer('indian_vehicles.txt')
     
     cities = [line.split(',')[0].strip() for line in cities_lines]
-    
-    # 1. PERSON patterns
-    # Match full First Name + Last Name / Word combinations first, then single first names.
-    # We omit isolated surnames to prevent splitting compound names into fragments.
-    for fn in first_names:
-        patterns.append({"label": "PERSON", "pattern": [{"LOWER": fn.lower()}, {"IS_ALPHA": True}]})
-        patterns.append({"label": "PERSON", "pattern": [{"LOWER": fn.lower()}]})
+    all_places = cities + localities
 
-    # 2. GPE patterns for cities
-    for city in cities:
-        words = city.split()
+    # 1. VEHICLE patterns (checked first so vehicle models like Innova/Scorpio are never marked as PERSON)
+    for v in vehicles:
+        words = v.split()
+        if len(words) == 1:
+            patterns.append({"label": "VEHICLE", "pattern": [{"LOWER": words[0].lower()}]})
+        else:
+            patterns.append({"label": "VEHICLE", "pattern": [{"LOWER": w.lower()} for w in words]})
+
+    # 2. GPE patterns for cities, localities, and neighborhoods (e.g. Dadar, Bandra, Saket)
+    for place in all_places:
+        words = place.split()
         if len(words) == 1:
             patterns.append({"label": "GPE", "pattern": [{"LOWER": words[0].lower()}]})
         else:
@@ -43,6 +47,16 @@ def get_entity_ruler_patterns() -> list[dict]:
         else:
             pattern = [{"LOWER": w.lower()} for w in words]
             patterns.append({"label": "GPE", "pattern": pattern})
+
+    # 4. PERSON patterns
+    # Match full First Name + Last Name / Word combinations first, then single first names.
+    # Exclude any names that overlap with vehicle makes or place names.
+    disallowed_person_names = {v.lower() for v in vehicles} | {p.lower() for p in all_places}
+    for fn in first_names:
+        if fn.lower() in disallowed_person_names:
+            continue
+        patterns.append({"label": "PERSON", "pattern": [{"LOWER": fn.lower()}, {"IS_ALPHA": True}]})
+        patterns.append({"label": "PERSON", "pattern": [{"LOWER": fn.lower()}]})
             
     return patterns
 

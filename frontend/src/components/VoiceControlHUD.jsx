@@ -16,6 +16,7 @@ import {
   FiShield,
   FiAlertTriangle
 } from 'react-icons/fi';
+import { useDraggable } from '../utils/useDraggable';
 
 export default function VoiceControlHUD({
   activeCase,
@@ -42,6 +43,11 @@ export default function VoiceControlHUD({
   const [audioVolume, setAudioVolume] = useState(0);
   const [isBrave, setIsBrave] = useState(false);
   const [securityThreat, setSecurityThreat] = useState(null);
+
+  const hudDraggable = useDraggable('crimenet_pos_voice_hud', () => ({
+    x: typeof window !== 'undefined' ? Math.max(20, window.innerWidth - 760) : 500,
+    y: typeof window !== 'undefined' ? Math.max(20, window.innerHeight - 560) : 100,
+  }));
 
   const recognitionRef = useRef(null);
   const transcriptRef = useRef('');
@@ -513,10 +519,21 @@ export default function VoiceControlHUD({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 w-96 max-w-[95vw] bg-[#081220]/95 backdrop-blur-xl border border-[#1e3a5f] rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-      {/* HUD Header */}
-      <div className="px-4 py-3 bg-[#060a14]/90 border-b border-[#1e3a5f] flex items-center justify-between">
-        <div className="flex items-center gap-2">
+    <div 
+      ref={hudDraggable.nodeRef}
+      style={{
+        left: `${hudDraggable.pos.x}px`,
+        top: `${hudDraggable.pos.y}px`,
+      }}
+      className="fixed z-50 w-96 max-w-[95vw] bg-[#081220]/95 backdrop-blur-xl border border-[#1e3a5f] rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200"
+    >
+      {/* HUD Header (Drag handle) */}
+      <div 
+        onPointerDown={hudDraggable.handlePointerDown}
+        className="px-4 py-3 bg-[#060a14]/90 border-b border-[#1e3a5f] flex items-center justify-between cursor-grab active:cursor-grabbing select-none"
+        title="Drag header to reposition"
+      >
+        <div className="flex items-center gap-2 pointer-events-none">
           <div className={`w-2.5 h-2.5 rounded-full ${isListening ? 'bg-[#64ffda] animate-ping' : 'bg-[#64ffda]'}`}></div>
           <span className="text-xs font-mono font-bold tracking-wider text-white uppercase flex items-center gap-1.5">
             <FiRadio className="text-[#64ffda]" /> Voice Tactical Copilot
@@ -527,15 +544,18 @@ export default function VoiceControlHUD({
         </div>
         <div className="flex items-center gap-1">
           <button
+            type="button"
             onClick={() => setAudioFeedback(!audioFeedback)}
-            className="p-1.5 text-xs text-[#8892b0] hover:text-white rounded hover:bg-[#162a45] transition-colors"
+            className="p-1.5 text-xs text-[#8892b0] hover:text-white rounded hover:bg-[#162a45] transition-colors cursor-pointer"
             title={audioFeedback ? 'Mute Voice Output' : 'Enable Voice Output'}
           >
             {audioFeedback ? <FiVolume2 size={14} className="text-[#64ffda]" /> : <FiVolumeX size={14} />}
           </button>
           <button
+            type="button"
             onClick={onClose}
-            className="p-1.5 text-xs text-[#8892b0] hover:text-white rounded hover:bg-[#162a45] transition-colors"
+            className="p-1.5 text-xs text-[#8892b0] hover:text-white rounded hover:bg-[#162a45] transition-colors cursor-pointer"
+            title="Close HUD (Esc)"
           >
             <FiX size={14} />
           </button>

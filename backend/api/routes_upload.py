@@ -116,27 +116,64 @@ def process_fir_nlp_and_graph(db: Session, text: str, target_case_id: str, clear
         case_id=target_case_id
     )
 
-    person_ents = []
-    for p in extracted.get("persons", []):
-        props = {"aliases": p.get("aliases", [])} if p.get("aliases") else {}
-        ent = crud.get_or_create_entity(db, "PERSON", p["name"], properties=props, case_id=target_case_id)
-        if p.get("aliases") and not (ent.properties and ent.properties.get("aliases")):
-            ent.properties = {**(ent.properties or {}), "aliases": p["aliases"]}
-        person_ents.append(ent)
+    VEHICLE_KEYWORDS = {
+        'innova', 'toyota innova', 'innova crysta', 'scorpio', 'mahindra scorpio',
+        'fortuner', 'toyota fortuner', 'bolero', 'mahindra bolero', 'swift', 'maruti swift',
+        'dzire', 'swift dzire', 'i20', 'hyundai i20', 'i10', 'creta', 'city', 'honda city',
+        'pulsar', 'splendor', 'thar', 'mahindra thar', 'ertiga', 'baleno', 'wagonr', 'alto',
+        'safari', 'harrier', 'nexon', 'brezza', 'xuv700', 'xuv500', 'qualis', 'tavera', 'duster',
+        'seltos', 'sonet', 'verna', 'amaze', 'santro', 'gypsy', 'omni', 'activa', 'bullet',
+        'royal enfield', 'apache', 'jupiter', 'ktm', 'duke', 'truck', 'tractor', 'dumper'
+    }
+    LOCATION_KEYWORDS = {
+        'dadar', 'bandra', 'andheri', 'juhu', 'colaba', 'dharavi', 'kurla', 'borivali',
+        'goregaon', 'malad', 'kandivali', 'chembur', 'ghatkopar', 'mulund', 'thane', 'vashi',
+        'panvel', 'bhendi bazaar', 'dongri', 'byculla', 'worli', 'parel', 'lower parel',
+        'saket', 'lajpat nagar', 'nehru place', 'connaught place', 'karol bagh', 'paharganj',
+        'chandni chowk', 'rohini', 'dwarka', 'okhla', 'janakpuri', 'hauz khas', 'malviya nagar',
+        'greater kailash', 'vasant kunj', 'south extension', 'defence colony', 'noida', 'gurgaon',
+        'koramangala', 'indiranagar', 'whitefield', 'hsr layout', 'jayanagar', 'hitec city',
+        'bastar', 'dandakaranya', 'wayanad', 'majha', 'dhubri', 'karimganj'
+    }
 
+    person_ents = []
     loc_ents = []
+    veh_ents = []
+
+    for p in extracted.get("persons", []):
+        p_name = p.get("name", "").strip()
+        p_lower = p_name.lower()
+        if any(p_lower == vk or p_lower.endswith(' ' + vk) or p_lower.startswith(vk + ' ') for vk in VEHICLE_KEYWORDS):
+            ent = crud.get_or_create_entity(db, "VEHICLE", p_name, case_id=target_case_id)
+            veh_ents.append(ent)
+        elif any(p_lower == lk or p_lower.endswith(' ' + lk) or p_lower.startswith(lk + ' ') for lk in LOCATION_KEYWORDS):
+            ent = crud.get_or_create_entity(db, "LOCATION", p_name, case_id=target_case_id)
+            loc_ents.append(ent)
+        else:
+            props = {"aliases": p.get("aliases", [])} if p.get("aliases") else {}
+            ent = crud.get_or_create_entity(db, "PERSON", p_name, properties=props, case_id=target_case_id)
+            if p.get("aliases") and not (ent.properties and ent.properties.get("aliases")):
+                ent.properties = {**(ent.properties or {}), "aliases": p["aliases"]}
+            person_ents.append(ent)
+
     for l in extracted.get("locations", []):
-        ent = crud.get_or_create_entity(db, "LOCATION", l["name"], case_id=target_case_id)
-        loc_ents.append(ent)
+        l_name = l.get("name", "").strip()
+        l_lower = l_name.lower()
+        if any(l_lower == vk or l_lower.endswith(' ' + vk) for vk in VEHICLE_KEYWORDS):
+            ent = crud.get_or_create_entity(db, "VEHICLE", l_name, case_id=target_case_id)
+            veh_ents.append(ent)
+        else:
+            ent = crud.get_or_create_entity(db, "LOCATION", l_name, case_id=target_case_id)
+            loc_ents.append(ent)
 
     phone_ents = []
     for ph in extracted.get("phones", []):
         ent = crud.get_or_create_entity(db, "PHONE", ph["number"], case_id=target_case_id)
         phone_ents.append(ent)
 
-    veh_ents = []
     for v in extracted.get("vehicles", []):
-        ent = crud.get_or_create_entity(db, "VEHICLE", v["plate"], case_id=target_case_id)
+        v_label = v.get("plate") or v.get("name") or "Unknown Vehicle"
+        ent = crud.get_or_create_entity(db, "VEHICLE", v_label, case_id=target_case_id)
         veh_ents.append(ent)
 
     org_ents = []

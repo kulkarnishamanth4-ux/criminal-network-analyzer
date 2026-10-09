@@ -1,8 +1,9 @@
 import React, { useRef, useEffect, useCallback, useState } from 'react';
 import CytoscapeComponent from 'react-cytoscapejs';
 import cytoscape from 'cytoscape';
-import { FiCrosshair, FiZoomIn, FiZoomOut } from 'react-icons/fi';
+import { FiCrosshair, FiZoomIn, FiZoomOut, FiSearch, FiX } from 'react-icons/fi';
 import TimelineScrubber from './TimelineScrubber';
+import { normalizeEntityType } from '../utils/entityNormalizer';
 
 // Helper to truncate long labels
 function truncateLabel(label, type) {
@@ -367,6 +368,29 @@ export default function GraphCanvas({
   const containerRef = useRef(null);
   const [timelineFilter, setTimelineFilter] = useState(null);
 
+  // Search Entity Node state
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const searchInputRef = useRef(null);
+
+  useEffect(() => {
+    if (isSearchOpen && searchInputRef.current) {
+      setTimeout(() => searchInputRef.current?.focus(), 60);
+    }
+  }, [isSearchOpen]);
+
+  const searchResults = React.useMemo(() => {
+    if (!searchQuery.trim() || !elements?.nodes) return [];
+    const q = searchQuery.trim().toLowerCase();
+    return elements.nodes
+      .filter(n => {
+        const name = (n.name || n.label || n.data?.name || n.data?.label || String(n.id || '')).toLowerCase();
+        const type = (n.type || n.entity_type || n.data?.type || n.data?.entity_type || '').toLowerCase();
+        return name.includes(q) || type.includes(q);
+      })
+      .slice(0, 15);
+  }, [searchQuery, elements?.nodes]);
+
   const isConnectionModeRef = useRef(isConnectionMode);
   const onConnectionNodeClickRef = useRef(onConnectionNodeClick);
   useEffect(() => { isConnectionModeRef.current = isConnectionMode; }, [isConnectionMode]);
@@ -471,8 +495,9 @@ export default function GraphCanvas({
     if (!elements || (!elements.nodes && !elements.edges)) return [];
     
     const nodes = (elements.nodes || []).map(n => {
-      const type = n.type || n.entity_type || 'UNKNOWN';
       const rawLabel = n.label || n.name || String(n.id);
+      const rawType = n.type || n.entity_type || 'UNKNOWN';
+      const type = normalizeEntityType(rawLabel, rawType);
       const pr = n.metrics?.pagerank || n.pagerank || 0;
       const risk = n.risk_score || n.riskScore || 0;
       const role = String(n.properties?.role || '').toLowerCase();
@@ -572,6 +597,37 @@ export default function GraphCanvas({
   const clearHighlight = useCallback((cy) => {
     cy.elements().removeClass('dimmed').removeClass('highlighted');
   }, []);
+
+  const handleSelectSearchNode = useCallback((nodeItem) => {
+    const nodeData = nodeItem.data || nodeItem;
+    const targetId = String(nodeData.id);
+
+    if (cyRef.current) {
+      const cy = cyRef.current;
+      const cyNode = cy.getElementById(targetId);
+      if (cyNode && cyNode.length > 0) {
+        cy.elements().unselect();
+        cy.edges().removeClass('edge-selected');
+        cyNode.select();
+        highlightNeighborhood(cy, cyNode);
+        try {
+          cy.animate({
+            center: { eles: cyNode },
+            zoom: Math.max(cy.zoom(), 1.6),
+          }, {
+            duration: 450,
+            easing: 'ease-out'
+          });
+        } catch (_) {}
+      }
+    }
+
+    if (onNodeSelect) {
+      onNodeSelect(nodeData);
+    }
+    setIsSearchOpen(false);
+    setSearchQuery('');
+  }, [highlightNeighborhood, onNodeSelect]);
 
   useEffect(() => {
     if (!cyRef.current) return;
@@ -707,6 +763,122 @@ export default function GraphCanvas({
           
 
           <div className="absolute bottom-6 right-6 z-10 flex flex-col gap-2">
+            {/* Search Entity Node Button (identical size & shape, positioned right above Zoom In) */}
+            <div className="relative">
+              <button 
+                onClick={() => {
+                  setIsSearchOpen(prev => !prev);
+                  if (isSearchOpen) setSearchQuery('');
+                }} 
+                className={`w-10 h-10 bg-[var(--bg-card)] border ${
+                  isSearchOpen 
+                    ? 'border-[#64ffda] text-[#64ffda] bg-[var(--bg-card-hover)]' 
+                    : 'border-[var(--border)] text-white hover:bg-[var(--bg-highlight)]'
+                } rounded flex items-center justify-center transition-colors shadow-lg cursor-pointer`}
+                title="Search Entity / Node by Name"
+              >
+                <FiSearch size={18} />
+              </button>
+
+              {/* Node Search Popover */}
+              {isSearchOpen && (
+                <div className="absolute bottom-0 right-12 w-72 sm:w-80 bg-[#0a1424]/95 border border-[#1e3a5f] rounded-xl shadow-2xl p-3 z-30 backdrop-blur-xl animate-in fade-in slide-in-from-right-2 duration-200">
+                  <div className="flex items-center justify-between pb-2 mb-2 border-b border-[#1e3a5f]/60">
+                    <div className="flex items-center gap-1.5 text-xs font-mono font-bold text-[#64ffda]">
+                      <FiSearch size={13} />
+                      <span>FIND ENTITY / NODE</span>
+                      <span className="text-[10px] text-[#8892b0] font-normal">({elements?.nodes?.length || 0})</span>
+                    </div>
+                    <button 
+                      type="button"
+                      onClick={() => setIsSearchOpen(false)} 
+                      className="text-[#8892b0] hover:text-white p-1 rounded transition-colors cursor-pointer"
+                      title="Close Search (Esc)"
+                    >
+                      <FiX size={14} />
+                    </button>
+                  </div>
+
+                  <div className="relative mb-2">
+                    <input
+                      ref={searchInputRef}
+                      type="text"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Escape') setIsSearchOpen(false);
+                        if (e.key === 'Enter' && searchResults.length > 0) {
+                          handleSelectSearchNode(searchResults[0]);
+                        }
+                      }}
+                      placeholder="Search node name (e.g. Dawood, Innova)..."
+                      className="w-full bg-[#05050f] border border-[#1e3a5f] rounded-lg px-2.5 py-1.5 text-xs text-[#c8d6e5] placeholder-[#53627c] focus:outline-none focus:border-[#64ffda] transition-colors"
+                    />
+                    {searchQuery && (
+                      <button 
+                        type="button"
+                        onClick={() => setSearchQuery('')}
+                        className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white text-xs cursor-pointer"
+                      >
+                        <FiX size={12} />
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Search Results Dropdown */}
+                  <div className="max-h-56 overflow-y-auto space-y-1 text-xs">
+                    {searchQuery.trim() === '' ? (
+                      <div className="p-3 text-center text-[#8892b0] text-[11px] font-mono">
+                        Type an entity name to pinpoint and zoom to it
+                      </div>
+                    ) : searchResults.length === 0 ? (
+                      <div className="p-3 text-center text-red-400/80 text-[11px] font-mono">
+                        No matching entity found on active graph
+                      </div>
+                    ) : (
+                      searchResults.map((n) => {
+                        const data = n.data || n;
+                        const name = data.name || data.label || String(data.id);
+                        const type = normalizeEntityType(name, data.type || data.entity_type || 'UNKNOWN');
+                        const typeColors = {
+                          PERSON: 'bg-red-500/20 text-red-400 border-red-500/30',
+                          VEHICLE: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30',
+                          LOCATION: 'bg-sky-500/20 text-sky-400 border-sky-500/30',
+                          PHONE: 'bg-teal-500/20 text-teal-400 border-teal-500/30',
+                          BANK_ACCOUNT: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
+                          ORGANIZATION: 'bg-purple-500/20 text-purple-400 border-purple-500/30',
+                        };
+                        const badgeClass = typeColors[type] || 'bg-gray-500/20 text-gray-300 border-gray-500/30';
+
+                        return (
+                          <button
+                            key={data.id}
+                            type="button"
+                            onClick={() => handleSelectSearchNode(n)}
+                            className="w-full text-left p-2 rounded bg-[#0e1b2e] hover:bg-[#162a45] border border-[#1e3a5f]/50 hover:border-[#64ffda]/50 transition-all flex items-center justify-between group cursor-pointer"
+                          >
+                            <div className="truncate mr-2">
+                              <div className="text-white font-medium group-hover:text-[#64ffda] truncate text-[12px]">
+                                {name}
+                              </div>
+                              {data.properties?.role && (
+                                <div className="text-[10px] text-[#8892b0] truncate">
+                                  {data.properties.role}
+                                </div>
+                              )}
+                            </div>
+                            <span className={`text-[9px] font-mono font-bold px-1.5 py-0.5 rounded border uppercase shrink-0 ${badgeClass}`}>
+                              {type}
+                            </span>
+                          </button>
+                        );
+                      })
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+
             <button onClick={() => cyRef.current && cyRef.current.zoom(cyRef.current.zoom() * 1.2)} className="w-10 h-10 bg-[var(--bg-card)] border border-[var(--border)] rounded flex items-center justify-center text-white hover:bg-[var(--bg-highlight)] transition-colors shadow-lg cursor-pointer" title="Zoom In">
               <FiZoomIn size={18} />
             </button>

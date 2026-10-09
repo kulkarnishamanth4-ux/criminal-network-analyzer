@@ -94,6 +94,8 @@ def extract_entities_from_text(text: str, known_entities: set = None) -> dict:
             result['locations'].append({'name': entity_text, 'start': ent.start_char, 'end': ent.end_char})
         elif ent.label_ == "ORG":
             result['organizations'].append({'name': entity_text, 'start': ent.start_char, 'end': ent.end_char})
+        elif ent.label_ == "VEHICLE":
+            result['vehicles'].append({'plate': entity_text, 'name': entity_text, 'start': ent.start_char, 'end': ent.end_char})
             
     # 3. Standard Regex Extractors (Phones, Vehicles, etc.)
     regexes = get_regex_patterns()
@@ -139,19 +141,67 @@ def extract_entities_from_text(text: str, known_entities: set = None) -> dict:
     cities_lines = _load_gazetteer('indian_cities.txt')
     known_cities = {line.split(',')[0].strip().lower() for line in cities_lines}
     states = {s.lower() for s in _load_gazetteer('indian_states.txt')}
-    known_geos = known_cities | states
+    localities = {line.strip().lower() for line in _load_gazetteer('indian_localities.txt')}
+    vehicles_gazetteer = {line.strip().lower() for line in _load_gazetteer('indian_vehicles.txt')}
+    
+    common_vehicles = {
+        'innova', 'toyota innova', 'innova crysta', 'scorpio', 'mahindra scorpio',
+        'fortuner', 'toyota fortuner', 'bolero', 'mahindra bolero', 'swift', 'maruti swift',
+        'dzire', 'swift dzire', 'i20', 'hyundai i20', 'i10', 'creta', 'hyundai creta',
+        'city', 'honda city', 'silver honda city', 'pulsar', 'bajaj pulsar', 'splendor',
+        'thar', 'mahindra thar', 'ertiga', 'baleno', 'wagonr', 'alto', 'safari', 'tata safari',
+        'harrier', 'nexon', 'brezza', 'xuv700', 'xuv500', 'qualis', 'tavera', 'duster',
+        'seltos', 'sonet', 'verna', 'amaze', 'santro', 'gypsy', 'omni', 'activa', 'bullet',
+        'royal enfield', 'apache', 'jupiter', 'ktm', 'duke', 'truck', 'tractor', 'dumper'
+    }
+    known_vehicles = vehicles_gazetteer | common_vehicles
 
-    # 1. Locations first
+    common_localities = {
+        'dadar', 'bandra', 'andheri', 'juhu', 'colaba', 'dharavi', 'kurla', 'borivali',
+        'goregaon', 'malad', 'kandivali', 'chembur', 'ghatkopar', 'mulund', 'thane', 'vashi',
+        'panvel', 'bhendi bazaar', 'dongri', 'byculla', 'worli', 'parel', 'lower parel',
+        'saket', 'lajpat nagar', 'nehru place', 'connaught place', 'karol bagh', 'paharganj',
+        'chandni chowk', 'rohini', 'dwarka', 'okhla', 'janakpuri', 'hauz khas', 'malviya nagar',
+        'greater kailash', 'vasant kunj', 'south extension', 'defence colony', 'noida', 'gurgaon',
+        'koramangala', 'indiranagar', 'whitefield', 'hsr layout', 'jayanagar', 'hitec city',
+        'bastar', 'dandakaranya', 'wayanad', 'majha', 'dhubri', 'karimganj'
+    }
+    known_geos = known_cities | states | localities | common_localities
+
+    def is_vehicle_term(val: str) -> bool:
+        v = val.strip().lower()
+        if v in known_vehicles:
+            return True
+        for veh in known_vehicles:
+            if len(veh) >= 4 and (v == veh or v.endswith(' ' + veh) or v.startswith(veh + ' ')):
+                return True
+        return False
+
+    def is_location_term(val: str) -> bool:
+        v = val.strip().lower()
+        if v in known_geos:
+            return True
+        for loc in known_geos:
+            if len(loc) >= 4 and (v == loc or v.endswith(' ' + loc) or v.startswith(loc + ' ')):
+                return True
+        return False
+
+    # 1. Locations first (move vehicles to vehicle list)
     clean_locations = []
+    clean_vehicles_extra = []
     seen_locs = set()
     for item in result['locations']:
         c = clean_name(item['name'])
         c_snapped = fuzzy_match_entity(c, known_entities)
-        if not is_legal_noise(c_snapped) and c_snapped.lower() not in alias_to_primary and c_snapped.lower() not in seen_locs:
+        if is_legal_noise(c_snapped) or c_snapped.lower() in alias_to_primary:
+            continue
+        if is_vehicle_term(c_snapped):
+            clean_vehicles_extra.append(c_snapped)
+        elif c_snapped.lower() not in seen_locs:
             clean_locations.append(c_snapped)
             seen_locs.add(c_snapped.lower())
 
-    # 2. Organizations (move known geos to locations)
+    # 2. Organizations (move known geos to locations, vehicles to vehicles)
     clean_orgs = []
     seen_orgs = set()
     for item in result['organizations']:
@@ -159,7 +209,9 @@ def extract_entities_from_text(text: str, known_entities: set = None) -> dict:
         c_snapped = fuzzy_match_entity(c, known_entities)
         if is_legal_noise(c_snapped) or c_snapped.lower() in alias_to_primary:
             continue
-        if c_snapped.lower() in known_geos or c_snapped.lower() in seen_locs:
+        if is_vehicle_term(c_snapped):
+            clean_vehicles_extra.append(c_snapped)
+        elif is_location_term(c_snapped) or c_snapped.lower() in known_geos or c_snapped.lower() in seen_locs:
             if c_snapped.lower() not in seen_locs:
                 clean_locations.append(c_snapped)
                 seen_locs.add(c_snapped.lower())
@@ -167,7 +219,7 @@ def extract_entities_from_text(text: str, known_entities: set = None) -> dict:
             clean_orgs.append(c_snapped)
             seen_orgs.add(c_snapped.lower())
 
-    # 3. Persons (move known geos to locations, exclude police and aliases)
+    # 3. Persons (move vehicles to vehicles, known geos to locations)
     clean_persons = []
     seen_persons = set()
     for item in result['persons']:
@@ -175,7 +227,9 @@ def extract_entities_from_text(text: str, known_entities: set = None) -> dict:
         c_snapped = fuzzy_match_entity(c, known_entities)
         if is_legal_noise(c_snapped) or c_snapped.lower() in police_names or c_snapped.lower() in alias_to_primary:
             continue
-        if c_snapped.lower() in known_geos or c_snapped.lower() in seen_locs:
+        if is_vehicle_term(c_snapped):
+            clean_vehicles_extra.append(c_snapped)
+        elif is_location_term(c_snapped) or c_snapped.lower() in known_geos or c_snapped.lower() in seen_locs:
             if c_snapped.lower() not in seen_locs:
                 clean_locations.append(c_snapped)
                 seen_locs.add(c_snapped.lower())
@@ -197,6 +251,13 @@ def extract_entities_from_text(text: str, known_entities: set = None) -> dict:
     clean_persons = dedupe_subsumed(clean_persons)
     clean_orgs = dedupe_subsumed(clean_orgs)
     clean_locations = dedupe_subsumed(clean_locations)
+
+    # Merge clean_vehicles_extra into result['vehicles']
+    existing_plates = {v.get('plate', '').lower() for v in result['vehicles']}
+    for vehextra in dedupe_subsumed(clean_vehicles_extra):
+        if vehextra.lower() not in existing_plates:
+            result['vehicles'].append({'plate': vehextra, 'name': vehextra})
+            existing_plates.add(vehextra.lower())
 
     result['persons'] = [{'name': p, 'aliases': list(dict.fromkeys(primary_to_aliases.get(p, [])))} for p in clean_persons]
     result['organizations'] = [{'name': o} for o in clean_orgs]

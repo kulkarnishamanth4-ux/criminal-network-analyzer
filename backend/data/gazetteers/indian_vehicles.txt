@@ -1,0 +1,94 @@
+Innova
+Toyota Innova
+Innova Crysta
+Scorpio
+Mahindra Scorpio
+Fortuner
+Toyota Fortuner
+Bolero
+Mahindra Bolero
+Swift
+Maruti Swift
+Swift Dzire
+Dzire
+i20
+Hyundai i20
+i10
+Hyundai i10
+Creta
+Hyundai Creta
+City
+Honda City
+Pulsar
+Bajaj Pulsar
+Splendor
+Hero Splendor
+Thar
+Mahindra Thar
+Ertiga
+Baleno
+WagonR
+Alto
+Celerio
+Safari
+Tata Safari
+Harrier
+Tata Harrier
+Nexon
+Tata Nexon
+Brezza
+Maruti Brezza
+XUV700
+XUV500
+XUV300
+Qualis
+Tavera
+Duster
+EcoSport
+Seltos
+Kia Seltos
+Sonet
+Kia Sonet
+Verna
+Hyundai Verna
+Amaze
+Honda Amaze
+Santro
+Hyundai Santro
+Gypsy
+Maruti Gypsy
+Omni
+Maruti Omni
+Activa
+Honda Activa
+Bullet
+Royal Enfield
+Apache
+TVS Apache
+Jupiter
+TVS Jupiter
+KTM
+Duke
+Discover
+Platina
+Avenger
+Access
+Suzuki Access
+Passion
+Hero Passion
+Glamour
+Shine
+CB Shine
+Unicorn
+Yamaha FZ
+R15
+Civic
+Corolla
+Truck
+Tractor
+Dumper
+Tanker
+Dhow
+Speedboat
+Drone
+UAV
