@@ -15,7 +15,8 @@ import {
   FiArrowRight,
   FiArrowUp,
   FiArrowDown,
-  FiArrowLeft
+  FiArrowLeft,
+  FiMoreVertical
 } from 'react-icons/fi';
 
 const TOUR_STEPS = [
@@ -86,9 +87,24 @@ const TOUR_STEPS = [
     hint: 'Tip: Requires Clearance Level 3+ (Admin / Director).',
   },
   {
+    id: 'command-tools',
+    selector: '[data-tour="command-tools"]',
+    title: '8. Command Tools & Utilities',
+    subtitle: 'THREE-DOTS SYSTEM MENU',
+    icon: <FiMoreVertical className="text-[#64ffda]" size={18} />,
+    content: 'Click this three-dots button next to your clearance badge to access essential tactical utilities:',
+    features: [
+      { icon: '📱', name: 'Download APK', desc: 'Offline Android field deployment package (.apk)' },
+      { icon: '📄', name: 'Generate Report', desc: 'Court-admissible PDF forensic case dossier' },
+      { icon: '🧭', name: 'System Tour', desc: 'Interactive walkthrough & feature orientation' },
+      { icon: '🎙️', name: 'Voice Control', desc: 'Full-screen Tactical Voice Command HUD (Alt+V)' },
+    ],
+    hint: 'Tip: You can re-launch this System Tour anytime directly from this menu.',
+  },
+  {
     id: 'right-panel',
     selector: '[data-tour="right-panel"]',
-    title: '8. Live Threat Feed & 360° Dossier',
+    title: '9. Live Threat Feed & 360° Dossier',
     subtitle: 'TACTICAL INTELLIGENCE FEED',
     icon: <FiActivity className="text-[#ff6b35]" size={18} />,
     content: 'The Right Panel shows real-time algorithmic threat alerts. Clicking any entity on the canvas instantly switches this panel into a complete 360° Forensic Intelligence Dossier with risk metrics and FIR history.',
@@ -160,7 +176,7 @@ export default function InteractiveTour({ isOpen, onClose, onFitCanvas }) {
         setTargetRect(rect);
 
         // Compute optimal non-overlapping position for the tooltip card
-        const cardWidth = Math.min(380, window.innerWidth - 32);
+        const cardWidth = Math.min(390, window.innerWidth - 32);
         const cardHeight = tooltipRef.current?.offsetHeight || 330;
         const gap = 24;
 
@@ -389,7 +405,7 @@ export default function InteractiveTour({ isOpen, onClose, onFitCanvas }) {
           left: `${cardPosition.left}px`,
           zIndex: 105,
         }}
-        className="fixed w-[370px] max-w-[92vw] bg-[#091426] border border-[#1e3a5f] rounded-2xl shadow-[0_15px_50px_rgba(0,0,0,0.85)] p-5 text-[#c8d6e5] transition-all duration-300 animate-in fade-in zoom-in-95 backdrop-blur-2xl"
+        className="fixed w-[390px] max-w-[92vw] bg-[#091426] border border-[#1e3a5f] rounded-2xl shadow-[0_15px_50px_rgba(0,0,0,0.85)] p-5 text-[#c8d6e5] transition-all duration-300 animate-in fade-in zoom-in-95 backdrop-blur-2xl"
       >
         {/* Directional Indicator Pointer toward highlighted target */}
         {cardPosition.placement === 'left' && (
@@ -436,6 +452,21 @@ export default function InteractiveTour({ isOpen, onClose, onFitCanvas }) {
         <p className="text-xs text-[#b8c7db] leading-relaxed mb-3">
           {step.content}
         </p>
+
+        {/* Feature Grid for Command Tools */}
+        {step.features && (
+          <div className="grid grid-cols-2 gap-2 mb-3">
+            {step.features.map((f, i) => (
+              <div key={i} className="p-2 rounded-lg bg-[#071120] border border-[#1e3a5f]/80 flex items-start gap-2 shadow-inner">
+                <span className="text-sm shrink-0">{f.icon}</span>
+                <div className="min-w-0">
+                  <div className="text-[11px] font-bold text-white leading-tight truncate">{f.name}</div>
+                  <div className="text-[9px] text-[#8892b0] leading-snug mt-0.5 line-clamp-2">{f.desc}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
 
         {/* Interactive Action Trigger for Fit Screen */}
         {step.actionType === 'fit-screen' && (

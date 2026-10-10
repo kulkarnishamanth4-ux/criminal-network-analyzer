@@ -666,7 +666,7 @@ function App() {
           }}
           style={voiceBtnDraggable.dragStyle}
           data-tour="voice-copilot"
-          className={`fixed ${!voiceBtnDraggable.hasCustomPos ? 'bottom-6 right-6' : ''} z-40 flex items-center gap-2 px-3.5 py-2.5 bg-[#0a1424]/95 hover:bg-[#11223b] text-[#64ffda] border border-[#1e3a5f] hover:border-[#64ffda] rounded-full shadow-[0_0_20px_rgba(100,255,218,0.25)] transition-all duration-200 cursor-grab active:cursor-grabbing backdrop-blur-md group hover:scale-105 select-none`}
+          className={`fixed ${!voiceBtnDraggable.hasCustomPos ? 'bottom-6 right-6' : ''} z-[70] flex items-center gap-2 px-3.5 py-2.5 bg-[#0a1424]/95 hover:bg-[#11223b] text-[#64ffda] border border-[#1e3a5f] hover:border-[#64ffda] rounded-full shadow-[0_0_20px_rgba(100,255,218,0.25)] transition-all duration-200 cursor-grab active:cursor-grabbing backdrop-blur-md group hover:scale-105 select-none`}
           title="Open Tactical Voice Copilot (Alt+V) - Drag to reposition"
         >
           <div className="relative flex items-center justify-center pointer-events-none">

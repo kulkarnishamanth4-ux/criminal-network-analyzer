@@ -122,7 +122,7 @@ export default function ChatBot({ activeCase, selectedEntity }) {
             setIsOpen(true);
           }}
           style={btnDraggable.dragStyle}
-          className={`fixed ${!btnDraggable.hasCustomPos ? 'bottom-20 right-6' : ''} w-12 h-12 bg-[#0a0a1a] border border-[#1e3a5f] hover:border-[#f9ca24] rounded-full flex items-center justify-center text-[#f9ca24] hover:bg-[#1e3a5f] transition-all shadow-[0_0_15px_rgba(249,202,36,0.3)] z-40 group cursor-grab active:cursor-grabbing select-none`}
+          className={`fixed ${!btnDraggable.hasCustomPos ? 'bottom-20 right-6' : ''} w-12 h-12 bg-[#0a0a1a] border border-[#1e3a5f] hover:border-[#f9ca24] rounded-full flex items-center justify-center text-[#f9ca24] hover:bg-[#1e3a5f] transition-all shadow-[0_0_15px_rgba(249,202,36,0.3)] z-[70] group cursor-grab active:cursor-grabbing select-none`}
           title="AI Intelligence Copilot (Drag to reposition)"
           data-tour="floating-chatbot"
         >
@@ -135,7 +135,7 @@ export default function ChatBot({ activeCase, selectedEntity }) {
         <div 
           ref={windowDraggable.nodeRef}
           style={windowDraggable.dragStyle}
-          className={`fixed ${!windowDraggable.hasCustomPos ? 'bottom-20 right-6' : ''} w-[420px] max-w-[95vw] h-[560px] bg-[#05050f] border border-[#1e3a5f] rounded-xl shadow-2xl z-50 flex flex-col overflow-hidden backdrop-blur-xl bg-opacity-95`}
+          className={`fixed ${!windowDraggable.hasCustomPos ? 'bottom-20 right-6' : ''} w-[420px] max-w-[95vw] h-[560px] bg-[#05050f] border border-[#1e3a5f] rounded-xl shadow-2xl z-[75] flex flex-col overflow-hidden backdrop-blur-xl bg-opacity-95`}
         >
           {/* Header (Drag handle) */}
           <div 

@@ -106,7 +106,7 @@ export default function Header({
 
             {/* Dropdown Menu Popover */}
             {suiteMenuOpen && (
-              <div className="absolute left-0 top-full mt-2 w-72 bg-[#0a1424] border border-[#1e3a5f] rounded-xl shadow-2xl p-2 z-[60] animate-in fade-in slide-in-from-top-2 duration-150 backdrop-blur-xl">
+              <div className="absolute left-0 top-full mt-2 w-72 bg-[#0a1424] border border-[#1e3a5f] rounded-xl shadow-2xl p-2 z-[80] animate-in fade-in slide-in-from-top-2 duration-150 backdrop-blur-xl">
                 <div className="px-3 py-2 border-b border-[#1e3a5f]/60 mb-1 flex items-center justify-between">
                   <span className="text-[10px] font-mono uppercase tracking-wider text-[#8892b0]">Security & Analytics Suite</span>
                   <span className="text-[9px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-mono font-bold">L{level} ACTIVE</span>
@@ -174,22 +174,12 @@ export default function Header({
             </SpecularButton>
           </div>
         )}
-
-        {/* Quick Tour Button */}
-        <button
-          onClick={onTourClick}
-          className="flex items-center gap-1.5 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-lg text-xs font-semibold bg-[#0d1c30] hover:bg-[#142e4f] border border-[#64ffda]/30 hover:border-[#64ffda] text-[#64ffda] transition-all cursor-pointer shadow-sm group shrink-0"
-          title="Interactive Platform Tour & Guide"
-        >
-          <FiHelpCircle size={14} className="group-hover:scale-110 transition-transform" />
-          <span className="hidden xl:inline">System Tour</span>
-        </button>
       </div>
 
       {/* Right Control Group: 3-Dots Dropdown Menu + Full Logged-in User Profile */}
       <div className="flex items-center gap-3 shrink-0 ml-4">
-        {/* 3-Dots Dropdown Menu containing Download APK, Generate Report */}
-        <div className="relative shrink-0" ref={moreMenuRef}>
+        {/* 3-Dots Dropdown Menu containing Download APK, Generate Report, System Tour, Voice Copilot */}
+        <div data-tour="command-tools" className="relative shrink-0" ref={moreMenuRef}>
           <button
             onClick={() => setMoreMenuOpen(!moreMenuOpen)}
             className={`flex items-center justify-center w-9 h-9 rounded-lg border transition-all cursor-pointer ${
@@ -197,14 +187,14 @@ export default function Header({
                 ? 'bg-[#162a45] border-[#64ffda] text-[#64ffda] shadow-[0_0_12px_rgba(100,255,218,0.25)]'
                 : 'bg-[#0d1829] border-[#1e3a5f] text-[#c8d6e5] hover:border-[#64ffda]/50 hover:text-white hover:bg-[#13233a]'
             }`}
-            title="More Options (Voice Copilot, Download APK, Generate Report)"
+            title="Command Tools (Download APK, Generate Report, System Tour, Voice Control)"
           >
             <FiMoreVertical size={16} />
           </button>
 
           {/* 3-Dots Dropdown Popover */}
           {moreMenuOpen && (
-            <div className="absolute right-0 top-full mt-2 w-64 bg-[#0a1424] border border-[#1e3a5f] rounded-xl shadow-2xl p-2 z-[60] animate-in fade-in slide-in-from-top-2 duration-150 backdrop-blur-xl">
+            <div className="absolute right-0 top-full mt-2 w-64 bg-[#0a1424] border border-[#1e3a5f] rounded-xl shadow-2xl p-2 z-[80] animate-in fade-in slide-in-from-top-2 duration-150 backdrop-blur-xl">
               <div className="px-3 py-1.5 border-b border-[#1e3a5f]/60 mb-1 flex items-center justify-between">
                 <span className="text-[10px] font-mono uppercase tracking-wider text-[#8892b0]">Command Tools</span>
                 <span className="text-[9px] px-1.5 py-0.5 rounded bg-[#64ffda]/10 text-[#64ffda] font-mono">TOOLS</span>
