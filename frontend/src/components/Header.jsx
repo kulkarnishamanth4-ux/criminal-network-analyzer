@@ -11,7 +11,8 @@ import {
   FiLayers,
   FiMic,
   FiDownloadCloud,
-  FiMoreVertical
+  FiMoreVertical,
+  FiHelpCircle
 } from 'react-icons/fi';
 import SpecularButton from './SpecularButton';
 
@@ -25,7 +26,8 @@ export default function Header({
   onAuditClick, 
   onLogout,
   onVoiceClick,
-  onAPKClick
+  onAPKClick,
+  onTourClick
 }) {
   const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
   const level = currentUser?.level || 0;
@@ -70,7 +72,7 @@ export default function Header({
         </span>
 
         {/* Case Selector Dropdown */}
-        <div className="relative w-56 sm:w-64 md:w-80 shrink-0">
+        <div data-tour="case-selector" className="relative w-56 sm:w-64 md:w-80 shrink-0">
           <select 
             value={activeCase} 
             onChange={(e) => onCaseChange(e.target.value)}
@@ -87,7 +89,7 @@ export default function Header({
 
         {/* Intelligence Suite Dropdown */}
         {level >= 3 && (
-          <div className="relative shrink-0" ref={suiteMenuRef}>
+          <div data-tour="intel-suite" className="relative shrink-0" ref={suiteMenuRef}>
             <button 
               onClick={() => setSuiteMenuOpen(!suiteMenuOpen)}
               className={`flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-2 rounded-lg text-xs font-semibold border transition-all cursor-pointer ${
@@ -157,7 +159,7 @@ export default function Header({
 
         {/* Major Change: Data Ingestion right after Intelligence Suite */}
         {level >= 2 && (
-          <div className="shrink-0">
+          <div data-tour="data-ingestion" className="shrink-0">
             <SpecularButton 
               onClick={onUploadClick}
               size="sm"
@@ -172,6 +174,16 @@ export default function Header({
             </SpecularButton>
           </div>
         )}
+
+        {/* Quick Tour Button */}
+        <button
+          onClick={onTourClick}
+          className="flex items-center gap-1.5 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-lg text-xs font-semibold bg-[#0d1c30] hover:bg-[#142e4f] border border-[#64ffda]/30 hover:border-[#64ffda] text-[#64ffda] transition-all cursor-pointer shadow-sm group shrink-0"
+          title="Interactive Platform Tour & Guide"
+        >
+          <FiHelpCircle size={14} className="group-hover:scale-110 transition-transform" />
+          <span className="hidden xl:inline">System Tour</span>
+        </button>
       </div>
 
       {/* Right Control Group: 3-Dots Dropdown Menu + Full Logged-in User Profile */}
@@ -233,7 +245,24 @@ export default function Header({
                   </div>
                 </button>
 
-                {/* 3. Generate Report */}
+                {/* 3. System Tour */}
+                <button
+                  onClick={() => {
+                    if (onTourClick) onTourClick();
+                    setMoreMenuOpen(false);
+                  }}
+                  className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-[#13233a] text-left transition-colors group cursor-pointer"
+                >
+                  <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 group-hover:border-emerald-400 shrink-0">
+                    <FiHelpCircle size={14} />
+                  </div>
+                  <div>
+                    <div className="text-xs font-semibold text-white group-hover:text-emerald-400">System Tour</div>
+                    <div className="text-[10px] text-[#8892b0]">Interactive Walkthrough & Feature Guide</div>
+                  </div>
+                </button>
+
+                {/* 4. Generate Report */}
                 {level >= 2 && (
                   <button
                     onClick={() => {

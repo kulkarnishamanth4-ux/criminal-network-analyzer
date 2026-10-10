@@ -16,6 +16,7 @@ import AuditLogViewer from './components/AuditLogViewer';
 import ErrorBoundary from './components/ErrorBoundary';
 import VoiceControlHUD from './components/VoiceControlHUD';
 import APKDownloadModal from './components/APKDownloadModal';
+import InteractiveTour from './components/InteractiveTour';
 import { FiShare2, FiMap, FiMic } from 'react-icons/fi';
 import { getFullGraph, getDashboardStats, getPredictedLinks, getShortestPath, logAuditEvent } from './api/client';
 import { useDraggable } from './utils/useDraggable';
@@ -53,6 +54,20 @@ function App() {
   const [showAuditModal, setShowAuditModal] = useState(false);
   const [showVoiceHUD, setShowVoiceHUD] = useState(false);
   const [showAPKModal, setShowAPKModal] = useState(false);
+  const [showTour, setShowTour] = useState(false);
+
+  // Auto-launch guided tour on first successful login
+  useEffect(() => {
+    if (isLoggedIn && !showTour) {
+      try {
+        const completed = localStorage.getItem('crimenet_tour_completed');
+        if (!completed) {
+          const timer = setTimeout(() => setShowTour(true), 1200);
+          return () => clearTimeout(timer);
+        }
+      } catch (e) {}
+    }
+  }, [isLoggedIn]);
 
   // Panel Collapse & Layout States
   const [isLeftPanelCollapsed, setIsLeftPanelCollapsed] = useState(false);
@@ -69,10 +84,7 @@ function App() {
   const [isPathFinderOpen, setIsPathFinderOpen] = useState(false);
   const [pathLoading, setPathLoading] = useState(false);
 
-  const voiceBtnDraggable = useDraggable('crimenet_pos_voice_btn', () => ({
-    x: typeof window !== 'undefined' ? Math.max(20, window.innerWidth - 560) : 600,
-    y: typeof window !== 'undefined' ? Math.max(20, window.innerHeight - 80) : 600,
-  }));
+  const voiceBtnDraggable = useDraggable('crimenet_pos_voice_btn_v5');
 
   const canAccess = (feature) => {
     if (!currentUser) return false;
@@ -425,6 +437,7 @@ function App() {
         onAuditClick={() => setShowAuditModal(true)}
         onVoiceClick={() => setShowVoiceHUD(prev => !prev)}
         onAPKClick={() => setShowAPKModal(true)}
+        onTourClick={() => setShowTour(true)}
         onLogout={() => {
           logAuditEvent({
             action: 'OFFICER_SESSION_LOGOUT',
@@ -651,11 +664,9 @@ function App() {
             if (voiceBtnDraggable.wasDragged()) return;
             setShowVoiceHUD(true);
           }}
-          style={{
-            left: `${voiceBtnDraggable.pos.x}px`,
-            top: `${voiceBtnDraggable.pos.y}px`,
-          }}
-          className="fixed z-40 flex items-center gap-2 px-3.5 py-2.5 bg-[#0a1424]/95 hover:bg-[#11223b] text-[#64ffda] border border-[#1e3a5f] hover:border-[#64ffda] rounded-full shadow-[0_0_20px_rgba(100,255,218,0.25)] transition-all duration-200 cursor-grab active:cursor-grabbing backdrop-blur-md group hover:scale-105 select-none"
+          style={voiceBtnDraggable.dragStyle}
+          data-tour="voice-copilot"
+          className={`fixed ${!voiceBtnDraggable.hasCustomPos ? 'bottom-6 right-6' : ''} z-40 flex items-center gap-2 px-3.5 py-2.5 bg-[#0a1424]/95 hover:bg-[#11223b] text-[#64ffda] border border-[#1e3a5f] hover:border-[#64ffda] rounded-full shadow-[0_0_20px_rgba(100,255,218,0.25)] transition-all duration-200 cursor-grab active:cursor-grabbing backdrop-blur-md group hover:scale-105 select-none`}
           title="Open Tactical Voice Copilot (Alt+V) - Drag to reposition"
         >
           <div className="relative flex items-center justify-center pointer-events-none">
@@ -682,6 +693,16 @@ function App() {
 
       {/* Floating AI Assistant */}
       {canAccess('chat') && <ChatBot activeCase={activeCase} selectedEntity={selectedEntity} />}
+
+      {/* Interactive Website Tour */}
+      <InteractiveTour
+        isOpen={showTour}
+        onClose={() => setShowTour(false)}
+        onFitCanvas={() => {
+          setFitTrigger(prev => prev + 1);
+          showToast('Network canvas centered & fitted to screen', 'success');
+        }}
+      />
 
       {/* Toast Notification */}
       {toast && (

@@ -766,6 +766,7 @@ export default function GraphCanvas({
             {/* Search Entity Node Button (identical size & shape, positioned right above Zoom In) */}
             <div className="relative">
               <button 
+                data-tour="node-search"
                 onClick={() => {
                   setIsSearchOpen(prev => !prev);
                   if (isSearchOpen) setSearchQuery('');
@@ -886,6 +887,7 @@ export default function GraphCanvas({
               <FiZoomOut size={18} />
             </button>
             <button 
+              data-tour="fit-screen"
               onClick={() => {
                 if (cyRef.current) {
                   cyRef.current.resize();

@@ -60,6 +60,7 @@ export default function PathFinder({
   if (!isOpen) {
     return (
       <button
+        data-tour="trace-path"
         onClick={onOpen}
         className="absolute top-4 left-4 z-30 flex items-center gap-2.5 bg-[#0a1628]/95 border border-[#1e3a5f] hover:border-[#64ffda] text-[#c8d6e5] hover:text-[#64ffda] px-4 py-2.5 rounded-xl transition-all text-xs font-semibold shadow-2xl backdrop-blur-md group cursor-pointer"
         title="Trace connection path between any two entities by clicking them on the canvas"

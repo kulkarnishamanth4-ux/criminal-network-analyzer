@@ -24,15 +24,8 @@ export default function ChatBot({ activeCase, selectedEntity }) {
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef(null);
 
-  const btnDraggable = useDraggable('crimenet_pos_chatbot_btn', () => ({
-    x: typeof window !== 'undefined' ? Math.max(20, window.innerWidth - 380) : 800,
-    y: typeof window !== 'undefined' ? Math.max(20, window.innerHeight - 80) : 600,
-  }));
-
-  const windowDraggable = useDraggable('crimenet_pos_chatbot_window', () => ({
-    x: typeof window !== 'undefined' ? Math.max(20, window.innerWidth - 760) : 500,
-    y: typeof window !== 'undefined' ? Math.max(20, window.innerHeight - 600) : 100,
-  }));
+  const btnDraggable = useDraggable('crimenet_pos_chatbot_btn_v5');
+  const windowDraggable = useDraggable('crimenet_pos_chatbot_window_v5');
 
   // Alias Matcher State
   const [showAliasForm, setShowAliasForm] = useState(false);
@@ -128,12 +121,10 @@ export default function ChatBot({ activeCase, selectedEntity }) {
             if (btnDraggable.wasDragged()) return;
             setIsOpen(true);
           }}
-          style={{
-            left: `${btnDraggable.pos.x}px`,
-            top: `${btnDraggable.pos.y}px`,
-          }}
-          className="fixed w-12 h-12 bg-[#0a0a1a] border border-[#1e3a5f] hover:border-[#f9ca24] rounded-full flex items-center justify-center text-[#f9ca24] hover:bg-[#1e3a5f] transition-all shadow-[0_0_15px_rgba(249,202,36,0.3)] z-50 group cursor-grab active:cursor-grabbing select-none"
+          style={btnDraggable.dragStyle}
+          className={`fixed ${!btnDraggable.hasCustomPos ? 'bottom-20 right-6' : ''} w-12 h-12 bg-[#0a0a1a] border border-[#1e3a5f] hover:border-[#f9ca24] rounded-full flex items-center justify-center text-[#f9ca24] hover:bg-[#1e3a5f] transition-all shadow-[0_0_15px_rgba(249,202,36,0.3)] z-40 group cursor-grab active:cursor-grabbing select-none`}
           title="AI Intelligence Copilot (Drag to reposition)"
+          data-tour="floating-chatbot"
         >
           <FiTerminal size={20} className="group-hover:scale-110 transition-transform pointer-events-none" />
         </button>
@@ -143,11 +134,8 @@ export default function ChatBot({ activeCase, selectedEntity }) {
       {isOpen && (
         <div 
           ref={windowDraggable.nodeRef}
-          style={{
-            left: `${windowDraggable.pos.x}px`,
-            top: `${windowDraggable.pos.y}px`,
-          }}
-          className="fixed w-[420px] max-w-[95vw] h-[560px] bg-[#05050f] border border-[#1e3a5f] rounded-xl shadow-2xl z-50 flex flex-col overflow-hidden backdrop-blur-xl bg-opacity-95"
+          style={windowDraggable.dragStyle}
+          className={`fixed ${!windowDraggable.hasCustomPos ? 'bottom-20 right-6' : ''} w-[420px] max-w-[95vw] h-[560px] bg-[#05050f] border border-[#1e3a5f] rounded-xl shadow-2xl z-50 flex flex-col overflow-hidden backdrop-blur-xl bg-opacity-95`}
         >
           {/* Header (Drag handle) */}
           <div 

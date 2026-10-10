@@ -37,7 +37,7 @@ export default function RightPanel({
   }
 
   return (
-    <aside className="w-[320px] bg-[var(--bg-card)] border-l border-[var(--border)] h-full overflow-y-auto flex flex-col z-10 shadow-lg shrink-0 relative transition-all duration-300">
+    <aside data-tour="right-panel" className="w-[320px] bg-[var(--bg-card)] border-l border-[var(--border)] h-full overflow-y-auto flex flex-col z-10 shadow-lg shrink-0 relative transition-all duration-300">
       <button onClick={() => handleToggleCollapse(true)} className="absolute top-3 left-3 z-50 text-[var(--text-secondary)] hover:text-white p-1 rounded hover:bg-[var(--bg-primary)] cursor-pointer" title="Collapse Panel">
         <FiChevronRight size={16} />
       </button>
