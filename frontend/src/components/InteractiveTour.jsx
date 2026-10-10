@@ -12,8 +12,10 @@ import {
   FiChevronRight, 
   FiChevronLeft, 
   FiCheck, 
-  FiPlay,
-  FiHelpCircle
+  FiArrowRight,
+  FiArrowUp,
+  FiArrowDown,
+  FiArrowLeft
 } from 'react-icons/fi';
 
 const TOUR_STEPS = [
@@ -97,7 +99,7 @@ const TOUR_STEPS = [
 export default function InteractiveTour({ isOpen, onClose, onFitCanvas }) {
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [targetRect, setTargetRect] = useState(null);
-  const [cardPosition, setCardPosition] = useState({ top: 100, left: 100, placement: 'bottom' });
+  const [cardPosition, setCardPosition] = useState({ top: 100, left: 100, placement: 'left' });
   const tooltipRef = useRef(null);
 
   const step = TOUR_STEPS[currentStepIndex];
@@ -107,67 +109,148 @@ export default function InteractiveTour({ isOpen, onClose, onFitCanvas }) {
     if (!isOpen) return;
 
     const updateRect = () => {
-      let el = document.querySelector(step.selector);
-      if (!el && step.fallbackSelectors) {
-        for (const sel of step.fallbackSelectors) {
-          el = document.querySelector(sel);
-          if (el) break;
+      let rect = null;
+
+      // Special handling for Step 2: encapsulate BOTH voice-copilot and floating-chatbot
+      if (step.id === 'floating-tools') {
+        const voiceEl = document.querySelector('[data-tour="voice-copilot"]');
+        const chatEl = document.querySelector('[data-tour="floating-chatbot"]');
+        if (voiceEl && chatEl) {
+          const v = voiceEl.getBoundingClientRect();
+          const c = chatEl.getBoundingClientRect();
+          rect = {
+            top: Math.min(v.top, c.top),
+            left: Math.min(v.left, c.left),
+            right: Math.max(v.right, c.right),
+            bottom: Math.max(v.bottom, c.bottom),
+            width: Math.max(v.right, c.right) - Math.min(v.left, c.left),
+            height: Math.max(v.bottom, c.bottom) - Math.min(v.top, c.top)
+          };
+        } else if (voiceEl) {
+          const v = voiceEl.getBoundingClientRect();
+          rect = { top: v.top, left: v.left, right: v.right, bottom: v.bottom, width: v.width, height: v.height };
+        } else if (chatEl) {
+          const c = chatEl.getBoundingClientRect();
+          rect = { top: c.top, left: c.left, right: c.right, bottom: c.bottom, width: c.width, height: c.height };
         }
       }
 
-      if (el) {
-        const rect = el.getBoundingClientRect();
-        setTargetRect({
-          top: rect.top,
-          left: rect.left,
-          width: rect.width,
-          height: rect.height,
-          bottom: rect.bottom,
-          right: rect.right
-        });
-
-        // Compute optimal position for the tooltip card
-        const cardWidth = Math.min(380, window.innerWidth - 32);
-        const cardHeight = 260;
-        const padding = 16;
-
-        let left = rect.left + rect.width / 2 - cardWidth / 2;
-        // Clamp horizontally
-        left = Math.max(16, Math.min(window.innerWidth - cardWidth - 16, left));
-
-        let top = 0;
-        let placement = 'bottom';
-
-        // Check space above vs below
-        const spaceBelow = window.innerHeight - rect.bottom;
-        const spaceAbove = rect.top;
-
-        if (spaceBelow >= cardHeight + padding) {
-          top = rect.bottom + padding;
-          placement = 'bottom';
-        } else if (spaceAbove >= cardHeight + padding) {
-          top = rect.top - cardHeight - padding;
-          placement = 'top';
-        } else {
-          // If neither has room, position to the side or center
-          if (rect.left > cardWidth + padding) {
-            left = rect.left - cardWidth - padding;
-            top = Math.max(20, Math.min(window.innerHeight - cardHeight - 20, rect.top));
-            placement = 'left';
-          } else {
-            left = Math.min(window.innerWidth - cardWidth - 20, rect.right + padding);
-            top = Math.max(20, Math.min(window.innerHeight - cardHeight - 20, rect.top));
-            placement = 'right';
+      if (!rect) {
+        let el = document.querySelector(step.selector);
+        if (!el && step.fallbackSelectors) {
+          for (const sel of step.fallbackSelectors) {
+            el = document.querySelector(sel);
+            if (el) break;
           }
+        }
+        if (el) {
+          const r = el.getBoundingClientRect();
+          rect = {
+            top: r.top,
+            left: r.left,
+            right: r.right,
+            bottom: r.bottom,
+            width: r.width,
+            height: r.height
+          };
+        }
+      }
+
+      if (rect) {
+        setTargetRect(rect);
+
+        // Compute optimal non-overlapping position for the tooltip card
+        const cardWidth = Math.min(380, window.innerWidth - 32);
+        const cardHeight = tooltipRef.current?.offsetHeight || 330;
+        const gap = 24;
+
+        let left = 0;
+        let top = 0;
+        let placement = 'left';
+
+        const isRightAligned = rect.right > window.innerWidth - 440;
+        const isHeaderElement = rect.top < 90;
+        const isBottomAligned = rect.bottom > window.innerHeight - 250;
+
+        if (isHeaderElement) {
+          // Always place below header elements with clear vertical spacing
+          placement = 'bottom';
+          top = rect.bottom + gap;
+          left = rect.left + rect.width / 2 - cardWidth / 2;
+        } else if (isRightAligned) {
+          // Target is in the right section (canvas controls, voice pill, chatbot, right panel)
+          // ALWAYS place card to the LEFT so buttons are 100% uncovered!
+          placement = 'left';
+          left = rect.left - cardWidth - gap;
+          top = rect.top + rect.height / 2 - cardHeight / 2;
+        } else if (isBottomAligned) {
+          // Target is in bottom area: prefer left if space exists, otherwise top
+          if (rect.left > cardWidth + gap + 20) {
+            placement = 'left';
+            left = rect.left - cardWidth - gap;
+            top = rect.top + rect.height / 2 - cardHeight / 2;
+          } else {
+            placement = 'top';
+            top = rect.top - cardHeight - gap;
+            left = rect.left + rect.width / 2 - cardWidth / 2;
+          }
+        } else {
+          // General placement: prefer bottom, then top, then right
+          const spaceBelow = window.innerHeight - rect.bottom;
+          const spaceAbove = rect.top;
+
+          if (spaceBelow >= cardHeight + gap + 30) {
+            placement = 'bottom';
+            top = rect.bottom + gap;
+            left = rect.left + rect.width / 2 - cardWidth / 2;
+          } else if (spaceAbove >= cardHeight + gap + 30) {
+            placement = 'top';
+            top = rect.top - cardHeight - gap;
+            left = rect.left + rect.width / 2 - cardWidth / 2;
+          } else {
+            placement = 'right';
+            left = rect.right + gap;
+            top = rect.top + rect.height / 2 - cardHeight / 2;
+          }
+        }
+
+        // Viewport boundaries clamping
+        left = Math.max(16, Math.min(window.innerWidth - cardWidth - 16, left));
+        top = Math.max(16, Math.min(window.innerHeight - cardHeight - 16, top));
+
+        // ZERO-COLLISION GUARANTEE: If card intersects targetRect bounding box, shove it out
+        const cardRight = left + cardWidth;
+        const cardBottom = top + cardHeight;
+        const padX = 12;
+        const padY = 12;
+        const collidesX = left < rect.right + padX && cardRight > rect.left - padX;
+        const collidesY = top < rect.bottom + padY && cardBottom > rect.top - padY;
+
+        if (collidesX && collidesY) {
+          if (rect.left > cardWidth + gap + 16) {
+            left = rect.left - cardWidth - gap;
+            placement = 'left';
+          } else if (window.innerWidth - rect.right > cardWidth + gap + 16) {
+            left = rect.right + gap;
+            placement = 'right';
+          } else if (rect.top > cardHeight + gap + 16) {
+            top = rect.top - cardHeight - gap;
+            placement = 'top';
+          } else {
+            top = rect.bottom + gap;
+            placement = 'bottom';
+          }
+          left = Math.max(16, Math.min(window.innerWidth - cardWidth - 16, left));
+          top = Math.max(16, Math.min(window.innerHeight - cardHeight - 16, top));
         }
 
         setCardPosition({ top, left, placement });
       } else {
-        // If element is not rendered, center on screen
+        // Element not in DOM, center on screen
         const cardWidth = Math.min(380, window.innerWidth - 32);
         setTargetRect(null);
         setCardPosition({
-          top: window.innerHeight / 2 - 130,
+          top: window.innerHeight / 2 - 160,
           left: window.innerWidth / 2 - cardWidth / 2,
           placement: 'center'
         });
@@ -179,9 +262,12 @@ export default function InteractiveTour({ isOpen, onClose, onFitCanvas }) {
     window.addEventListener('resize', handleResize);
     window.addEventListener('scroll', updateRect, true);
 
+    const timer = setTimeout(updateRect, 60);
+
     return () => {
       window.removeEventListener('resize', handleResize);
       window.removeEventListener('scroll', updateRect, true);
+      clearTimeout(timer);
     };
   }, [isOpen, currentStepIndex, step]);
 
@@ -226,33 +312,73 @@ export default function InteractiveTour({ isOpen, onClose, onFitCanvas }) {
 
   if (!isOpen) return null;
 
+  const pad = 8;
+
   return (
     <div className="fixed inset-0 z-[100] overflow-hidden select-none pointer-events-auto">
-      {/* Dark overlay backdrop with cutout feel */}
-      <div 
-        className="absolute inset-0 bg-black/60 backdrop-blur-[2px] transition-opacity duration-300"
-        onClick={handleComplete}
-      />
+      {/* 
+        Aperture Backdrop System:
+        Creates physical open holes in the dark overlay so highlighted buttons 
+        are 100% visible, crystal-clear, unblurred, and directly clickable!
+      */}
+      {targetRect ? (
+        <>
+          {/* Top dark block */}
+          <div 
+            onClick={handleNext}
+            className="fixed top-0 left-0 right-0 bg-[#020612]/75 backdrop-blur-[1.5px] z-[100] cursor-pointer"
+            style={{ height: `${Math.max(0, targetRect.top - pad)}px` }}
+          />
+          {/* Bottom dark block */}
+          <div 
+            onClick={handleNext}
+            className="fixed left-0 right-0 bottom-0 bg-[#020612]/75 backdrop-blur-[1.5px] z-[100] cursor-pointer"
+            style={{ top: `${Math.min(window.innerHeight, targetRect.bottom + pad)}px` }}
+          />
+          {/* Left dark block */}
+          <div 
+            onClick={handleNext}
+            className="fixed left-0 bg-[#020612]/75 backdrop-blur-[1.5px] z-[100] cursor-pointer"
+            style={{ 
+              top: `${Math.max(0, targetRect.top - pad)}px`,
+              height: `${Math.max(0, targetRect.height + pad * 2)}px`,
+              width: `${Math.max(0, targetRect.left - pad)}px` 
+            }}
+          />
+          {/* Right dark block */}
+          <div 
+            onClick={handleNext}
+            className="fixed right-0 bg-[#020612]/75 backdrop-blur-[1.5px] z-[100] cursor-pointer"
+            style={{ 
+              top: `${Math.max(0, targetRect.top - pad)}px`,
+              height: `${Math.max(0, targetRect.height + pad * 2)}px`,
+              left: `${Math.min(window.innerWidth, targetRect.right + pad)}px` 
+            }}
+          />
 
-      {/* Target Spotlight Highlight Ring */}
-      {targetRect && (
+          {/* Glowing Aperture Spotlight Ring */}
+          <div 
+            className="fixed rounded-xl pointer-events-none z-[102] transition-all duration-300 animate-in fade-in"
+            style={{
+              top: `${Math.max(0, targetRect.top - pad)}px`,
+              left: `${Math.max(0, targetRect.left - pad)}px`,
+              width: `${targetRect.width + pad * 2}px`,
+              height: `${targetRect.height + pad * 2}px`,
+              border: '2px solid #64ffda',
+              boxShadow: '0 0 25px rgba(100, 255, 218, 0.75), inset 0 0 15px rgba(100, 255, 218, 0.25)',
+            }}
+          >
+            <span className="absolute -top-1.5 -left-1.5 flex h-3.5 w-3.5">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#64ffda] opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-[#64ffda]"></span>
+            </span>
+          </div>
+        </>
+      ) : (
         <div 
-          className="absolute pointer-events-none transition-all duration-300 rounded-xl"
-          style={{
-            top: `${Math.max(0, targetRect.top - 6)}px`,
-            left: `${Math.max(0, targetRect.left - 6)}px`,
-            width: `${targetRect.width + 12}px`,
-            height: `${targetRect.height + 12}px`,
-            boxShadow: '0 0 0 9999px rgba(3, 7, 18, 0.75), 0 0 25px rgba(100, 255, 218, 0.6)',
-            border: '2px solid #64ffda',
-            zIndex: 101,
-          }}
-        >
-          <span className="absolute -top-1 -left-1 flex h-3 w-3">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#64ffda] opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-3 w-3 bg-[#64ffda]"></span>
-          </span>
-        </div>
+          onClick={handleNext}
+          className="fixed inset-0 bg-[#020612]/75 backdrop-blur-[1.5px] z-[100] cursor-pointer"
+        />
       )}
 
       {/* Tour Step Card */}
@@ -263,8 +389,22 @@ export default function InteractiveTour({ isOpen, onClose, onFitCanvas }) {
           left: `${cardPosition.left}px`,
           zIndex: 105,
         }}
-        className="absolute w-[360px] max-w-[92vw] bg-[#091426] border border-[#1e3a5f] rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.8)] p-5 text-[#c8d6e5] transition-all duration-300 animate-in fade-in zoom-in-95 backdrop-blur-xl"
+        className="fixed w-[370px] max-w-[92vw] bg-[#091426] border border-[#1e3a5f] rounded-2xl shadow-[0_15px_50px_rgba(0,0,0,0.85)] p-5 text-[#c8d6e5] transition-all duration-300 animate-in fade-in zoom-in-95 backdrop-blur-2xl"
       >
+        {/* Directional Indicator Pointer toward highlighted target */}
+        {cardPosition.placement === 'left' && (
+          <div className="absolute -right-2 top-1/2 -translate-y-1/2 w-4 h-4 bg-[#091426] border-t border-r border-[#1e3a5f] rotate-45 pointer-events-none" />
+        )}
+        {cardPosition.placement === 'right' && (
+          <div className="absolute -left-2 top-1/2 -translate-y-1/2 w-4 h-4 bg-[#091426] border-b border-l border-[#1e3a5f] rotate-45 pointer-events-none" />
+        )}
+        {cardPosition.placement === 'bottom' && (
+          <div className="absolute -top-2 left-10 w-4 h-4 bg-[#091426] border-t border-l border-[#1e3a5f] rotate-45 pointer-events-none" />
+        )}
+        {cardPosition.placement === 'top' && (
+          <div className="absolute -bottom-2 left-10 w-4 h-4 bg-[#091426] border-b border-r border-[#1e3a5f] rotate-45 pointer-events-none" />
+        )}
+
         {/* Header */}
         <div className="flex items-start justify-between gap-3 mb-3">
           <div className="flex items-center gap-2.5">
@@ -272,8 +412,10 @@ export default function InteractiveTour({ isOpen, onClose, onFitCanvas }) {
               {step.icon}
             </div>
             <div>
-              <div className="text-[10px] font-mono tracking-wider font-bold text-[#64ffda] uppercase">
-                {step.subtitle} • {currentStepIndex + 1}/{TOUR_STEPS.length}
+              <div className="text-[10px] font-mono tracking-wider font-bold text-[#64ffda] uppercase flex items-center gap-1.5">
+                <span>{step.subtitle}</span>
+                <span>•</span>
+                <span>{currentStepIndex + 1}/{TOUR_STEPS.length}</span>
               </div>
               <h3 className="text-sm font-bold text-white leading-tight">
                 {step.title}
@@ -283,7 +425,7 @@ export default function InteractiveTour({ isOpen, onClose, onFitCanvas }) {
           <button 
             type="button"
             onClick={handleComplete}
-            className="text-[#8892b0] hover:text-white p-1 rounded hover:bg-[#13233a] transition-colors"
+            className="text-[#8892b0] hover:text-white p-1 rounded hover:bg-[#13233a] transition-colors cursor-pointer"
             title="Skip Tour (Esc)"
           >
             <FiX size={16} />
@@ -295,25 +437,25 @@ export default function InteractiveTour({ isOpen, onClose, onFitCanvas }) {
           {step.content}
         </p>
 
-        {/* Optional Action / Interactive Trigger */}
+        {/* Interactive Action Trigger for Fit Screen */}
         {step.actionType === 'fit-screen' && (
           <button
             type="button"
             onClick={() => {
               if (onFitCanvas) onFitCanvas();
             }}
-            className="w-full mb-3 py-1.5 px-3 rounded-lg bg-[#0e2a4a] hover:bg-[#143d6b] border border-[#64ffda]/40 text-[#64ffda] text-xs font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer shadow-sm group"
+            className="w-full mb-3 py-2 px-3 rounded-lg bg-[#0e2a4a] hover:bg-[#143d6b] border border-[#64ffda]/40 text-[#64ffda] text-xs font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer shadow-sm group"
           >
             <FiCrosshair size={14} className="group-hover:rotate-45 transition-transform" />
             <span>{step.actionLabel}</span>
           </button>
         )}
 
-        {/* Hint Box */}
+        {/* Tactical Tip Callout */}
         {step.hint && (
-          <div className="p-2 rounded-lg bg-[#050b14] border border-[#1e3a5f]/60 text-[11px] font-mono text-[#8892b0] mb-4 flex items-start gap-1.5">
+          <div className="p-2.5 rounded-lg bg-[#050b14] border border-[#1e3a5f]/60 text-[11px] font-mono text-[#8892b0] mb-4 flex items-start gap-2">
             <span className="text-[#f9ca24] shrink-0 font-bold">💡</span>
-            <span>{step.hint}</span>
+            <span className="leading-snug">{step.hint}</span>
           </div>
         )}
 
@@ -326,7 +468,7 @@ export default function InteractiveTour({ isOpen, onClose, onFitCanvas }) {
                 key={s.id}
                 type="button"
                 onClick={() => setCurrentStepIndex(idx)}
-                className={`h-1.5 rounded-full transition-all ${
+                className={`h-1.5 rounded-full transition-all cursor-pointer ${
                   idx === currentStepIndex 
                     ? 'w-5 bg-[#64ffda]' 
                     : 'w-1.5 bg-[#1e3a5f] hover:bg-[#8892b0]'
